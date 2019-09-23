@@ -1,9 +1,17 @@
 import $ from 'jquery'
+import { connect } from '../api/nexus'
 
 export default class MainView {
   mount() {
     // This will be executed when the document loads...
     $('#signInBtn').click(() => this.login())
+    let uuid = sessionStorage.getItem("uuid")
+    let token = sessionStorage.getItem("connection_token")
+
+    console.log({
+      "uuid":  uuid,
+      "connection_token": token
+    })
   }
 
   unmount() {
@@ -13,5 +21,6 @@ export default class MainView {
 
   login(){
     console.log('login!')
+    connect()
   }
 }
