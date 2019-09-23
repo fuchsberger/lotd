@@ -1,3 +1,5 @@
+import CSS from '../css/app.css'
+
 import $ from 'jquery'
 import Turbolinks from 'turbolinks'
 import loadView from './views/loader'
