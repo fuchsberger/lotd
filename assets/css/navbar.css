@@ -1,0 +1,9 @@
+i.nexus-icon {
+  height: 100%;
+  width:100%;
+  background: url('../static/images/nexusmods.svg');
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 2px;
+}

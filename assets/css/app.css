@@ -1,3 +1,4 @@
 /* This file is for your main application css. */
 
 @import "../node_modules/bulma/css/bulma.css";
+@import "./navbar.css";
