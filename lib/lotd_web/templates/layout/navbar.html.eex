@@ -15,7 +15,7 @@
     <div class="navbar-end">
       <div class="navbar-item">
         <div class="buttons">
-          <a class="button">
+          <a id='signInBtn' class="button">
             <span class="icon is-small">
               <i class="nexus-icon"></i>
             </span>

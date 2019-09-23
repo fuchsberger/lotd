@@ -1,11 +1,17 @@
+import $ from 'jquery'
+
 export default class MainView {
   mount() {
     // This will be executed when the document loads...
-    console.log('MainView mounted');
+    $('#signInBtn').click(() => this.login())
   }
 
   unmount() {
     // This will be executed when the document unloads...
-    console.log('MainView unmounted');
+
+  }
+
+  login(){
+    console.log('login!')
   }
 }
