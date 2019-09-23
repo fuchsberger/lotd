@@ -3,12 +3,13 @@
   <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="author" content="Alexander Fuchsberger"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><%= gettext "LOTD - Museum Inventory" %></title>
-    <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
-    <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
+    <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>' />
+    <script defer type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
   </head>
-  <body>
+  <body data-view='<%= unique_view_name(@view_module, @view_template) %>'>
     <%= render "navbar.html", assigns %>
     <%= render @view_module, @view_template, assigns %>
   </body>
