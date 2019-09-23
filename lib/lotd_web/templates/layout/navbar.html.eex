@@ -1,0 +1,28 @@
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="<%= Routes.page_path(@conn, :index) %>">
+      <img src="<%= Routes.static_path(@conn, "/images/logo.png") %>" width="112" height="28" />
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="mainMenu">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="mainMenu" class="navbar-menu">
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="buttons">
+          <a class="button">
+            <span class="icon is-small">
+              <i class="nexus-icon"></i>
+            </span>
+            <strong>Sign In</strong>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
