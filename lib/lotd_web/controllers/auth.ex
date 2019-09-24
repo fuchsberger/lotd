@@ -15,12 +15,12 @@ defmodule LotdWeb.AuthController do
 
     NOTE: it seems like a nexus api-key is valid for a full year --> nothing to do about expirey
   """
-  def login(conn, _params) do
+  def login(conn, %{"api_key" => api_key}) do
 
-    api_key = "ZHhFU2F2RmZUT2dFb1Jwd3ZRV0hVNHFSSDlKdnN6Ym8rQ0RZeUJmSXFlTHR5WjM3QkNFbVROa2l3Z25SWHprMC0tU3VPSG55dFROeDB3Tnd4UzIxczU4dz09--983492fbd087d4adc1c525975579767662e7a7b8"
-    api_url_user = "https://api.nexusmods.com/v1/users/validate.json"
+    url = Application.get_env(:lotd, Lotd.NexusAPI)[:user_url]
+    header = Application.get_env(:lotd, Lotd.NexusAPI)[:header] |> Keyword.put(:apikey, api_key)
 
-    case HTTPoison.get(api_url_user, [apikey: api_key, version: "0.1"]) do
+    case HTTPoison.get(url, header) do
       {:ok, response} ->
         response = Jason.decode!(response.body)
         json(conn, %{

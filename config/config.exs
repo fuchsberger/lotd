@@ -7,8 +7,17 @@
 # General application configuration
 use Mix.Config
 
+
 config :lotd,
   ecto_repos: [Lotd.Repo]
+
+# Nexus API urls
+config :lotd, Lotd.NexusAPI,
+  user_url: "https://api.nexusmods.com/v1/users/validate.json",
+  header: [
+    application_name: "LOTD Inventory Manager",
+    application_version: "0.1"
+  ]
 
 # Configures the endpoint
 config :lotd, LotdWeb.Endpoint,

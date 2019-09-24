@@ -14,26 +14,24 @@ const uuidv4 = () => (
 
 // Temporarily connects to nexus api to retrieve api-key token
 export const login = () => {
-  window.socket = new WebSocket("wss://sso.nexusmods.com");
+
+  // if we already have an API key there is no need to create a socket and get one (testing)
+  let api_key = sessionStorage.getItem("api_key")
+  if(api_key){
+    $('#api_key').val(api_key)
+    $('#login-form').submit()
+    return
+  }
+
+  window.socket = new WebSocket("wss://sso.nexusmods.com")
 
   // Connect to SSO service
   socket.onopen = () => {
-
     // Generate or retrieve a request ID and connection token (if we are reconnecting)
-    var uuid = null
-    var token = null
-    uuid = sessionStorage.getItem("uuid")
-    token = sessionStorage.getItem("connection_token")
-
-    if (uuid == null) {
-      uuid = uuidv4();
-      sessionStorage.setItem('uuid', uuid);
-    }
-
     if (uuid !== null) {
       var data = {
-        id: uuid,
-        token: token,
+        id: uuidv4(),
+        token: null,
         protocol: 2
       }
 
@@ -51,16 +49,16 @@ export const login = () => {
   socket.onmessage = e => {
     // All messages from protocol > 2 pass all messages back to the client by using the format type:value
     var res = JSON.parse(e.data)
-    console.log(e)
+
     if (res && res.success){
 
       // If the response is valid, the data array will be available. Now we can check for what type of data is being returned.
       if (res.data.hasOwnProperty('api_key')){
 
         // This is received when the user has approved the SSO request and the SSO is now returning with that user's API key
-        console.log("API Key Received: " + res.data.api_key)
 
-        $('#api_key').val(res.api_key)
+        sessionStorage.setItem('api_key', res.data.api_key);
+        $('#api_key').val(res.data.api_key)
         $('#login-form').submit()
 
         // close right away
