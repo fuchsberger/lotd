@@ -26,3 +26,8 @@
     </div>
   </div>
 </nav>
+
+<%# Login Form (hidden) %>
+<%= f = form_for @conn, Routes.auth_path(@conn, :login), [id: "login-form"] %>
+  <%= hidden_input(f, :api_key) %>
+</form>

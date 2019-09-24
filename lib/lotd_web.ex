@@ -24,6 +24,8 @@ defmodule LotdWeb do
       import Plug.Conn
       import LotdWeb.Gettext
       alias LotdWeb.Router.Helpers, as: Routes
+
+      require Logger
     end
   end
 

@@ -1,3 +1,5 @@
+import $ from 'jquery'
+
 // This can be edited to identify your registered app.
 const APPLICATION_SLUG = "lotd-inventory-manager"
 
@@ -11,7 +13,7 @@ const uuidv4 = () => (
 )
 
 // Temporarily connects to nexus api to retrieve api-key token
-export const connect = () => {
+export const login = () => {
   window.socket = new WebSocket("wss://sso.nexusmods.com");
 
   // Connect to SSO service
@@ -48,16 +50,18 @@ export const connect = () => {
   // When the client receives a message
   socket.onmessage = e => {
     // All messages from protocol > 2 pass all messages back to the client by using the format type:value
-    var response = JSON.parse(e.data);
-    if (response && response.success)
-    {
+    var res = JSON.parse(e.data)
+    console.log(e)
+    if (res && res.success){
+
       // If the response is valid, the data array will be available. Now we can check for what type of data is being returned.
-      if (response.data.hasOwnProperty('api_key')){
+      if (res.data.hasOwnProperty('api_key')){
 
         // This is received when the user has approved the SSO request and the SSO is now returning with that user's API key
-        console.log("API Key Received: " + response.data.api_key)
+        console.log("API Key Received: " + res.data.api_key)
 
-        // TODO: send it to server for authentication
+        $('#api_key').val(res.api_key)
+        $('#login-form').submit()
 
         // close right away
         window.socket.close()
@@ -65,6 +69,6 @@ export const connect = () => {
     }
 
     // The SSO  will return an error attribute that can be used for error reporting
-    else console.error("Something went wrong! " + response.error)
+    else console.error("Something went wrong! " + res.error)
   }
 }

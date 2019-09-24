@@ -17,6 +17,7 @@ defmodule LotdWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+    get "/login", AuthController, :login
   end
 
   # Other scopes may use custom stacks.
