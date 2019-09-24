@@ -14,20 +14,40 @@
   <div id="mainMenu" class="navbar-menu">
     <div class="navbar-end">
       <div class="navbar-item">
-        <div class="buttons">
+        <%= if authenticated?(@conn) do %>
+          <div class="dropdown is-right">
+
+            <button id='user-button' class="button" aria-haspopup="true" aria-controls="user-menu">
+              <span class="icon is-small">
+                <i class="nexus-icon"></i>
+              </span>
+              <strong><%= @conn.assigns.current_user.nexus_name %></strong>
+            </button>
+
+            <div id="user-menu" class="dropdown-menu" role="menu">
+              <div class="dropdown-content">
+                <a href="#" class="dropdown-item">
+                  <span class="icon">
+                    <i class="icon-off"></i>
+                  </span>
+                  Logout
+                </a>
+              </div>
+            </div>
+          </div>
+        <% else %>
           <a id='signInBtn' class="button">
             <span class="icon is-small">
               <i class="nexus-icon"></i>
             </span>
             <strong>Sign In</strong>
           </a>
-        </div>
+          <%# Login Form (hidden) %>
+          <%= f = form_for @conn, Routes.session_path(@conn, :create), [id: "login-form"] %>
+            <%= hidden_input(f, :api_key) %>
+          </form>
+        <% end %>
       </div>
     </div>
   </div>
 </nav>
-
-<%# Login Form (hidden) %>
-<%= f = form_for @conn, Routes.auth_path(@conn, :login), [id: "login-form"] %>
-  <%= hidden_input(f, :api_key) %>
-</form>

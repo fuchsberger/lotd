@@ -7,6 +7,7 @@ defmodule LotdWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug LotdWeb.Auth
   end
 
   pipeline :api do
@@ -17,7 +18,7 @@ defmodule LotdWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    post "/login", AuthController, :login
+    resources "/session", SessionController, only: [:create]
   end
 
   # Other scopes may use custom stacks.

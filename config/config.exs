@@ -7,7 +7,6 @@
 # General application configuration
 use Mix.Config
 
-
 config :lotd,
   ecto_repos: [Lotd.Repo]
 

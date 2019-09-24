@@ -1,4 +1,4 @@
-defmodule Lotd.Account.User do
+defmodule Lotd.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
