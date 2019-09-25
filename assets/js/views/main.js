@@ -2,8 +2,6 @@ import $ from 'jquery'
 
 import { login } from '../api/nexus'
 
-
-
 export default class MainView {
   mount() {
 
@@ -12,14 +10,9 @@ export default class MainView {
 
     // enable user button dropwdown
     enableDropdowns()
-
-
-    // $(document).click(() => $('#user-button').parent().removeClass('is-active'))
-    // $('#user-button').click(() => $('#user-button').parent().toggleClass('is-active'))
   }
 
   unmount() {
-    // This will be executed when the document unloads...
 
   }
 }

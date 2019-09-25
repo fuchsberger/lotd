@@ -14,7 +14,6 @@
   <div id="mainMenu" class="navbar-menu">
     <div class="navbar-end">
       <div class="navbar-item">
-      <% IO.inspect @conn.assigns %>
         <%= if authenticated?(@conn) do %>
           <div class="dropdown is-right">
 
