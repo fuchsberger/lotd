@@ -39,6 +39,7 @@ defmodule LotdWeb.Endpoint do
   # Set :encryption_salt if you would also like to encrypt it.
   plug Plug.Session,
     store: :cookie,
+    max_age: 24*60*60*10, # 10 days
     key: "_lotd_key",
     signing_salt: "8y5LmsqX"
 
