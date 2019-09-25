@@ -7,11 +7,17 @@ i.nexus-icon {
   background-position: center;
   padding: 2px;
 }
-
+/* Desktop only */
+@media screen and (min-width: 1024px){
+  .navbar-start { flex-grow: 1; }
+  #main-menu .control { width: 100%!important; }
+}
 /* Mobile only */
 @media screen and (max-width: 1023px) {
   /* move user-button to right so that the dropdown menu is not out of screen */
   .navbar-end > .navbar-item { text-align: right; }
+
+
 }
 
 /* enable dynamic dropdown arrows based on :hover state */

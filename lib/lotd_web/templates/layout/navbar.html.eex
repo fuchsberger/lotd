@@ -4,14 +4,14 @@
       <img src="<%= Routes.static_path(@conn, "/images/logo.png") %>" width="112" height="28" />
     </a>
 
-    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="mainMenu">
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
     </a>
   </div>
 
-  <div id="mainMenu" class="navbar-menu">
+  <div id="main-menu" class="navbar-menu">
     <div class='navbar-start'>
       <div class='navbar-item is-expanded'>
         <div class="control has-icons-left is-loading">
@@ -24,6 +24,12 @@
     </div>
 
     <div class="navbar-end">
+      <div class="navbar-item has-dropdown is-hoverable is-right">
+        <a class='navbar-link'>Add</a>
+        <div id="add-menu" class="navbar-dropdown">
+          <a href="#" class='navbar-item'>Item</a>
+        </div>
+      </div>
       <div class="navbar-item">
         <%= if authenticated?(@conn) do %>
           <div class="dropdown has-dropdown is-hoverable is-right">
