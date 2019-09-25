@@ -14,6 +14,7 @@
   <div id="mainMenu" class="navbar-menu">
     <div class="navbar-end">
       <div class="navbar-item">
+      <% IO.inspect @conn.assigns %>
         <%= if authenticated?(@conn) do %>
           <div class="dropdown is-right">
 
@@ -26,12 +27,10 @@
 
             <div id="user-menu" class="dropdown-menu" role="menu">
               <div class="dropdown-content">
-                <a href="#" class="dropdown-item">
-                  <span class="icon">
-                    <i class="icon-off"></i>
-                  </span>
-                  Logout
-                </a>
+                <%= link [icon("off"), "Log out"],
+                      to: Routes.session_path(@conn, :delete, @current_user),
+                      method: "delete",
+                      class: "dropdown-item" %>
               </div>
             </div>
           </div>

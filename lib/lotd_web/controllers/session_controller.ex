@@ -30,8 +30,8 @@ defmodule LotdWeb.SessionController do
               {:ok, user} ->
                 conn
                 |> Auth.login(user)
-                |> put_flash(:info, "#{user.nexus_name} created!")
                 |> redirect(to: Routes.page_path(conn, :index))
+
               {:error, _changeset} ->
                 conn
                 |> put_flash(:error, "Could not create user in database!")
@@ -39,10 +39,8 @@ defmodule LotdWeb.SessionController do
             end
           # user found --> authenticate
           user ->
-
             conn
             |> Auth.login(user)
-            |> put_flash(:info, "#{user.nexus_name} already in database, loggin in..")
             |> redirect(to: Routes.page_path(conn, :index))
         end
 
@@ -63,4 +61,10 @@ defmodule LotdWeb.SessionController do
   #     |> halt()
   #   end
   # end
+
+  def delete(conn, _) do
+    conn
+    |> Auth.logout()
+    |> redirect(to: Routes.page_path(conn, :index))
+  end
 end

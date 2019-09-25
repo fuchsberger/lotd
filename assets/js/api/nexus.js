@@ -15,34 +15,24 @@ const uuidv4 = () => (
 // Temporarily connects to nexus api to retrieve api-key token
 export const login = () => {
 
-  // if we already have an API key there is no need to create a socket and get one (testing)
-  let api_key = sessionStorage.getItem("api_key")
-  if(api_key){
-    $('#api_key').val(api_key)
-    $('#login-form').submit()
-    return
-  }
-
   window.socket = new WebSocket("wss://sso.nexusmods.com")
 
   // Connect to SSO service
   socket.onopen = () => {
-    // Generate or retrieve a request ID and connection token (if we are reconnecting)
-    if (uuid !== null) {
-      var data = {
-        id: uuidv4(),
-        token: null,
-        protocol: 2
-      }
 
-      // Send the SSO request
-      socket.send(JSON.stringify(data))
+    const uuid = uuidv4()
 
-      // Once the request is active, we can send the user to the site to authorise the SSO, passing an identifier for an application.
-      window.open("https://www.nexusmods.com/sso?id="+uuid+"&application="+APPLICATION_SLUG);
+    var data = {
+      id: uuid,
+      token: null,
+      protocol: 2
     }
-    else
-      console.error("ID was not calculated correctly.")
+
+    // Send the SSO request
+    socket.send(JSON.stringify(data))
+
+    // Once the request is active, we can send the user to the site to authorise the SSO, passing an identifier for an application.
+    window.open("https://www.nexusmods.com/sso?id="+uuid+"&application="+APPLICATION_SLUG);
   }
 
   // When the client receives a message
@@ -57,7 +47,7 @@ export const login = () => {
 
         // This is received when the user has approved the SSO request and the SSO is now returning with that user's API key
 
-        sessionStorage.setItem('api_key', res.data.api_key);
+        // Send API key to webserver that will then try to connect with it and authenticate
         $('#api_key').val(res.data.api_key)
         $('#login-form').submit()
 

@@ -41,6 +41,7 @@ defmodule LotdWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
+      import LotdWeb.ViewHelpers
       import LotdWeb.ErrorHelpers
       import LotdWeb.Gettext
       alias LotdWeb.Router.Helpers, as: Routes
