@@ -7,3 +7,16 @@ i.nexus-icon {
   background-position: center;
   padding: 2px;
 }
+
+/* Mobile only */
+@media screen and (max-width: 1023px) {
+  /* move user-button to right so that the dropdown menu is not out of screen */
+  .navbar-end > .navbar-item { text-align: right; }
+}
+
+/* enable dynamic dropdown arrows based on :hover state */
+.dropdown i.icon-arrow:before { content: '\f103'; }
+.dropdown:hover i.icon-arrow:before { content: '\f102'; }
+
+/* make icons in dropdown-menus aligned */
+.dropdown-item > .icon { width: 25px; margin-right: 0!important; margin-left: 0!important; }

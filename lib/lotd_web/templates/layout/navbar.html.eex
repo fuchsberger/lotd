@@ -12,10 +12,21 @@
   </div>
 
   <div id="mainMenu" class="navbar-menu">
+    <div class='navbar-start'>
+      <div class='navbar-item is-expanded'>
+        <div class="control has-icons-left is-loading">
+          <input class="input" type="search" placeholder="Find...">
+          <span class="icon is-small is-left">
+            <i class="icon-search"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+
     <div class="navbar-end">
       <div class="navbar-item">
         <%= if authenticated?(@conn) do %>
-          <div class="dropdown has-dropdown is-right">
+          <div class="dropdown has-dropdown is-hoverable is-right">
             <div class="dropdown-trigger">
               <button id='user-button' class="button" aria-haspopup="true" aria-controls="user-menu">
                 <span class="icon is-small">
@@ -23,7 +34,7 @@
                 </span>
                 <strong><%= @conn.assigns.current_user.nexus_name %></strong>
                 <span class="icon is-small">
-                  <i class="icon-angle-double-down" aria-hidden="true"></i>
+                  <i class="icon-arrow" aria-hidden="true"></i>
                 </span>
               </button>
             </div>
