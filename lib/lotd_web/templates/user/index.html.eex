@@ -1,0 +1,40 @@
+<%# <div class="columns">
+  <div class="column is-narrow">
+    <h1 class='title'>Users</h1>
+  </div>
+  <div class="tabs column is-right">
+    <ul>
+      <li class="is-active"><a>Pictures</a></li>
+      <li><a>Music</a></li>
+      <li><a>Videos</a></li>
+      <li><a>Documents</a></li>
+    </ul>
+  </div>
+</div> %>
+
+<div class="table-container">
+  <table class="table is-narrow is-fullwidth">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Roles</th>
+        <th>Actions</th>
+        <th>Joined</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for u <- @users do %>
+        <tr>
+          <td>
+            <a href='https://www.nexusmods.com/users/<%= u.nexus_id %>' target='_blank'>
+              <strong><%= u.nexus_name %></strong>
+            </a>
+          </td>
+          <td><%= user_roles(u) %></td>
+          <td><%= user_actions(@conn, u) %></td>
+          <td><%= time(u.inserted_at) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -47,6 +47,9 @@
 
             <div id="user-menu" class="dropdown-menu" role="menu">
               <div class="dropdown-content">
+                <%= link [icon("off"), "Manage Users"],
+                      to: Routes.user_path(@conn, :index),
+                      class: "dropdown-item" %>
                 <%= link [icon("off"), "Log out"],
                       to: Routes.session_path(@conn, :delete, @current_user),
                       method: "delete",

@@ -19,6 +19,7 @@ defmodule LotdWeb.Router do
 
     get "/", PageController, :index
     resources "/session", SessionController, only: [:create, :delete]
+    resources "/user", UserController, only: [:index]
   end
 
   # Other scopes may use custom stacks.
