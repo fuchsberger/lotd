@@ -17,16 +17,6 @@ config :lotd, Lotd.NexusAPI,
     application_name: "LOTD Inventory Manager",
     application_version: "0.1"
   ]
-
-config :mnesia,
-  dir: '/var/phoenix_sessions'  # Note the simple quotes, Erlang strings are charlists ;-)
-
-# session management
-config :plug_session_mnesia,
-  table: :session,
-  max_age: 60_60*24*10, # 10 days
-  cleaner_timeout: 60 * 60 # every hour
-
 # Configures the endpoint
 config :lotd, LotdWeb.Endpoint,
   url: [host: "localhost"],
