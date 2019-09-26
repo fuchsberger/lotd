@@ -44,6 +44,7 @@ defmodule Lotd.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.5"},
+      {:plug_session_mnesia, "~> 0.1.3"},
       {:edeliver, "~> 1.6"},
       {:distillery, "~> 2.1"}
     ]
