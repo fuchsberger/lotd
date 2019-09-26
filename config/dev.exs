@@ -1,8 +1,5 @@
 use Mix.Config
 
-config :mnesia,
-  dir: '/home/alex/.session'  # Note the simple quotes, Erlang strings are charlists ;-)
-
 # Configure your database
 config :lotd, Lotd.Repo,
   username: "postgres",

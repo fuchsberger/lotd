@@ -10,9 +10,6 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 
-config :mnesia,
-  dir: '/home/deploy/.session'  # Note the simple quotes, Erlang strings are charlists ;-)
-
 config :lotd, LotdWeb.Endpoint,
   url:  [scheme: "https", host: "lotd.fuchsberger.us", port: 443],
   cache_static_manifest: "priv/static/cache_manifest.json"

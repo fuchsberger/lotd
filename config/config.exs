@@ -18,6 +18,9 @@ config :lotd, Lotd.NexusAPI,
     application_version: "0.1"
   ]
 
+config :mnesia,
+  dir: '/var/phoenix_sessions'  # Note the simple quotes, Erlang strings are charlists ;-)
+
 # session management
 config :plug_session_mnesia,
   table: :session,
