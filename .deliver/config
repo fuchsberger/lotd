@@ -18,9 +18,10 @@ DELIVER_TO="/home/deploy/apps"
 pre_erlang_clean_compile() {
   status "Setting up session storage"
     __sync_remote "
-    set -e
-    cd '$BUILD_AT'
-    mix session.setup
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd '$BUILD_AT'
+      mix session.setup
     "
   status "Running npm install"
     __sync_remote "
