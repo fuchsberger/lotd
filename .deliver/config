@@ -16,13 +16,6 @@ PRODUCTION_USER="deploy"
 DELIVER_TO="/home/deploy/apps"
 
 pre_erlang_clean_compile() {
-  status "Setting up session storage"
-    __sync_remote "
-      [ -f ~/.profile ] && source ~/.profile
-      set -e
-      cd '$BUILD_AT'
-      mix session.setup
-    "
   status "Running npm install"
     __sync_remote "
       [ -f ~/.profile ] && source ~/.profile
@@ -38,6 +31,15 @@ pre_erlang_clean_compile() {
       cd '$BUILD_AT'/assets
       node_modules/.bin/webpack --mode production --silent
     "
+
+  status "Setting up session storage"
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd '$BUILD_AT'
+      mix session.setup
+    "
+
   status "Running phx.digest" # log output prepended with "----->"
     __sync_remote "
       # runs the commands on the build host
