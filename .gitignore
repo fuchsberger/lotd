@@ -35,6 +35,9 @@ npm-debug.log
 
 .deliver/releases/
 
+# dont sync session storage
+/Mnesia.nonode@nohost
+
 # editor & OS artifacts
 **/.DS_Store
 *.code-workspace
