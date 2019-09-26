@@ -1,0 +1,39 @@
+<div class="tabs is-centered is-hidden-touch">
+  <ul>
+    <li><a>Items</a></li>
+    <li><a>Areas</a></li>
+    <li><a>Locations</a></li>
+    <li><a>Rooms</a></li>
+    <li><a>Displays</a></li>
+    <li><a>Quests</a></li>
+    <li><a>Mods</a></li>
+    <li><a>Characters</a></li>
+    <%= menu_link @conn, :user, "Users" %>
+  </ul>
+</div>
+
+<nav class="navbar is-hidden-desktop" role="navigation" aria-label="main navigation">
+  <div class="navbar-item is-expanded has-dropdown is-hoverable">
+    <a class="navbar-link">
+      <span class='is-flex'>More</span>
+      <span class='is-flex'>200/2000</span>
+    </a>
+
+
+    <div class="navbar-dropdown">
+      <a class="navbar-item">
+        About
+      </a>
+      <a class="navbar-item">
+        Jobs
+      </a>
+      <a class="navbar-item">
+        Contact
+      </a>
+      <hr class="navbar-divider">
+      <a class="navbar-item">
+        Report an issue
+      </a>
+    </div>
+  </div>
+</nav>

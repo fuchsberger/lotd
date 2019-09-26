@@ -1,0 +1,57 @@
+// Alter Bulma Variables
+
+$navbar-breakpoint: 0; // disable mobile navbar
+
+// Load Bulma (only what we need)
+
+// utilities
+@import "bulma/sass/utilities/_all.sass";
+
+// base
+@import "bulma/sass/base/_all.sass";
+
+// elements
+// @import "bulma/sass/elements/box.sass";
+@import "bulma/sass/elements/button.sass";
+// @import "bulma/sass/elements/container.sass";
+// @import "bulma/sass/elements/content.sass";
+@import "bulma/sass/elements/icon.sass";
+// @import "bulma/sass/elements/image.sass";
+// @import "bulma/sass/elements/notification.sass";
+// @import "bulma/sass/elements/progress.sass";
+@import "bulma/sass/elements/table.sass";
+// @import "bulma/sass/elements/tag.sass";
+// @import "bulma/sass/elements/title.sass";
+// @import "bulma/sass/elements/other.sass";
+
+// forms
+@import "bulma/sass/form/shared";
+@import "bulma/sass/form/input-textarea";
+// @import "bulma/sass/form/checkbox-radio";
+// @import "bulma/sass/form/select";
+// @import "bulma/sass/form/file";
+@import "bulma/sass/form/tools";
+
+// components
+// @import "bulma/sass/components/breadcrumb.sass";
+// @import "bulma/sass/components/card.sass";
+@import "bulma/sass/components/dropdown.sass";
+// @import "bulma/sass/components/level.sass";
+// @import "bulma/sass/components/list.sass";
+// @import "bulma/sass/components/media.sass";
+// @import "bulma/sass/components/menu.sass";
+// @import "bulma/sass/components/message.sass";
+// @import "bulma/sass/components/modal.sass";
+@import "bulma/sass/components/navbar.sass";
+// @import "bulma/sass/components/pagination.sass";
+// @import "bulma/sass/components/panel.sass";
+@import "bulma/sass/components/tabs.sass";
+
+// grid
+// @import "bulma/sass/grid/columns.sass";
+// @import "bulma/sass/grid/tiles.sass";
+
+// layout
+// @import "bulma/sass/layout/hero.sass";
+// @import "bulma/sass/layout/section.sass";
+// @import "bulma/sass/layout/footer.sass";

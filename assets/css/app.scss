@@ -1,0 +1,6 @@
+// load css files first (order is abitrary)
+@import "./icons.css";
+
+// then scss files
+@import "./bulma.scss";
+@import "./navbar.scss";

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="has-navbar-fixed-top">
   <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -11,13 +11,8 @@
   </head>
   <body data-view='<%= unique_view_name(@view_module, @view_template) %>'>
     <%= render "navbar.html", assigns %>
+    <%= render "tabbar.html", assigns %>
     <main role="main" class="container">
-      <p class="alert alert-info" role="alert">
-        <%= get_flash(@conn, :info) %>
-      </p>
-      <p class="alert alert-danger" role="alert">
-        <%= get_flash(@conn, :error) %>
-      </p>
       <%= render @view_module, @view_template, assigns %>
     </main>
   </body>

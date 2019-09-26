@@ -1,0 +1,37 @@
+i.nexus-icon {
+  height: 100%;
+  width:100%;
+  background: url('../static/images/nexusmods.svg');
+  background-size: 20px 20px;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 2px;
+}
+
+.navbar-brand .logo{
+  background: url('../static/images/logo.png');
+  background-size: 144px 36px;
+  width: 144px;
+  height: 36px;
+}
+
+.navbar-start { flex-grow: 1; }
+#main-menu .control { width: 100%!important; }
+
+// Desktop only
+@media screen and (min-width: 1024px){
+  .navbar-item, .navbar-link { padding: 0.5rem 0.25rem; }
+}
+
+
+// Mobile only
+@media screen and (max-width: 1023px) {
+  // Make Brand Logo smaller
+  .navbar-brand .logo{ width: 35px; }
+
+  // make dropdown link fullwidth
+  .navbar-item.is-expanded .navbar-link { width: 100%; }
+}
+
+// make icons in dropdown-menus aligned
+.dropdown-item > .icon { width: 25px; margin-right: 0!important; margin-left: 0!important; }

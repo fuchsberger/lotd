@@ -1,9 +1,13 @@
-const path = require('path');
-const glob = require('glob');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const path = require('path')
+const glob = require('glob')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+
+const staticDir = path.join(__dirname, '.')
+// const destDir = path.join(__dirname, '../priv/static')
+// const publicPath = '/'
 
 module.exports = (env, options) => ({
   stats: 'errors-warnings',
@@ -14,6 +18,12 @@ module.exports = (env, options) => ({
     ]
   },
   entry: './js/app.js',
+  // entry: {
+  //   app: [
+  //     staticDir + '/css/app.scss',
+  //     staticDir + '/js/app.js'
+  //   ]
+  // },
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, '../priv/static/js')
@@ -23,14 +33,16 @@ module.exports = (env, options) => ({
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader'
-        }
+        use: { loader: 'babel-loader' }
       },
       {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader']
+        test: /\.(s?)css$/,
+        use: [ MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'  ]
       },
+      // {
+      //   test: /\.css$/,
+      //   use: [ MiniCssExtractPlugin.loader, 'css-loader' ]
+      // },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
         loader: 'url-loader'

@@ -1,7 +1,7 @@
-<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+<nav class="navbar is-fixed-top is-light" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item" href="<%= Routes.page_path(@conn, :index) %>">
-      <img src="<%= Routes.static_path(@conn, "/images/logo.png") %>" width="112" height="28" />
+      <div class='logo'></div>
     </a>
 
     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
@@ -23,46 +23,21 @@
       </div>
     </div>
 
-    <div class="navbar-end">
-      <div class="navbar-item has-dropdown is-hoverable is-right">
-        <a class='navbar-link'>Add</a>
-        <div id="add-menu" class="navbar-dropdown">
-          <a href="#" class='navbar-item'>Item</a>
-        </div>
+    <div class="navbar-end is-hidden-touch">
+      <div class="navbar-item">
+        <a class="button">
+          <%= icon("plus") %>
+        </a>
       </div>
       <div class="navbar-item">
         <%= if authenticated?(@conn) do %>
-          <div class="dropdown has-dropdown is-hoverable is-right">
-            <div class="dropdown-trigger">
-              <button id='user-button' class="button" aria-haspopup="true" aria-controls="user-menu">
-                <span class="icon is-small">
-                  <i class="nexus-icon"></i>
-                </span>
-                <strong><%= @conn.assigns.current_user.nexus_name %></strong>
-                <span class="icon is-small">
-                  <i class="icon-arrow" aria-hidden="true"></i>
-                </span>
-              </button>
-            </div>
-
-            <div id="user-menu" class="dropdown-menu" role="menu">
-              <div class="dropdown-content">
-                <%= link [icon("off"), "Manage Users"],
-                      to: Routes.user_path(@conn, :index),
-                      class: "dropdown-item" %>
-                <%= link [icon("off"), "Log out"],
-                      to: Routes.session_path(@conn, :delete, @current_user),
-                      method: "delete",
-                      class: "dropdown-item" %>
-              </div>
-            </div>
-          </div>
+          <%= logout_button(@conn) %>
         <% else %>
           <a id='signInBtn' class="button">
             <span class="icon is-small">
               <i class="nexus-icon"></i>
             </span>
-            <strong>Sign In</strong>
+            <strong class="is-hidden-touch">Sign In</strong>
           </a>
           <%# Login Form (hidden) %>
           <%= f = form_for @conn, Routes.session_path(@conn, :create), [id: "login-form"] %>

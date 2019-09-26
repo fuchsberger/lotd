@@ -1,4 +1,4 @@
-import CSS from '../css/app.css'
+import CSS from '../css/app.scss'
 
 import "phoenix_html"
 
