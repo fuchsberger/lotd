@@ -30,11 +30,11 @@ defmodule LotdWeb.SessionController do
               {:ok, user} ->
                 conn
                 |> Auth.login(user)
-                |> redirect(to: Routes.page_path(conn, :index))
+                |> render(PageView, "index.html")
 
               {:error, _changeset} ->
                 conn
-                |> put_flash(:error, "Could not create user in database!")
+                |> put_flash(:error, "Error: Could not create user in database!")
                 |> render(PageView, "index.html")
             end
           # user found --> authenticate
@@ -44,23 +44,12 @@ defmodule LotdWeb.SessionController do
             |> redirect(to: Routes.page_path(conn, :index))
         end
 
-      {:error, _response} ->
+      {:error, %HTTPoison.Error{reason: reason, status_code: status_code}} ->
         conn
-        |> put_flash(:error, "Nexus refused the request or invalid authentication token.")
+        |> put_flash(:error, "Error #{status_code} connecting to Nexus. #{reason}")
         |> render(PageView, "index.html")
     end
   end
-
-  # defp authenticate(conn) do
-  #   if conn.assigns.current_user do
-  #     conn
-  #   else
-  #     conn
-  #     |> put_flash(:error, "You must be logged in to access that page")
-  #     |> redirect(to: Routes.page_path(conn, :index))
-  #     |> halt()
-  #   end
-  # end
 
   def delete(conn, _) do
     conn
