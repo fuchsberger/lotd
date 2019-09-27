@@ -15,8 +15,12 @@ i.nexus-icon {
   height: 36px;
 }
 
+// Expand Search Input over entire available space
+.navbar-brand { flex-grow: 1; }
+.navbar-menu { flex-grow: 0; }
+
 .navbar-start { flex-grow: 1; }
-#main-menu .control { width: 100%!important; }
+#search-control { width: 100%!important; }
 
 // Desktop only
 @media screen and (min-width: 1024px){
@@ -28,9 +32,6 @@ i.nexus-icon {
 @media screen and (max-width: 1023px) {
   // Make Brand Logo smaller
   .navbar-brand .logo{ width: 35px; }
-
-  // make dropdown link fullwidth
-  .navbar-item.is-expanded .navbar-link { width: 100%; }
 }
 
 // make icons in dropdown-menus aligned

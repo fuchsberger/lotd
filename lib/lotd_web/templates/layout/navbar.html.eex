@@ -3,7 +3,18 @@
     <a class="navbar-item" href="<%= Routes.page_path(@conn, :index) %>">
       <div class='logo'></div>
     </a>
-
+    <div class='navbar-item is-expanded'>
+      <div id="search-control" class="control has-icons-left">
+        <input id="search" class="input" type="text" placeholder="Find...">
+        <span class="icon is-small is-left">
+          <i class="icon-search"></i>
+        </span>
+        <div id='search-info'>
+          <span class='filtered-count' title="Found Entries"></span>
+          <strong class='total-count' title="Total Entries"></strong>
+        </div>
+      </div>
+    </div>
     <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
@@ -12,26 +23,11 @@
   </div>
 
   <div id="main-menu" class="navbar-menu">
-    <div class='navbar-start'>
-      <div class='navbar-item is-expanded'>
-        <div class="control has-icons-left">
-          <input id="search" class="input" type="text" placeholder="Find...">
-          <span class="icon is-small is-left">
-            <i class="icon-search"></i>
-          </span>
-          <div id='search-info'>
-            <span class='filtered-count' title="Found Entries"></span>
-            <strong class='total-count' title="Total Entries"></strong>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="navbar-end is-hidden-touch">
+    <div class="navbar-end ">
       <div class="navbar-item is-hidden">
         <a class="button"><%= icon("plus") %></a>
       </div>
-      <div class="navbar-item">
+      <div class="navbar-item has-text-centered">
         <%= if authenticated?(@conn) do %>
           <%= logout_button(@conn) %>
         <% else %>
@@ -39,7 +35,7 @@
             <span class="icon is-small">
               <i class="nexus-icon"></i>
             </span>
-            <strong class="is-hidden-touch">Sign In</strong>
+            <strong>Sign In</strong>
           </a>
           <%# Login Form (hidden) %>
           <%= f = form_for @conn, Routes.session_path(@conn, :create), [id: "login-form"] %>
@@ -47,6 +43,8 @@
           </form>
         <% end %>
       </div>
+      <%# Mobile Menu %>
+      <%= if admin?(@conn) do menu_link(@conn, :user, "Users", class: "navbar-item") end %>
     </div>
   </div>
 </nav>
