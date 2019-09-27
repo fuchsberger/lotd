@@ -11,8 +11,8 @@ config :lotd,
   ecto_repos: [Lotd.Repo]
 
 # Session store
-config :mnesia,
-  dir: '/var/phoenix_sessions'
+# config :mnesia,
+#   dir: '/var/phoenix_sessions'
 
 config :plug_session_mnesia,
   table: :session,
