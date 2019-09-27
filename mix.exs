@@ -4,7 +4,7 @@ defmodule Lotd.MixProject do
   def project do
     [
       app: :lotd,
-      version: "0.2.1",
+      version: "0.3.0",
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -44,6 +44,7 @@ defmodule Lotd.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.5"},
+      {:plug_session_mnesia, "~> 0.1.3"},
       {:edeliver, "~> 1.6"},
       {:distillery, "~> 2.1"}
     ]

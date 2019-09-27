@@ -10,6 +10,15 @@ use Mix.Config
 config :lotd,
   ecto_repos: [Lotd.Repo]
 
+# Session store
+config :mnesia,
+  dir: '/var/phoenix_sessions'
+
+config :plug_session_mnesia,
+  table: :session,
+  cleaner_timeout: 60*60,   # check every hour for expired sessions
+  max_age: 69*60*24*10      # A session should last 10 days
+
 # Nexus API urls
 config :lotd, Lotd.NexusAPI,
   user_url: "https://api.nexusmods.com/v1/users/validate.json",
@@ -17,6 +26,7 @@ config :lotd, Lotd.NexusAPI,
     application_name: "LOTD Inventory Manager",
     application_version: "0.1"
   ]
+
 # Configures the endpoint
 config :lotd, LotdWeb.Endpoint,
   url: [host: "localhost"],
