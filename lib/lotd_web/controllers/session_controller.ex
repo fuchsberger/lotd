@@ -44,9 +44,9 @@ defmodule LotdWeb.SessionController do
             |> redirect(to: Routes.page_path(conn, :index))
         end
 
-      {:error, %HTTPoison.Error{reason: reason, status_code: status_code}} ->
+      {:error, %HTTPoison.Error{reason: reason}} ->
         conn
-        |> put_flash(:error, "Error #{status_code} connecting to Nexus. #{reason}")
+        |> put_flash(:error, "Error connecting to Nexus. #{reason}")
         |> render(PageView, "index.html")
     end
   end
