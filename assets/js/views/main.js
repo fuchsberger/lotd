@@ -20,6 +20,8 @@ export default class MainView {
   }
 
   unmount() {
-
+    // save current scroll position and view so after reloading same view it should scroll down
+    sessionStorage.lastView = $('body').data('view')
+    sessionStorage.scrollTop = $(window).scrollTop()
   }
 }

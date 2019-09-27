@@ -28,7 +28,7 @@
     </div>
 
     <div class="navbar-end is-hidden-touch">
-      <div class="navbar-item">
+      <div class="navbar-item is-hidden">
         <a class="button"><%= icon("plus") %></a>
       </div>
       <div class="navbar-item">

@@ -7,7 +7,7 @@
     <li>Quests</li>
     <li>Mods</li>
     <li>Characters</li> %>
-    <%= admin?(@conn) && menu_link @conn, :user, "Users" %>
+    <%= if admin?(@conn) do menu_link(@conn, :user, "Users") end %>
   </ul>
 </div>
 
