@@ -7,7 +7,7 @@ BUILD_USER="deploy"
 BUILD_AT="/tmp/edeliver/$APP/builds"
 
 START_DEPLOY=true
-CLEAN_DEPLOY=true
+CLEAN_DEPLOY=false
 
 GIT_CLEAN_PATHS="_build rel priv/static"
 

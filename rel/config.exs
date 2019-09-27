@@ -39,6 +39,7 @@ environment :prod do
   set include_src: false
   set cookie: :"*w9|8VpKBc8F(qp&xEf!j&|LIj2w4G<D{cd<$V^on|C|~>IQxc}kh93DC5NCL0m7"
   set vm_args: "rel/vm.args"
+  set output_dir: "rel/lotd"
 end
 
 # You may define one or more releases in this file.
