@@ -6,8 +6,8 @@ BUILD_HOST="fuchsberger.us"
 BUILD_USER="deploy"
 BUILD_AT="/tmp/edeliver/$APP/builds"
 
-START_DEPLOY=true
-CLEAN_DEPLOY=true
+# START_DEPLOY=true
+# CLEAN_DEPLOY=true
 
 GIT_CLEAN_PATHS="_build rel priv/static"
 
