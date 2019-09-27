@@ -11,9 +11,6 @@ config :lotd,
   ecto_repos: [Lotd.Repo]
 
 # Session store
-# config :mnesia,
-#   dir: '/var/phoenix_sessions'
-
 config :plug_session_mnesia,
   table: :session,
   cleaner_timeout: 60*60,   # check every hour for expired sessions

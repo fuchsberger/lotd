@@ -4,6 +4,9 @@
 # remember to add this file to your .gitignore.
 use Mix.Config
 
+config :mnesia,
+  dir: System.get_env("MNESIA_PATH")
+
 database_url =
   System.get_env("LOTD_DATABASE_URL") ||
     raise """
