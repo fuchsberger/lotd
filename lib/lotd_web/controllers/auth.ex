@@ -1,6 +1,8 @@
 defmodule LotdWeb.Auth do
 
   import Plug.Conn
+  import Phoenix.Controller
+  alias LotdWeb.Router.Helpers, as: Routes
 
   def init(opts), do: opts
 
@@ -19,5 +21,38 @@ defmodule LotdWeb.Auth do
 
   def logout(conn) do
     configure_session(conn, drop: true)
+  end
+
+  def is_authenticated(conn, _params) do
+    if conn.assigns.current_user do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be an logged in to access that page")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
+  end
+
+  def is_moderator(conn, _params) do
+    if conn.assigns.current_user && conn.assigns.current_user.moderator do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be a moderator to access that page")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
+  end
+
+  def is_admin(conn, _params) do
+    if conn.assigns.current_user && conn.assigns.current_user.admin do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must be an administrator to access that page")
+      |> redirect(to: Routes.page_path(conn, :index))
+      |> halt()
+    end
   end
 end

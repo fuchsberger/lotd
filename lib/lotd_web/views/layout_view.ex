@@ -1,10 +1,6 @@
 defmodule LotdWeb.LayoutView do
   use LotdWeb, :view
 
-  import Phoenix.Controller, only: [controller_module: 1]
-
-  def authenticated?(conn), do: conn.assigns.current_user
-
   def logout_button(conn) do
     link [icon("off", class: "is-small"), content_tag(:span, "Logout")],
       to: Routes.session_path(conn, :delete, conn.assigns.current_user.id),
@@ -15,7 +11,10 @@ defmodule LotdWeb.LayoutView do
 
   def menu_link(conn, module, title) do
 
-    current_module = conn.path_info |> List.first() |> String.to_atom()
+    current_module = if conn.path_info == [],
+      do: nil,
+      else: conn.path_info |> List.first() |> String.to_atom()
+
     class = if current_module == module, do: "is-active", else: ""
 
     path = case module do

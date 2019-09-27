@@ -14,16 +14,29 @@ defmodule LotdWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Public Routes
   scope "/", LotdWeb do
     pipe_through :browser
 
     get "/", PageController, :index
     resources "/session", SessionController, only: [:create, :delete]
-    resources "/user", UserController, only: [:index, :update]
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", LotdWeb do
-  #   pipe_through :api
-  # end
+  # Authenticated Routes
+  scope "/", LotdWeb do
+    pipe_through [:browser, :is_authenticated]
+
+  end
+
+  # Moderator Routes
+  scope "/", LotdWeb do
+    pipe_through [:browser, :is_moderator]
+
+  end
+
+  # Admin Routes
+  scope "/", LotdWeb do
+    pipe_through [:browser, :is_admin]
+    resources "/user", UserController, only: [:index, :update]
+  end
 end

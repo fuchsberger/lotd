@@ -23,6 +23,8 @@ defmodule LotdWeb do
 
       import Plug.Conn
       import LotdWeb.Gettext
+      import LotdWeb.Auth, only: [is_authenticated: 2, is_moderator: 2, is_admin: 2]
+
       alias LotdWeb.Router.Helpers, as: Routes
 
       require Logger
@@ -36,7 +38,7 @@ defmodule LotdWeb do
         namespace: LotdWeb
 
       # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
+      import Phoenix.Controller, only: [controller_module: 1, get_flash: 1, get_flash: 2, view_module: 1]
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
@@ -53,6 +55,7 @@ defmodule LotdWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import LotdWeb.Auth, only: [is_authenticated: 2, is_moderator: 2, is_admin: 2]
     end
   end
 

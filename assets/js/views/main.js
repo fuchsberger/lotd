@@ -14,6 +14,9 @@ export default class MainView {
 
     // enable login button
     $('#signInBtn').click(() => login())
+
+    // enable dismissing of notifications
+    $('.notification button.delete').on('click', function(){ $(this).parent().remove() })
   }
 
   unmount() {
