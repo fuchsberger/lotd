@@ -15,7 +15,7 @@
     <div class='navbar-start'>
       <div class='navbar-item is-expanded'>
         <div class="control has-icons-left is-loading">
-          <input class="input" type="search" placeholder="Find...">
+          <input id="search" class="input" type="search" placeholder="Find...">
           <span class="icon is-small is-left">
             <i class="icon-search"></i>
           </span>

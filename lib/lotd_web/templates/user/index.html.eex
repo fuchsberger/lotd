@@ -13,7 +13,7 @@
 </div> %>
 
 <div class="table-container">
-  <table class="table is-narrow is-fullwidth">
+  <table id="user-table" class="display">
     <thead>
       <tr>
         <th>Username</th>

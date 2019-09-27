@@ -1,13 +1,12 @@
-<div class="tabs is-centered is-hidden-touch">
+<div class="tabs is-centered is-marginless is-hidden-touch">
   <ul>
-    <li><a>Items</a></li>
-    <li><a>Areas</a></li>
-    <li><a>Locations</a></li>
-    <li><a>Rooms</a></li>
-    <li><a>Displays</a></li>
-    <li><a>Quests</a></li>
-    <li><a>Mods</a></li>
-    <li><a>Characters</a></li>
+    <%# <li>Items</li>
+    <li>Areas</li>
+    <li>Locations</li>
+    <li>Museum</li>
+    <li>Quests</li>
+    <li>Mods</li>
+    <li>Characters</li> %>
     <%= menu_link @conn, :user, "Users" %>
   </ul>
 </div>
