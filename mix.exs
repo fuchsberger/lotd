@@ -20,7 +20,7 @@ defmodule Lotd.MixProject do
   def application do
     [
       mod: {Lotd.Application, []},
-      extra_applications: [:logger, :runtime_tools, :edeliver]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -44,8 +44,7 @@ defmodule Lotd.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:httpoison, "~> 1.5"},
-      {:plug_session_mnesia, "~> 0.1.3"},
-      {:distillery, "~> 2.0"}
+      {:plug_session_mnesia, "~> 0.1.3"}
     ]
   end
 
