@@ -1,25 +1,11 @@
-<%# <div class="columns">
-  <div class="column is-narrow">
-    <h1 class='title'>Users</h1>
-  </div>
-  <div class="tabs column is-right">
-    <ul>
-      <li class="is-active"><a>Pictures</a></li>
-      <li><a>Music</a></li>
-      <li><a>Videos</a></li>
-      <li><a>Documents</a></li>
-    </ul>
-  </div>
-</div> %>
-
 <div class="table-container">
   <table id="user-table" class="display">
     <thead>
       <tr>
-        <th>Username</th>
-        <th>Roles</th>
-        <th>Actions</th>
-        <th>Joined</th>
+        <th data-priority="1">User</th>
+        <th data-priority="3">Roles</th>
+        <th data-priority="4" class='is-hidden-touch'>Joined</th>
+        <th data-priority="2" data-sortable="false">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -31,8 +17,8 @@
             </a>
           </td>
           <td><%= user_roles(u) %></td>
+          <td class='is-hidden-touch' data-order="<%= u.inserted_at %>"><%= time(u.inserted_at) %></td>
           <td><%= user_actions(@conn, u) %></td>
-          <td><%= time(u.inserted_at) %></td>
         </tr>
       <% end %>
     </tbody>

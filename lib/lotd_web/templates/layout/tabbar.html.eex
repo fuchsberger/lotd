@@ -13,11 +13,7 @@
 
 <nav class="navbar is-hidden-desktop" role="navigation" aria-label="main navigation">
   <div class="navbar-item is-expanded has-dropdown is-hoverable">
-    <a class="navbar-link">
-      <span class='is-flex'>More</span>
-      <span class='is-flex'>200/2000</span>
-    </a>
-
+    <a class="navbar-link">Users</a>
 
     <div class="navbar-dropdown">
       <a class="navbar-item">

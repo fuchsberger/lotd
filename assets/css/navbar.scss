@@ -35,3 +35,11 @@ i.nexus-icon {
 
 // make icons in dropdown-menus aligned
 .dropdown-item > .icon { width: 25px; margin-right: 0!important; margin-left: 0!important; }
+
+
+#search-info {
+  position: absolute !important;
+  right: 0.625em;
+  top: 0.4em;
+  z-index: 4;
+}

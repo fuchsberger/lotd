@@ -11,15 +11,15 @@ defmodule Lotd.Accounts.User do
   end
 
   @doc false
-  def changeset(user, attrs) do
+  def register_changeset(user, attrs) do
     user
     |> cast(attrs, [:nexus_id, :nexus_name])
     |> validate_required([:nexus_id, :nexus_name])
     |> unique_constraint(:nexus_id)
   end
 
-  def role_changeset(user, attrs) do
+  def changeset(user, attrs) do
     user
-    |> cast(attrs, [:admin, :admin])
+    |> cast(attrs, [:admin, :moderator])
   end
 end

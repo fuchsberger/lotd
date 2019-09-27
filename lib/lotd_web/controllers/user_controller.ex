@@ -7,4 +7,11 @@ defmodule LotdWeb.UserController do
     users = Accounts.list_users()
     render(conn, "index.html", users: users)
   end
+
+  def update(conn, %{"id" => id} = params) do
+    Accounts.get_user(id)
+    |> Accounts.update_user(params)
+
+    redirect(conn, to: "/user")
+  end
 end

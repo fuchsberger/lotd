@@ -1,5 +1,4 @@
 import $ from 'jquery'
-import timeago from 'timeago'
 
 import { login } from '../api/nexus'
 
@@ -15,9 +14,6 @@ export default class MainView {
 
     // enable login button
     $('#signInBtn').click(() => login())
-
-    // enable timeago
-    $("time").timeago()
   }
 
   unmount() {

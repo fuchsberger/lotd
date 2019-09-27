@@ -1,39 +1,42 @@
 import $ from 'jquery'
-import dt from 'datatables.net'
+import 'datatables.net'
+import 'timeago'
+
 import MainView from '../main'
 
 export default class View extends MainView {
   mount() {
+    // enable timeago on table redraw
+    $("#user-table").on('draw.dt', function() {
+      $("time").timeago()
+    });
+
+
     let table = $('#user-table').DataTable({
       dom: 't',
       paging: false,
-      info: false
+      info: false,
+      responsive: true
     });
 
-    /* Custom filtering function which will search data in column four between two values */
-    $.fn.dataTable.ext.search.push(
-      function( settings, data, dataIndex ) {
-          var min = parseInt( $('#min').val(), 10 );
-          var max = parseInt( $('#max').val(), 10 );
-          var age = parseFloat( data[3] ) || 0; // use data for the age column
+    let info = table.page.info()
 
-          if ( ( isNaN( min ) && isNaN( max ) ) ||
-              ( isNaN( min ) && age <= max ) ||
-              ( min <= age   && isNaN( max ) ) ||
-              ( min <= age   && age <= max ) )
-          {
-              return true;
-          }
-          return false;
-      }
-    );
+    $('.total-count').text(info.recordsTotal)
 
     $('#search').on('keyup', function(){
       table.search( this.value ).draw()
+      let info = table.page.info()
+
+      $('.total-count').text(info.recordsTotal)
+      if(info.recordsTotal != info.recordsDisplay) $('.filtered-count').text(info.recordsDisplay + ' / ')
+      else $('.filtered-count').text("")
     })
+
+    this.table = table
   }
 
   unmount() {
+    this.table.destroy()
     super.unmount()
   }
 }

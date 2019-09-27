@@ -14,11 +14,15 @@
   <div id="main-menu" class="navbar-menu">
     <div class='navbar-start'>
       <div class='navbar-item is-expanded'>
-        <div class="control has-icons-left is-loading">
-          <input id="search" class="input" type="search" placeholder="Find...">
+        <div class="control has-icons-left">
+          <input id="search" class="input" type="text" placeholder="Find...">
           <span class="icon is-small is-left">
             <i class="icon-search"></i>
           </span>
+          <div id='search-info'>
+            <span class='filtered-count' title="Found Entries"></span>
+            <strong class='total-count' title="Total Entries"></strong>
+          </div>
         </div>
       </div>
     </div>
