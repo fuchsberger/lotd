@@ -1,8 +1,5 @@
 use Mix.Config
 
-config :mnesia,
-  dir: '/var/phoenix_sessions'
-
 # Configure your database
 config :lotd, Lotd.Repo,
   username: "postgres",

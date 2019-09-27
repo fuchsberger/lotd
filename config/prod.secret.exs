@@ -4,9 +4,6 @@
 # remember to add this file to your .gitignore.
 use Mix.Config
 
-config :mnesia,
-  dir: System.get_env("MNESIA_PATH")
-
 database_url =
   System.get_env("LOTD_DATABASE_URL") ||
     raise """
@@ -15,7 +12,6 @@ database_url =
     """
 
 config :lotd, Lotd.Repo,
-  # ssl: true,
   url: database_url,
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
@@ -35,7 +31,7 @@ config :lotd, LotdWeb.Endpoint,
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start each relevant endpoint:
 #
-#     config :lotd, LotdWeb.Endpoint, server: true
+config :lotd, LotdWeb.Endpoint, server: true
 #
 # Then you can assemble a release by calling `mix release`.
 # See `mix help release` for more information.

@@ -43,8 +43,7 @@ defmodule Lotd.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:httpoison, "~> 1.5"},
-      {:plug_session_mnesia, "~> 0.1.3"}
+      {:httpoison, "~> 1.5"}
     ]
   end
 

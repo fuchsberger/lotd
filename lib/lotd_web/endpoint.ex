@@ -38,8 +38,7 @@ defmodule LotdWeb.Endpoint do
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   plug Plug.Session,
-    # store: :cookie,
-    store: PlugSessionMnesia.Store,
+    store: :cookie,
     key: "_lotd_key",
     max_age: 24*60*60*10, # 10 days
     signing_salt: "8y5LmsqX"
