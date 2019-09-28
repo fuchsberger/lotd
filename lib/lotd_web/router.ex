@@ -18,14 +18,15 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    get "/", ItemController, :home
     resources "/session", SessionController, only: [:create, :delete]
+    resources "/items", ItemController, only: [:index]
   end
 
   # Authenticated Routes
   scope "/", LotdWeb do
     pipe_through [:browser, :is_authenticated]
-    resources "/character", CharacterController, except: [:edit, :show]
+    resources "/characters", CharacterController, except: [:edit, :show]
   end
 
   # Moderator Routes
@@ -37,6 +38,6 @@ defmodule LotdWeb.Router do
   # Admin Routes
   scope "/", LotdWeb do
     pipe_through [:browser, :is_admin]
-    resources "/user", UserController, only: [:index, :update]
+    resources "/users", UserController, only: [:index, :update]
   end
 end

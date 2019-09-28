@@ -1,0 +1,20 @@
+<div class="table-container">
+  <table class="display">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th class='is-hidden-touch'>Created</th>
+        <th data-sortable="false">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for i <- @items do %>
+        <tr>
+          <td><strong><%= i.name %></strong></td>
+          <td class='is-hidden-touch' data-order="<%= i.inserted_at %>"><%= time(i.inserted_at) %></td>
+          <td><%= item_actions(@conn, i) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

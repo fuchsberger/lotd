@@ -11,7 +11,10 @@ defmodule LotdWeb.ViewHelpers do
 
   def icon(name, opts \\ [] ) do
     class = Keyword.get(opts, :class, "")
-    raw "<span class='icon #{class}'><i class='icon-#{name}'></i></span>"
+    title = Keyword.get(opts, :title)
+
+    icon = content_tag :i, "", class: "icon-#{name}"
+    content_tag :span, icon, class: "icon #{class}", title: title
   end
 
   def time(time) do

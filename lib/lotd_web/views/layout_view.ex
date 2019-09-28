@@ -24,6 +24,7 @@ defmodule LotdWeb.LayoutView do
 
   defp get_path(conn, module) do
     case module do
+      :item -> Routes.item_path(conn, :index)
       :character -> Routes.character_path(conn, :index)
       :user -> Routes.user_path(conn, :index)
       _ -> Routes.page_path(conn, :index)

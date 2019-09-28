@@ -1,6 +1,6 @@
 <nav class="navbar is-fixed-top is-light" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
-    <a class="navbar-item" href="<%= Routes.page_path(@conn, :index) %>">
+    <a class="navbar-item" href="<%= Routes.item_path(@conn, :index) %>">
       <div class='logo'></div>
     </a>
     <div class='navbar-item is-expanded'>
@@ -46,6 +46,7 @@
         <% end %>
       </div>
       <%# Mobile Menu %>
+      <%= menu_link(@conn, :item, "Items", tag: :div, class: "navbar-item  is-hidden-desktop") %>
       <%= if authenticated?(@conn) do menu_link(@conn, :character, "Characters",
         tag: :div, class: "navbar-item  is-hidden-desktop") end %>
       <%= if admin?(@conn) do menu_link(@conn, :user, "Users",
