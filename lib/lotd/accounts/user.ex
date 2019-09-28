@@ -7,6 +7,7 @@ defmodule Lotd.Accounts.User do
     field :nexus_name, :string
     field :admin, :boolean, default: false
     field :moderator, :boolean, default: false
+    belongs_to :active_character, Lotd.Accounts.Character
     has_many :characters, Lotd.Accounts.Character
     timestamps()
   end
@@ -21,6 +22,6 @@ defmodule Lotd.Accounts.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:admin, :moderator])
+    |> cast(attrs, [:admin, :moderator, :active_character_id])
   end
 end

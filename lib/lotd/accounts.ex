@@ -11,7 +11,9 @@ defmodule Lotd.Accounts do
 
   # user
   def list_users, do: Repo.all(User)
+
   def get_user(id), do: Repo.get(User, id)
+
   def get_user!(id), do: Repo.get!(User, id)
   def get_user_by(params), do: Repo.get_by(User, params)
 
@@ -62,4 +64,12 @@ defmodule Lotd.Accounts do
 
   def delete_character(%Character{} = character), do: Repo.delete(character)
   def change_character(%Character{} = character), do: Character.changeset(character, %{})
+
+  def activate_character(user, %Character{} = character) do
+    if character.user_id == user.id do
+      update_user(user, %{ active_character_id: character.id })
+    else
+      { :error, "You cannot activate another user's character." }
+    end
+  end
 end

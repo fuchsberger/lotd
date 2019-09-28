@@ -4,9 +4,19 @@ defmodule LotdWeb.CharacterView do
   alias Lotd.Accounts.Character
 
   def character_actions(conn, %Character{} = c) do
-    [btn_delete(conn, c)]
+    [btn_activate(conn, c), btn_delete(conn, c)]
   end
 
+  defp btn_activate(conn, character) do
+    u = conn.assigns.current_user
+
+    active = if u.active_character_id == character.id,
+      do: "is-primary", else: "has-text-dark"
+    link icon("user-times", class: "#{active}"),
+      to: Routes.character_path(conn, :update, character.id),
+      method: "put",
+      title: "Activate"
+  end
 
   defp btn_delete(conn, character) do
     link icon("user-times", class: "has-text-dark"),
