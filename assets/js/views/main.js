@@ -16,11 +16,18 @@ export default class MainView {
 
     // enable dismissing of notifications
     $('.notification button.delete').on('click', function(){ $(this).parent().remove() })
+
+    // hide loader
+    $('#loader-wrapper').addClass('is-hidden')
   }
 
   unmount() {
+    // show loader
+    $('#loader-wrapper').removeClass('is-hidden')
+
     // save current scroll position and view so after reloading same view it should scroll down
     sessionStorage.lastView = $('body').data('view')
     sessionStorage.scrollTop = $(window).scrollTop()
+
   }
 }
