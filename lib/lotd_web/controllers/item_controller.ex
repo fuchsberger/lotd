@@ -47,18 +47,12 @@ defmodule LotdWeb.ItemController do
   #   end
   # end
 
-  # def delete(conn, %{"id" => id}, current_user) do
+  def delete(conn, %{"id" => id}, current_user) do
+    item = Gallery.get_item!(id)
+    {:ok, _character} = Gallery.delete_item(item)
 
-  #   # if this is the active character, remove it from user as well
-  #   if current_user.active_character_id == String.to_integer(id) do
-  #     Accounts.update_user(current_user, %{ active_character_id: nil })
-  #   end
-
-  #   character = Accounts.get_user_character!(current_user, id)
-  #   {:ok, _character} = Accounts.delete_character(character)
-
-  #   conn
-  #   |> put_flash(:info, "Character deleted successfully.")
-  #   |> redirect(to: Routes.character_path(conn, :index))
-  # end
+    conn
+    |> put_flash(:info, "Item deleted successfully.")
+    |> redirect(to: Routes.item_path(conn, :index))
+  end
 end

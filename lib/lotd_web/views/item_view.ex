@@ -4,11 +4,10 @@ defmodule LotdWeb.ItemView do
   alias Lotd.Gallery.Item
 
   def item_actions(conn, %Item{} = i) do
-    # [btn_activate(conn, c), btn_delete(conn, c)]
-    ""
+    [btn_delete(conn, i)]
   end
 
-  def item_name(%item{} = i) do
+  def item_name(%Item{} = i) do
     if i.url, do: link(i.name, to: i.url, target: "_blank"), else: "#{i.name}"
   end
 
@@ -25,10 +24,10 @@ defmodule LotdWeb.ItemView do
   #   end
   # end
 
-  # defp btn_delete(conn, character) do
-  #   link icon("cancel", class: "has-text-danger"),
-  #     to: Routes.character_path(conn, :delete, character.id),
-  #     method: "delete",
-  #     title: "Remove Character"
-  # end
+  defp btn_delete(conn, %Item{} = item) do
+    link icon("cancel", class: "has-text-danger"),
+      to: Routes.item_path(conn, :delete, item.id),
+      method: "delete",
+      title: "Remove Item"
+  end
 end

@@ -3,7 +3,6 @@
     <thead>
       <tr>
         <th>Item</th>
-        <th class='is-hidden-touch'>Created</th>
         <th data-sortable="false">Actions</th>
       </tr>
     </thead>
@@ -11,8 +10,7 @@
       <%= for i <- @items do %>
         <tr>
           <td><strong><%= item_name(i) %></strong></td>
-          <td class='is-hidden-touch' data-order="<%= i.inserted_at %>"><%= time(i.inserted_at) %></td>
-          <td><%= item_actions(@conn, i) %></td>
+          <td><%= if authenticated?(@conn) do item_actions(@conn, i) end %></td>
         </tr>
       <% end %>
     </tbody>
