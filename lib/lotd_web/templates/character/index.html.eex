@@ -1,0 +1,20 @@
+<div class="table-container">
+  <table id="character-table" class="display">
+    <thead>
+      <tr>
+        <th>Character</th>
+        <th class='is-hidden-touch'>Created</th>
+        <th data-sortable="false">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for c <- @characters do %>
+        <tr>
+          <td><strong><%= c.name %></strong></td>
+          <td class='is-hidden-touch' data-order="<%= c.inserted_at %>"><%= time(c.inserted_at) %></td>
+          <td><%= character_actions(@conn, c) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

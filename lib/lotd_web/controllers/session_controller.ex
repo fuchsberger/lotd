@@ -30,7 +30,7 @@ defmodule LotdWeb.SessionController do
               {:ok, user} ->
                 conn
                 |> Auth.login(user)
-                |> render(PageView, "index.html")
+                |> redirect(to: Routes.character_path(conn, :new))
 
               {:error, _changeset} ->
                 conn

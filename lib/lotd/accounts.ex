@@ -31,8 +31,21 @@ defmodule Lotd.Accounts do
   def change_user(%User{} = user), do: User.changeset(user, %{})
 
   # character
-  def list_characters, do: Repo.all(Character)
-  def get_character!(id), do: Repo.get!(Character, id)
+  def list_user_characters(%User{} = user) do
+    Character
+    |> user_characters_query(user)
+    |> Repo.all()
+  end
+
+  def get_user_character!(%User{} = user, id) do
+    Character
+    |> user_characters_query(user)
+    |> Repo.get!(id)
+  end
+
+  defp user_characters_query(query, %User{id: user_id}) do
+    from(c in query, where: c.user_id == ^user_id)
+  end
 
   def create_character(%User{} = user, attrs \\ %{}) do
     %Character{}

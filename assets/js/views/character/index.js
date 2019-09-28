@@ -9,12 +9,12 @@ export default class View extends MainView {
     super.mount()
 
     // enable timeago on table redraw
-    $("#user-table").on('draw.dt', function() {
+    $("#character-table").on('draw.dt', function() {
       $("time").timeago()
     });
 
 
-    let table = $('#user-table').DataTable({
+    let table = $('#character-table').DataTable({
       dom: 't',
       paging: false,
       info: false

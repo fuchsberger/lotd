@@ -6,8 +6,8 @@
     <li>Locations</li>
     <li>Museum</li>
     <li>Quests</li>
-    <li>Mods</li>
-    <li>Characters</li> %>
+    <li>Mods</li>%>
+    <%= if authenticated?(@conn) do menu_link(@conn, :character, "Characters") end %>
     <%= if admin?(@conn) do menu_link(@conn, :user, "Users") end %>
   </ul>
 </div>

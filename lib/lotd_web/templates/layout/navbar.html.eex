@@ -24,9 +24,11 @@
 
   <div id="main-menu" class="navbar-menu">
     <div class="navbar-end ">
-      <div class="navbar-item is-hidden">
-        <a class="button"><%= icon("plus") %></a>
-      </div>
+      <%= if authenticated?(@conn) do %>
+        <div class="navbar-item is-hidden-touch">
+          <%= add_button(@conn) %>
+        </div>
+      <% end %>
       <div class="navbar-item has-text-centered">
         <%= if authenticated?(@conn) do %>
           <%= logout_button(@conn) %>
@@ -44,7 +46,10 @@
         <% end %>
       </div>
       <%# Mobile Menu %>
-      <%= if admin?(@conn) do menu_link(@conn, :user, "Users", class: "navbar-item") end %>
+      <%= if authenticated?(@conn) do menu_link(@conn, :character, "Characters",
+        tag: :div, class: "navbar-item  is-hidden-desktop") end %>
+      <%= if admin?(@conn) do menu_link(@conn, :user, "Users",
+        tag: :div, class: "navbar-item  is-hidden-desktop") end %>
     </div>
   </div>
 </nav>

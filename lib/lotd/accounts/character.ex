@@ -13,5 +13,6 @@ defmodule Lotd.Accounts.Character do
     character
     |> cast(attrs, [:name])
     |> validate_required([:name])
+    |> validate_length(:name, min: 3, max: 80)
   end
 end

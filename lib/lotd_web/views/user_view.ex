@@ -29,28 +29,28 @@ defmodule LotdWeb.UserView do
     end
   end
 
-  def btn_add_admin(conn, user) do
+  defp btn_add_admin(conn, user) do
     link icon("user-plus", class: "has-text-link"),
       to: Routes.user_path(conn, :update, user, admin: true),
       method: "put",
       title: "Add Admin"
   end
 
-  def btn_remove_admin(conn, user) do
+  defp btn_remove_admin(conn, user) do
     link icon("user-times", class: "has-text-link"),
       to: Routes.user_path(conn, :update, user, admin: false),
       method: "put",
       title: "Remove Admin"
   end
 
-  def btn_add_moderator(conn, user) do
+  defp btn_add_moderator(conn, user) do
     link icon("user-plus", class: "has-text-dark"),
       to: Routes.user_path(conn, :update, user, moderator: true),
       method: "put",
       title: "Add Moderator"
   end
 
-  def btn_remove_moderator(conn, user) do
+  defp btn_remove_moderator(conn, user) do
     link icon("user-times", class: "has-text-dark"),
       to: Routes.user_path(conn, :update, user, moderator: false),
       method: "put",

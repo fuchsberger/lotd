@@ -25,7 +25,7 @@ defmodule LotdWeb.Router do
   # Authenticated Routes
   scope "/", LotdWeb do
     pipe_through [:browser, :is_authenticated]
-
+    resources "/character", CharacterController, except: [:edit, :update, :show]
   end
 
   # Moderator Routes
