@@ -8,6 +8,10 @@ defmodule LotdWeb.ItemView do
     ""
   end
 
+  def item_name(%item{} = i) do
+    if i.url, do: link(i.name, to: i.url, target: "_blank"), else: "#{i.name}"
+  end
+
   # defp btn_activate(conn, character) do
   #   u = conn.assigns.current_user
 

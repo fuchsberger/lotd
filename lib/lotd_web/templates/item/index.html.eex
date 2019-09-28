@@ -10,7 +10,7 @@
     <tbody>
       <%= for i <- @items do %>
         <tr>
-          <td><strong><%= i.name %></strong></td>
+          <td><strong><%= item_name(i) %></strong></td>
           <td class='is-hidden-touch' data-order="<%= i.inserted_at %>"><%= time(i.inserted_at) %></td>
           <td><%= item_actions(@conn, i) %></td>
         </tr>

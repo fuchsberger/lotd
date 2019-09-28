@@ -3,7 +3,6 @@ defmodule LotdWeb.SessionController do
 
   alias Lotd.Accounts
   alias LotdWeb.Auth
-  alias LotdWeb.PageView
 
   @doc """
   connect to nexus to test api key and return username and userid.
@@ -35,25 +34,29 @@ defmodule LotdWeb.SessionController do
               {:error, _changeset} ->
                 conn
                 |> put_flash(:error, "Error: Could not create user in database!")
-                |> render(PageView, "index.html")
+                |> redirect(to: Routes.item_path(conn, :index))
+                |> halt()
             end
           # user found --> authenticate
           user ->
             conn
             |> Auth.login(user)
-            |> redirect(to: Routes.page_path(conn, :index))
+            |> redirect(to: Routes.item_path(conn, :index))
+            |> halt()
         end
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         conn
         |> put_flash(:error, "Error connecting to Nexus. #{reason}")
-        |> render(PageView, "index.html")
+        |> redirect(to: Routes.item_path(conn, :index))
+        |> halt()
     end
   end
 
   def delete(conn, _) do
     conn
     |> Auth.logout()
-    |> redirect(to: Routes.page_path(conn, :index))
+    |> redirect(to: Routes.item_path(conn, :index))
+    |> halt()
   end
 end

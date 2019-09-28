@@ -13,10 +13,8 @@ defmodule Lotd.Repo.Migrations.CreateItems do
     create table(:items) do
       add :name, :string, null: false
       add :url, :string
-      add :character_id, references(:characters, on_delete: :delete_all), null: false
       timestamps()
     end
-    create index(:items, [:character_id])
 
     # character_items (many to many)
     create table(:characters_items) do
