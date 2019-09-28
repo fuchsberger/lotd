@@ -7,6 +7,7 @@ defmodule Lotd.Accounts.User do
     field :nexus_name, :string
     field :admin, :boolean, default: false
     field :moderator, :boolean, default: false
+    has_many :character, Lotd.Accounts.Character
     timestamps()
   end
 
