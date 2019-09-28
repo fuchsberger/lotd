@@ -46,10 +46,10 @@
         <% end %>
       </div>
       <%# Mobile Menu %>
-      <%= menu_link(@conn, :item, "Items", tag: :div, class: "navbar-item  is-hidden-desktop") %>
-      <%= if authenticated?(@conn) do menu_link(@conn, :character, "Characters",
+      <%= menu_link(@conn, :items, "Items", tag: :div, class: "navbar-item  is-hidden-desktop") %>
+      <%= if authenticated?(@conn) do menu_link(@conn, :characters, "Characters",
         tag: :div, class: "navbar-item  is-hidden-desktop") end %>
-      <%= if admin?(@conn) do menu_link(@conn, :user, "Users",
+      <%= if admin?(@conn) do menu_link(@conn, :users, "Users",
         tag: :div, class: "navbar-item  is-hidden-desktop") end %>
     </div>
   </div>

@@ -1,13 +1,13 @@
 <%# Desktop Menu %>
 <div class="tabs is-centered is-marginless is-hidden-touch">
   <ul>
-    <%= menu_link(@conn, :item, "Items") %>
+    <%= menu_link(@conn, :items, "Items") %>
     <%# <li>Areas</li>
     <li>Locations</li>
     <li>Museum</li>
     <li>Quests</li>
     <li>Mods</li> %>
-    <%= if authenticated?(@conn) do menu_link(@conn, :character, "Characters") end %>
-    <%= if admin?(@conn) do menu_link(@conn, :user, "Users") end %>
+    <%= if authenticated?(@conn) do menu_link(@conn, :characters, "Characters") end %>
+    <%= if admin?(@conn) do menu_link(@conn, :users, "Users") end %>
   </ul>
 </div>

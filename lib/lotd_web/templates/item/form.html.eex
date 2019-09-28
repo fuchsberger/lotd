@@ -1,23 +1,19 @@
-<section class="section has-text-centered">
-  <h3 class="title is-3">Add Item</h3>
-
-  <%= form_for @changeset, Routes.item_path(@conn, :create), [as: :item], fn f -> %>
-    <%= label f, :name, class: "label" %>
-    <div class="field">
-      <div class="control is-expanded">
-        <%= text_input f, :name,
-          class: "input #{error_class(f, :name)}", placeholder: "Name" %>
-      </div>
+<%= form_for @changeset, @action, [as: :item], fn f -> %>
+  <%= label f, :name, class: "label" %>
+  <div class="field">
+    <div class="control is-expanded">
+      <%= text_input f, :name,
+        class: "input #{error_class(f, :name)}", placeholder: "Name" %>
     </div>
-    <%= error_tag f, :name %>
-    <%= label f, :url, class: "label" %>
-    <div class="field">
-      <div class="control is-expanded">
-        <%= text_input f, :url,
-          class: "input #{error_class(f, :url)}", placeholder: "Url" %>
-      </div>
+  </div>
+  <%= error_tag f, :name %>
+  <%= label f, :url, class: "label" %>
+  <div class="field">
+    <div class="control is-expanded">
+      <%= text_input f, :url,
+        class: "input #{error_class(f, :url)}", placeholder: "Url" %>
     </div>
-    <%= error_tag f, :url %>
-    <%= submit "Create", class: "button is-info" %>
-  <% end %>
-</section>
+  </div>
+  <%= error_tag f, :url %>
+  <%= submit @submit_button_text, class: "button is-info" %>
+<% end %>

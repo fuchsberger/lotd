@@ -33,19 +33,23 @@ defmodule LotdWeb.ItemController do
     end
   end
 
-  # def update(conn, %{"id" => id}, current_user) do
-  #   character =  Accounts.get_user_character!(current_user, id)
-  #   case Accounts.activate_character(current_user, character) do
-  #     {:ok, _user} ->
-  #       conn
-  #       |> put_flash(:info, "#{character.name} is hunting relics...")
-  #       |> redirect(to: Routes.character_path(conn, :index))
-  #     {:error, _reason} ->
-  #       conn
-  #       |> put_flash(:info, "Error: TODO: improve this...")
-  #       |> redirect(to: Routes.character_path(conn, :index))
-  #   end
-  # end
+  def edit(conn, %{"id" => id}, _current_user) do
+    item = Gallery.get_item!(id)
+    changeset = Gallery.change_item(item)
+    render(conn, "edit.html", changeset: changeset)
+  end
+
+  def update(conn, %{"id" => id, "item" => item_params}, _current_user) do
+    item =  Gallery.get_item!(id)
+    case Gallery.update_item(item, item_params) do
+      {:ok, item} ->
+        conn
+        |> put_flash(:info, "#{item.name} was edited.")
+        |> redirect(to: Routes.item_path(conn, :index))
+      {:error, changeset} ->
+        render(conn, "edit.html", changeset: changeset)
+    end
+  end
 
   def delete(conn, %{"id" => id}, current_user) do
     item = Gallery.get_item!(id)
