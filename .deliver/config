@@ -1,0 +1,45 @@
+#!/bin/bash
+
+APP="lotd"
+
+BUILD_HOST="fuchsberger.us"
+BUILD_USER="deploy"
+BUILD_AT="/tmp/edeliver/$APP/builds"
+
+START_DEPLOY=true
+# CLEAN_DEPLOY=true
+
+GIT_CLEAN_PATHS="_build rel priv/static"
+
+PRODUCTION_HOSTS="fuchsberger.us"
+PRODUCTION_USER="deploy"
+DELIVER_TO="/home/deploy/apps"
+
+pre_erlang_clean_compile() {
+  status "Running npm install"
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd '$BUILD_AT'/assets
+      npm install
+    "
+
+  status "Compiling assets"
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd '$BUILD_AT'/assets
+      node_modules/.bin/webpack --mode production --silent
+    "
+  status "Running phx.digest" # log output prepended with "----->"
+    __sync_remote " # runs the commands on the build host
+      [ -f ~/.profile ] && source ~/.profile # load profile (optional)
+      set -e # fail if any command fails (recommended)
+      cd '$BUILD_AT' # enter the build directory on the build host (required)
+      # prepare something
+      mkdir -p priv/static # required by the phoenix.digest task
+      # run your custom task
+      APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD phx.digest $SILENCE
+      APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD phx.digest.clean $SILENCE
+    "
+}
