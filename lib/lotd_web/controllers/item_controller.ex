@@ -12,13 +12,14 @@ defmodule LotdWeb.ItemController do
   def home(conn, _params, _current_user), do: redirect(conn, to: Routes.item_path(conn, :index))
 
   def index(conn, _params, _current_user) do
+    active_character_id = active_character_id(conn)
     items = Gallery.list_items()
 
-    character_item_ids = if authenticated?(conn) do
-      character = conn
-      |> active_character_id()
-      |> Accounts.get_character!()
-      |> Accounts.character_item_ids()
+    character_item_ids = if active_character_id do
+      character =
+        active_character_id
+        |> Accounts.get_character!()
+        |> Accounts.character_item_ids()
     else
       []
     end
