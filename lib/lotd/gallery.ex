@@ -8,7 +8,7 @@ defmodule Lotd.Gallery do
 
   alias Lotd.Accounts
   alias Lotd.Accounts.Character
-  alias Lotd.Gallery.Item
+  alias Lotd.Gallery.{Display, Item}
 
   def list_items, do: Repo.all(Item)
 
@@ -54,5 +54,31 @@ defmodule Lotd.Gallery do
     |> Accounts.change_character()
     |> Ecto.Changeset.put_assoc(:items, items)
     |> Repo.update!
+  end
+
+  def list_displays do
+    Repo.all(Display)
+  end
+
+  def get_display!(id), do: Repo.get!(Display, id)
+
+  def create_display(attrs \\ %{}) do
+    %Display{}
+    |> Display.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_display(%Display{} = display, attrs) do
+    display
+    |> Display.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_display(%Display{} = display) do
+    Repo.delete(display)
+  end
+
+  def change_display(%Display{} = display) do
+    Display.changeset(display, %{})
   end
 end

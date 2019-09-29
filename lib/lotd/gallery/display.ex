@@ -1,20 +1,18 @@
-defmodule Lotd.Gallery.Item do
+defmodule Lotd.Gallery.Display do
   use Ecto.Schema
-  import Ecto.Changeset
 
+  import Ecto.Changeset
   import Lotd.Repo, only: [validate_url: 2]
 
-  schema "items" do
+  schema "displays" do
     field :name, :string
     field :url, :string
-    belongs_to :display, Lotd.Gallery.Display
-    many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_items"
-    timestamps()
+    has_many :items, Lotd.Gallery.Item
   end
 
   @doc false
-  def changeset(item, attrs) do
-    item
+  def changeset(display, attrs) do
+    display
     |> cast(attrs, [:name, :url])
     |> validate_required([:name])
     |> validate_length(:name, min: 3, max: 80)

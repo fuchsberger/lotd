@@ -1,0 +1,19 @@
+<%= form_for @changeset, @action, [as: :display], fn f -> %>
+  <%= label f, :name, class: "label" %>
+  <div class="field">
+    <div class="control is-expanded">
+      <%= text_input f, :name,
+        class: "input #{error_class(f, :name)}", placeholder: "Name" %>
+    </div>
+  </div>
+  <%= error_tag f, :name %>
+  <%= label f, :url, class: "label" %>
+  <div class="field">
+    <div class="control is-expanded">
+      <%= text_input f, :url,
+        class: "input #{error_class(f, :url)}", placeholder: "Url" %>
+    </div>
+  </div>
+  <%= error_tag f, :url %>
+  <%= submit @submit_button_text, class: "button is-info" %>
+<% end %>

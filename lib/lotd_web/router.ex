@@ -21,6 +21,7 @@ defmodule LotdWeb.Router do
     get "/", ItemController, :home
     resources "/session", SessionController, only: [:create, :delete]
     resources "/items", ItemController, only: [:index]
+    resources "/displays", DisplayController, only: [:index]
   end
 
   # Authenticated Routes
@@ -35,6 +36,7 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through [:browser, :is_moderator]
     resources "/items", ItemController, except: [:index]
+    resources "/displays", DisplayController, except: [:index]
   end
 
   # Admin Routes

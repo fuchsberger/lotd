@@ -5,8 +5,11 @@ defmodule LotdWeb.LayoutView do
     text =  [icon("plus"), content_tag(:span, "Add")]
 
     case current_module(conn.path_info) do
+      :displays ->
+        if moderator?(conn), do:
+          link(text, to: Routes.display_path(conn, :new), class: "button")
       :items ->
-        if conn.assigns.current_user.moderator, do:
+        if moderator?(conn), do:
           link(text, to: Routes.item_path(conn, :new), class: "button")
       :characters ->
         link(text, to: Routes.character_path(conn, :new), class: "button")
@@ -30,6 +33,7 @@ defmodule LotdWeb.LayoutView do
   defp get_path(conn, module) do
     case module do
       :characters -> Routes.character_path(conn, :index)
+      :displays -> Routes.display_path(conn, :index)
       :users -> Routes.user_path(conn, :index)
       _ -> Routes.item_path(conn, :index)
     end
