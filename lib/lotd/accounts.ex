@@ -36,6 +36,7 @@ defmodule Lotd.Accounts do
   def list_user_characters(%User{} = user) do
     Character
     |> user_characters_query(user)
+    |> preload(:items)
     |> Repo.all()
   end
 
