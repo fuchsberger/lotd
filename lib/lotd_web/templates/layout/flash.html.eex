@@ -4,7 +4,7 @@
     <%= @flash["error"] %>
   </div>
 <% end %>
-<%= if Map.has_key?(@flash, @flash["info"]) do %>
+<%= if @flash["info"] do %>
   <div class="notification is-info">
     <button class="delete"></button>
     <%= @flash["info"] %>

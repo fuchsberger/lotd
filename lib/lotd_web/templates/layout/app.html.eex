@@ -12,8 +12,9 @@
   <body data-view='<%= unique_view_name(@view_module, @view_template) %>'>
     <div id="loader-wrapper"><div id="loader"></div></div>
     <%= render "navbar.html", assigns %>
-    <%= render "tabbar.html", assigns %>
     <%= render "flash.html", flash: get_flash(@conn) %>
+    <%= render "tabbar.html", assigns %>
+
 
     <main role="main" class="container">
       <%= render @view_module, @view_template, assigns %>

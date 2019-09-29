@@ -3,14 +3,14 @@
     <thead>
       <tr>
         <th>Item</th>
-        <th data-sortable="false">Actions</th>
+        <%= if authenticated?(@conn) do %><th data-sortable="false">Actions</th><% end %>
       </tr>
     </thead>
     <tbody>
       <%= for i <- @items do %>
         <tr>
           <td><strong><%= item_name(i) %></strong></td>
-          <td><%= if authenticated?(@conn) do item_actions(@conn, i) end %></td>
+          <%= if authenticated?(@conn) do %><td><%= item_actions(@conn, i) %></td><% end %>
         </tr>
       <% end %>
     </tbody>
