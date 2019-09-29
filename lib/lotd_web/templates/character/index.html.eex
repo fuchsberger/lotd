@@ -1,5 +1,5 @@
 <div class="table-container">
-  <table id="character-table" class="display">
+  <table id="character-table" class="display" data-order="[[1, &quot;desc&quot; ]]">
     <thead>
       <tr>
         <th>Character</th>
