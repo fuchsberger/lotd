@@ -27,6 +27,8 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through [:browser, :is_authenticated]
     resources "/characters", CharacterController, except: [:edit, :show]
+    put "/items/:id/collect", ItemController, :collect
+    put "/items/:id/borrow", ItemController, :borrow
   end
 
   # Moderator Routes

@@ -1,14 +1,25 @@
 <div class="table-container">
-  <table class="display">
+  <table class="display"
+    data-order="[[<%= if active_character_id(@conn) do 1 else 0 end %>, &quot;asc&quot; ]]">
     <thead>
       <tr>
+        <%= if authenticated?(@conn) && active_character_id(@conn) do %>
+          <th data-searchable="false" data-sortable='false' width='10px' class='has-small-padding' title='Collected'>
+            <%= icon("ok-squared") %>
+          </th>
+        <% end %>
         <th>Item</th>
-        <%= if authenticated?(@conn) do %><th data-sortable="false">Actions</th><% end %>
+        <%= if authenticated?(@conn) do %>
+          <th data-searchable="false" data-sortable='false' width='35px'></th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
       <%= for i <- @items do %>
         <tr>
+          <%= if authenticated?(@conn) && active_character_id(@conn) do %>
+            <td><%= btn_collect(@conn, i, @character_item_ids) %></td>
+          <% end %>
           <td><strong><%= item_name(i) %></strong></td>
           <%= if authenticated?(@conn) do %><td><%= item_actions(@conn, i) %></td><% end %>
         </tr>

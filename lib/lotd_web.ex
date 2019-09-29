@@ -23,8 +23,9 @@ defmodule LotdWeb do
 
       import Plug.Conn
       import LotdWeb.Gettext
-      import LotdWeb.Auth, only: [is_authenticated: 2, is_moderator: 2, is_admin: 2]
-
+      # import LotdWeb.Auth, only: [is_authenticated: 2, is_moderator: 2, is_admin: 2]
+      import LotdWeb.ViewHelpers,
+        only: [authenticated?: 1, moderator?: 1, admin?: 1, active_character_id: 1]
       alias LotdWeb.Router.Helpers, as: Routes
 
       require Logger

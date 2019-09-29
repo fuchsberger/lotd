@@ -1,7 +1,7 @@
 defmodule LotdWeb.ItemController do
   use LotdWeb, :controller
 
-  alias Lotd.Gallery
+  alias Lotd.{Accounts, Gallery}
   alias Lotd.Gallery.Item
 
   def action(conn, _) do
@@ -13,7 +13,16 @@ defmodule LotdWeb.ItemController do
 
   def index(conn, _params, _current_user) do
     items = Gallery.list_items()
-    render(conn, "index.html", items: items)
+
+    character_item_ids = if authenticated?(conn) do
+      character = conn
+      |> active_character_id()
+      |> Accounts.get_character!()
+      |> Accounts.character_item_ids()
+    else
+      []
+    end
+    render(conn, "index.html", items: items, character_item_ids: character_item_ids)
   end
 
   def new(conn, _params, _current_user) do
@@ -51,12 +60,24 @@ defmodule LotdWeb.ItemController do
     end
   end
 
-  def delete(conn, %{"id" => id}, current_user) do
+  def delete(conn, %{"id" => id}, _current_user) do
     item = Gallery.get_item!(id)
     {:ok, _character} = Gallery.delete_item(item)
 
     conn
     |> put_flash(:info, "Item deleted successfully.")
     |> redirect(to: Routes.item_path(conn, :index))
+  end
+
+  def collect(conn, %{"id" => item_id}, _current_user) do
+    character = conn |> active_character_id() |> Accounts.get_character!()
+    Gallery.collect_item(character, item_id)
+    redirect(conn, to: Routes.item_path(conn, :index))
+  end
+
+  def borrow(conn, %{"id" => item_id}, current_user) do
+    character = conn |> active_character_id() |> Accounts.get_character!()
+    Gallery.borrow_item(character, item_id)
+    redirect(conn, to: Routes.item_path(conn, :index))
   end
 end

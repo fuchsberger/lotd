@@ -9,6 +9,9 @@ defmodule LotdWeb.ViewHelpers do
   def moderator?(conn), do: authenticated?(conn) && conn.assigns.current_user.moderator
   def admin?(conn), do: authenticated?(conn) && conn.assigns.current_user.admin
 
+  def active_character_id(conn),
+    do: authenticated?(conn) && conn.assigns.current_user.active_character_id
+
   def icon(name, opts \\ [] ) do
     class = Keyword.get(opts, :class, "")
     title = Keyword.get(opts, :title)

@@ -6,6 +6,8 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
   alias Lotd.Repo
 
+  alias Lotd.Accounts
+  alias Lotd.Accounts.Character
   alias Lotd.Gallery.Item
 
   def list_items, do: Repo.all(Item)
@@ -30,5 +32,27 @@ defmodule Lotd.Gallery do
 
   def change_item(%Item{} = item) do
     Item.changeset(item, %{})
+  end
+
+  def collect_item(character, item_id) do
+    items = from(i in Item,
+      where: i.id == ^item_id or i.id in ^Accounts.character_item_ids(character)
+    ) |> Repo.all
+
+    character
+    |> Accounts.change_character()
+    |> Ecto.Changeset.put_assoc(:items, items)
+    |> Repo.update!
+  end
+
+  def borrow_item(character, item_id) do
+    items = from(i in Item,
+      where: i.id != ^item_id and i.id in ^Accounts.character_item_ids(character)
+    ) |> Repo.all
+
+    character
+    |> Accounts.change_character()
+    |> Ecto.Changeset.put_assoc(:items, items)
+    |> Repo.update!
   end
 end

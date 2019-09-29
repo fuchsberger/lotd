@@ -3,6 +3,23 @@ defmodule LotdWeb.ItemView do
 
   alias Lotd.Gallery.Item
 
+  def btn_collect(conn, %Item{} = i, character_item_ids) do
+    if Enum.member?(character_item_ids, i.id) do
+      link icon("ok-squared"),
+        to: Routes.item_path(conn, :borrow, i.id),
+        method: "put",
+        title: "Remove from collection",
+        data: [test: "new val"]
+
+    else
+      link icon("plus-squared-alt"),
+        to: Routes.item_path(conn, :collect, i.id),
+        method: "put",
+        title: "Add to collection",
+        data: [test: "new val"]
+    end
+  end
+
   def item_actions(conn, %Item{} = i) do
     [btn_edit(conn, i), btn_delete(conn, i)]
   end

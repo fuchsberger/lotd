@@ -39,10 +39,21 @@ defmodule Lotd.Accounts do
     |> Repo.all()
   end
 
+  def get_character!(id) do
+    from(c in Character, where: c.id == ^id, preload: [:items])
+    |> Repo.one()
+  end
+
   def get_user_character!(%User{} = user, id) do
     Character
     |> user_characters_query(user)
     |> Repo.get!(id)
+  end
+
+  def character_item_ids(character) do
+    character
+    |> Map.get(:items)
+    |> Enum.map(fn i -> i.id end)
   end
 
   defp user_characters_query(query, %User{id: user_id}) do
