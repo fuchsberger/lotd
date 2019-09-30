@@ -6,7 +6,7 @@ defmodule LotdWeb.ErrorHelpers do
   use Phoenix.HTML
 
   def error_class(form, field) do
-    Enum.map(Keyword.get_values(form.errors, field), fn error -> "is-danger" end)
+    Enum.map(Keyword.get_values(form.errors, field), fn _error -> "is-danger" end)
   end
 
   @doc """

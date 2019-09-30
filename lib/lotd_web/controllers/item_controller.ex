@@ -15,10 +15,9 @@ defmodule LotdWeb.ItemController do
     items = Gallery.list_items()
 
     character_item_ids = if active_character_id do
-      character =
-        active_character_id
-        |> Accounts.get_character!()
-        |> Accounts.character_item_ids()
+      active_character_id
+      |> Accounts.get_character!()
+      |> Accounts.character_item_ids()
     else
       []
     end

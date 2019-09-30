@@ -1,10 +1,10 @@
 defmodule Lotd.TestHelpers do
 
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Accounts}
 
   def user_fixture(attrs \\ %{}) do
+    id = System.unique_integer([:positive])
     {:ok, user} =
-      id = System.unique_integer([:positive])
       attrs
       |> Enum.into(%{
         nexus_id: id,
@@ -14,9 +14,10 @@ defmodule Lotd.TestHelpers do
     user
   end
 
+
   def character_fixture(%Accounts.User{} = user, attrs \\ %{}) do
     attrs = Enum.into(attrs, %{ name: "Dovakiin" })
-    {:ok, character} = Multimedia.create_character(user, attrs)
+    {:ok, character} = Accounts.create_character(user, attrs)
     character
   end
 end

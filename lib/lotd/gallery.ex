@@ -7,7 +7,6 @@ defmodule Lotd.Gallery do
   alias Lotd.Repo
 
   alias Lotd.Accounts
-  alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Display, Item}
 
   def alphabetical(query), do: from(c in query, order_by: c.name)

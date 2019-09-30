@@ -22,6 +22,7 @@ defmodule Lotd.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Lotd.DataCase
+      import Lotd.TestHelpers
     end
   end
 

@@ -28,7 +28,7 @@ defmodule LotdWeb.CharacterController do
         if character_count == 1, do: Accounts.activate_character(current_user, character)
 
         conn
-        |> put_flash(:info, "Character was sucessfully created and activated. Good hunting!")
+        |> put_flash(:info, "Character was sucessfully created. Good hunting!")
         |> redirect(to: Routes.character_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -53,7 +53,7 @@ defmodule LotdWeb.CharacterController do
   def delete(conn, %{"id" => id}, current_user) do
 
     # if this is the active character, remove it from user as well
-    if current_user.active_character_id == String.to_integer(id) do
+    if active_character_id(conn) == String.to_integer(id) do
       Accounts.update_user(current_user, %{ active_character_id: nil })
     end
 

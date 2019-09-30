@@ -16,7 +16,7 @@ defmodule LotdWeb.DisplayController do
 
   def create(conn, %{"display" => display_params}) do
     case Gallery.create_display(display_params) do
-      {:ok, display} ->
+      {:ok, _display} ->
         redirect(conn, to: Routes.display_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
