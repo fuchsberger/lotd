@@ -17,7 +17,7 @@ defmodule Lotd.Accounts do
   def get_user!(id), do: Repo.get!(User, id)
   def get_user_by(params), do: Repo.get_by(User, params)
 
-  def create_user(attrs \\ %{}) do
+  def register_user(attrs \\ %{}) do
     %User{}
     |> User.register_changeset(attrs)
     |> Repo.insert()

@@ -25,7 +25,7 @@ defmodule LotdWeb.SessionController do
         case Accounts.get_user_by(nexus_id: nexus_id) do
           # no record found --> create it and authenticate
           nil ->
-            case Accounts.create_user(%{nexus_id: nexus_id, nexus_name: nexus_name}) do
+            case Accounts.register_user(%{nexus_id: nexus_id, nexus_name: nexus_name}) do
               {:ok, user} ->
                 conn
                 |> Auth.login(user)
