@@ -9,7 +9,6 @@ defmodule Lotd.Gallery.Item do
     field :url, :string
     belongs_to :display, Lotd.Gallery.Display
     many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_items"
-    timestamps()
   end
 
   @doc false

@@ -27,6 +27,7 @@ defmodule LotdWeb.ItemController do
   end
 
   def new(conn, _params, _current_user) do
+    displays = Gallery.list_displays()
     changeset = Gallery.change_item(%Item{})
     render(conn, "new.html", changeset: changeset)
   end
