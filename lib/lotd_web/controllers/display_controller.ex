@@ -5,7 +5,7 @@ defmodule LotdWeb.DisplayController do
   alias Lotd.Gallery.Display
 
   def index(conn, _params) do
-    displays = Gallery.list_displays()
+    displays = Gallery.list_alphabetical_displays()
     render(conn, "index.html", displays: displays)
   end
 

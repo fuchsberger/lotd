@@ -20,6 +20,10 @@ defmodule LotdWeb.ItemView do
     end
   end
 
+  def display_select_options(displays) do
+    for display <- displays, do: {display.name, display.id}
+  end
+
   def item_actions(conn, %Item{} = i) do
     [btn_edit(conn, i), btn_delete(conn, i)]
   end

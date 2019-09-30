@@ -4,14 +4,13 @@ defmodule LotdWeb.ItemController do
   alias Lotd.{Accounts, Gallery}
   alias Lotd.Gallery.Item
 
-  def action(conn, _) do
-    args = [conn, conn.params, conn.assigns.current_user]
-    apply(__MODULE__, action_name(conn), args)
-  end
+  plug :load_displays when action in [:new, :create, :edit, :update]
 
-  def home(conn, _params, _current_user), do: redirect(conn, to: Routes.item_path(conn, :index))
+  defp load_displays(conn, _), do: assign conn, :displays, Gallery.list_alphabetical_displays()
 
-  def index(conn, _params, _current_user) do
+  def home(conn, _params), do: redirect(conn, to: Routes.item_path(conn, :index))
+
+  def index(conn, _params) do
     active_character_id = active_character_id(conn)
     items = Gallery.list_items()
 
@@ -26,13 +25,12 @@ defmodule LotdWeb.ItemController do
     render(conn, "index.html", items: items, character_item_ids: character_item_ids)
   end
 
-  def new(conn, _params, _current_user) do
-    displays = Gallery.list_displays()
+  def new(conn, _params) do
     changeset = Gallery.change_item(%Item{})
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"item" => item_params}, _current_user) do
+  def create(conn, %{"item" => item_params}) do
     case Gallery.create_item(item_params) do
       {:ok, item} ->
         conn
@@ -44,13 +42,13 @@ defmodule LotdWeb.ItemController do
     end
   end
 
-  def edit(conn, %{"id" => id}, _current_user) do
+  def edit(conn, %{"id" => id}) do
     item = Gallery.get_item!(id)
     changeset = Gallery.change_item(item)
     render(conn, "edit.html", changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "item" => item_params}, _current_user) do
+  def update(conn, %{"id" => id, "item" => item_params}) do
     item =  Gallery.get_item!(id)
     case Gallery.update_item(item, item_params) do
       {:ok, item} ->
@@ -62,7 +60,7 @@ defmodule LotdWeb.ItemController do
     end
   end
 
-  def delete(conn, %{"id" => id}, _current_user) do
+  def delete(conn, %{"id" => id}) do
     item = Gallery.get_item!(id)
     {:ok, _character} = Gallery.delete_item(item)
 
@@ -71,13 +69,13 @@ defmodule LotdWeb.ItemController do
     |> redirect(to: Routes.item_path(conn, :index))
   end
 
-  def collect(conn, %{"id" => item_id}, _current_user) do
+  def collect(conn, %{"id" => item_id}) do
     character = conn |> active_character_id() |> Accounts.get_character!()
     Gallery.collect_item(character, item_id)
     redirect(conn, to: Routes.item_path(conn, :index))
   end
 
-  def borrow(conn, %{"id" => item_id}, current_user) do
+  def borrow(conn, %{"id" => item_id}) do
     character = conn |> active_character_id() |> Accounts.get_character!()
     Gallery.borrow_item(character, item_id)
     redirect(conn, to: Routes.item_path(conn, :index))

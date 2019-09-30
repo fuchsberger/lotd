@@ -14,9 +14,10 @@ defmodule Lotd.Gallery.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :url])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :url, :display_id])
+    |> validate_required([:name, :display_id])
     |> validate_length(:name, min: 3, max: 80)
     |> validate_url(:url)
+    |> assoc_constraint(:display)
   end
 end

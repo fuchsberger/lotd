@@ -10,7 +10,9 @@ defmodule Lotd.Gallery do
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Display, Item}
 
-  def list_items, do: Repo.all(Item)
+  def alphabetical(query), do: from(c in query, order_by: c.name)
+
+  def list_items, do: from(i in Item, preload: :display) |> Repo.all()
 
   def get_item!(id), do: Repo.get!(Item, id)
 
@@ -56,8 +58,10 @@ defmodule Lotd.Gallery do
     |> Repo.update!
   end
 
-  def list_displays do
-    Repo.all(Display)
+  def list_alphabetical_displays do
+    Display
+    |> alphabetical()
+    |> Repo.all()
   end
 
   def get_display!(id), do: Repo.get!(Display, id)

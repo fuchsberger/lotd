@@ -1,4 +1,6 @@
 <%= form_for @changeset, @action, [as: :item], fn f -> %>
+
+  <%# name %>
   <%= label f, :name, class: "label" %>
   <div class="field">
     <div class="control is-expanded">
@@ -7,6 +9,8 @@
     </div>
   </div>
   <%= error_tag f, :name %>
+
+  <%# url %>
   <%= label f, :url, class: "label" %>
   <div class="field">
     <div class="control is-expanded">
@@ -15,5 +19,21 @@
     </div>
   </div>
   <%= error_tag f, :url %>
+
+  <%# display %>
+  <%= label f, :display_id, class: "label" %>
+  <div class="field">
+    <div class="control has-text-centered">
+      <div class="select <%= error_class(f, :display_id) %>">
+        <%= select f, :display_id, display_select_options(@displays),
+          class: "select",
+          placeholder: "Display",
+          prompt: "Choose a Display"
+        %>
+      </div>
+    </div>
+  </div>
+  <%= error_tag f, :display_id %>
+
   <%= submit @submit_button_text, class: "button is-info" %>
 <% end %>

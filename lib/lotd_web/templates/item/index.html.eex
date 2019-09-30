@@ -9,6 +9,7 @@
           </th>
         <% end %>
         <th>Item</th>
+        <th>Gallery</th>
         <%= if authenticated?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='35px'></th>
         <% end %>
@@ -21,6 +22,7 @@
             <td><%= btn_collect(@conn, i, @character_item_ids) %></td>
           <% end %>
           <td><strong><%= item_name(i) %></strong></td>
+          <td><%= i.display.name %></td>
           <%= if authenticated?(@conn) do %><td><%= item_actions(@conn, i) %></td><% end %>
         </tr>
       <% end %>
