@@ -3,7 +3,7 @@
     data-order="[[<%= if active_character_id(@conn) do 1 else 0 end %>, &quot;asc&quot; ]]">
     <thead>
       <tr>
-        <%= if authenticated?(@conn) && active_character_id(@conn) do %>
+        <%= if active_character_id(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='10px' class='has-small-padding' title='Collected'>
             <%= icon("ok-squared") %>
           </th>
@@ -19,7 +19,7 @@
     <tbody>
       <%= for i <- @items do %>
         <tr>
-          <%= if authenticated?(@conn) && active_character_id(@conn) do %>
+          <%= if active_character_id(@conn) do %>
             <td><%= btn_collect(@conn, i, @character_item_ids) %></td>
           <% end %>
           <td><strong><%= name_link(i) %></strong></td>

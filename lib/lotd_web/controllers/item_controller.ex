@@ -11,14 +11,8 @@ defmodule LotdWeb.ItemController do
   defp load_locations(conn, _), do: assign conn, :locations, Skyrim.list_alphabetical_locations()
 
   def index(conn, _params) do
-
     items = Gallery.list_items()
-    character_item_ids = if authenticated?(conn),
-      do: Gallery.list_character_item_ids(conn.assigns.current_user.active_character),
-      else: nil
-
-    IO.inspect character_item_ids
-
+    character_item_ids = character_item_ids(conn)
     render(conn, "index.html", items: items, character_item_ids: character_item_ids)
   end
 

@@ -3,6 +3,8 @@
     <thead>
       <tr>
         <th>Display</th>
+        <th class='is-hidden-touch' data-searchable="false">Items Found</th>
+        <th class='is-hidden-touch' data-searchable="false">Items Total</th>
         <%= if moderator?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='35px'></th>
         <% end %>
@@ -12,6 +14,8 @@
       <%= for d <- @displays do %>
         <tr>
           <td><strong><%= name_link(d) %></strong></td>
+          <td class='is-hidden-touch'><%= d.character_item_count %></td>
+          <td class='is-hidden-touch'><%= Enum.count(d.items) %></td>
           <%= if moderator?(@conn) do %><td><%= display_actions(@conn, d) %></td><% end %>
         </tr>
       <% end %>

@@ -12,6 +12,12 @@ defmodule LotdWeb.ViewHelpers do
   def active_character_id(conn),
     do: authenticated?(conn) && conn.assigns.current_user.active_character_id
 
+  def character_item_ids(conn) do
+    if authenticated?(conn),
+      do: Enum.map(conn.assigns.current_user.active_character.items, fn i -> i.id end),
+      else: []
+  end
+
   def name_link(%{} = struct) do
     if struct.url, do: link(struct.name, to: struct.url, target: "_blank"), else: "#{struct.name}"
   end

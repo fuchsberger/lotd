@@ -63,6 +63,7 @@ defmodule Lotd.Gallery do
 
   def list_alphabetical_displays do
     Display
+    |> preload(:items)
     |> Repo.alphabetical()
     |> Repo.all()
   end
