@@ -9,9 +9,15 @@ defmodule LotdWeb.UserController do
   end
 
   def update(conn, %{"id" => id} = params) do
-    Accounts.get_user(id)
-    |> Accounts.update_user(params)
+    user = Accounts.get_user!(id)
 
-    redirect(conn, to: Routes.user_path(conn, :index))
+    case Accounts.update_user(user, params) do
+      {:ok, _user} ->
+        redirect(conn, to: Routes.user_path(conn, :index))
+      {:error, _changeset} ->
+        conn
+        |> put_flash(:error, "Could not update user")
+        |> redirect(to: Routes.user_path(conn, :index))
+    end
   end
 end

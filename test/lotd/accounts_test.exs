@@ -4,6 +4,18 @@ defmodule Lotd.AccountsTest do
   alias Lotd.Accounts
   alias Lotd.Accounts.User
 
+  test "list_users/0 lists all users" do
+    %User{id: id1} = user_fixture()
+    assert [%User{id: ^id1}] = Accounts.list_users()
+    %User{id: id2} = user_fixture()
+    assert [%User{id: ^id1}, %User{id: ^id2}] = Accounts.list_users()
+  end
+
+  test "get_user!/1 returns the user with given id" do
+    %User{id: id} = user_fixture()
+    assert %User{id: ^id} = Accounts.get_user!(id)
+  end
+
   describe "user_registration" do
 
     @valid_attrs %{nexus_id: 42, nexus_name: "some_nexus_name"}
