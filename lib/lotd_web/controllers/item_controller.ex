@@ -1,12 +1,14 @@
 defmodule LotdWeb.ItemController do
   use LotdWeb, :controller
 
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Accounts, Gallery, Skyrim}
   alias Lotd.Gallery.Item
 
   plug :load_displays when action in [:new, :create, :edit, :update]
+  plug :load_locations when action in [:new, :create, :edit, :update]
 
   defp load_displays(conn, _), do: assign conn, :displays, Gallery.list_alphabetical_displays()
+  defp load_locations(conn, _), do: assign conn, :locations, Skyrim.list_alphabetical_locations()
 
   def index(conn, _params) do
 

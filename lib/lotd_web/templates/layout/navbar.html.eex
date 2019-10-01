@@ -51,6 +51,7 @@
       <%# Mobile Menu %>
       <%= menu_link(@conn, :items, "Items", tag: :div, class: "navbar-item  is-hidden-desktop") %>
       <%= menu_link(@conn, :displays, "Displays", tag: :div, class: "navbar-item  is-hidden-desktop") %>
+      <%= menu_link(@conn, :locations, "Locations", tag: :div, class: "navbar-item  is-hidden-desktop") %>
       <%= if authenticated?(@conn) do menu_link(@conn, :characters, "Characters",
         tag: :div, class: "navbar-item  is-hidden-desktop") end %>
       <%= if admin?(@conn) do menu_link(@conn, :users, "Users",

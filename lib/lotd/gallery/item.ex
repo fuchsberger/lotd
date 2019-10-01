@@ -8,16 +8,18 @@ defmodule Lotd.Gallery.Item do
     field :name, :string
     field :url, :string
     belongs_to :display, Lotd.Gallery.Display
+    belongs_to :location, Lotd.Skyrim.Location
     many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_items"
   end
 
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :url, :display_id])
+    |> cast(attrs, [:name, :url, :display_id, :location_id])
     |> validate_required([:name, :display_id])
     |> validate_length(:name, min: 3, max: 80)
     |> validate_url(:url)
     |> assoc_constraint(:display)
+    |> assoc_constraint(:location)
   end
 end

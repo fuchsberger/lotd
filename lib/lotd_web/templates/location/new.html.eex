@@ -1,0 +1,6 @@
+<section class="section has-text-centered">
+  <h3 class="title is-3">Add Location</h3>
+  <%= render @view_module, "form.html", changeset: @changeset,
+    action: Routes.location_path(@conn, :create),
+    submit_button_text: "Create" %>
+</section>

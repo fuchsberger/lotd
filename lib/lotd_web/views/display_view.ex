@@ -7,10 +7,6 @@ defmodule LotdWeb.DisplayView do
     [btn_edit(conn, d), btn_delete(conn, d)]
   end
 
-  def display_name(%Display{} = d) do
-    if d.url, do: link(d.name, to: d.url, target: "_blank"), else: "#{d.name}"
-  end
-
   defp btn_edit(conn, display) do
     link icon("pencil"),
       to: Routes.display_path(conn, :edit, display.id),

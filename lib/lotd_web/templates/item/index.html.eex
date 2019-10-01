@@ -9,6 +9,7 @@
           </th>
         <% end %>
         <th>Item</th>
+        <th class='is-hidden-touch'>Location</th>
         <th class='is-hidden-touch'>Display</th>
         <%= if authenticated?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='35px'></th>
@@ -21,7 +22,10 @@
           <%= if authenticated?(@conn) && active_character_id(@conn) do %>
             <td><%= btn_collect(@conn, i, @character_item_ids) %></td>
           <% end %>
-          <td><strong><%= item_name(i) %></strong></td>
+          <td><strong><%= name_link(i) %></strong></td>
+          <td class='is-hidden-touch'>
+            <%= if i.location do link(i.location.name, to: "#", class: "search-field") end %>
+          </td>
           <td class='is-hidden-touch'>
             <%= link(i.display.name, to: "#", class: "search-field") %>
           </td>

@@ -4,6 +4,7 @@
     action: Routes.item_path(@conn, :create),
     changeset: @changeset,
     displays: @displays,
+    locations: @locations,
     submit_button_text: "Create"
   %>
 </section>

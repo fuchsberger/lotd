@@ -2,17 +2,17 @@
   <table class="display">
     <thead>
       <tr>
-        <th>Display</th>
+        <th>Location</th>
         <%= if moderator?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='35px'></th>
         <% end %>
       </tr>
     </thead>
     <tbody>
-      <%= for d <- @displays do %>
+      <%= for l <- @locations do %>
         <tr>
-          <td><strong><%= name_link(d) %></strong></td>
-          <%= if moderator?(@conn) do %><td><%= display_actions(@conn, d) %></td><% end %>
+          <td><strong><%= name_link(l) %></strong></td>
+          <%= if moderator?(@conn) do %><td><%= location_actions(@conn, l) %></td><% end %>
         </tr>
       <% end %>
     </tbody>

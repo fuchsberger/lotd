@@ -18,16 +18,10 @@ defmodule LotdWeb.ItemView do
     end
   end
 
-  def display_select_options(displays) do
-    for display <- displays, do: {display.name, display.id}
-  end
+  def select_options(structures), do: for s <- structures, do: {s.name, s.id}
 
   def item_actions(conn, %Item{} = i) do
     [btn_edit(conn, i), btn_delete(conn, i)]
-  end
-
-  def item_name(%Item{} = i) do
-    if i.url, do: link(i.name, to: i.url, target: "_blank"), else: "#{i.name}"
   end
 
   defp btn_edit(conn, %Item{} = item) do

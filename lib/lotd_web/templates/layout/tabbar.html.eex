@@ -3,6 +3,7 @@
   <ul>
     <%= menu_link(@conn, nil, "Items") %>
     <%= menu_link(@conn, :displays, "Displays") %>
+    <%= menu_link(@conn, :locations, "Locations") %>
     <%= if authenticated?(@conn) do menu_link(@conn, :characters, "Characters") end %>
     <%= if admin?(@conn) do menu_link(@conn, :users, "Users") end %>
   </ul>

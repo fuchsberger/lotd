@@ -10,6 +10,9 @@ defmodule LotdWeb.LayoutView do
           link(text, to: Routes.display_path(conn, :new), class: "button")
       :characters ->
         link(text, to: Routes.character_path(conn, :new), class: "button")
+      :locations ->
+        if moderator?(conn), do:
+          link(text, to: Routes.location_path(conn, :new), class: "button")
       _ ->
         if moderator?(conn), do:
           link(text, to: Routes.item_path(conn, :new), class: "button")
@@ -32,6 +35,7 @@ defmodule LotdWeb.LayoutView do
     case module do
       :characters -> Routes.character_path(conn, :index)
       :displays -> Routes.display_path(conn, :index)
+      :locations -> Routes.location_path(conn, :index)
       :users -> Routes.user_path(conn, :index)
       _ -> Routes.item_path(conn, :index)
     end

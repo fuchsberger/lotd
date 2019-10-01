@@ -25,7 +25,7 @@
   <div class="field">
     <div class="control has-text-centered">
       <div class="select <%= error_class(f, :display_id) %>">
-        <%= select f, :display_id, display_select_options(@displays),
+        <%= select f, :display_id, select_options(@displays),
           class: "select",
           placeholder: "Display",
           prompt: "Choose a Display"
@@ -34,6 +34,22 @@
     </div>
   </div>
   <%= error_tag f, :display_id %>
+
+  <%# location %>
+  <%= label f, :location_id, class: "label" %>
+  <div class="field">
+    <div class="control has-text-centered">
+      <div class="select <%= error_class(f, :location_id) %>">
+        <%= select f, :location_id, select_options(@locations),
+          class: "select",
+          placeholder: "Location",
+          prompt: "Choose a Location"
+        %>
+      </div>
+    </div>
+  </div>
+  <%= error_tag f, :location_id %>
+
 
   <%= submit @submit_button_text, class: "button is-info" %>
 <% end %>

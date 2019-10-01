@@ -12,6 +12,10 @@ defmodule LotdWeb.ViewHelpers do
   def active_character_id(conn),
     do: authenticated?(conn) && conn.assigns.current_user.active_character_id
 
+  def name_link(%{} = struct) do
+    if struct.url, do: link(struct.name, to: struct.url, target: "_blank"), else: "#{struct.name}"
+  end
+
   def icon(name, opts \\ [] ) do
     class = Keyword.get(opts, :class, "")
     title = Keyword.get(opts, :title)
@@ -23,4 +27,5 @@ defmodule LotdWeb.ViewHelpers do
   def time(time) do
     content_tag :time, "", datetime: NaiveDateTime.to_iso8601(time) <> "Z"
   end
+
 end

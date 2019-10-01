@@ -4,14 +4,12 @@ defmodule Lotd.Gallery do
   """
 
   import Ecto.Query, warn: false
-  alias Lotd.Repo
 
+  alias Lotd.Repo
   alias Lotd.Accounts
   alias Lotd.Gallery.{Display, Item}
 
-  def alphabetical(query), do: from(c in query, order_by: c.name)
-
-  def list_items, do: from(i in Item, preload: :display) |> Repo.all()
+  def list_items, do: from(i in Item, preload: [:display, :location]) |> Repo.all()
 
   def list_character_item_ids(character) do
     character
@@ -65,7 +63,7 @@ defmodule Lotd.Gallery do
 
   def list_alphabetical_displays do
     Display
-    |> alphabetical()
+    |> Repo.alphabetical()
     |> Repo.all()
   end
 
