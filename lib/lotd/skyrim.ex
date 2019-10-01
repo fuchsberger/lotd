@@ -6,7 +6,40 @@ defmodule Lotd.Skyrim do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
-  alias Lotd.Skyrim.Location
+  alias Lotd.Skyrim.{Quest, Location}
+
+  # quests
+
+  def list_alphabetical_quests do
+    Quest
+    |> preload(:items)
+    |> Repo.alphabetical()
+    |> Repo.all()
+  end
+
+  def get_quest!(id), do: Repo.get!(Quest, id)
+
+  def create_quest(attrs \\ %{}) do
+    %Quest{}
+    |> Quest.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_quest(%Quest{} = quest, attrs) do
+    quest
+    |> Quest.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_quest(%Quest{} = quest) do
+    Repo.delete(quest)
+  end
+
+  def change_quest(%Quest{} = quest) do
+    Quest.changeset(quest, %{})
+  end
+
+  # locations
 
   def list_alphabetical_locations do
     Location

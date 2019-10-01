@@ -5,9 +5,62 @@ defmodule LotdWeb.ViewHelpers do
 
   use Phoenix.HTML
 
+  import Phoenix.Controller, only: [view_module: 1]
+
+  alias LotdWeb.Router.Helpers, as: Routes
+  alias LotdWeb.{CharacterView, DisplayView, LocationView, UserView}
+
+  # permission layers
   def authenticated?(conn), do: not is_nil(conn.assigns.current_user)
   def moderator?(conn), do: authenticated?(conn) && conn.assigns.current_user.moderator
   def admin?(conn), do: authenticated?(conn) && conn.assigns.current_user.admin
+
+  defp current_module(path_info) do
+    if path_info == [], do: nil, else: path_info |> List.first() |> String.to_atom()
+  end
+
+  def get_path(conn, action, opts \\ []) do
+    id = Keyword.get(opts, :id, nil)
+    module = Keyword.get(opts, :module, module(conn))
+
+    case module do
+      :character ->
+        if id,
+          do: Routes.character_path(conn, action, id),
+          else: Routes.character_path(conn, action)
+      :display ->
+        if id,
+          do: Routes.display_path(conn, action, id),
+          else: Routes.display_path(conn, action)
+      :location ->
+        if id,
+          do: Routes.location_path(conn, action, id),
+          else: Routes.location_path(conn, action)
+      :user ->
+        if id,
+          do: Routes.user_path(conn, action, id),
+          else: Routes.user_path(conn, action)
+      _ ->
+        if id,
+          do: Routes.item_path(conn, action, id),
+          else: Routes.item_path(conn, action)
+    end
+  end
+
+  def moderator_actions(conn, struct) do
+    if moderator?(conn) do
+      module = module(conn)
+      edit_path = get_path(conn, :edit, id: struct.id)
+      delete_path = get_path(conn, :delete, id: struct.id)
+
+      content_tag :td, [
+        link(icon("pencil"), to: edit_path),
+        link(icon("cancel", class: "has-text-danger"), to: delete_path, method: "delete")
+      ]
+    end
+  end
+
+
 
   def active_character_id(conn),
     do: authenticated?(conn) && conn.assigns.current_user.active_character_id
@@ -16,6 +69,14 @@ defmodule LotdWeb.ViewHelpers do
     if active_character_id(conn),
       do: Enum.map(conn.assigns.current_user.active_character.items, fn i -> i.id end),
       else: []
+  end
+
+  def module(conn) do
+    conn
+    |> view_module()
+    |> Phoenix.Naming.resource_name()
+    |> String.replace("_view", "")
+    |> String.to_atom()
   end
 
   def name_link(%{} = struct) do
@@ -30,8 +91,5 @@ defmodule LotdWeb.ViewHelpers do
     content_tag :span, icon, class: "icon #{class}", title: title
   end
 
-  def time(time) do
-    content_tag :time, "", datetime: NaiveDateTime.to_iso8601(time) <> "Z"
-  end
-
+  def time(time), do: content_tag(:time, "", datetime: NaiveDateTime.to_iso8601(time) <> "Z")
 end

@@ -49,13 +49,11 @@
         <% end %>
       </div>
       <%# Mobile Menu %>
-      <%= menu_link(@conn, :items, "Items", tag: :div, class: "navbar-item  is-hidden-desktop") %>
-      <%= menu_link(@conn, :displays, "Displays", tag: :div, class: "navbar-item  is-hidden-desktop") %>
-      <%= menu_link(@conn, :locations, "Locations", tag: :div, class: "navbar-item  is-hidden-desktop") %>
-      <%= if authenticated?(@conn) do menu_link(@conn, :characters, "Characters",
-        tag: :div, class: "navbar-item  is-hidden-desktop") end %>
-      <%= if admin?(@conn) do menu_link(@conn, :users, "Users",
-        tag: :div, class: "navbar-item  is-hidden-desktop") end %>
+      <%= menu_link(@conn, :item, tag: :div, navbar: true) %>
+      <%= menu_link(@conn, :display, navbar: true) %>
+      <%= menu_link(@conn, :location, navbar: true) %>
+      <%= if authenticated?(@conn) do menu_link(@conn, :character, navbar: true) end %>
+      <%= if admin?(@conn) do menu_link(@conn, :user, navbar: true) end %>
     </div>
   </div>
 </nav>

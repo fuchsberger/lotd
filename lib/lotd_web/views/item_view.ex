@@ -19,21 +19,4 @@ defmodule LotdWeb.ItemView do
   end
 
   def select_options(structures), do: for s <- structures, do: {s.name, s.id}
-
-  def item_actions(conn, %Item{} = i) do
-    [btn_edit(conn, i), btn_delete(conn, i)]
-  end
-
-  defp btn_edit(conn, %Item{} = item) do
-    link icon("pencil"),
-      to: Routes.item_path(conn, :edit, item.id),
-      title: "Edit Item"
-  end
-
-  defp btn_delete(conn, %Item{} = item) do
-    link icon("cancel", class: "has-text-danger"),
-      to: Routes.item_path(conn, :delete, item.id),
-      method: "delete",
-      title: "Remove Item"
-  end
 end

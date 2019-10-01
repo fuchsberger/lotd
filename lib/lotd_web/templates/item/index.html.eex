@@ -29,7 +29,7 @@
           <td class='is-hidden-touch'>
             <%= link(i.display.name, to: "#", class: "search-field") %>
           </td>
-          <%= if authenticated?(@conn) do %><td><%= item_actions(@conn, i) %></td><% end %>
+          <%= moderator_actions(@conn, i) %>
         </tr>
       <% end %>
     </tbody>

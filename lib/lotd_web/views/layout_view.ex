@@ -3,19 +3,13 @@ defmodule LotdWeb.LayoutView do
 
   def add_button(conn) do
     text =  [icon("plus"), content_tag(:span, "Add")]
-
-    case current_module(conn.path_info) do
-      :displays ->
-        if moderator?(conn), do:
-          link(text, to: Routes.display_path(conn, :new), class: "button")
-      :characters ->
-        link(text, to: Routes.character_path(conn, :new), class: "button")
-      :locations ->
-        if moderator?(conn), do:
-          link(text, to: Routes.location_path(conn, :new), class: "button")
+    case module(conn) do
+      :user ->
+        nil
+      :character ->
+        link(text, to: get_path(conn, :new), class: "button")
       _ ->
-        if moderator?(conn), do:
-          link(text, to: Routes.item_path(conn, :new), class: "button")
+        if moderator?(conn), do: link(text, to: get_path(conn, :new), class: "button")
     end
   end
 
@@ -27,26 +21,15 @@ defmodule LotdWeb.LayoutView do
       title: "Logout #{conn.assigns.current_user.nexus_name}"
   end
 
-  defp current_module(path_info) do
-    if path_info == [], do: nil, else: path_info |> List.first() |> String.to_atom()
-  end
-
-  defp get_path(conn, module) do
-    case module do
-      :characters -> Routes.character_path(conn, :index)
-      :displays -> Routes.display_path(conn, :index)
-      :locations -> Routes.location_path(conn, :index)
-      :users -> Routes.user_path(conn, :index)
-      _ -> Routes.item_path(conn, :index)
-    end
-  end
-
-  def menu_link(conn, module, title, opts \\ []) do
-    active = if current_module(conn.path_info) == module, do: " is-active", else: ""
-    class = Keyword.get(opts, :class, "") <> active
-    tag = Keyword.get(opts, :tag, :li)
-    path = get_path(conn, module)
-    content_tag tag, link(title, to: path), class: class
+  def menu_link(conn, module, opts \\ []) do
+    title = Atom.to_string(module) |> String.capitalize()
+    active = if module(conn) == module, do: " is-active", else: ""
+    class = if Keyword.has_key?(opts, :navbar),
+      do: "navbar-item is-hidden-desktop" <> active,
+      else: active
+    tag = if Keyword.has_key?(opts, :navbar), do: :div, else: :li
+    path = get_path(conn, :index, module: module)
+    content_tag tag, link("#{title}s", to: path), class: class
   end
 
   def unique_view_name(view_module, view_template) do

@@ -1,10 +1,10 @@
 <%# Desktop Menu %>
 <div class="tabs is-centered is-marginless is-hidden-touch">
   <ul>
-    <%= menu_link(@conn, nil, "Items") %>
-    <%= menu_link(@conn, :displays, "Displays") %>
-    <%= menu_link(@conn, :locations, "Locations") %>
-    <%= if authenticated?(@conn) do menu_link(@conn, :characters, "Characters") end %>
-    <%= if admin?(@conn) do menu_link(@conn, :users, "Users") end %>
+    <%= menu_link(@conn, :item) %>
+    <%= menu_link(@conn, :display) %>
+    <%= menu_link(@conn, :location) %>
+    <%= if authenticated?(@conn) do menu_link(@conn, :character) end %>
+    <%= if admin?(@conn) do menu_link(@conn, :user) end %>
   </ul>
 </div>

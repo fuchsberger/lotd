@@ -39,9 +39,7 @@ defmodule LotdWeb do
 
   def view do
     quote do
-      use Phoenix.View,
-        root: "lib/lotd_web/templates",
-        namespace: LotdWeb
+      use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [controller_module: 1, get_flash: 1, get_flash: 2, view_module: 1]
