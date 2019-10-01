@@ -18,9 +18,8 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", ItemController, :home
+    resources "/", ItemController, only: [:index]
     resources "/session", SessionController, only: [:create, :delete]
-    resources "/items", ItemController, only: [:index]
     resources "/displays", DisplayController, only: [:index]
   end
 

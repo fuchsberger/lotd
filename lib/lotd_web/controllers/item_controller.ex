@@ -8,8 +8,6 @@ defmodule LotdWeb.ItemController do
 
   defp load_displays(conn, _), do: assign conn, :displays, Gallery.list_alphabetical_displays()
 
-  def home(conn, _params), do: redirect(conn, to: Routes.item_path(conn, :index))
-
   def index(conn, _params) do
     active_character_id = active_character_id(conn)
     items = Gallery.list_items()
