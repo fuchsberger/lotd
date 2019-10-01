@@ -8,13 +8,11 @@ defmodule LotdWeb.LayoutView do
       :displays ->
         if moderator?(conn), do:
           link(text, to: Routes.display_path(conn, :new), class: "button")
-      :items ->
-        if moderator?(conn), do:
-          link(text, to: Routes.item_path(conn, :new), class: "button")
       :characters ->
         link(text, to: Routes.character_path(conn, :new), class: "button")
       _ ->
-        nil
+        if moderator?(conn), do:
+          link(text, to: Routes.item_path(conn, :new), class: "button")
     end
   end
 
