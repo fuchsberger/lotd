@@ -5,7 +5,14 @@ defmodule LotdWeb.LocationController do
   alias Lotd.Skyrim.Location
 
   def index(conn, _params) do
+    character_item_ids = character_item_ids(conn)
     locations = Skyrim.list_alphabetical_locations()
+    |> Enum.map(fn l ->
+      location_item_ids = Enum.map(l.items, fn i -> i.id end)
+      common_ids = location_item_ids -- character_item_ids
+      common_ids = location_item_ids -- common_ids
+      Map.put(l, :character_item_count, Enum.count(common_ids))
+    end)
     render(conn, "index.html", locations: locations)
   end
 

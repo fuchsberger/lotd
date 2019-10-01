@@ -10,6 +10,7 @@ defmodule Lotd.Skyrim do
 
   def list_alphabetical_locations do
     Location
+    |> preload(:items)
     |> Repo.alphabetical()
     |> Repo.all()
   end
