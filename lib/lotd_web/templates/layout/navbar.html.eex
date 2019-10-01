@@ -6,8 +6,11 @@
     <div class='navbar-item is-expanded'>
       <div id="search-control" class="control has-icons-left">
         <input id="search" class="input" type="text" placeholder="Find...">
-        <span class="icon is-small is-left">
+        <span id='search-icon' class="icon is-small is-left">
           <i class="icon-search"></i>
+        </span>
+        <span id='search-cancel' class="icon is-small has-text-link is-left is-hidden">
+          <i class="icon-cancel"></i>
         </span>
         <div id='search-info'>
           <span class='filtered-count' title="Found Entries"></span>

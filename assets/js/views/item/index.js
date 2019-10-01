@@ -6,7 +6,20 @@ export default class View extends MainView {
     super.mount()
 
     // enable search on page load
-    $('#search').val($('body').data('search'))
+    let searchtext = $('body').data('search')
+    if (searchtext != '') this.search(searchtext)
+
+    $('a.search-field').on('click', e => {
+      e.preventDefault()
+      this.search($(e.target).text())
+    }).bind(this.table)
+  }
+
+  search(text){
+    $('#search').val( text )
+    this.table.search(text).draw()
+    $('#search-icon').addClass('is-hidden')
+    $('#search-cancel').removeClass('is-hidden')
   }
 
   unmount() {

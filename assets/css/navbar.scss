@@ -22,6 +22,8 @@ i.nexus-icon {
 .navbar-start { flex-grow: 1; }
 #search-control { width: 100%!important; }
 
+#search-cancel { z-index: 100; cursor: pointer; pointer-events: all; }
+
 // Desktop only
 @media screen and (min-width: 1024px){
   .navbar-item, .navbar-link { padding: 0.5rem 0.25rem; }

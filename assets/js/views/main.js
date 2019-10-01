@@ -35,9 +35,27 @@ export default class MainView {
         table.search( this.value ).draw()
         let info = table.page.info()
 
+        // enable clean button
+        if ($(this).val() == '') {
+          $('#search-icon').removeClass('is-hidden')
+          $('#search-cancel').addClass('is-hidden')
+        } else {
+          $('#search-icon').addClass('is-hidden')
+          $('#search-cancel').removeClass('is-hidden')
+        }
+
+        // update filtered count
         $('.total-count').text(info.recordsTotal)
         $('.filtered-count')
           .text(info.recordsTotal != info.recordsDisplay ? info.recordsDisplay + ' / ' : '')
+      })
+
+      // enable search cancel button
+      $('#search-cancel').on('click', function () {
+        $('#search').val('')
+        table.search('').draw()
+        $('#search-icon').removeClass('is-hidden')
+        $('#search-cancel').addClass('is-hidden')
       })
 
       // store table for unmount
