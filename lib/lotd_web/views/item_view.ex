@@ -8,15 +8,13 @@ defmodule LotdWeb.ItemView do
       link icon("ok-squared"),
         to: Routes.item_path(conn, :borrow, i.id),
         method: "put",
-        title: "Remove from collection",
-        data: [test: "new val"]
+        title: "Remove from collection"
 
     else
       link icon("plus-squared-alt"),
         to: Routes.item_path(conn, :collect, i.id),
         method: "put",
-        title: "Add to collection",
-        data: [test: "new val"]
+        title: "Add to collection"
     end
   end
 

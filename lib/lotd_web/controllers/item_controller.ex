@@ -10,16 +10,13 @@ defmodule LotdWeb.ItemController do
 
   def index(conn, _params) do
 
-    active_character_id = active_character_id(conn)
     items = Gallery.list_items()
+    character_item_ids = if authenticated?(conn),
+      do: Gallery.list_character_item_ids(conn.assigns.current_user.active_character),
+      else: nil
 
-    character_item_ids = if active_character_id do
-      active_character_id
-      |> Accounts.get_character!()
-      |> Accounts.character_item_ids()
-    else
-      []
-    end
+    IO.inspect character_item_ids
+
     render(conn, "index.html", items: items, character_item_ids: character_item_ids)
   end
 

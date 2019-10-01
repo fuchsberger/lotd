@@ -12,11 +12,17 @@ defmodule Lotd.Accounts do
   # user
   def list_users, do: Repo.all(User)
 
-  def get_user(id), do: Repo.get(User, id)
+  def get_user!(id) do
+    User
+    |> preload(:active_character)
+    |> Repo.get!(id)
+  end
 
-  def get_user!(id), do: Repo.get!(User, id)
-
-  def get_user_by(params), do: Repo.get_by(User, params)
+  def get_user_by(params) do
+    User
+    |> preload(:active_character)
+    |> Repo.get_by(params)
+  end
 
   def register_user(attrs \\ %{}) do
     %User{}

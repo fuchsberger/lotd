@@ -13,6 +13,12 @@ defmodule Lotd.Gallery do
 
   def list_items, do: from(i in Item, preload: :display) |> Repo.all()
 
+  def list_character_item_ids(character) do
+    character
+    |> Repo.preload(items: from(i in Item, select: i.id))
+    |> Map.get(:items)
+  end
+
   def get_item!(id), do: Repo.get!(Item, id)
 
   def create_item(attrs \\ %{}) do

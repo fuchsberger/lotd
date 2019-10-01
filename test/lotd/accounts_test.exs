@@ -2,17 +2,37 @@ defmodule Lotd.AccountsTest do
   use Lotd.DataCase, async: true
 
   alias Lotd.Accounts
-  alias Lotd.Accounts.User
+  alias Lotd.Accounts.{Character, User}
 
-  describe "user_registration" do
+  test "list_users/0 lists all users" do
+    %User{id: id1} = user_fixture()
+    assert [%User{id: ^id1}] = Accounts.list_users()
+    %User{id: id2} = user_fixture()
+    assert [%User{id: ^id1}, %User{id: ^id2}] = Accounts.list_users()
+  end
+
+  test "get_user!/1 returns the user with a given id" do
+    %User{id: id} = user_fixture()
+    assert %User{id: ^id} = Accounts.get_user!(id)
+  end
+
+  test "get_user_by/1 returns a user by one or more attributes" do
+    %User{nexus_id: nexus_id} = user_fixture()
+    assert %User{nexus_id: ^nexus_id} = Accounts.get_user_by(nexus_id: nexus_id)
+  end
+
+  describe "register_user/1 registers a new user" do
 
     @valid_attrs %{nexus_id: 42, nexus_name: "some_nexus_name"}
     @invalid_attrs %{}
 
     test "with valid data inserts user" do
-      assert {:ok, %User{id: id}=user} = Accounts.register_user(@valid_attrs)
+      assert {:ok, %User{id: id} = user} = Accounts.register_user(@valid_attrs)
       assert user.nexus_id == 42
       assert user.nexus_name == "some_nexus_name"
+      assert user.active_character_id == nil
+      assert user.moderator == false
+      assert user.admin == false
       assert [%User{id: ^id}] = Accounts.list_users()
     end
 
@@ -29,30 +49,35 @@ defmodule Lotd.AccountsTest do
     end
   end
 
-  describe "user_roles" do
+  test "update_user/2 updates a user" do
+    user = user_fixture()
+    {:ok, user} = Accounts.update_user(user, %{ admin: true })
+    {:ok, user} = Accounts.update_user(user, %{ moderator: true })
+    assert user.admin == true
+    assert user.moderator == true
+    {:ok, user} = Accounts.update_user(user, %{ admin: false, moderator: false })
+    assert user.admin == false
+    assert user.moderator == false
+  end
+
+  describe "characters" do
+    alias Lotd.Accounts.Character
 
     setup do
       {:ok, user: user_fixture()}
     end
 
-    test "user should not have moderator or admin roles on creation", %{ user: user } do
-      assert user.moderator == false
-      assert user.admin == false
+    test "list_user_characters/1", %{user: user} do
+      %Character{id: id1} = character_fixture(user)
+      assert [%Character{id: ^id1}] = Accounts.list_user_characters(user)
+      %Character{id: id2} = character_fixture(user)
+      # NOTE: Test could (incorrectly) fail if select retrieves entries in different order
+      assert [%Character{id: ^id2}, %Character{id: ^id1}] = Accounts.list_user_characters(user)
     end
 
-    test "promote / demote roles", %{ user: user } do
-      {:ok, user} = Accounts.update_user(user, %{ admin: true })
-      {:ok, user} = Accounts.update_user(user, %{ moderator: true })
-      assert user.admin == true
-      assert user.moderator == true
-      {:ok, user} = Accounts.update_user(user, %{ admin: false, moderator: false })
-      assert user.admin == false
-      assert user.moderator == false
-    end
-  end
+    test "get_character!/1" do
 
-  # describe "characters" do
-  #   alias Lotd.Accounts.Character
+    end
 
   #   @valid_attrs %{name: "some name"}
   #   @update_attrs %{name: "some updated name"}
@@ -108,5 +133,5 @@ defmodule Lotd.AccountsTest do
   #     character = character_fixture()
   #     assert %Ecto.Changeset{} = Accounts.change_character(character)
   #   end
-  # end
+  end
 end
