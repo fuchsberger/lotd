@@ -13,7 +13,7 @@ defmodule LotdWeb.ViewHelpers do
     do: authenticated?(conn) && conn.assigns.current_user.active_character_id
 
   def character_item_ids(conn) do
-    if authenticated?(conn),
+    if active_character_id(conn),
       do: Enum.map(conn.assigns.current_user.active_character.items, fn i -> i.id end),
       else: []
   end
