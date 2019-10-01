@@ -22,7 +22,9 @@
             <td><%= btn_collect(@conn, i, @character_item_ids) %></td>
           <% end %>
           <td><strong><%= item_name(i) %></strong></td>
-          <td class='is-hidden-touch'><%= i.display.name %></td>
+          <td class='search-field is-hidden-touch'>
+            <%= link(i.display.name, to: Routes.item_path(@conn, :index, search: i.display.name)) %>
+          </td>
           <%= if authenticated?(@conn) do %><td><%= item_actions(@conn, i) %></td><% end %>
         </tr>
       <% end %>

@@ -9,7 +9,10 @@
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
   </head>
-  <body data-view='<%= unique_view_name(@view_module, @view_template) %>'>
+  <body
+    data-view='<%= unique_view_name(@view_module, @view_template) %>'
+    data-search='<%= Map.get(@conn.params, "search", "") %>'
+  >
     <div id="loader-wrapper"><div id="loader"></div></div>
     <%= render "navbar.html", assigns %>
     <%= render "flash.html", flash: get_flash(@conn) %>
