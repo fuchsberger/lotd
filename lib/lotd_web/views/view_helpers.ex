@@ -6,6 +6,7 @@ defmodule LotdWeb.ViewHelpers do
   use Phoenix.HTML
 
   import Phoenix.Controller, only: [view_module: 1]
+  import Phoenix.View, only: [render: 3]
 
   alias LotdWeb.Router.Helpers, as: Routes
   alias LotdWeb.{CharacterView, DisplayView, LocationView, UserView}
@@ -93,6 +94,19 @@ defmodule LotdWeb.ViewHelpers do
 
     icon = content_tag :i, "", class: "icon-#{name}"
     content_tag :span, icon, class: "icon #{class}", title: title
+  end
+
+  def render_form(conn, action) do
+    path = if action == :update,
+      do: get_path(conn, :update, id: conn.assigns.changeset.data.id),
+      else: get_path(conn, :create)
+    module = module(conn)
+
+    render LotdWeb.LayoutView, "form.html",
+      action: path,
+      changeset: conn.assigns.changeset,
+      context: module,
+      submit_button_text: Atom.to_string(action) |> String.capitalize()
   end
 
   def time(time), do: content_tag(:time, "", datetime: NaiveDateTime.to_iso8601(time) <> "Z")
