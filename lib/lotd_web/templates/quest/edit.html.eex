@@ -1,0 +1,8 @@
+<section class="section has-text-centered">
+  <h3 class="title is-3">Edit Quest</h3>
+  <%= render @view_module, "form.html",
+    changeset: @changeset,
+    action: Routes.quest_path(@conn, :update, @changeset.data.id),
+    submit_button_text: "Edit"
+    %>
+</section>

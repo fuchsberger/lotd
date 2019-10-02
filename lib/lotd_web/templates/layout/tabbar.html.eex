@@ -3,6 +3,7 @@
   <ul>
     <%= menu_link(@conn, :item) %>
     <%= menu_link(@conn, :display) %>
+    <%= menu_link(@conn, :quest) %>
     <%= menu_link(@conn, :location) %>
     <%= if authenticated?(@conn) do menu_link(@conn, :character) end %>
     <%= if admin?(@conn) do menu_link(@conn, :user) end %>

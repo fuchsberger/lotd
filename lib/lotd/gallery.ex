@@ -9,7 +9,7 @@ defmodule Lotd.Gallery do
   alias Lotd.Accounts
   alias Lotd.Gallery.{Display, Item}
 
-  def list_items, do: from(i in Item, preload: [:display, :location]) |> Repo.all()
+  def list_items, do: from(i in Item, preload: [:display, :quest, :location]) |> Repo.all()
 
   def list_character_item_ids(character) do
     character

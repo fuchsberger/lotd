@@ -1,0 +1,28 @@
+<div class="table-container">
+  <table class="display">
+    <thead>
+      <tr>
+        <th>Quest</th>
+        <%= if active_character_id(@conn) do %>
+          <th class='is-hidden-touch' data-searchable="false">Items Found</th>
+        <% end %>
+        <th class='is-hidden-touch' data-searchable="false">Items Total</th>
+        <%= if moderator?(@conn) do %>
+          <th data-searchable="false" data-sortable='false' width='35px'></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for q <- @quests do %>
+        <tr>
+          <td><strong><%= name_link(q) %></strong></td>
+          <%= if active_character_id(@conn) do %>
+            <td class='is-hidden-touch'><%= q.character_item_count %></td>
+          <% end %>
+          <td class='is-hidden-touch'><%= Enum.count(q.items) %></td>
+          <%= moderator_actions(@conn, q) %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

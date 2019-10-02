@@ -32,6 +32,10 @@ defmodule LotdWeb.ViewHelpers do
         if id,
           do: Routes.display_path(conn, action, id),
           else: Routes.display_path(conn, action)
+      :quest ->
+        if id,
+          do: Routes.quest_path(conn, action, id),
+          else: Routes.quest_path(conn, action)
       :location ->
         if id,
           do: Routes.location_path(conn, action, id),

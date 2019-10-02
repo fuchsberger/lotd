@@ -4,6 +4,7 @@
     action: Routes.item_path(@conn, :update, @changeset.data.id),
     changeset: @changeset,
     displays: @displays,
+    quests: @quests,
     locations: @locations,
     submit_button_text: "Edit"
   %>

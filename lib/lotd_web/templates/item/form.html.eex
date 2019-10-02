@@ -35,6 +35,21 @@
   </div>
   <%= error_tag f, :display_id %>
 
+  <%# quest %>
+  <%= label f, :quest_id, class: "label" %>
+  <div class="field">
+    <div class="control has-text-centered">
+      <div class="select <%= error_class(f, :quest_id) %>">
+        <%= select f, :quest_id, select_options(@quests),
+          class: "select",
+          placeholder: "Quest",
+          prompt: "Choose a Quest"
+        %>
+      </div>
+    </div>
+  </div>
+  <%= error_tag f, :quest_id %>
+
   <%# location %>
   <%= label f, :location_id, class: "label" %>
   <div class="field">

@@ -10,6 +10,7 @@
         <% end %>
         <th>Item</th>
         <th class='is-hidden-touch'>Location</th>
+        <th class='is-hidden-touch'>Quest</th>
         <th class='is-hidden-touch'>Display</th>
         <%= if authenticated?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='35px'></th>
@@ -25,6 +26,9 @@
           <td><strong><%= name_link(i) %></strong></td>
           <td class='is-hidden-touch'>
             <%= if i.location do link(i.location.name, to: "#", class: "search-field") end %>
+          </td>
+          <td class='is-hidden-touch'>
+            <%= if i.quest do link(i.quest.name, to: "#", class: "search-field") end %>
           </td>
           <td class='is-hidden-touch'>
             <%= link(i.display.name, to: "#", class: "search-field") %>
