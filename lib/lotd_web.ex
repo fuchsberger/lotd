@@ -29,6 +29,7 @@ defmodule LotdWeb do
         active_character_id: 1,
         admin?: 1,
         character_item_ids: 1,
+        character_mod_ids: 1,
         moderator?: 1
       ]
       alias LotdWeb.Router.Helpers, as: Routes

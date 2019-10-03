@@ -14,7 +14,7 @@ defmodule Lotd.Accounts do
 
   def get_user!(id) do
     User
-    |> preload(characters: [], active_character: [:items])
+    |> preload(characters: [], active_character: [:items, :mods])
     |> Repo.get!(id)
   end
 

@@ -5,7 +5,7 @@ defmodule Lotd.Skyrim do
 
   import Ecto.Query, warn: false
 
-  alias Lotd.Repo
+  alias Lotd.{Accounts, Repo}
   alias Lotd.Skyrim.{Quest, Location, Mod}
 
   # quests
@@ -89,6 +89,30 @@ defmodule Lotd.Skyrim do
     mod
     |> Mod.changeset(attrs)
     |> Repo.update()
+  end
+
+  defp mod_ids(%{} = struct) do
+    struct
+    |> Map.get(:mods)
+    |> Enum.map(fn m -> m.id end)
+  end
+
+  def activate_mod(character, mod_id) do
+    mods = from(m in Mod, where: m.id == ^mod_id or m.id in ^mod_ids(character)) |> Repo.all
+
+    character
+    |> Accounts.change_character()
+    |> Ecto.Changeset.put_assoc(:mods, mods)
+    |> Repo.update!
+  end
+
+  def deactivate_mod(character, mod_id) do
+    mods = from(m in Mod, where: m.id != ^mod_id and m.id in ^mod_ids(character)) |> Repo.all
+
+    character
+    |> Accounts.change_character()
+    |> Ecto.Changeset.put_assoc(:mods, mods)
+    |> Repo.update!
   end
 
   def delete_mod(%Mod{} = mod) do

@@ -32,6 +32,8 @@ defmodule LotdWeb.Router do
     resources "/characters", CharacterController, except: [:edit, :show]
     put "/items/:id/collect", ItemController, :collect
     put "/items/:id/borrow", ItemController, :borrow
+    put "/mods/:id/activate", ModController, :activate
+    put "/mods/:id/deactivate", ModController, :deactivate
   end
 
   # Moderator Routes

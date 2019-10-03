@@ -2,6 +2,11 @@
   <table class="display">
     <thead>
       <tr>
+        <%= if active_character_id(@conn) do %>
+          <th data-searchable="false" data-sortable='false' width='10px' class='has-small-padding' title='Activated Mods'>
+            <%= icon("ok-squared") %>
+          </th>
+        <% end %>
         <th>Mod</th>
         <th>Filename</th>
         <%= if active_character_id(@conn) do %>
@@ -14,15 +19,18 @@
       </tr>
     </thead>
     <tbody>
-      <%= for q <- @mods do %>
+      <%= for m <- @mods do %>
         <tr>
-          <td><strong><%= name_link(q) %></strong></td>
-          <td><%= q.filename %></td>
           <%= if active_character_id(@conn) do %>
-            <td class='is-hidden-touch'><%= q.character_item_count %></td>
+            <td><%= btn_activate(@conn, m, @character_mod_ids) %></td>
           <% end %>
-          <td class='is-hidden-touch'><%= Enum.count(q.items) %></td>
-          <%= moderator_actions(@conn, q) %>
+          <td><strong><%= name_link(m) %></strong></td>
+          <td><%= m.filename %></td>
+          <%= if active_character_id(@conn) do %>
+            <td class='is-hidden-touch'><%= m.character_item_count %></td>
+          <% end %>
+          <td class='is-hidden-touch'><%= Enum.count(m.items) %></td>
+          <%= moderator_actions(@conn, m) %>
         </tr>
       <% end %>
     </tbody>

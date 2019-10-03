@@ -9,6 +9,7 @@ defmodule Lotd.Skyrim.Mod do
     has_many :items, Lotd.Gallery.Item
     has_many :quests, Lotd.Skyrim.Quest
     has_many :locations, Lotd.Skyrim.Location
+    many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_mods"
   end
 
   @doc false

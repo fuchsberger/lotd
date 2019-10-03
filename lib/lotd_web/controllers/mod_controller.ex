@@ -13,7 +13,8 @@ defmodule LotdWeb.ModController do
       common_ids = mod_item_ids -- common_ids
       Map.put(l, :character_item_count, Enum.count(common_ids))
     end)
-    render(conn, "index.html", mods: mods)
+
+    render(conn, "index.html", mods: mods, character_mod_ids: character_mod_ids(conn))
   end
 
   def new(conn, _params) do
@@ -45,6 +46,16 @@ defmodule LotdWeb.ModController do
       {:error, changeset} ->
         render(conn, "edit.html", changeset: changeset)
     end
+  end
+
+  def activate(conn, %{"id" => mod_id}) do
+    Skyrim.activate_mod(conn.assigns.current_user.active_character, mod_id)
+    redirect(conn, to: Routes.mod_path(conn, :index))
+  end
+
+  def deactivate(conn, %{"id" => mod_id}) do
+    Skyrim.deactivate_mod(conn.assigns.current_user.active_character, mod_id)
+    redirect(conn, to: Routes.mod_path(conn, :index))
   end
 
   def delete(conn, %{"id" => id}) do

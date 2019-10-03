@@ -6,6 +6,7 @@ defmodule Lotd.Accounts.Character do
     field :name, :string
     belongs_to :user, Lotd.Accounts.User
     many_to_many :items, Lotd.Gallery.Item, join_through: "characters_items", on_replace: :delete
+    many_to_many :mods, Lotd.Skyrim.Mod, join_through: "characters_mods", on_replace: :delete
     timestamps()
   end
 

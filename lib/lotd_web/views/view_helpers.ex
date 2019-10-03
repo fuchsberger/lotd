@@ -72,6 +72,12 @@ defmodule LotdWeb.ViewHelpers do
       else: []
   end
 
+  def character_mod_ids(conn) do
+    if active_character_id(conn),
+      do: Enum.map(conn.assigns.current_user.active_character.mods, fn m -> m.id end),
+      else: []
+  end
+
   def module(conn) do
     conn
     |> view_module()
