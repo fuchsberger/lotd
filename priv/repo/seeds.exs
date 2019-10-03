@@ -12,11 +12,11 @@
 
 alias Lotd.Accounts
 
-{:ok, user} = Accounts.create_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" })
+{:ok, user} = Accounts.register_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" })
 Accounts.update_user(user, %{ admin: true, moderator: true })
 
-{:ok, user} = Accounts.create_user(%{ nexus_id: 31179975, nexus_name: "Pickysaurus" })
+{:ok, user} = Accounts.register_user(%{ nexus_id: 31179975, nexus_name: "Pickysaurus" })
 Accounts.update_user(user, %{ admin: true, moderator: true })
 
-{:ok, user} = Accounts.create_user(%{ nexus_id: 2846158, nexus_name: "icecreamassassin" })
+{:ok, user} = Accounts.register_user(%{ nexus_id: 2846158, nexus_name: "icecreamassassin" })
 Accounts.update_user(user, %{ admin: true, moderator: true })

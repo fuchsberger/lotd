@@ -9,16 +9,11 @@ defmodule LotdWeb.ViewHelpers do
   import Phoenix.View, only: [render: 3]
 
   alias LotdWeb.Router.Helpers, as: Routes
-  alias LotdWeb.{CharacterView, DisplayView, LocationView, UserView}
 
   # permission layers
   def authenticated?(conn), do: not is_nil(conn.assigns.current_user)
   def moderator?(conn), do: authenticated?(conn) && conn.assigns.current_user.moderator
   def admin?(conn), do: authenticated?(conn) && conn.assigns.current_user.admin
-
-  defp current_module(path_info) do
-    if path_info == [], do: nil, else: path_info |> List.first() |> String.to_atom()
-  end
 
   def get_path(conn, action, opts \\ []) do
     id = Keyword.get(opts, :id, nil)
@@ -54,7 +49,6 @@ defmodule LotdWeb.ViewHelpers do
 
   def moderator_actions(conn, struct) do
     if moderator?(conn) do
-      module = module(conn)
       edit_path = get_path(conn, :edit, id: struct.id)
       delete_path = get_path(conn, :delete, id: struct.id)
 
@@ -64,8 +58,6 @@ defmodule LotdWeb.ViewHelpers do
       ]
     end
   end
-
-
 
   def active_character_id(conn),
     do: authenticated?(conn) && conn.assigns.current_user.active_character_id

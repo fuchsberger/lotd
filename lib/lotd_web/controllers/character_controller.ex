@@ -25,7 +25,8 @@ defmodule LotdWeb.CharacterController do
 
         # if it is first character, automatically activate it
         character_count = current_user |> Accounts.list_user_characters() |> Enum.count()
-        if character_count == 1, do: Accounts.activate_character(current_user, character)
+        if character_count == 1,
+          do: Accounts.update_user(current_user, %{ active_character_id: character.id})
 
         conn
         |> put_flash(:info, "Character was sucessfully created. Good hunting!")
@@ -37,16 +38,22 @@ defmodule LotdWeb.CharacterController do
   end
 
   def update(conn, %{"id" => id}, current_user) do
-    character =  Accounts.get_user_character!(current_user, id)
-    case Accounts.activate_character(current_user, character) do
-      {:ok, _user} ->
-        conn
-        |> put_flash(:info, "#{character.name} is hunting relics...")
-        |> redirect(to: Routes.character_path(conn, :index))
-      {:error, _reason} ->
-        conn
-        |> put_flash(:info, "Error: TODO: improve this...")
-        |> redirect(to: Routes.character_path(conn, :index))
+    character = Enum.find(current_user.characters, fn c -> c.id == String.to_integer(id) end)
+    if is_nil(character) do
+      conn
+      |> put_flash(:info, "This character does not exist or you do not own him.")
+      |> redirect(to: Routes.character_path(conn, :index))
+    else
+      case Accounts.update_user(current_user,  %{ active_character_id: character.id }) do
+        {:ok, _user} ->
+          conn
+          |> put_flash(:info, "#{character.name} is hunting relics...")
+          |> redirect(to: Routes.character_path(conn, :index))
+        {:error, _reason} ->
+          conn
+          |> put_flash(:info, "Database Error. Character could not be activated.")
+          |> redirect(to: Routes.character_path(conn, :index))
+      end
     end
   end
 
@@ -57,7 +64,7 @@ defmodule LotdWeb.CharacterController do
       Accounts.update_user(current_user, %{ active_character_id: nil })
     end
 
-    character = Accounts.get_user_character!(current_user, id)
+    character = Enum.find(current_user.characters, fn c -> c.id == String.to_integer(id) end)
     {:ok, _character} = Accounts.delete_character(character)
 
     conn

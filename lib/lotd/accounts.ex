@@ -14,7 +14,7 @@ defmodule Lotd.Accounts do
 
   def get_user!(id) do
     User
-    |> preload(active_character: [:items])
+    |> preload(characters: [], active_character: [:items])
     |> Repo.get!(id)
   end
 
@@ -37,6 +37,11 @@ defmodule Lotd.Accounts do
   end
 
   # character
+
+  defp user_characters_query(query, %User{id: user_id}) do
+    from(c in query, where: c.user_id == ^user_id)
+  end
+
   def list_user_characters(%User{} = user) do
     Character
     |> user_characters_query(user)
@@ -46,23 +51,7 @@ defmodule Lotd.Accounts do
 
   def get_character!(id) do
     from(c in Character, where: c.id == ^id, preload: [:items])
-    |> Repo.one()
-  end
-
-  def get_user_character!(%User{} = user, id) do
-    Character
-    |> user_characters_query(user)
-    |> Repo.get!(id)
-  end
-
-  def character_item_ids(character) do
-    character
-    |> Map.get(:items)
-    |> Enum.map(fn i -> i.id end)
-  end
-
-  defp user_characters_query(query, %User{id: user_id}) do
-    from(c in query, where: c.user_id == ^user_id)
+    |> Repo.one!()
   end
 
   def create_character(%User{} = user, attrs \\ %{}) do
@@ -80,12 +69,4 @@ defmodule Lotd.Accounts do
 
   def delete_character(%Character{} = character), do: Repo.delete(character)
   def change_character(%Character{} = character), do: Character.changeset(character, %{})
-
-  def activate_character(user, %Character{} = character) do
-    if character.user_id == user.id do
-      update_user(user, %{ active_character_id: character.id })
-    else
-      { :error, "You cannot activate another user's character." }
-    end
-  end
 end

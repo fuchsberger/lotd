@@ -23,5 +23,6 @@ defmodule Lotd.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:admin, :moderator, :active_character_id])
+    |> assoc_constraint(:active_character)
   end
 end

@@ -39,9 +39,15 @@ defmodule Lotd.Gallery do
     Item.changeset(item, %{})
   end
 
+  defp item_ids(%{} = struct) do
+    struct
+    |> Map.get(:items)
+    |> Enum.map(fn i -> i.id end)
+  end
+
   def collect_item(character, item_id) do
     items = from(i in Item,
-      where: i.id == ^item_id or i.id in ^Accounts.character_item_ids(character)
+      where: i.id == ^item_id or i.id in ^item_ids(character)
     ) |> Repo.all
 
     character
@@ -52,7 +58,7 @@ defmodule Lotd.Gallery do
 
   def borrow_item(character, item_id) do
     items = from(i in Item,
-      where: i.id != ^item_id and i.id in ^Accounts.character_item_ids(character)
+      where: i.id != ^item_id and i.id in ^item_ids(character)
     ) |> Repo.all
 
     character

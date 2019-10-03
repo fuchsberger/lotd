@@ -14,7 +14,6 @@ defmodule Lotd.TestHelpers do
     user
   end
 
-
   def character_fixture(%Accounts.User{} = user, attrs \\ %{}) do
     attrs = Enum.into(attrs, %{ name: "Dovakiin" })
     {:ok, character} = Accounts.create_character(user, attrs)

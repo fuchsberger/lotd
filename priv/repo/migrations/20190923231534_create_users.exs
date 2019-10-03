@@ -23,7 +23,7 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
 
     # link users and characters
     alter table(:users) do
-      add :active_character_id, references(:characters)
+      add :active_character_id, references(:characters, on_delete: :nilify_all)
     end
     create index(:users, [:active_character_id])
 
