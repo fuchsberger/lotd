@@ -17,6 +17,4 @@ defmodule LotdWeb.ItemView do
         title: "Add to collection"
     end
   end
-
-  def select_options(structures), do: for s <- structures, do: {s.name, s.id}
 end

@@ -7,6 +7,7 @@
     </div>
   </div>
   <%= error_tag f, :name %>
+
   <%= label f, :url, class: "label" %>
   <div class="field">
     <div class="control is-expanded">
@@ -15,5 +16,31 @@
     </div>
   </div>
   <%= error_tag f, :url %>
+
+  <%= if @context == :mod do %>
+
+    <%= label f, :filename, class: "label" %>
+    <div class="field">
+      <div class="control is-expanded">
+        <%= text_input f, :filename,
+          class: "input #{error_class(f, :filename)}", placeholder: "Filename" %>
+      </div>
+    </div>
+    <%= error_tag f, :filename %>
+
+  <% end %>
+
+  <%= if @context == :location or @context == :quest do %>
+    <%= label f, :mod_id, class: "label" %>
+    <div class="field">
+      <div class="control has-text-centered">
+        <div class="select <%= error_class(f, :mod_id) %>">
+          <%= select f, :mod_id, select_options(@mods), class: "select", prompt: "Choose a Mod" %>
+        </div>
+      </div>
+    </div>
+    <%= error_tag f, :mod_id %>
+  <% end %>
+
   <%= submit @submit_button_text, class: "button is-info" %>
 <% end %>

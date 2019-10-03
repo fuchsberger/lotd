@@ -124,4 +124,67 @@
 #       assert %Ecto.Changeset{} = Skyrim.change_quest(quest)
 #     end
 #   end
-# end
+# 
+  describe "mods" do
+    alias Lotd.Skyrim.Mod
+
+    @valid_attrs %{filename: "some filename", name: "some name", url: "some url"}
+    @update_attrs %{filename: "some updated filename", name: "some updated name", url: "some updated url"}
+    @invalid_attrs %{filename: nil, name: nil, url: nil}
+
+    def mod_fixture(attrs \\ %{}) do
+      {:ok, mod} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Skyrim.create_mod()
+
+      mod
+    end
+
+    test "list_mods/0 returns all mods" do
+      mod = mod_fixture()
+      assert Skyrim.list_mods() == [mod]
+    end
+
+    test "get_mod!/1 returns the mod with given id" do
+      mod = mod_fixture()
+      assert Skyrim.get_mod!(mod.id) == mod
+    end
+
+    test "create_mod/1 with valid data creates a mod" do
+      assert {:ok, %Mod{} = mod} = Skyrim.create_mod(@valid_attrs)
+      assert mod.filename == "some filename"
+      assert mod.name == "some name"
+      assert mod.url == "some url"
+    end
+
+    test "create_mod/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Skyrim.create_mod(@invalid_attrs)
+    end
+
+    test "update_mod/2 with valid data updates the mod" do
+      mod = mod_fixture()
+      assert {:ok, %Mod{} = mod} = Skyrim.update_mod(mod, @update_attrs)
+      assert mod.filename == "some updated filename"
+      assert mod.name == "some updated name"
+      assert mod.url == "some updated url"
+    end
+
+    test "update_mod/2 with invalid data returns error changeset" do
+      mod = mod_fixture()
+      assert {:error, %Ecto.Changeset{}} = Skyrim.update_mod(mod, @invalid_attrs)
+      assert mod == Skyrim.get_mod!(mod.id)
+    end
+
+    test "delete_mod/1 deletes the mod" do
+      mod = mod_fixture()
+      assert {:ok, %Mod{}} = Skyrim.delete_mod(mod)
+      assert_raise Ecto.NoResultsError, fn -> Skyrim.get_mod!(mod.id) end
+    end
+
+    test "change_mod/1 returns a mod changeset" do
+      mod = mod_fixture()
+      assert %Ecto.Changeset{} = Skyrim.change_mod(mod)
+    end
+  end
+end

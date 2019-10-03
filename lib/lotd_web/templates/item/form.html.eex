@@ -27,13 +27,23 @@
       <div class="select <%= error_class(f, :display_id) %>">
         <%= select f, :display_id, select_options(@displays),
           class: "select",
-          placeholder: "Display",
           prompt: "Choose a Display"
         %>
       </div>
     </div>
   </div>
   <%= error_tag f, :display_id %>
+
+  <%# mod %>
+  <%= label f, :mod_id, class: "label" %>
+  <div class="field">
+    <div class="control has-text-centered">
+      <div class="select <%= error_class(f, :mod_id) %>">
+        <%= select f, :mod_id, select_options(@mods), class: "select", prompt: "Choose a Mod" %>
+      </div>
+    </div>
+  </div>
+  <%= error_tag f, :mod_id %>
 
   <%# quest %>
   <%= label f, :quest_id, class: "label" %>
@@ -42,7 +52,6 @@
       <div class="select <%= error_class(f, :quest_id) %>">
         <%= select f, :quest_id, select_options(@quests),
           class: "select",
-          placeholder: "Quest",
           prompt: "Choose a Quest"
         %>
       </div>
@@ -57,7 +66,6 @@
       <div class="select <%= error_class(f, :location_id) %>">
         <%= select f, :location_id, select_options(@locations),
           class: "select",
-          placeholder: "Location",
           prompt: "Choose a Location"
         %>
       </div>

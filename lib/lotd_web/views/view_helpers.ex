@@ -36,6 +36,10 @@ defmodule LotdWeb.ViewHelpers do
         if id,
           do: Routes.location_path(conn, action, id),
           else: Routes.location_path(conn, action)
+      :mod ->
+        if id,
+          do: Routes.mod_path(conn, action, id),
+          else: Routes.mod_path(conn, action)
       :user ->
         if id,
           do: Routes.user_path(conn, action, id),
@@ -98,8 +102,12 @@ defmodule LotdWeb.ViewHelpers do
       action: path,
       changeset: conn.assigns.changeset,
       context: module,
+      mods: Map.get(conn.assigns, :mods),
       submit_button_text: Atom.to_string(action) |> String.capitalize()
   end
 
+  def select_options(structures), do: for s <- structures, do: {s.name, s.id}
+
   def time(time), do: content_tag(:time, "", datetime: NaiveDateTime.to_iso8601(time) <> "Z")
+
 end

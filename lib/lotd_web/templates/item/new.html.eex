@@ -5,6 +5,7 @@
     changeset: @changeset,
     displays: @displays,
     quests: @quests,
+    mods: @mods,
     locations: @locations,
     submit_button_text: "Create"
   %>

@@ -5,12 +5,14 @@ defmodule LotdWeb.ItemController do
   alias Lotd.Gallery.Item
 
   plug :load_displays when action in [:new, :create, :edit, :update]
-  plug :load_quests when action in [:new, :create, :edit, :update]
   plug :load_locations when action in [:new, :create, :edit, :update]
+  plug :load_mods when action in [:new, :create, :edit, :update]
+  plug :load_quests when action in [:new, :create, :edit, :update]
 
   defp load_displays(conn, _), do: assign conn, :displays, Gallery.list_alphabetical_displays()
-  defp load_quests(conn, _), do: assign conn, :quests, Skyrim.list_alphabetical_quests()
   defp load_locations(conn, _), do: assign conn, :locations, Skyrim.list_alphabetical_locations()
+  defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_alphabetical_mods()
+  defp load_quests(conn, _), do: assign conn, :quests, Skyrim.list_alphabetical_quests()
 
   def index(conn, _params) do
     items = Gallery.list_items()

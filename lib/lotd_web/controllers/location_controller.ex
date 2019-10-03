@@ -4,6 +4,10 @@ defmodule LotdWeb.LocationController do
   alias Lotd.Skyrim
   alias Lotd.Skyrim.Location
 
+  plug :load_mods when action in [:new, :create, :edit, :update]
+
+  defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_alphabetical_mods()
+
   def index(conn, _params) do
     character_item_ids = character_item_ids(conn)
     locations = Skyrim.list_alphabetical_locations()

@@ -1,0 +1,4 @@
+<section class="section has-text-centered">
+  <h3 class="title is-3">Edit Mod</h3>
+  <%= render_form @conn, :update %>
+</section>

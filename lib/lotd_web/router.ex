@@ -23,6 +23,7 @@ defmodule LotdWeb.Router do
     resources "/displays", DisplayController, only: [:index]
     resources "/locations", LocationController, only: [:index]
     resources "/quests", QuestController, only: [:index]
+    resources "/mods", ModController, only: [:index]
   end
 
   # Authenticated Routes
@@ -40,6 +41,7 @@ defmodule LotdWeb.Router do
     resources "/displays", DisplayController, except: [:index]
     resources "/locations", LocationController, except: [:index]
     resources "/quests", QuestController, except: [:index]
+    resources "/mods", ModController, except: [:index]
   end
 
   # Admin Routes

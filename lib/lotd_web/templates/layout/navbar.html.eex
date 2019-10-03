@@ -53,6 +53,7 @@
       <%= menu_link(@conn, :display, navbar: true) %>
       <%= menu_link(@conn, :quest, navbar: true) %>
       <%= menu_link(@conn, :location, navbar: true) %>
+      <%= menu_link(@conn, :mod, navbar: true) %>
       <%= if authenticated?(@conn) do menu_link(@conn, :character, navbar: true) end %>
       <%= if admin?(@conn) do menu_link(@conn, :user, navbar: true) end %>
     </div>

@@ -6,6 +6,7 @@
     displays: @displays,
     quests: @quests,
     locations: @locations,
+    mods: @mods,
     submit_button_text: "Edit"
   %>
 </section>
