@@ -12,7 +12,7 @@
         <th class='is-hidden-touch'>Location</th>
         <th class='is-hidden-touch'>Quest</th>
         <th class='is-hidden-touch'>Display</th>
-        <%= if authenticated?(@conn) do %>
+        <%= if moderator?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='35px'></th>
         <% end %>
       </tr>
@@ -33,7 +33,7 @@
           <td class='is-hidden-touch'>
             <%= link(i.display.name, to: "#", class: "search-field") %>
           </td>
-          <%= moderator_actions(@conn, i) %>
+          <%= if moderator?(@conn) do moderator_actions(@conn, i) end %>
         </tr>
       <% end %>
     </tbody>

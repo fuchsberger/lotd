@@ -29,8 +29,8 @@ defmodule LotdWeb.CharacterController do
           do: Accounts.update_user(current_user, %{ active_character_id: character.id})
 
         conn
-        |> put_flash(:info, "Character was sucessfully created. Good hunting!")
-        |> redirect(to: Routes.character_path(conn, :index))
+        |> put_flash(:info, "Character was sucessfully created. Please select the mods you are going to use:")
+        |> redirect(to: Routes.mod_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -59,16 +59,18 @@ defmodule LotdWeb.CharacterController do
 
   def delete(conn, %{"id" => id}, current_user) do
 
-    # if this is the active character, remove it from user as well
+    # if this is the active character do not allow deleting it
     if active_character_id(conn) == String.to_integer(id) do
-      Accounts.update_user(current_user, %{ active_character_id: nil })
+      conn
+      |> put_flash(:info, "Nice try. You still cannot delete your active character.")
+      |> redirect(to: Routes.character_path(conn, :index))
+    else
+      character = Enum.find(current_user.characters, fn c -> c.id == String.to_integer(id) end)
+      {:ok, _character} = Accounts.delete_character(character)
+
+      conn
+      |> put_flash(:info, "Character deleted successfully.")
+      |> redirect(to: Routes.character_path(conn, :index))
     end
-
-    character = Enum.find(current_user.characters, fn c -> c.id == String.to_integer(id) end)
-    {:ok, _character} = Accounts.delete_character(character)
-
-    conn
-    |> put_flash(:info, "Character deleted successfully.")
-    |> redirect(to: Routes.character_path(conn, :index))
   end
 end

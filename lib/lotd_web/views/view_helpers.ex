@@ -52,15 +52,13 @@ defmodule LotdWeb.ViewHelpers do
   end
 
   def moderator_actions(conn, struct) do
-    if moderator?(conn) do
-      edit_path = get_path(conn, :edit, id: struct.id)
-      delete_path = get_path(conn, :delete, id: struct.id)
+    edit_path = get_path(conn, :edit, id: struct.id)
+    delete_path = get_path(conn, :delete, id: struct.id)
 
-      content_tag :td, [
-        link(icon("pencil"), to: edit_path),
-        link(icon("cancel", class: "has-text-danger"), to: delete_path, method: "delete")
-      ]
-    end
+    content_tag :td, [
+      link(icon("pencil"), to: edit_path),
+      link(icon("cancel", class: "has-text-danger"), to: delete_path, method: "delete")
+    ]
   end
 
   def active_character_id(conn),

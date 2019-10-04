@@ -21,9 +21,13 @@ defmodule LotdWeb.CharacterView do
   end
 
   defp btn_delete(conn, character) do
-    link icon("cancel", class: "has-text-danger"),
-      to: Routes.character_path(conn, :delete, character.id),
-      method: "delete",
-      title: "Remove Character"
+    if conn.assigns.current_user.active_character_id != character.id do
+      link icon("cancel", class: "has-text-danger"),
+        to: Routes.character_path(conn, :delete, character.id),
+        method: "delete",
+        title: "Remove Character"
+    else
+      ""
+    end
   end
 end

@@ -30,7 +30,7 @@
             <td class='is-hidden-touch'><%= m.character_item_count %></td>
           <% end %>
           <td class='is-hidden-touch'><%= Enum.count(m.items) %></td>
-          <%= moderator_actions(@conn, m) %>
+          <%= if moderator?(@conn) do moderator_actions(@conn, m) end %>
         </tr>
       <% end %>
     </tbody>

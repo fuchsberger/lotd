@@ -11,28 +11,67 @@
 # and so on) as they will fail if something goes wrong.
 
 alias Lotd.{Accounts, Gallery, Skyrim}
-alias Lotd.Skyrim.Mod
+alias Lotd.Accounts.Character
+alias Lotd.Skyrim.{Quest, Location, Mod}
 alias Lotd.Gallery.Display
 
-{:ok, user} = Accounts.register_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" })
-Accounts.update_user(user, %{ admin: true, moderator: true })
+# create admin user
+# {:ok, user} = Accounts.register_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" })
+# {:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
+# Accounts.update_user(user, %{ admin: true, moderator: true, active_character_id: id })
 
-Accounts.register_user(%{ nexus_id: 0, nexus_name: "Test User" })
+# create a test user (can never login)
+{:ok, user} = Accounts.register_user(%{ nexus_id: 0, nexus_name: "Test User" })
+{:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
+Accounts.update_user(user, %{ active_character_id: id })
 
 # create the basic mods
 {:ok, %Mod{id: mid}} = Skyrim.create_mod(%{ name: "Skyrim", filename: "Skyrim.esm" })
 Skyrim.create_mod(%{ name: "Dawnguard", filename: "Dawnguard.esm" })
 Skyrim.create_mod(%{ name: "Hearth Fires", filename: "HearthFires.esm" })
-Skyrim.create_mod(%{ name: "Dragonborn", filename: "Dragonborn.esm" })
+{:ok, %Mod{id: db}} = Skyrim.create_mod(%{ name: "Dragonborn", filename: "Dragonborn.esm" })
 
 # create a few test displays
-Gallery.create_display(%{ name: "Hall of Heroes", mod_id: mid })
+{:ok, %Display{id: h_heroes}} =Gallery.create_display(%{ name: "Hall of Heroes", mod_id: mid })
 Gallery.create_display(%{ name: "Dragonborn Hall", mod_id: mid })
 Gallery.create_display(%{ name: "Hall of Oddities", mod_id: mid })
-{:ok, %Display{id: did}} = Gallery.create_display(%{ name: "Daedric Hall", mod_id: mid })
+{:ok, %Display{id: daedric_hall}} = Gallery.create_display(%{ name: "Daedric Hall", mod_id: mid })
+
+# create a few test quests
+{:ok, %Quest{id: quest}} = Skyrim.create_quest(%{
+  name: "At the Summit of Apocrypha",
+  url: "https://en.uesp.net/wiki/Dragonborn:At_the_Summit_of_Apocrypha",
+  mod_id: db
+})
+
+# create a few test locations
+{:ok, %Location{id: location}} = Skyrim.create_location(%{
+  name: "Apocrypha (Waking Dreams)",
+  url: "https://en.uesp.net/wiki/Dragonborn:Apocrypha_(Waking_Dreams)",
+  mod_id: db
+})
 
 # create a few test items
-Gallery.create_item(%{ name: "Spellbreaker", mod_id: mid, display_id: did })
-Gallery.create_item(%{ name: "Ebony Blade", mod_id: mid, display_id: did })
-Gallery.create_item(%{ name: "Wabbajack", mod_id: mid, display_id: did })
-Gallery.create_item(%{ name: "Ring of Namira", mod_id: mid, display_id: did })
+Gallery.create_item(%{ name: "Spellbreaker", mod_id: mid, display_id: daedric_hall })
+Gallery.create_item(%{ name: "Ebony Blade", mod_id: mid, display_id: daedric_hall })
+Gallery.create_item(%{ name: "Wabbajack", mod_id: mid, display_id: daedric_hall })
+Gallery.create_item(%{ name: "Ring of Namira", mod_id: mid, display_id: daedric_hall })
+
+Gallery.create_item(%{ name: "Bloodskal Blade", mod_id: db, display_id: h_heroes })
+Gallery.create_item(%{ name: "Dwarven Black Bow of Fate", mod_id: db, display_id: h_heroes })
+
+Gallery.create_item(%{
+  name: "Miraak's Staff",
+  quest_id: quest,
+  mod_id: db,
+  display_id: h_heroes,
+  location_id: location
+})
+
+Gallery.create_item(%{
+  name: "Miraak's Sword",
+  quest_id: quest,
+  mod_id: db,
+  display_id: h_heroes,
+  location_id: location
+})
