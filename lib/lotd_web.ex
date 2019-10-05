@@ -24,6 +24,7 @@ defmodule LotdWeb do
       import Plug.Conn
       import LotdWeb.Gettext
 
+      import LotdWeb.ControllerHelpers
       import LotdWeb.ViewHelpers, only: [
         authenticated?: 1,
         active_character_id: 1,
