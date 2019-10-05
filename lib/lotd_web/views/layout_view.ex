@@ -15,10 +15,10 @@ defmodule LotdWeb.LayoutView do
 
   def logout_button(conn) do
     link [icon("off", class: "is-small"), content_tag(:span, "Logout")],
-      to: Routes.session_path(conn, :delete, conn.assigns.current_user.id),
+      to: Routes.session_path(conn, :delete, user(conn).id),
       method: "delete",
       class: "button has-icons has-text-centered",
-      title: "Logout #{conn.assigns.current_user.nexus_name}"
+      title: "Logout #{user(conn).nexus_name}"
   end
 
   def menu_link(conn, module, opts \\ []) do

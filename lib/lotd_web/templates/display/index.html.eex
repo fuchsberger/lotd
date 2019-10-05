@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th>Display</th>
-        <%= if active_character_id(@conn) do %>
+        <%= if authenticated?(@conn) do %>
           <th class='is-hidden-touch' data-searchable="false">Items Found</th>
         <% end %>
         <th class='is-hidden-touch' data-searchable="false">Items Total</th>
@@ -16,7 +16,7 @@
       <%= for d <- @displays do %>
         <tr>
           <td><strong><%= name_link(d) %></strong></td>
-          <%= if active_character_id(@conn) do %>
+          <%= if authenticated?(@conn) do %>
             <td class='is-hidden-touch'><%= d.character_item_count %></td>
           <% end %>
           <td class='is-hidden-touch'><%= Enum.count(d.items) %></td>

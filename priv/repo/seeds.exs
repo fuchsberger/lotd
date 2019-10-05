@@ -16,9 +16,9 @@ alias Lotd.Skyrim.{Quest, Location, Mod}
 alias Lotd.Gallery.Display
 
 # create admin user
-# {:ok, user} = Accounts.register_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" })
-# {:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
-# Accounts.update_user(user, %{ admin: true, moderator: true, active_character_id: id })
+{:ok, user} = Accounts.register_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" })
+{:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
+Accounts.update_user(user, %{ admin: true, moderator: true, active_character_id: id })
 
 # create a test user (can never login)
 {:ok, user} = Accounts.register_user(%{ nexus_id: 0, nexus_name: "Test User" })
@@ -26,10 +26,31 @@ alias Lotd.Gallery.Display
 Accounts.update_user(user, %{ active_character_id: id })
 
 # create the basic mods
-{:ok, %Mod{id: mid}} = Skyrim.create_mod(%{ name: "Skyrim", filename: "Skyrim.esm" })
-Skyrim.create_mod(%{ name: "Dawnguard", filename: "Dawnguard.esm" })
-Skyrim.create_mod(%{ name: "Hearth Fires", filename: "HearthFires.esm" })
-{:ok, %Mod{id: db}} = Skyrim.create_mod(%{ name: "Dragonborn", filename: "Dragonborn.esm" })
+{:ok, %Mod{id: mid}} = Skyrim.create_mod(%{
+  name: "Skyrim",
+  url: "https://en.uesp.net/wiki/Skyrim:Skyrim",
+  filename: "Skyrim.esm"
+})
+Skyrim.create_mod(%{
+  name: "Dawnguard",
+  url: "https://en.uesp.net/wiki/Skyrim:Dawnguard",
+  filename: "Dawnguard.esm"
+})
+Skyrim.create_mod(%{
+  name: "Hearthfire",
+  url: "https://en.uesp.net/wiki/Skyrim:Hearthfire",
+  filename: "HearthFires.esm"
+})
+{:ok, %Mod{id: db}} = Skyrim.create_mod(%{
+  name: "Dragonborn",
+  url: "https://en.uesp.net/wiki/Dragonborn:Dragonborn",
+  filename: "Dragonborn.esm"
+})
+Skyrim.create_mod(%{
+  name: "Legacy of the Dragonborn",
+  url: "https://www.nexusmods.com/skyrimspecialedition/mods/11802",
+  filename: "LegacyoftheDragonborn.esm"
+})
 
 # create a few test displays
 {:ok, %Display{id: h_heroes}} =Gallery.create_display(%{ name: "Hall of Heroes", mod_id: mid })

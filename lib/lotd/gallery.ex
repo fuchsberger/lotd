@@ -6,8 +6,9 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
-  alias Lotd.Accounts
   alias Lotd.Gallery.{Display, Item}
+
+  def list_item_ids, do: from(i in Item, select: i.id)
 
   def list_items, do: from(i in Item, preload: [:display, :quest, :location]) |> Repo.all()
 
@@ -37,34 +38,6 @@ defmodule Lotd.Gallery do
 
   def change_item(%Item{} = item) do
     Item.changeset(item, %{})
-  end
-
-  defp item_ids(%{} = struct) do
-    struct
-    |> Map.get(:items)
-    |> Enum.map(fn i -> i.id end)
-  end
-
-  def collect_item(character, item_id) do
-    items = from(i in Item,
-      where: i.id == ^item_id or i.id in ^item_ids(character)
-    ) |> Repo.all
-
-    character
-    |> Accounts.change_character()
-    |> Ecto.Changeset.put_assoc(:items, items)
-    |> Repo.update!
-  end
-
-  def borrow_item(character, item_id) do
-    items = from(i in Item,
-      where: i.id != ^item_id and i.id in ^item_ids(character)
-    ) |> Repo.all
-
-    character
-    |> Accounts.change_character()
-    |> Ecto.Changeset.put_assoc(:items, items)
-    |> Repo.update!
   end
 
   def list_alphabetical_displays do

@@ -10,10 +10,11 @@ defmodule LotdWeb.ViewHelpers do
 
   alias LotdWeb.Router.Helpers, as: Routes
 
-  # permission layers
   def authenticated?(conn), do: not is_nil(conn.assigns.current_user)
   def moderator?(conn), do: authenticated?(conn) && conn.assigns.current_user.moderator
   def admin?(conn), do: authenticated?(conn) && conn.assigns.current_user.admin
+  def user(conn), do: conn.assigns.current_user
+  def character(conn), do: authenticated?(conn) && conn.assigns.current_user.active_character
 
   def get_path(conn, action, opts \\ []) do
     id = Keyword.get(opts, :id, nil)
@@ -61,20 +62,11 @@ defmodule LotdWeb.ViewHelpers do
     ]
   end
 
-  def active_character_id(conn),
-    do: authenticated?(conn) && conn.assigns.current_user.active_character_id
+  def active_character_id(conn), do: character(conn).id
 
-  def character_item_ids(conn) do
-    if active_character_id(conn),
-      do: Enum.map(conn.assigns.current_user.active_character.items, fn i -> i.id end),
-      else: []
-  end
+  def character_item_ids(conn), do: Enum.map(character(conn).items, fn i -> i.id end)
 
-  def character_mod_ids(conn) do
-    if active_character_id(conn),
-      do: Enum.map(conn.assigns.current_user.active_character.mods, fn m -> m.id end),
-      else: []
-  end
+  def character_mod_ids(conn), do: Enum.map(character(conn).mods, fn m -> m.id end)
 
   def module(conn) do
     conn

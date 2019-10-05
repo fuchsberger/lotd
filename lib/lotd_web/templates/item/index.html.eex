@@ -1,9 +1,9 @@
 <div class="table-container">
   <table class="display"
-    data-order="[[<%= if active_character_id(@conn) do 1 else 0 end %>, &quot;asc&quot; ]]">
+    data-order="[[<%= if authenticated?(@conn) do 1 else 0 end %>, &quot;asc&quot; ]]">
     <thead>
       <tr>
-        <%= if active_character_id(@conn) do %>
+        <%= if authenticated?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='10px' class='has-small-padding' title='Collected'>
             <%= icon("ok-squared") %>
           </th>
@@ -20,9 +20,7 @@
     <tbody>
       <%= for i <- @items do %>
         <tr>
-          <%= if active_character_id(@conn) do %>
-            <td><%= btn_collect(@conn, i, @character_item_ids) %></td>
-          <% end %>
+          <%= if authenticated?(@conn) do user_actions(@conn, i) end %>
           <td><strong><%= name_link(i) %></strong></td>
           <td class='is-hidden-touch'>
             <%= if i.location do link(i.location.name, to: "#", class: "search-field") end %>

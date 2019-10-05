@@ -14,10 +14,10 @@ defmodule LotdWeb.ItemController do
   defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_alphabetical_mods()
   defp load_quests(conn, _), do: assign conn, :quests, Skyrim.list_alphabetical_quests()
 
+
   def index(conn, _params) do
-    items = Gallery.list_items()
-    character_item_ids = character_item_ids(conn)
-    render(conn, "index.html", items: items, character_item_ids: character_item_ids)
+    character_items = Enum.map(character(conn).items, fn i -> i.id end)
+    render conn, "index.html", items: Gallery.list_items(), character_items: character_items
   end
 
   def new(conn, _params) do
@@ -65,14 +65,15 @@ defmodule LotdWeb.ItemController do
   end
 
   def collect(conn, %{"id" => item_id}) do
-    character = conn |> active_character_id() |> Accounts.get_character!()
-    Gallery.collect_item(character, item_id)
+    items = character(conn).items ++ [Gallery.get_item!(item_id)]
+    Accounts.update_character(character(conn), :items, items)
     redirect(conn, to: Routes.item_path(conn, :index))
   end
 
   def borrow(conn, %{"id" => item_id}) do
-    character = conn |> active_character_id() |> Accounts.get_character!()
-    Gallery.borrow_item(character, item_id)
+    item_id = String.to_integer(item_id)
+    items = Enum.reject(character(conn).items, fn i -> i.id == item_id end)
+    Accounts.update_character(character(conn), :items, items)
     redirect(conn, to: Routes.item_path(conn, :index))
   end
 end

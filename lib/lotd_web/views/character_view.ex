@@ -1,16 +1,12 @@
 defmodule LotdWeb.CharacterView do
   use LotdWeb, :view
 
-  alias Lotd.Accounts.Character
-
-  def character_actions(conn, %Character{} = c) do
+  def character_actions(conn, %Lotd.Accounts.Character{} = c) do
     [btn_activate(conn, c), btn_delete(conn, c)]
   end
 
   defp btn_activate(conn, character) do
-    u = conn.assigns.current_user
-
-    if u.active_character_id == character.id do
+    if character(conn).id == character.id do
       icon("star", class: "has-text-link", title: "Active Character")
     else
       link icon("star-empty", class: "has-text-dark"),
@@ -21,7 +17,7 @@ defmodule LotdWeb.CharacterView do
   end
 
   defp btn_delete(conn, character) do
-    if conn.assigns.current_user.active_character_id != character.id do
+    if character(conn).id != character.id do
       link icon("cancel", class: "has-text-danger"),
         to: Routes.character_path(conn, :delete, character.id),
         method: "delete",

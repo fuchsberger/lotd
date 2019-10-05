@@ -1,20 +1,36 @@
 defmodule LotdWeb.ModController do
   use LotdWeb, :controller
 
-  alias Lotd.Skyrim
+  alias Lotd.{Repo, Accounts, Skyrim}
   alias Lotd.Skyrim.Mod
 
-  def index(conn, _params) do
-    character_item_ids = character_item_ids(conn)
-    mods = Skyrim.list_alphabetical_mods()
-    |> Enum.map(fn l ->
-      mod_item_ids = Enum.map(l.items, fn i -> i.id end)
-      common_ids = mod_item_ids -- character_item_ids
-      common_ids = mod_item_ids -- common_ids
-      Map.put(l, :character_item_count, Enum.count(common_ids))
-    end)
+  plug :mod_ids when action in [:activate, :deactivate, :index]
 
-    render(conn, "index.html", mods: mods, character_mod_ids: character_mod_ids(conn))
+  def mod_ids(conn, _) do
+    character = Repo.preload(character(conn), :mods)
+    assign conn, :current_user, Map.put(user(conn), :active_character, character)
+  end
+
+  def index(conn, _params) do
+
+    character_mods = Enum.map(character(conn).mods, fn m -> m.id end)
+
+    mods = Skyrim.list_alphabetical_mods()
+
+    mods =
+      if authenticated?(conn) do
+        Enum.map(mods, fn m ->
+          common_ids = m.items -- character(conn).items
+          common_ids = m.items -- common_ids
+          m
+          |> Map.put(:found_items, Enum.count(common_ids))
+          |> Map.put(:items, Enum.count(m.items))
+        end)
+      else
+        mods
+      end
+
+    render conn, "index.html", mods: mods, character_mods: character_mods
   end
 
   def new(conn, _params) do
@@ -49,12 +65,15 @@ defmodule LotdWeb.ModController do
   end
 
   def activate(conn, %{"id" => mod_id}) do
-    Skyrim.activate_mod(conn.assigns.current_user.active_character, mod_id)
+    mods = character(conn).mods ++ [Skyrim.get_mod!(mod_id)]
+    Accounts.update_character(character(conn), :mods, mods)
     redirect(conn, to: Routes.mod_path(conn, :index))
   end
 
   def deactivate(conn, %{"id" => mod_id}) do
-    Skyrim.deactivate_mod(conn.assigns.current_user.active_character, mod_id)
+    mod_id = String.to_integer(mod_id)
+    mods = Enum.reject(character(conn).mods, fn m -> m.id == mod_id end)
+    Accounts.update_character(character(conn), :mods, mods)
     redirect(conn, to: Routes.mod_path(conn, :index))
   end
 

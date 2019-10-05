@@ -4,23 +4,21 @@ defmodule Lotd.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Lotd.Repo
-
-  alias Lotd.Accounts.User
-  alias Lotd.Accounts.Character
+  alias Lotd.{Repo, Gallery, Skyrim}
+  alias Lotd.Accounts.{Character, User}
 
   # user
   def list_users, do: Repo.all(User)
 
   def get_user!(id) do
     User
-    |> preload(active_character: [:items, :mods])
+    |> preload(active_character: [ :items ])
     |> Repo.get!(id)
   end
 
   def get_user_by(params) do
     User
-    |> preload(:active_character)
+    |> preload(active_character: [ :items ])
     |> Repo.get_by(params)
   end
 
@@ -55,15 +53,26 @@ defmodule Lotd.Accounts do
   end
 
   def create_character(%User{} = user, attrs \\ %{}) do
+    dlc_mods = Skyrim.list_dlcs()
+
     %Character{}
     |> Character.changeset(attrs)
     |> Ecto.Changeset.put_assoc(:user, user)
+    |> Ecto.Changeset.put_assoc(:mods, dlc_mods)
     |> Repo.insert()
   end
 
-  def update_character(%Character{} = character, attrs) do
+  def update_character(%Character{} = character, %{} = attrs) do
     character
     |> Character.changeset(attrs)
+    |> Repo.update()
+  end
+
+  # activating / deactivating mods, collecting / borrowing items
+  def update_character(%Character{} = character, association, collection) do
+    character
+    |> change_character()
+    |> Ecto.Changeset.put_assoc(association, collection)
     |> Repo.update()
   end
 

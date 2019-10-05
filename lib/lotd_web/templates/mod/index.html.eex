@@ -1,15 +1,16 @@
 <div class="table-container">
-  <table class="display">
+  <table class="display"
+    data-order="[[<%= if authenticated?(@conn) do 1 else 0 end %>, &quot;asc&quot; ]]">
     <thead>
       <tr>
-        <%= if active_character_id(@conn) do %>
+        <%= if authenticated?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='10px' class='has-small-padding' title='Activated Mods'>
             <%= icon("ok-squared") %>
           </th>
         <% end %>
         <th>Mod</th>
         <th>Filename</th>
-        <%= if active_character_id(@conn) do %>
+        <%= if authenticated?(@conn) do %>
           <th class='is-hidden-touch' data-searchable="false">Items Found</th>
         <% end %>
         <th class='is-hidden-touch' data-searchable="false">Items Total</th>
@@ -21,16 +22,18 @@
     <tbody>
       <%= for m <- @mods do %>
         <tr>
-          <%= if active_character_id(@conn) do %>
-            <td><%= btn_activate(@conn, m, @character_mod_ids) %></td>
+          <%= if authenticated?(@conn) do %>
+            <td><%= user_actions(@conn, m) %></td>
           <% end %>
           <td><strong><%= name_link(m) %></strong></td>
           <td><%= m.filename %></td>
-          <%= if active_character_id(@conn) do %>
-            <td class='is-hidden-touch'><%= m.character_item_count %></td>
+          <%= if authenticated?(@conn) do %>
+            <td class='is-hidden-touch'><%= m.found_items %></td>
           <% end %>
-          <td class='is-hidden-touch'><%= Enum.count(m.items) %></td>
-          <%= if moderator?(@conn) do moderator_actions(@conn, m) end %>
+          <td class='is-hidden-touch'><%= m.items %></td>
+          <%= if moderator?(@conn) do %>
+            <%= if m.id > 5 do moderator_actions(@conn, m) else content_tag :td, "" end %>
+          <% end %>
         </tr>
       <% end %>
     </tbody>
