@@ -4,33 +4,22 @@ defmodule LotdWeb.ModController do
   alias Lotd.{Repo, Accounts, Skyrim}
   alias Lotd.Skyrim.Mod
 
-  plug :mod_ids when action in [:activate, :deactivate, :index]
-
-  def mod_ids(conn, _) do
-    character = Repo.preload(character(conn), :mods)
-    assign conn, :current_user, Map.put(user(conn), :active_character, character)
-  end
-
   def index(conn, _params) do
+    if authenticated?(conn) do
+      character_mod_ids = Enum.map(character(conn).mods, fn m -> m.id end)
+      character_item_ids = Enum.map(character(conn).items, fn i -> i.id end)
 
-    character_mods = Enum.map(character(conn).mods, fn m -> m.id end)
+      mods = Skyrim.list_mods()
+      |> Enum.map(fn m ->
+        common_ids = m.items -- character_item_ids
+        common_ids = m.items -- common_ids
+        Map.put(m, :found_items, Enum.count(common_ids))
+      end)
 
-    mods = Skyrim.list_mods()
-
-    mods =
-      if authenticated?(conn) do
-        Enum.map(mods, fn m ->
-          common_ids = m.items -- character(conn).items
-          common_ids = m.items -- common_ids
-          m
-          |> Map.put(:found_items, Enum.count(common_ids))
-          |> Map.put(:items, Enum.count(m.items))
-        end)
-      else
-        mods
-      end
-
-    render conn, "index.html", mods: mods, character_mods: character_mods
+      render conn, "index.html", mods: mods, character_mod_ids: character_mod_ids
+    else
+      render conn, "index.html", mods: Skyrim.list_mods()
+    end
   end
 
   def new(conn, _params) do

@@ -5,7 +5,7 @@ defmodule LotdWeb.ModView do
     cond do
       m.id <= 5 ->
         icon("ok-squared")
-      Enum.member?(conn.assigns.character_mods, m.id) ->
+      Enum.member?(conn.assigns.character_mod_ids, m.id) ->
         link icon("ok-squared"),
           to: Routes.mod_path(conn, :deactivate, m.id),
           method: "put",
