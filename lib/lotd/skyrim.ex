@@ -73,8 +73,6 @@ defmodule Lotd.Skyrim do
 
   # mods
 
-  def list_dlcs, do: Repo.all(from m in Mod, where: m.id <= 5)
-
   def list_mod_ids, do: from(m in Mod, select: m.id)
 
   def list_alphabetical_mods do

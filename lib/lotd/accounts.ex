@@ -53,12 +53,9 @@ defmodule Lotd.Accounts do
   end
 
   def create_character(%User{} = user, attrs \\ %{}) do
-    dlc_mods = Skyrim.list_dlcs()
-
     %Character{}
     |> Character.changeset(attrs)
     |> Ecto.Changeset.put_assoc(:user, user)
-    |> Ecto.Changeset.put_assoc(:mods, dlc_mods)
     |> Repo.insert()
   end
 

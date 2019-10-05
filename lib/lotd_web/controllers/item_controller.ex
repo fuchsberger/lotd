@@ -1,7 +1,7 @@
 defmodule LotdWeb.ItemController do
   use LotdWeb, :controller
 
-  alias Lotd.{Accounts, Gallery, Skyrim}
+  alias Lotd.{Accounts, Gallery, Skyrim, Repo}
   alias Lotd.Gallery.Item
 
   plug :load_displays when action in [:new, :create, :edit, :update]
@@ -16,8 +16,15 @@ defmodule LotdWeb.ItemController do
 
 
   def index(conn, _params) do
-    character_items = Enum.map(character(conn).items, fn i -> i.id end)
-    render conn, "index.html", items: Gallery.list_items(), character_items: character_items
+    if authenticated?(conn) do
+      character = Repo.preload(character(conn), :mods)
+      citems = Enum.map(character.items, fn i -> i.id end)
+      cmods = Enum.map(character.mods, fn m -> m.id end)
+      IO.inspect character
+      render conn, "index.html", items: Gallery.list_items(cmods), character_items: citems
+    else
+      render conn, "index.html", items: Gallery.list_items()
+    end
   end
 
   def new(conn, _params) do
