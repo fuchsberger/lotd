@@ -6,18 +6,25 @@ defmodule LotdWeb.QuestController do
 
   plug :load_mods when action in [:new, :create, :edit, :update]
 
-  defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_alphabetical_mods()
+  defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_mods()
 
   def index(conn, _params) do
-    character_item_ids = character_item_ids(conn)
-    quests = Skyrim.list_alphabetical_quests()
-    |> Enum.map(fn l ->
-      quest_item_ids = Enum.map(l.items, fn i -> i.id end)
-      common_ids = quest_item_ids -- character_item_ids
-      common_ids = quest_item_ids -- common_ids
-      Map.put(l, :character_item_count, Enum.count(common_ids))
-    end)
-    render(conn, "index.html", quests: quests)
+    if authenticated?(conn) do
+      character_mod_ids = Enum.map(character(conn).mods, fn m -> m.id end)
+      character_item_ids = Enum.map(character(conn).items, fn i -> i.id end)
+
+      quests = Skyrim.list_quests(character_mod_ids)
+      |> Enum.map(fn q ->
+        quest_item_ids = Enum.map(q.items, fn i -> i.id end)
+        common_ids = quest_item_ids -- character_item_ids
+        common_ids = quest_item_ids -- common_ids
+        Map.put(q, :found_items, Enum.count(common_ids))
+      end)
+
+      render conn, "index.html", quests: quests
+    else
+      render conn, "index.html", quests: Skyrim.list_quests()
+    end
   end
 
   def new(conn, _params) do

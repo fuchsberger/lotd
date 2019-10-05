@@ -47,7 +47,7 @@ defmodule Lotd.Gallery do
     Item.changeset(item, %{})
   end
 
-  def list_alphabetical_displays do
+  def list_displays do
     Display
     |> preload(:items)
     |> Repo.alphabetical()

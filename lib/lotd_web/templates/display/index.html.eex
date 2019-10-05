@@ -17,7 +17,7 @@
         <tr>
           <td><strong><%= name_link(d) %></strong></td>
           <%= if authenticated?(@conn) do %>
-            <td class='is-hidden-touch'><%= d.character_item_count %></td>
+            <td class='is-hidden-touch'><%= d.found_items %></td>
           <% end %>
           <td class='is-hidden-touch'><%= Enum.count(d.items) %></td>
           <%= if moderator?(@conn) do moderator_actions(@conn, d) end %>

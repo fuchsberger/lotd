@@ -12,13 +12,13 @@ defmodule Lotd.Accounts do
 
   def get_user!(id) do
     User
-    |> preload(active_character: [ :items ])
+    |> preload(active_character: [ :items, :mods ])
     |> Repo.get!(id)
   end
 
   def get_user_by(params) do
     User
-    |> preload(active_character: [ :items ])
+    |> preload(active_character: [ :items, :mods ])
     |> Repo.get_by(params)
   end
 

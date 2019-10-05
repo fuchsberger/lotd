@@ -15,7 +15,7 @@ defmodule LotdWeb.ModController do
 
     character_mods = Enum.map(character(conn).mods, fn m -> m.id end)
 
-    mods = Skyrim.list_alphabetical_mods()
+    mods = Skyrim.list_mods()
 
     mods =
       if authenticated?(conn) do

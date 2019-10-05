@@ -5,15 +5,24 @@ defmodule Lotd.Skyrim do
 
   import Ecto.Query, warn: false
 
-  alias Lotd.{Accounts, Repo}
+  alias Lotd.Repo
   alias Lotd.Gallery.Item
   alias Lotd.Skyrim.{Quest, Location, Mod}
 
   # quests
 
-  def list_alphabetical_quests do
+  def list_quests do
     Quest
     |> preload(:items)
+    |> Repo.alphabetical()
+    |> Repo.all()
+  end
+
+  def list_quests(mod_ids) do
+    mod_ids = mod_ids ++ [1,2,3,4,5]
+    Quest
+    |> preload(:items)
+    |> where([q], q.mod_id in ^mod_ids)
     |> Repo.alphabetical()
     |> Repo.all()
   end
@@ -42,9 +51,18 @@ defmodule Lotd.Skyrim do
 
   # locations
 
-  def list_alphabetical_locations do
+  def list_locations do
     Location
     |> preload(:items)
+    |> Repo.alphabetical()
+    |> Repo.all()
+  end
+
+  def list_locations(mod_ids) do
+    mod_ids = mod_ids ++ [1,2,3,4,5]
+    Location
+    |> preload(:items)
+    |> where([l], l.mod_id in ^mod_ids)
     |> Repo.alphabetical()
     |> Repo.all()
   end
@@ -75,7 +93,7 @@ defmodule Lotd.Skyrim do
 
   def list_mod_ids, do: from(m in Mod, select: m.id)
 
-  def list_alphabetical_mods do
+  def list_mods do
     item_query = from(i in Item, select: i.id)
     Mod
     |> preload(items: ^item_query)

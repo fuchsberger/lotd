@@ -9,18 +9,16 @@ defmodule LotdWeb.ItemController do
   plug :load_mods when action in [:new, :create, :edit, :update]
   plug :load_quests when action in [:new, :create, :edit, :update]
 
-  defp load_displays(conn, _), do: assign conn, :displays, Gallery.list_alphabetical_displays()
-  defp load_locations(conn, _), do: assign conn, :locations, Skyrim.list_alphabetical_locations()
-  defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_alphabetical_mods()
-  defp load_quests(conn, _), do: assign conn, :quests, Skyrim.list_alphabetical_quests()
-
+  defp load_displays(conn, _), do: assign conn, :displays, Gallery.list_displays()
+  defp load_locations(conn, _), do: assign conn, :locations, Skyrim.list_locations()
+  defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_mods()
+  defp load_quests(conn, _), do: assign conn, :quests, Skyrim.list_quests()
 
   def index(conn, _params) do
     if authenticated?(conn) do
       character = Repo.preload(character(conn), :mods)
       citems = Enum.map(character.items, fn i -> i.id end)
       cmods = Enum.map(character.mods, fn m -> m.id end)
-      IO.inspect character
       render conn, "index.html", items: Gallery.list_items(cmods), character_items: citems
     else
       render conn, "index.html", items: Gallery.list_items()

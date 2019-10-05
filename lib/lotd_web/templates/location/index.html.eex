@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th>Location</th>
-        <%= if active_character_id(@conn) do %>
+        <%= if authenticated?(@conn) do %>
           <th class='is-hidden-touch' data-searchable="false">Items Found</th>
         <% end %>
         <th class='is-hidden-touch' data-searchable="false">Items Total</th>
@@ -16,8 +16,8 @@
       <%= for l <- @locations do %>
         <tr>
           <td><strong><%= name_link(l) %></strong></td>
-          <%= if active_character_id(@conn) do %>
-            <td class='is-hidden-touch'><%= l.character_item_count %></td>
+          <%= if authenticated?(@conn) do %>
+            <td class='is-hidden-touch'><%= l.found_items %></td>
           <% end %>
           <td class='is-hidden-touch'><%= Enum.count(l.items) %></td>
           <%= if moderator?(@conn) do moderator_actions(@conn, l) end %>

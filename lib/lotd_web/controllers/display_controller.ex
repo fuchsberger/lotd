@@ -5,14 +5,14 @@ defmodule LotdWeb.DisplayController do
   alias Lotd.Gallery.Display
 
   def index(conn, _params) do
-    displays = Gallery.list_alphabetical_displays()
+    displays = Gallery.list_displays()
     displays =
       if authenticated?(conn) do
         Enum.map(displays, fn d ->
           display_item_ids = Enum.map(d.items, fn i -> i.id end)
           common_ids = display_item_ids -- character_item_ids(conn)
           common_ids = display_item_ids -- common_ids
-          Map.put(d, :character_item_count, Enum.count(common_ids))
+          Map.put(d, :found_items, Enum.count(common_ids))
         end)
       else
         displays

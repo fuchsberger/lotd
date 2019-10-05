@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th>Quest</th>
-        <%= if active_character_id(@conn) do %>
+        <%= if authenticated?(@conn) do %>
           <th class='is-hidden-touch' data-searchable="false">Items Found</th>
         <% end %>
         <th class='is-hidden-touch' data-searchable="false">Items Total</th>
@@ -16,8 +16,8 @@
       <%= for q <- @quests do %>
         <tr>
           <td><strong><%= name_link(q) %></strong></td>
-          <%= if active_character_id(@conn) do %>
-            <td class='is-hidden-touch'><%= q.character_item_count %></td>
+          <%= if authenticated?(@conn) do %>
+            <td class='is-hidden-touch'><%= q.found_items %></td>
           <% end %>
           <td class='is-hidden-touch'><%= Enum.count(q.items) %></td>
           <%= if moderator?(@conn) do moderator_actions(@conn, q) end %>
