@@ -1,18 +1,7 @@
 <section class="section has-text-centered">
   <h3 class="title is-3">Add Character</h3>
-
-  <%= form_for @changeset, Routes.character_path(@conn, :create), [as: :character], fn f -> %>
-    <%= label f, :name, class: "label" %>
-    <div class="field has-addons">
-      <div class="control is-expanded">
-        <%= text_input f, :name,
-          class: "input #{error_class(f, :name)}", placeholder: "Name / Race / Title..." %>
-      </div>
-      <div class="control">
-        <%= submit "Create", class: "button is-info" %>
-      </div>
-    </div>
-    <%= error_tag f, :name %>
-
-  <% end %>
+  <%= render "form.html",
+    changeset: @changeset,
+    path: Routes.character_path(@conn, :create),
+    submit_btn: "Create" %>
 </section>
