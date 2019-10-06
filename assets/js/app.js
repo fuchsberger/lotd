@@ -1,9 +1,9 @@
 import CSS from '../css/app.scss'
 
-import "phoenix_html"
-
 import $ from 'jquery'
 import Turbolinks from 'turbolinks'
+import "phoenix_html"
+import socket from './socket'
 import loadView from './views/loader'
 
 document.addEventListener("turbolinks:load", () => {

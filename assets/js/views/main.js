@@ -20,7 +20,10 @@ export default class MainView {
     if ($('table').length ) {
 
       // enable timeago on table redraw
-      $("table").on('draw.dt', function() { $("time").timeago() })
+      $("table").on('draw.dt', function () {
+        $('#loader-wrapper').addClass('is-hidden')
+        $("time").timeago()
+      })
 
       // create datatable
       let table = $('table').DataTable({ dom: 't', paging: false, info: false })
@@ -63,7 +66,7 @@ export default class MainView {
     }
 
     // hide loader
-    $('#loader-wrapper').addClass('is-hidden')
+    if(! $( "body" ).has( "table" ).length ) $('#loader-wrapper').addClass('is-hidden')
   }
 
   unmount() {
