@@ -14,7 +14,7 @@
           <th class='is-hidden-touch' data-searchable="false">Items Found</th>
         <% end %>
         <th class='is-hidden-touch' data-searchable="false">Items Total</th>
-        <%= if moderator?(@conn) do %>
+        <%= if admin?(@conn) do %>
           <th data-searchable="false" data-sortable='false' width='35px'></th>
         <% end %>
       </tr>
