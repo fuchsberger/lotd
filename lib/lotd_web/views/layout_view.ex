@@ -4,6 +4,8 @@ defmodule LotdWeb.LayoutView do
   def add_button(conn) do
     text =  [icon("plus"), content_tag(:span, "Add")]
     case module(conn) do
+      :mod ->
+        if admin?(conn), do: link(text, to: get_path(conn, :new), class: "button")
       :user ->
         nil
       :character ->

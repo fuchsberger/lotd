@@ -4,7 +4,7 @@ defmodule Lotd.Accounts do
   """
 
   import Ecto.Query, warn: false
-  alias Lotd.{Repo, Gallery, Skyrim}
+  alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
 
   # user

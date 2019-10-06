@@ -1,7 +1,7 @@
 defmodule LotdWeb.ModController do
   use LotdWeb, :controller
 
-  alias Lotd.{Repo, Accounts, Skyrim}
+  alias Lotd.{Accounts, Skyrim}
   alias Lotd.Skyrim.Mod
 
   def index(conn, _params) do

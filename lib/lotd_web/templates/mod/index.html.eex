@@ -31,8 +31,8 @@
             <td class='is-hidden-touch'><%= m.found_items %></td>
           <% end %>
           <td class='is-hidden-touch'><%= Enum.count(m.items) %></td>
-          <%= if moderator?(@conn) do %>
-            <%= if m.id > 5 do moderator_actions(@conn, m) else content_tag :td, "" end %>
+          <%= if admin?(@conn) do %>
+            <%= if m.id > 5 do admin_actions(@conn, m) else content_tag :td, "" end %>
           <% end %>
         </tr>
       <% end %>

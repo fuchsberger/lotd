@@ -44,12 +44,12 @@ defmodule LotdWeb.Router do
     resources "/displays", DisplayController, except: [:index]
     resources "/locations", LocationController, except: [:index]
     resources "/quests", QuestController, except: [:index]
-    resources "/mods", ModController, except: [:index]
   end
 
   # Admin Routes
   scope "/", LotdWeb do
     pipe_through [:browser, :is_admin]
+    resources "/mods", ModController, except: [:index]
     resources "/users", UserController, only: [:index, :update]
   end
 end

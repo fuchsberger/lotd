@@ -12,11 +12,11 @@ defmodule Lotd.Gallery do
 
   def item_query, do: from(i in Item, preload: [:display, :quest, :location])
 
-  def list_items, do: Repo.all(item_query)
+  def list_items, do: Repo.all(item_query())
 
   def list_items(mod_ids) do
     mod_ids = mod_ids ++ [1,2,3,4,5]
-    item_query |> where([i], i.mod_id in ^mod_ids) |> Repo.all()
+    item_query() |> where([i], i.mod_id in ^mod_ids) |> Repo.all()
   end
 
   def list_character_item_ids(character) do

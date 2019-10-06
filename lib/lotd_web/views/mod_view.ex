@@ -17,4 +17,14 @@ defmodule LotdWeb.ModView do
           title: "Activate"
     end
   end
+
+  def admin_actions(conn, struct) do
+    edit_path = get_path(conn, :edit, id: struct.id)
+    delete_path = get_path(conn, :delete, id: struct.id)
+
+    content_tag :td, [
+      link(icon("pencil"), to: edit_path),
+      link(icon("cancel", class: "has-text-danger"), to: delete_path, method: "delete")
+    ]
+  end
 end

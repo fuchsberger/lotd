@@ -17,11 +17,12 @@ This is a utility app for the mod "Legacy of the Dragonborn" and it allows to ke
 * you can never delete your active character
 
 ### Moderators can
-* create / edit / delete Items, Displays, Locations, Mods
+* create / edit / delete Items, Displays, Locations
 * required mods (Skyrim, Dawnguard, Hearthfires, Dragonborn, Legacy of the Dragonborn) can never be edited or deleted
 * deleting a display deletes all items associated to it
 * deleting a mod deletes all quests, locations and items associated to it.
 
 ### Admins can
 * promote / demote users to admins and moderators
+* create / edit / delete Mods
 * view a list of all nexus users (and links to their profiles) and when they first logged in
