@@ -1,4 +1,5 @@
 <div class="table-container">
+  <table id='item-table' class='display' width="100%"></table>
   <table class="display"
     data-order="[[<%= if authenticated?(@conn) do 1 else 0 end %>, &quot;asc&quot; ]]">
     <thead>

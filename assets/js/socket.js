@@ -1,26 +1,36 @@
-import {Socket} from "phoenix"
+import $ from 'jquery'
+import 'datatables.net'
+import 'timeago'
+
+import { Socket } from "phoenix"
 
 let socket = new Socket("/socket", {
   params: { token: window.userToken },
   // logger: (kind, msg, data) => { console.log(`${kind}: ${msg}`, data) }
 })
 
+const icon = name => (`<span class="icon"><i class="icon-${name}"></i></span>`)
+
+const search_field = d => (`<a class='search-field' href='#'>${d}</a>`)
+
 // Finally, connect to the socket:
 socket.connect()
 
-// Now that you are connected, you can join channels with a topic:
-let publicChannel = socket.channel("public", {})
+// if (window.userToken != "") {
+//   let channel = socket.channel("user", {})
 
-publicChannel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+//   channel.on("disconnect", () => {
+//     console.log("disconnect")
+//     channel.leave()
+//   })
 
-if (window.userToken != "") {
-  let userChannel = socket.channel("user", {})
+//   channel.join()
+//     .receive("ok", resp => {
 
-  userChannel.join()
-    .receive("ok", resp => { console.log("Joined successfully", resp) })
-    .receive("error", resp => { console.log("Unable to join", resp) })
-}
+//     })
+//     .receive("error", resp => { console.log("Unable to join", resp) })
+
+//   window.userChannel = channel
+// }
 
 export default socket

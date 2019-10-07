@@ -3,6 +3,27 @@ defmodule LotdWeb.ItemView do
 
   alias Lotd.Gallery.Item
 
+  def render("item.json", %{ item: i, character_items: citems }) do
+    [
+      i.id,
+      Enum.member?(citems, i.id),
+      i.name,
+      (if i.location, do: i.location.name, else: ""),
+      (if i.quest, do: i.quest.name, else: ""),
+      i.display.name
+    ]
+  end
+
+  def render("item.json", %{ item: i }) do
+    [
+      i.id,
+      i.name,
+      (if i.location, do: i.location.name, else: ""),
+      (if i.quest, do: i.quest.name, else: ""),
+      i.display.name
+    ]
+  end
+
   def user_actions(conn, %Item{} = i) do
     btn =
       if Enum.member?(conn.assigns.character_items, i.id) do

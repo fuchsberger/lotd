@@ -19,6 +19,7 @@ defmodule LotdWeb.LayoutView do
     link [icon("off", class: "is-small"), content_tag(:span, "Logout")],
       to: Routes.session_path(conn, :delete, user(conn).id),
       method: "delete",
+      id: "logout-button",
       class: "button has-icons has-text-centered",
       title: "Logout #{user(conn).nexus_name}"
   end

@@ -13,57 +13,60 @@ export default class MainView {
     // enable login button
     $('#signInBtn').click(() => login())
 
+    // on clicking logout, disconnect all sockets
+    $('#logout-button').click(() => window.userChannel.push("logout"))
+
     // enable dismissing of notifications
     $('.notification button.delete').on('click', function(){ $(this).parent().remove() })
 
     // if we have a table, create a datatable
-    if ($('table').length ) {
+    // if ($('table').length ) {
 
-      // enable timeago on table redraw
-      $("table").on('draw.dt', function () {
-        $('#loader-wrapper').addClass('is-hidden')
-        $("time").timeago()
-      })
+    //   // enable timeago on table redraw
+    //   $("table").on('draw.dt', function () {
+    //     $('#loader-wrapper').addClass('is-hidden')
+    //     $("time").timeago()
+    //   })
 
-      // create datatable
-      let table = $('table').DataTable({ dom: 't', paging: false, info: false })
+    //   // create datatable
+    //   let table = $('table').DataTable({ dom: 't', paging: false, info: false })
 
-      let info = table.page.info()
+    //   let info = table.page.info()
 
-      // initial display total count
-      $('.total-count').text(info.recordsTotal)
+    //   // initial display total count
+    //   $('.total-count').text(info.recordsTotal)
 
-      // enable searching/filtering
-      $('#search').on('keyup', function(){
-        table.search( this.value ).draw()
-        let info = table.page.info()
+    //   // enable searching/filtering
+    //   $('#search').on('keyup', function(){
+    //     table.search( this.value ).draw()
+    //     let info = table.page.info()
 
-        // enable clean button
-        if ($(this).val() == '') {
-          $('#search-icon').removeClass('is-hidden')
-          $('#search-cancel').addClass('is-hidden')
-        } else {
-          $('#search-icon').addClass('is-hidden')
-          $('#search-cancel').removeClass('is-hidden')
-        }
+    //     // enable clean button
+    //     if ($(this).val() == '') {
+    //       $('#search-icon').removeClass('is-hidden')
+    //       $('#search-cancel').addClass('is-hidden')
+    //     } else {
+    //       $('#search-icon').addClass('is-hidden')
+    //       $('#search-cancel').removeClass('is-hidden')
+    //     }
 
-        // update filtered count
-        $('.total-count').text(info.recordsTotal)
-        $('.filtered-count')
-          .text(info.recordsTotal != info.recordsDisplay ? info.recordsDisplay + ' / ' : '')
-      })
+    //     // update filtered count
+    //     $('.total-count').text(info.recordsTotal)
+    //     $('.filtered-count')
+    //       .text(info.recordsTotal != info.recordsDisplay ? info.recordsDisplay + ' / ' : '')
+    //   })
 
-      // enable search cancel button
-      $('#search-cancel').on('click', function () {
-        $('#search').val('')
-        table.search('').draw()
-        $('#search-icon').removeClass('is-hidden')
-        $('#search-cancel').addClass('is-hidden')
-      })
+    //   // enable search cancel button
+    //   $('#search-cancel').on('click', function () {
+    //     $('#search').val('')
+    //     table.search('').draw()
+    //     $('#search-icon').removeClass('is-hidden')
+    //     $('#search-cancel').addClass('is-hidden')
+    //   })
 
-      // store table for unmount
-      this.table = table
-    }
+    //   // store table for unmount
+    //   this.table = table
+    // }
 
     // hide loader
     if(! $( "body" ).has( "table" ).length ) $('#loader-wrapper').addClass('is-hidden')

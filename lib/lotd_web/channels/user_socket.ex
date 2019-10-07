@@ -3,7 +3,7 @@ defmodule LotdWeb.UserSocket do
 
   ## Channels
   channel "public", LotdWeb.PublicChannel
-  channel "user", LotdWeb.UserChannel
+  # channel "user", LotdWeb.UserChannel
 
   @max_age 2 * 7 * 24 * 60 * 60
 
@@ -11,7 +11,8 @@ defmodule LotdWeb.UserSocket do
   def connect(%{"token" => token}, socket, _connect_info) do
     case Phoenix.Token.verify(socket, "user_socket", token, max_age: @max_age) do
       {:ok, user_id} ->
-        {:ok, assign(socket, :user_id, user_id)}
+        user = Lotd.Accounts.get_user!(user_id)
+        {:ok, assign(socket, :user, user)}
 
       {:error, _reason} ->
         # also allow anonymous connection on invalid or missing token
@@ -21,10 +22,13 @@ defmodule LotdWeb.UserSocket do
 
   def connect(_params, socket, _connect_info), do: {:ok, socket}
 
+  def character(socket), do:
+    if Map.has_key?(socket.assigns, :user), do: socket.assigns.user.active_character, else: nil
+
   # authenticated users should be able to be recogized so that on a logout all sockets are disconnected.
   def id(socket) do
-    if Map.has_key?(socket.assigns, :user_id),
-      do: "user_socket:#{socket.assigns.user_id}",
+    if Map.has_key?(socket.assigns, :user),
+      do: "user_socket:#{socket.assigns.user.id}",
       else: nil
   end
 end

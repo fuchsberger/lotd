@@ -70,6 +70,7 @@ defmodule LotdWeb do
     quote do
       use Phoenix.Channel
       import LotdWeb.Gettext
+      import LotdWeb.UserSocket, only: [character: 1]
     end
   end
 
