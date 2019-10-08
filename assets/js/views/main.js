@@ -1,11 +1,25 @@
 import $ from 'jquery'
 import 'datatables.net'
 import 'timeago'
+import socket from '../socket'
 
 import { login } from '../api/nexus'
 
 export default class MainView {
+
+  icon(name) {
+    return `<span class="icon"><i class="icon-${name}"></i></span>`
+  }
+
+  search_field(d) {
+    return `<a class='search-field' href='#'>${d}</a>`
+  }
+
   mount() {
+
+    // connect socket
+    socket.connect()
+    this.socket = socket
 
     // enable mobile menu
     $(".navbar-burger").click(() => { $(".navbar-burger, .navbar-menu").toggleClass("is-active")})

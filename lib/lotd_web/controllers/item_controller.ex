@@ -14,16 +14,7 @@ defmodule LotdWeb.ItemController do
   defp load_mods(conn, _), do: assign conn, :mods, Skyrim.list_mods()
   defp load_quests(conn, _), do: assign conn, :quests, Skyrim.list_quests()
 
-  def index(conn, _params) do
-    if authenticated?(conn) do
-      character = Repo.preload(character(conn), :mods)
-      citems = Enum.map(character.items, fn i -> i.id end)
-      cmods = Enum.map(character.mods, fn m -> m.id end)
-      render conn, "index.html", items: Gallery.list_items(cmods), character_items: citems
-    else
-      render conn, "index.html", items: Gallery.list_items()
-    end
-  end
+  def index(conn, _params), do: render conn, "index.html"
 
   def new(conn, _params) do
     changeset = Gallery.change_item(%Item{})

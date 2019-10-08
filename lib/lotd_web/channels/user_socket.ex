@@ -2,8 +2,7 @@ defmodule LotdWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "public", LotdWeb.PublicChannel
-  # channel "user", LotdWeb.UserChannel
+  channel "items", LotdWeb.ItemChannel
 
   @max_age 2 * 7 * 24 * 60 * 60
 

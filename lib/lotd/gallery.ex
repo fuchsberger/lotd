@@ -10,7 +10,7 @@ defmodule Lotd.Gallery do
 
   def list_item_ids, do: from(i in Item, select: i.id)
 
-  def item_query, do: from(i in Item, preload: [:display, :quest, :location])
+  def item_query, do: from(i in Item, order_by: i.id, preload: [:display, :quest, :location])
 
   def list_items, do: Repo.all(item_query())
 
