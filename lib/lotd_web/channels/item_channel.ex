@@ -4,7 +4,12 @@ defmodule LotdWeb.ItemChannel do
   alias Lotd.{Accounts, Gallery, Repo}
   alias LotdWeb.ItemView
 
+  def join("items", %{ "loaded" => true }, socket) do
+    {:ok, socket}
+  end
+
   def join("items", _params, socket) do
+
     if character(socket) do
       citems = Enum.map(character(socket).items, fn i -> i.id end)
 

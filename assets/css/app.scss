@@ -1,9 +1,6 @@
-// load css files first (order is abitrary)
-@import "./icons.css";
-
-// then scss files
 @import "./loader.scss";
-@import "./bulma.scss";
+@import "./bootstrap";
+@import "./icons.scss";
 @import "../node_modules/datatables.net-dt/css/jquery.dataTables.css";
 @import "./navbar.scss";
 @import "./tables.scss";

@@ -8,41 +8,43 @@ i.nexus-icon {
   padding: 2px;
 }
 
-.navbar-brand .logo{
+.navbar-toggler {
+  padding: 0.25rem 0.35rem;
+}
+.navbar-brand { margin-right: 0; }
+
+#logo {
   background: url('../static/images/logo.png');
   background-size: 144px 36px;
   width: 144px;
   height: 36px;
 }
 
-// Expand Search Input over entire available space
-.navbar-brand { flex-grow: 1; }
-.navbar-menu { flex-grow: 0; }
-
-.navbar-start { flex-grow: 1; }
-#search-control { width: 100%!important; }
-
-#search-cancel { z-index: 100; cursor: pointer; pointer-events: all; }
-
-// Desktop only
-@media screen and (min-width: 1024px){
-  .navbar-item, .navbar-link { padding: 0.5rem 0.25rem; }
-}
-
-
 // Mobile only
-@media screen and (max-width: 1023px) {
+@include media-breakpoint-down(md) {
   // Make Brand Logo smaller
-  .navbar-brand .logo{ width: 35px; }
+  #logo { width: 35px; }
 }
+
+
+// Expand Search Input over entire available space and search features
+#search { padding-left: 2.25em; }
+
+.icon-search {
+  display: inline-flex;
+  height: 2.25em;
+  line-height: 2.25em;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  align-items: center;
+  justify-content: center;
+  left:0;
+  width: 2.25em;
+}
+
+#search-control { flex-grow: 1; }
+
 
 // make icons in dropdown-menus aligned
 .dropdown-item > .icon { width: 25px; margin-right: 0!important; margin-left: 0!important; }
-
-
-#search-info {
-  position: absolute !important;
-  right: 0.625em;
-  top: 0.4em;
-  z-index: 4;
-}

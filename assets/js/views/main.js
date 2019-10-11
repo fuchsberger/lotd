@@ -1,28 +1,43 @@
 import $ from 'jquery'
 import 'datatables.net'
 import 'timeago'
-import socket from '../socket'
-
-import { login } from '../api/nexus'
+import socket from '../api/socket'
+import login from '../api/nexus'
 
 export default class MainView {
+
+  enableTableFeatures() {
+    $("table").on('draw.dt', function () {
+      $('#loader-wrapper').addClass('d-none')
+      $("time").timeago()
+    })
+
+    // enable filtering tables based on a searchfield
+    $('table').on('click', 'a.search-field', function () {
+      const text = $(this).text()
+      $('#search').val( text )
+      $('table').DataTable().search(text).draw()
+    })
+
+    // enable canceling a search
+    $('#search-cancel').on('click', function () {
+      $('#search').val('')
+      $('table').DataTable().search('').draw()
+    })
+  }
 
   icon(name) {
     return `<span class="icon"><i class="icon-${name}"></i></span>`
   }
 
-  search_field(d) {
-    return `<a class='search-field' href='#'>${d}</a>`
+  search_field(term) {
+    return `<a class='search-field'>${term}</a>`
   }
 
   mount() {
 
-    // connect socket
-    socket.connect()
+    // assign socket to view so we don't have to import it in each view
     this.socket = socket
-
-    // enable mobile menu
-    $(".navbar-burger").click(() => { $(".navbar-burger, .navbar-menu").toggleClass("is-active")})
 
     // enable login button
     $('#signInBtn').click(() => login())
@@ -30,17 +45,10 @@ export default class MainView {
     // on clicking logout, disconnect all sockets
     $('#logout-button').click(() => window.userChannel.push("logout"))
 
-    // enable dismissing of notifications
-    $('.notification button.delete').on('click', function(){ $(this).parent().remove() })
-
     // if we have a table, create a datatable
     // if ($('table').length ) {
 
-    //   // enable timeago on table redraw
-    //   $("table").on('draw.dt', function () {
-    //     $('#loader-wrapper').addClass('is-hidden')
-    //     $("time").timeago()
-    //   })
+
 
     //   // create datatable
     //   let table = $('table').DataTable({ dom: 't', paging: false, info: false })

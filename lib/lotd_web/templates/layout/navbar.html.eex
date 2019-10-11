@@ -1,32 +1,23 @@
-<nav class="navbar is-fixed-top is-light" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a class="navbar-item" href="<%= Routes.item_path(@conn, :index) %>">
-      <div class='logo'></div>
-    </a>
-    <div class='navbar-item is-expanded'>
-      <div id="search-control" class="control has-icons-left">
-        <input id="search" class="input" type="text" placeholder="Find...">
-        <span id='search-icon' class="icon is-small is-left">
-          <i class="icon-search"></i>
-        </span>
-        <span id='search-cancel' class="icon is-small has-text-link is-left is-hidden">
-          <i class="icon-cancel"></i>
-        </span>
-        <div id='search-info'>
-          <span class='filtered-count' title="Found Entries"></span>
-          <strong class='total-count' title="Total Entries"></strong>
-        </div>
+<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+
+  <a id="logo" class="navbar-brand" href="<%= Routes.item_path(@conn, :index) %>"></a>
+
+  <form id="search-control">
+    <div class='input-group'>
+      <input id="search" class="form-control" type="search" placeholder="Find..." >
+      <i class="icon-search text-black-50"></i>
+      <div class='input-group-append'>
+        <span id='search-count' class='input-group-text'>0</span>
       </div>
     </div>
-    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="main-menu">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
+  </form>
 
-  <div id="main-menu" class="navbar-menu">
-    <div class="navbar-end ">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav">
       <%= if authenticated?(@conn) do %>
         <div class="navbar-item is-hidden-touch">
           <%= add_button(@conn) %>
@@ -56,6 +47,6 @@
       <%= menu_link(@conn, :mod, navbar: true) %>
       <%= if authenticated?(@conn) do menu_link(@conn, :character, navbar: true) end %>
       <%= if admin?(@conn) do menu_link(@conn, :user, navbar: true) end %>
-    </div>
+    </ul>
   </div>
 </nav>

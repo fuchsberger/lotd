@@ -18,12 +18,6 @@ module.exports = (env, options) => ({
     ]
   },
   entry: './js/app.js',
-  // entry: {
-  //   app: [
-  //     staticDir + '/css/app.scss',
-  //     staticDir + '/js/app.js'
-  //   ]
-  // },
   output: {
     filename: 'app.js',
     path: path.resolve(__dirname, '../priv/static/js')
@@ -37,7 +31,15 @@ module.exports = (env, options) => ({
       },
       {
         test: /\.(s?)css$/,
-        use: [ MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'  ]
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: { plugins: function () { return [require('autoprefixer')] } }
+          },
+          'sass-loader'
+        ]
       },
       // {
       //   test: /\.css$/,

@@ -1,9 +1,11 @@
 import CSS from '../css/app.scss'
 
+
 import $ from 'jquery'
+import 'bootstrap'
 import Turbolinks from 'turbolinks'
 import "phoenix_html"
-import socket from './socket'
+import socket from './api/socket'
 import loadView from './views/loader'
 
 document.addEventListener("turbolinks:load", () => {

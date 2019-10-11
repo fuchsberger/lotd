@@ -13,9 +13,9 @@ const uuidv4 = () => (
 )
 
 // Temporarily connects to nexus api to retrieve api-key token
-export const login = () => {
+const login = () => {
 
-  window.socket = new WebSocket("wss://sso.nexusmods.com")
+  const socket = new WebSocket("wss://sso.nexusmods.com")
 
   // Connect to SSO service
   socket.onopen = () => {
@@ -52,7 +52,7 @@ export const login = () => {
         $('#login-form').submit()
 
         // close right away
-        window.socket.close()
+        socket.close()
       }
     }
 
@@ -60,3 +60,5 @@ export const login = () => {
     else console.error("Something went wrong! " + res.error)
   }
 }
+
+export default login
