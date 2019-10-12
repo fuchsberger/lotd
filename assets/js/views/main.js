@@ -55,7 +55,7 @@ export default class MainView {
   }
 
   search_field(term) {
-    return `<a class='search-field'>${term}</a>`
+    return term ? `<a class='search-field'>${term}</a>` : ''
   }
 
   mount() {

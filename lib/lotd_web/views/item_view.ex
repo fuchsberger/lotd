@@ -6,11 +6,12 @@ defmodule LotdWeb.ItemView do
   def render("item.json", %{ item: i, character_items: citems }) do
     [
       i.id,
-      Enum.member?(citems, i.id),
       i.name,
-      (if i.location, do: i.location.name, else: ""),
-      (if i.quest, do: i.quest.name, else: ""),
-      i.display.name
+      i.url,
+      (if i.location, do: i.location.name, else: nil),
+      (if i.quest, do: i.quest.name, else: nil),
+      i.display.name,
+      Enum.member?(citems, i.id)
     ]
   end
 
@@ -18,8 +19,9 @@ defmodule LotdWeb.ItemView do
     [
       i.id,
       i.name,
-      (if i.location, do: i.location.name, else: ""),
-      (if i.quest, do: i.quest.name, else: ""),
+      i.url,
+      (if i.location, do: i.location.name, else: nil),
+      (if i.quest, do: i.quest.name, else: nil),
       i.display.name
     ]
   end

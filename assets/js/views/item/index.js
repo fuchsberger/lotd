@@ -12,16 +12,23 @@ export default class View extends MainView {
 
     channel.join()
       .receive("ok", ({ items, moderator }) => {
+        console.log(items)
+
+        let authenticated = items[0].length == 7
+
+        let order = items[0].length == 7 ? 2 : 1
 
         let columns = [
           { visible: false },
-          { title: "Item", className: "all" },
-          { title: "Location", render: d => this.search_field(d)},
-          { title: "Quest", render: d => this.search_field(d)},
-          { title: "Display", render: d => this.search_field(d) },
+          {
+            title: "Item", className: "all font-weight-bold", data: null, render: d => (
+              d[2] ? `<a href="${d[2]}" target='_blank'>${d[1]}</a>` : d[1]
+          )},
+          { title: "Location", data: 3, render: d => this.search_field(d)},
+          { title: "Quest", data: 4, render: d => this.search_field(d)},
+          { title: "Display", data: 5, render: d => this.search_field(d) },
 
         ]
-        let order = 1
 
         // if moderator, add action column
         if (moderator) columns.push({
@@ -41,7 +48,7 @@ export default class View extends MainView {
         })
 
         // user was logged in, add collect column
-        if (items[0].length == 6) {
+        if (authenticated) {
 
           // allow collecting of items
           $('#item-table').on('click', '.collect', function () {
@@ -83,7 +90,6 @@ export default class View extends MainView {
             title: this.icon('ok-squared'),
             width: "25px"
           })
-          order = 2
         }
 
         let table = $('table').DataTable({
@@ -91,7 +97,7 @@ export default class View extends MainView {
           dom: 't',
           paging: false,
           info: false,
-          order: [[order, 'asc']],
+          order: [[authenticated ? 1 : 0, 'asc']],
           responsive: {
             details: {
               type: 'column',
