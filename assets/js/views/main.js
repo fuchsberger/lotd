@@ -88,6 +88,8 @@ export default class MainView {
         $('#search-cancel').addClass('is-hidden')
       })
 
+      $('time').timeago()
+
       // store table for unmount
       this.table = table
 
