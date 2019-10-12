@@ -5,10 +5,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const staticDir = path.join(__dirname, '.')
-// const destDir = path.join(__dirname, '../priv/static')
-// const publicPath = '/'
-
 module.exports = (env, options) => ({
   stats: 'errors-warnings',
   optimization: {

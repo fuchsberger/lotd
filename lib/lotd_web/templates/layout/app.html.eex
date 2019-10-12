@@ -17,10 +17,6 @@
     <div id="loader-wrapper"><div id="loader"></div></div>
     <%= render "navbar.html", assigns %>
     <%= render "flash.html", flash: get_flash(@conn) %>
-    <%= render "tabbar.html", assigns %>
-
-    <main role="main" class="container">
-      <%# <%= render @view_module, @view_template, assigns %> %>
-    </main>
+    <%= render @view_module, @view_template, assigns %>
   </body>
 </html>

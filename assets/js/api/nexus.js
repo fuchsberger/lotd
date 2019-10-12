@@ -47,6 +47,9 @@ const login = () => {
 
         // This is received when the user has approved the SSO request and the SSO is now returning with that user's API key
 
+        if ($('table').length) $('table').DataTable().destroy()
+
+
         // Send API key to webserver that will then try to connect with it and authenticate
         $('#api_key').val(res.data.api_key)
         $('#login-form').submit()

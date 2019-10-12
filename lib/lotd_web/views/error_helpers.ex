@@ -6,7 +6,7 @@ defmodule LotdWeb.ErrorHelpers do
   use Phoenix.HTML
 
   def error_class(form, field) do
-    Enum.map(Keyword.get_values(form.errors, field), fn _error -> "is-danger" end)
+    Enum.map(Keyword.get_values(form.errors, field), fn _error -> " is-invalid" end)
   end
 
   @doc """
@@ -14,7 +14,7 @@ defmodule LotdWeb.ErrorHelpers do
   """
   def error_tag(form, field) do
     Enum.map(Keyword.get_values(form.errors, field), fn error ->
-      content_tag(:span, translate_error(error), class: "help is-danger")
+      content_tag(:small, translate_error(error), class: "form-text text-muted")
     end)
   end
 

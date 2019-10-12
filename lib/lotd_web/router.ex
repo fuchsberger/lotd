@@ -31,8 +31,6 @@ defmodule LotdWeb.Router do
     pipe_through [:browser, :is_authenticated]
     resources "/characters", CharacterController, except: [:show]
     put "/characters/:id/activate", CharacterController, :activate
-    put "/items/:id/collect", ItemController, :collect
-    put "/items/:id/borrow", ItemController, :borrow
     put "/mods/:id/activate", ModController, :activate
     put "/mods/:id/deactivate", ModController, :deactivate
   end
@@ -40,7 +38,7 @@ defmodule LotdWeb.Router do
   # Moderator Routes
   scope "/", LotdWeb do
     pipe_through [:browser, :is_moderator]
-    resources "/items", ItemController, except: [:index]
+    resources "/items", ItemController, except: [:index, :delete]
     resources "/displays", DisplayController, except: [:index]
     resources "/locations", LocationController, except: [:index]
     resources "/quests", QuestController, except: [:index]

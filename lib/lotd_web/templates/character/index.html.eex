@@ -1,22 +1,20 @@
-<div class="table-container">
-  <table id="character-table" class="display" data-order="[[1, &quot;desc&quot; ]]">
-    <thead>
+<table id="character-table" class="display" data-order="[[1, &quot;desc&quot; ]]">
+  <thead>
+    <tr>
+      <th>Character</th>
+      <th data-searchable="false">Items</th>
+      <th data-searchable="false" class='is-hidden-touch'>Created</th>
+      <th data-searchable="false" data-sortable="false">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for c <- @characters do %>
       <tr>
-        <th>Character</th>
-        <th data-searchable="false">Items</th>
-        <th data-searchable="false" class='is-hidden-touch'>Created</th>
-        <th data-searchable="false" data-sortable="false">Actions</th>
+        <td><strong><%= c.name %></strong></td>
+        <td><%= Enum.count(c.items) %></td>
+        <td class='is-hidden-touch' data-order="<%= c.inserted_at %>"><%= time(c.inserted_at) %></td>
+        <td><%= character_actions(@conn, c) %></td>
       </tr>
-    </thead>
-    <tbody>
-      <%= for c <- @characters do %>
-        <tr>
-          <td><strong><%= c.name %></strong></td>
-          <td><%= Enum.count(c.items) %></td>
-          <td class='is-hidden-touch' data-order="<%= c.inserted_at %>"><%= time(c.inserted_at) %></td>
-          <td><%= character_actions(@conn, c) %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</div>
+    <% end %>
+  </tbody>
+</table>

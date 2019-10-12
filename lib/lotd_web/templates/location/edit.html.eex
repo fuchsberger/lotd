@@ -1,4 +1,4 @@
-<section class="section has-text-centered">
-  <h3 class="title is-3">Edit Location</h3>
+<div class='container text-center'>
+  <h3>Edit Location</h3>
   <%= render_form @conn, :update %>
-</section>
+</div>

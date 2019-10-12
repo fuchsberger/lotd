@@ -1,17 +1,18 @@
-i.nexus-icon {
-  height: 100%;
-  width:100%;
+body { margin-top: 56px; }
+
+#signInBtn {
   background: url('../static/images/nexusmods.svg');
   background-size: 20px 20px;
   background-repeat: no-repeat;
-  background-position: center;
-  padding: 2px;
+  background-position: left center;
+  padding-left: 23px;
+  margin-left: 10px;
+  cursor: pointer;
 }
 
-.navbar-toggler {
-  padding: 0.25rem 0.35rem;
-}
+.navbar-toggler { padding: 0.25rem 0.35rem; }
 .navbar-brand { margin-right: 0; }
+.navbar-collapse { flex-grow: 0; }
 
 #logo {
   background: url('../static/images/logo.png');
@@ -20,30 +21,33 @@ i.nexus-icon {
   height: 36px;
 }
 
-// Mobile only
-@include media-breakpoint-down(md) {
-  // Make Brand Logo smaller
-  #logo { width: 35px; }
-}
+// Make Brand Logo smaller on Mobile only
+@include media-breakpoint-down(md) { #logo { width: 35px; } }
 
+#search-control {
+  flex-grow: 1;
+  margin-left: 5px;
+  width: min-content;
+}
 
 // Expand Search Input over entire available space and search features
 #search { padding-left: 2.25em; }
 
-.icon-search {
+#search-control > i {
   display: inline-flex;
   height: 2.25em;
   line-height: 2.25em;
-  pointer-events: none;
   position: absolute;
   top: 0;
   align-items: center;
   justify-content: center;
   left:0;
   width: 2.25em;
+  z-index: 1050;
 }
 
-#search-control { flex-grow: 1; }
+#search-control > i.icon-cancel { cursor: pointer; }
+
 
 
 // make icons in dropdown-menus aligned

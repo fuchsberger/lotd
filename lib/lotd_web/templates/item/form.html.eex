@@ -1,78 +1,59 @@
 <%= form_for @changeset, @action, [as: :item], fn f -> %>
 
   <%# name %>
-  <%= label f, :name, class: "label" %>
-  <div class="field">
-    <div class="control is-expanded">
-      <%= text_input f, :name,
-        class: "input #{error_class(f, :name)}", placeholder: "Name" %>
-    </div>
+  <div class="form-group">
+    <%= label f, :name %>
+    <%= text_input f, :name, class: "form-control#{error_class(f, :name)}", placeholder: "Name" %>
+    <%= error_tag f, :name %>
   </div>
-  <%= error_tag f, :name %>
 
   <%# url %>
-  <%= label f, :url, class: "label" %>
-  <div class="field">
-    <div class="control is-expanded">
-      <%= text_input f, :url,
-        class: "input #{error_class(f, :url)}", placeholder: "Url" %>
-    </div>
+  <div class="form-group">
+    <%= label f, :url %>
+    <%= text_input f, :url, class: "form-control#{error_class(f, :url)}", placeholder: "Url" %>
+    <%= error_tag f, :url %>
   </div>
-  <%= error_tag f, :url %>
 
   <%# display %>
-  <%= label f, :display_id, class: "label" %>
-  <div class="field">
-    <div class="control has-text-centered">
-      <div class="select <%= error_class(f, :display_id) %>">
-        <%= select f, :display_id, select_options(@displays),
-          class: "select",
-          prompt: "Choose a Display"
-        %>
-      </div>
-    </div>
+  <div class="form-group">
+    <%= label f, :display_id %>
+    <%= select f, :display_id, select_options(@displays),
+      class: "custom-select#{error_class(f, :display_id)}",
+      prompt: "Choose a Display"
+    %>
+    <%= error_tag f, :display_id %>
   </div>
-  <%= error_tag f, :display_id %>
 
   <%# mod %>
-  <%= label f, :mod_id, class: "label" %>
-  <div class="field">
-    <div class="control has-text-centered">
-      <div class="select <%= error_class(f, :mod_id) %>">
-        <%= select f, :mod_id, select_options(@mods), class: "select", prompt: "Choose a Mod" %>
-      </div>
-    </div>
+  <div class="form-group">
+    <%= label f, :mod_id %>
+    <%= select f, :mod_id, select_options(@mods),
+      class: "custom-select#{error_class(f, :mod_id)}",
+      prompt: "Choose a Mod"
+    %>
+    <%= error_tag f, :mod_id %>
   </div>
-  <%= error_tag f, :mod_id %>
 
   <%# quest %>
-  <%= label f, :quest_id, class: "label" %>
-  <div class="field">
-    <div class="control has-text-centered">
-      <div class="select <%= error_class(f, :quest_id) %>">
-        <%= select f, :quest_id, select_options(@quests),
-          class: "select",
-          prompt: "Choose a Quest"
-        %>
-      </div>
-    </div>
+  <div class="form-group">
+    <%= label f, :quest_id %>
+    <%= select f, :quest_id, select_options(@quests),
+      class: "custom-select#{error_class(f, :quest_id)}",
+      prompt: "Choose a Quest"
+    %>
+    <%= error_tag f, :quest_id %>
   </div>
-  <%= error_tag f, :quest_id %>
 
   <%# location %>
-  <%= label f, :location_id, class: "label" %>
-  <div class="field">
-    <div class="control has-text-centered">
-      <div class="select <%= error_class(f, :location_id) %>">
-        <%= select f, :location_id, select_options(@locations),
-          class: "select",
-          prompt: "Choose a Location"
-        %>
-      </div>
-    </div>
+
+  <div class="form-group">
+    <%= label f, :location_id %>
+    <%= select f, :location_id, select_options(@locations),
+      class: "custom-select#{error_class(f, :location_id)}",
+      prompt: "Choose a Location"
+    %>
+    <%= error_tag f, :location_id %>
   </div>
-  <%= error_tag f, :location_id %>
 
-
-  <%= submit @submit_button_text, class: "button is-info" %>
+  <%= submit @submit_button_text, class: "btn btn-primary" %>
 <% end %>

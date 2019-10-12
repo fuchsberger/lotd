@@ -1,28 +1,26 @@
-<div class="table-container">
-  <table class="display">
-    <thead>
-      <tr>
-        <th>Display</th>
-        <%= if authenticated?(@conn) do %>
-          <th class='is-hidden-touch' data-searchable="false">Items Found</th>
-        <% end %>
-        <th class='is-hidden-touch' data-searchable="false">Items Total</th>
-        <%= if moderator?(@conn) do %>
-          <th data-searchable="false" data-sortable='false' width='35px'></th>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <%= for d <- @displays do %>
-        <tr>
-          <td><strong><%= name_link(d) %></strong></td>
-          <%= if authenticated?(@conn) do %>
-            <td class='is-hidden-touch'><%= d.found_items %></td>
-          <% end %>
-          <td class='is-hidden-touch'><%= Enum.count(d.items) %></td>
-          <%= if moderator?(@conn) do moderator_actions(@conn, d) end %>
-        </tr>
+<table class="display">
+  <thead>
+    <tr>
+      <th>Display</th>
+      <%= if authenticated?(@conn) do %>
+        <th class='is-hidden-touch' data-searchable="false">Items Found</th>
       <% end %>
-    </tbody>
-  </table>
-</div>
+      <th class='is-hidden-touch' data-searchable="false">Items Total</th>
+      <%= if moderator?(@conn) do %>
+        <th data-searchable="false" data-sortable='false' width='35px'></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for d <- @displays do %>
+      <tr>
+        <td><strong><%= name_link(d) %></strong></td>
+        <%= if authenticated?(@conn) do %>
+          <td class='is-hidden-touch'><%= d.found_items %></td>
+        <% end %>
+        <td class='is-hidden-touch'><%= Enum.count(d.items) %></td>
+        <%= if moderator?(@conn) do moderator_actions(@conn, d) end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

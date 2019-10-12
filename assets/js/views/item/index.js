@@ -1,33 +1,44 @@
 import $ from 'jquery'
+import 'datatables.net'
+import 'datatables.net-responsive'
 import MainView from '../main'
 
 export default class View extends MainView {
   mount() {
     super.mount()
 
-    // Now that you are connected, you can join channels with a topic:
-    let channel = this.socket.channel("items", { loaded: !!window.items })
+    // join item channel
+    let channel = this.socket.channel("items")
 
     channel.join()
-      .receive("ok", ({ items }) => {
-
-        // save data to window
-        window.items = items
-
-        // enable timeago on table redraw
-        $('#item-table').on('draw.dt', function () {
-          $('#loader-wrapper').addClass('is-hidden')
-          $("time").timeago()
-        })
+      .receive("ok", ({ items, moderator }) => {
 
         let columns = [
           { visible: false },
-          { title: "Name" },
+          { title: "Item", className: "all" },
           { title: "Location", render: d => this.search_field(d)},
           { title: "Quest", render: d => this.search_field(d)},
-          { title: "Display", render: d => this.search_field(d)}
+          { title: "Display", render: d => this.search_field(d) },
+
         ]
         let order = 1
+
+        // if moderator, add action column
+        if (moderator) columns.push({
+          className: 'text-center small-cell',
+          data: 0,
+          render: id => (`<a href="items/${id}/edit" class="icon-pencil"></a>`),
+          searchable: false,
+          orderable: false,
+          title: 'Actions'
+        })
+
+        columns.push({
+          className: 'control all small-cell',
+          data: null,
+          defaultContent: '',
+          orderable: false
+        })
 
         // user was logged in, add collect column
         if (items[0].length == 6) {
@@ -38,7 +49,6 @@ export default class View extends MainView {
             channel.push("collect", { id })
               .receive('ok', () => {
                 // find entry in items and mark as collected
-                window.items[id - 1][1] = true
                 $('#item-table').DataTable().cell($(this).parent()).data(true)
               })
           })
@@ -49,13 +59,21 @@ export default class View extends MainView {
             channel.push("remove", { id })
               .receive('ok', () => {
                 // find entry in items and mark as collected
-                window.items[id - 1][1] = false
                 $('#item-table').DataTable().cell($(this).parent()).data(false)
               })
           })
 
+          // allow deleting of items
+          if (moderator) {
+            $('#item-table').on('click', '.delete', function () {
+              let id = parseInt($(this).closest('tr').attr('id'))
+              channel.push("delete", { id })
+            })
+          }
+
           // add collect / borrow column
           columns.splice(1, 0, {
+            className: "all small-cell",
             render: d => (
               d ? `<a class='remove'>${this.icon('ok-squared')}</a>`
                 : `<a class='collect'>${this.icon('plus-squared-alt')}</a>`
@@ -63,28 +81,32 @@ export default class View extends MainView {
             searchable: false,
             sortable: false,
             title: this.icon('ok-squared'),
-            width: "34px"
+            width: "25px"
           })
           order = 2
         }
 
-        let table = $('#item-table').DataTable({
+        let table = $('table').DataTable({
           data: items,
           dom: 't',
           paging: false,
           info: false,
           order: [[order, 'asc']],
+          responsive: {
+            details: {
+              type: 'column',
+              target: -1
+            }
+          },
           rowId: 0,
           columns
         })
 
-        this.enableTableFeatures()
-
+        this.enableTableFeatures(table)
+        this.ready()
         this.table = table
       })
       .receive("error", resp => { console.log("Unable to join", resp) })
-
-    this.channel = channel
   }
 
   unmount() {

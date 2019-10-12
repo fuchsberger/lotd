@@ -1,1 +1,15 @@
-.has-small-padding { padding: 8px 10px!important; }
+.small-cell { padding: 8px 10px!important; }
+
+a.search-field, a.collect, a.remove {
+  color: $blue!important;
+  cursor: pointer;
+}
+
+.control {
+  cursor: pointer;
+  font-family: "icons";
+  text-align:center;
+}
+
+.control:before{ content: '\f13a'; }
+tr.parent .control:before { content: '\f139'; }

@@ -1,52 +1,52 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
 
-  <a id="logo" class="navbar-brand" href="<%= Routes.item_path(@conn, :index) %>"></a>
+  <a id="logo" class="navbar-brand" href="<%= Routes.item_path(@conn, :index) %>" title='Legacy of the Dragonborn - Inventory Manager'></a>
 
-  <form id="search-control">
-    <div class='input-group'>
-      <input id="search" class="form-control" type="search" placeholder="Find..." >
-      <i class="icon-search text-black-50"></i>
-      <div class='input-group-append'>
-        <span id='search-count' class='input-group-text'>0</span>
-      </div>
+  <div id="search-control" class='input-group'>
+    <input id="search" class="form-control" type="text" placeholder="Find..." >
+    <i class="icon-search text-black-50"></i>
+    <i class="icon-cancel text-primary d-none"></i>
+    <div class='input-group-append'>
+      <span id='search-count' class='input-group-text font-weight-bold'>0</span>
     </div>
-  </form>
+  </div>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+  <div class="ml-2 collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav">
+
+      <%= menu_link(@conn, :item) %>
+      <%= menu_link(@conn, :display) %>
+      <%= menu_link(@conn, :quest) %>
+      <%= menu_link(@conn, :location) %>
+
       <%= if authenticated?(@conn) do %>
-        <div class="navbar-item is-hidden-touch">
-          <%= add_button(@conn) %>
-        </div>
+        <li class='nav-item dropdown'>
+          <a class="nav-link dropdown-toggle" href="#" role="button"  id="navbarDropdown" data-toggle="dropdown">Manage</a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <%= add_button(@conn) %>
+            <%= dropdown_link(@conn, :character) %>
+            <%= dropdown_link(@conn, :mod) %>
+            <%= if admin?(@conn) do dropdown_link(@conn, :user) end %>
+          </div>
+        </li>
       <% end %>
-      <div class="navbar-item has-text-centered">
+      <li class="nav-item">
         <%= if authenticated?(@conn) do %>
           <%= logout_button(@conn) %>
         <% else %>
-          <a id='signInBtn' class="button">
-            <span class="icon is-small">
-              <i class="nexus-icon"></i>
-            </span>
-            <strong>Sign In</strong>
+          <a id='signInBtn' class="nav-link font-weight-bold">
+            Sign In
           </a>
           <%# Login Form (hidden) %>
           <%= f = form_for @conn, Routes.session_path(@conn, :create), [id: "login-form"] %>
             <%= hidden_input(f, :api_key) %>
           </form>
         <% end %>
-      </div>
-      <%# Mobile Menu %>
-      <%= menu_link(@conn, :item, tag: :div, navbar: true) %>
-      <%= menu_link(@conn, :display, navbar: true) %>
-      <%= menu_link(@conn, :quest, navbar: true) %>
-      <%= menu_link(@conn, :location, navbar: true) %>
-      <%= menu_link(@conn, :mod, navbar: true) %>
-      <%= if authenticated?(@conn) do menu_link(@conn, :character, navbar: true) end %>
-      <%= if admin?(@conn) do menu_link(@conn, :user, navbar: true) end %>
+      </li>
     </ul>
   </div>
 </nav>

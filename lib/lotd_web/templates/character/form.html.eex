@@ -1,13 +1,10 @@
 <%= form_for @changeset, @path, [as: :character], fn f -> %>
-  <%= label f, :name, class: "label" %>
-  <div class="field has-addons">
-    <div class="control is-expanded">
-      <%= text_input f, :name,
-        class: "input #{error_class(f, :name)}", placeholder: "Name / Race / Title..." %>
-    </div>
-    <div class="control">
-      <%= submit @submit_btn, class: "button is-info" %>
-    </div>
+
+  <div class="form-group">
+    <%= label f, :name %>
+    <%= text_input f, :name, class: "form-control #{error_class(f, :name)}", placeholder: "Name / Race / Title..." %>
+    <%= error_tag f, :name %>
   </div>
-  <%= error_tag f, :name %>
+
+  <%= submit @submit_btn, class: "btn btn-primary" %>
 <% end %>

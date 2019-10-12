@@ -24,6 +24,8 @@ defmodule LotdWeb.UserSocket do
   def character(socket), do:
     if Map.has_key?(socket.assigns, :user), do: socket.assigns.user.active_character, else: nil
 
+  def moderator?(socket), do: Map.has_key?(socket.assigns, :user) && socket.assigns.user.moderator
+
   # authenticated users should be able to be recogized so that on a logout all sockets are disconnected.
   def id(socket) do
     if Map.has_key?(socket.assigns, :user),

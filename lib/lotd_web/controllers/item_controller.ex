@@ -1,7 +1,7 @@
 defmodule LotdWeb.ItemController do
   use LotdWeb, :controller
 
-  alias Lotd.{Accounts, Gallery, Skyrim, Repo}
+  alias Lotd.{Accounts, Gallery, Skyrim}
   alias Lotd.Gallery.Item
 
   plug :load_displays when action in [:new, :create, :edit, :update]
@@ -49,27 +49,5 @@ defmodule LotdWeb.ItemController do
       {:error, changeset} ->
         render(conn, "edit.html", changeset: changeset)
     end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    item = Gallery.get_item!(id)
-    {:ok, _character} = Gallery.delete_item(item)
-
-    conn
-    |> put_flash(:info, "Item deleted successfully.")
-    |> redirect(to: Routes.item_path(conn, :index))
-  end
-
-  def collect(conn, %{"id" => item_id}) do
-    items = character(conn).items ++ [Gallery.get_item!(item_id)]
-    Accounts.update_character(character(conn), :items, items)
-    redirect(conn, to: Routes.item_path(conn, :index))
-  end
-
-  def borrow(conn, %{"id" => item_id}) do
-    item_id = String.to_integer(item_id)
-    items = Enum.reject(character(conn).items, fn i -> i.id == item_id end)
-    Accounts.update_character(character(conn), :items, items)
-    redirect(conn, to: Routes.item_path(conn, :index))
   end
 end

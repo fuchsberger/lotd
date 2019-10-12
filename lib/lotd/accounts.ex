@@ -52,6 +52,18 @@ defmodule Lotd.Accounts do
     |> Repo.one!()
   end
 
+  def get_character_items(character) do
+    character
+    |> Repo.preload(:items)
+    |> Map.get(:items)
+  end
+
+  def get_character_item_ids(character) do
+    character
+    |> get_character_items()
+    |> Enum.map(fn m -> m.id end)
+  end
+
   def create_character(%User{} = user, attrs \\ %{}) do
     %Character{}
     |> Character.changeset(attrs)
@@ -65,12 +77,22 @@ defmodule Lotd.Accounts do
     |> Repo.update()
   end
 
-  # activating / deactivating mods, collecting / borrowing items
-  def update_character(%Character{} = character, association, collection) do
+  def update_character_add_item(%Character{} = character, item) do
+    character = Repo.preload(character, :items)
+
     character
-    |> change_character()
-    |> Ecto.Changeset.put_assoc(association, collection)
-    |> Repo.update()
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
+    |> Repo.update!()
+  end
+
+  def update_character_remove_item(%Character{} = character, item_id) do
+    character = Repo.preload(character, :items)
+
+    character
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, fn i -> i.id == item_id end))
+    |> Repo.update!()
   end
 
   def delete_character(%Character{} = character), do: Repo.delete(character)

@@ -1,3 +1,1 @@
-<div class="table-container">
-  <table id='item-table' class='display' width="100%"></table>
-</div>
+<table id='item-table' class='display nowrap' width="100%"></table>

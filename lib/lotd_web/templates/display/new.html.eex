@@ -1,4 +1,4 @@
-<section class="section has-text-centered">
-  <h3 class="title is-3">Add Display</h3>
+<div class='container text-center'>
+  <h3>Add Display</h3>
   <%= render_form @conn, :create %>
-</section>
+</div>

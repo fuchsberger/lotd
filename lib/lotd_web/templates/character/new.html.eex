@@ -1,7 +1,7 @@
-<section class="section has-text-centered">
-  <h3 class="title is-3">Add Character</h3>
+<div class='container text-center'>
+  <h3>Add Character</h3>
   <%= render "form.html",
     changeset: @changeset,
     path: Routes.character_path(@conn, :create),
     submit_btn: "Create" %>
-</section>
+</div>
