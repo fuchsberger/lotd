@@ -12,11 +12,8 @@ export default class View extends MainView {
 
     channel.join()
       .receive("ok", ({ items, moderator }) => {
-        console.log(items)
 
         let authenticated = items[0].length == 7
-
-        let order = items[0].length == 7 ? 2 : 1
 
         let columns = [
           { visible: false },
