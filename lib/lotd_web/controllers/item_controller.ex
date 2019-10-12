@@ -4,10 +4,10 @@ defmodule LotdWeb.ItemController do
   alias Lotd.{Gallery, Skyrim}
   alias Lotd.Gallery.Item
 
-  plug :load_displays when action in [:new, :create, :edit, :update]
-  plug :load_locations when action in [:new, :create, :edit, :update]
-  plug :load_mods when action in [:new, :create, :edit, :update]
-  plug :load_quests when action in [:new, :create, :edit, :update]
+  plug :load_displays when action in [:index, :edit, :update]
+  plug :load_locations when action in [:index, :edit, :update]
+  plug :load_mods when action in [:index, :edit, :update]
+  plug :load_quests when action in [:index, :edit, :update]
 
   defp load_displays(conn, _), do: assign conn, :displays, Gallery.list_displays()
   defp load_locations(conn, _), do: assign conn, :locations, Skyrim.list_locations()
@@ -15,23 +15,6 @@ defmodule LotdWeb.ItemController do
   defp load_quests(conn, _), do: assign conn, :quests, Skyrim.list_quests()
 
   def index(conn, _params), do: render conn, "index.html"
-
-  def new(conn, _params) do
-    changeset = Gallery.change_item(%Item{})
-    render(conn, "new.html", changeset: changeset)
-  end
-
-  def create(conn, %{"item" => item_params}) do
-    case Gallery.create_item(item_params) do
-      {:ok, item} ->
-        conn
-        |> put_flash(:info, "#{item.name} created.")
-        |> redirect(to: Routes.item_path(conn, :index))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
-    end
-  end
 
   def edit(conn, %{"id" => id}) do
     item = Gallery.get_item!(id)

@@ -1,6 +1,5 @@
 import CSS from '../css/app.scss'
 
-
 import $ from 'jquery'
 import 'bootstrap'
 import Turbolinks from 'turbolinks'

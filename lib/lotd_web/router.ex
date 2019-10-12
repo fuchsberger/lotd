@@ -38,7 +38,7 @@ defmodule LotdWeb.Router do
   # Moderator Routes
   scope "/", LotdWeb do
     pipe_through [:browser, :is_moderator]
-    resources "/items", ItemController, except: [:index, :delete]
+    resources "/items", ItemController, only: [:update, :edit]
     resources "/displays", DisplayController, except: [:index]
     resources "/locations", LocationController, except: [:index]
     resources "/quests", QuestController, except: [:index]

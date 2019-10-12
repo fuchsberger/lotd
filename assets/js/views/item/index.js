@@ -4,19 +4,34 @@ import 'datatables.net-responsive'
 import MainView from '../main'
 
 export default class View extends MainView {
+
+  user_actions(found){
+    return found
+      ? `<a class='remove'>${this.icon('ok-squared')}</a>`
+      : `<a class='collect'>${this.icon('plus-squared-alt')}</a>`
+  }
+
   mount() {
     super.mount()
 
     // join item channel
     let channel = this.socket.channel("items")
 
-    channel.join()
-      .receive("ok", ({ items, moderator }) => {
+    // listen for deleted items
+    channel.on('add', ({ item }) => {
+      this.table
+        .row.add( item )
+        .draw()
+        .node()
+    })
+    channel.on('delete', ({ id }) => this.table.row(`#${id}`).remove().draw())
 
-        let authenticated = items[0].length == 7
+    channel.join()
+      .receive("ok", ({ items }) => {
+
+        this.items = items
 
         let columns = [
-          { visible: false },
           {
             title: "Item", className: "all font-weight-bold", data: null, render: d => (
               d[2] ? `<a href="${d[2]}" target='_blank'>${d[1]}</a>` : d[1]
@@ -24,14 +39,13 @@ export default class View extends MainView {
           { title: "Location", data: 3, render: d => this.search_field(d)},
           { title: "Quest", data: 4, render: d => this.search_field(d)},
           { title: "Display", data: 5, render: d => this.search_field(d) },
-
         ]
 
         // if moderator, add action column
-        if (moderator) columns.push({
+        if (this.moderator || this.admin) columns.push({
           className: 'text-center small-cell',
           data: 0,
-          render: id => (`<a href="items/${id}/edit" class="icon-pencil"></a>`),
+          render: id => this.manage_actions(id),
           searchable: false,
           orderable: false,
           title: 'Actions'
@@ -45,7 +59,7 @@ export default class View extends MainView {
         })
 
         // user was logged in, add collect column
-        if (authenticated) {
+        if (this.authenticated) {
 
           // allow collecting of items
           $('#item-table').on('click', '.collect', function () {
@@ -68,7 +82,7 @@ export default class View extends MainView {
           })
 
           // allow deleting of items
-          if (moderator) {
+          if (this.moderator) {
             $('#item-table').on('click', '.delete', function () {
               let id = parseInt($(this).closest('tr').attr('id'))
               channel.push("delete", { id })
@@ -76,16 +90,49 @@ export default class View extends MainView {
           }
 
           // add collect / borrow column
-          columns.splice(1, 0, {
+          columns.splice(0, 0, {
             className: "all small-cell",
-            render: d => (
-              d ? `<a class='remove'>${this.icon('ok-squared')}</a>`
-                : `<a class='collect'>${this.icon('plus-squared-alt')}</a>`
-            ),
+            render: found => this.user_actions(found),
             searchable: false,
             sortable: false,
             title: this.icon('ok-squared'),
             width: "25px"
+          })
+        }
+
+        if (this.moderator) {
+          $('#modal form').submit(function (e) {
+            e.preventDefault()
+
+            const data = $(this).serializeArray().reduce(function(obj, item) {
+              obj[item.name] = item.value;
+              return obj;
+            }, {})
+
+            channel.push('add', data)
+              .receive('ok', () => {
+
+                // reset form
+                $('#name').val('').removeClass('is-invalid')
+                $('#url').val('').removeClass('is-invalid')
+                $('#mod_id').val('').removeClass('is-invalid')
+                $('#quest_id').val('').removeClass('is-invalid')
+                $('#location_id').val('').removeClass('is-invalid')
+                $('#display_id').val('').removeClass('is-invalid')
+                $('.invalid-feedback').remove()
+
+                // close modal if "add more items..." was not checked
+                if (!$('#continue').is(':checked')) $('#modal').modal('hide')
+              })
+              .receive('error', ({ errors }) => {
+                for (var key in errors) {
+                  if (errors.hasOwnProperty(key)) {
+                    $(`#${key}`).addClass('is-invalid')
+                      .after(`<div class="invalid-feedback">${errors[key]}</div>`)
+                  }
+                }
+              })
+
           })
         }
 
@@ -94,7 +141,7 @@ export default class View extends MainView {
           dom: 't',
           paging: false,
           info: false,
-          order: [[authenticated ? 1 : 0, 'asc']],
+          order: [[this.authenticated ? 1 : 0, 'asc']],
           responsive: {
             details: {
               type: 'column',

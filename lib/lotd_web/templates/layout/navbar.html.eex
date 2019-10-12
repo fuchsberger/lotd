@@ -3,9 +3,18 @@
   <a id="logo" class="navbar-brand" href="<%= Routes.item_path(@conn, :index) %>" title='Legacy of the Dragonborn - Inventory Manager'></a>
 
   <div id="search-control" class='input-group'>
+
+    <div class='input-group-prepend'>
+      <div class='input-group-text'>
+      <%= if moderator?(@conn) do %>
+        <a class='icon-plus' data-toggle="modal" data-target="#modal"></a>
+      <% else %>
+        <i class="icon-search text-black-50"></i>
+      <% end %>
+      <a class="icon-cancel text-primary d-none"></a>
+      </div>
+    </div>
     <input id="search" class="form-control" type="text" placeholder="Find..." >
-    <i class="icon-search text-black-50"></i>
-    <i class="icon-cancel text-primary d-none"></i>
     <div class='input-group-append'>
       <span id='search-count' class='input-group-text font-weight-bold'>0</span>
     </div>
@@ -27,7 +36,6 @@
         <li class='nav-item dropdown'>
           <a class="nav-link dropdown-toggle" href="#" role="button"  id="navbarDropdown" data-toggle="dropdown">Manage</a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <%= add_button(@conn) %>
             <%= dropdown_link(@conn, :character) %>
             <%= dropdown_link(@conn, :mod) %>
             <%= if admin?(@conn) do dropdown_link(@conn, :user) end %>

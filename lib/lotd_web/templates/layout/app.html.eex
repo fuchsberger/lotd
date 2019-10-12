@@ -12,7 +12,9 @@
   </head>
   <body
     data-view='<%= unique_view_name(@view_module, @view_template) %>'
-    data-search='<%= Map.get(@conn.params, "search", "") %>'
+    data-authenticated='<%= authenticated?(@conn) %>'
+    data-moderator='<%= moderator?(@conn) %>'
+    data-admin='<%= admin?(@conn) %>'
   >
     <div id="loader-wrapper"><div id="loader"></div></div>
     <%= render "navbar.html", assigns %>

@@ -70,7 +70,8 @@ defmodule LotdWeb do
     quote do
       use Phoenix.Channel
       import LotdWeb.Gettext
-      import LotdWeb.UserSocket, only: [character: 1, moderator?: 1]
+      import LotdWeb.ErrorHelpers, only: [error_map: 1]
+      import LotdWeb.UserSocket, only: [character: 1, moderator?: 1, admin?: 1]
     end
   end
 

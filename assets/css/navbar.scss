@@ -30,25 +30,7 @@ body { margin-top: 56px; }
   width: min-content;
 }
 
-// Expand Search Input over entire available space and search features
-#search { padding-left: 2.25em; }
-
-#search-control > i {
-  display: inline-flex;
-  height: 2.25em;
-  line-height: 2.25em;
-  position: absolute;
-  top: 0;
-  align-items: center;
-  justify-content: center;
-  left:0;
-  width: 2.25em;
-  z-index: 1050;
-}
-
-#search-control > i.icon-cancel { cursor: pointer; }
-
-
+#search-control  a { cursor: pointer; color: $primary; }
 
 // make icons in dropdown-menus aligned
 .dropdown-item > .icon { width: 25px; margin-right: 0!important; margin-left: 0!important; }

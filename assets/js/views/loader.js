@@ -8,5 +8,6 @@ export default viewPath => {
   } catch (e) {
     view = new MainView()
   }
+  view.module = viewPath.split('/')[0]
   return view
 }

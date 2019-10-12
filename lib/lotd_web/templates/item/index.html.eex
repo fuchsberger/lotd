@@ -1,1 +1,73 @@
 <table id='item-table' class='display nowrap' width="100%"></table>
+
+<div id="modal" class="modal fade" tabindex="-1" role="dialog">
+  <form>
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create Item</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <%# name %>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input class="form-control" id="name" name="name" placeholder="Name" type="text">
+          </div>
+
+          <%# url %>
+          <div class="form-group">
+            <label for="url">Url</label>
+            <input class="form-control" id="url" name="url" placeholder="Url" type="text">
+          </div>
+
+          <%# display %>
+          <div class="form-group">
+            <label for="display_id">Display</label>
+            <select class="custom-select" id="display_id" name="display_id">
+              <option value="">Choose a Display</option>
+              <%= options(@displays) %>
+            <select>
+          </div>
+
+          <%# mod %>
+          <div class="form-group">
+            <label for="mod_id">Mod</label>
+            <select class="custom-select" id="mod_id" name="mod_id">
+              <option value="">Choose a Mod</option>
+              <%= options(@mods) %>
+            <select>
+          </div>
+
+          <%# quest %>
+          <div class="form-group">
+            <label for="quest_id">Quest</label>
+            <select class="custom-select" id="quest_id" name="quest_id">
+              <option value="">Choose a Quest</option>
+              <%= options(@quests) %>
+            <select>
+          </div>
+
+          <%# location %>
+          <div class="form-group">
+            <label for="location_id">Location</label>
+            <select class="custom-select" id="location_id" name="location_id">
+              <option value="">Choose a Location</option>
+              <%= options(@quests) %>
+            <select>
+          </div>
+        </div>
+        <div class="modal-footer form-inline justify-content-between">
+          <div class="form-group form-check float-left">
+            <input type="checkbox" class="form-check-input" id="continue">
+            <label class="form-check-label" for="exampleCheck1">Add more items...</label>
+          </div>
+          <%= submit "Create", class: "btn btn-primary" %>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

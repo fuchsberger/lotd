@@ -7,6 +7,16 @@ import login from '../api/nexus'
 
 export default class MainView {
 
+  toggle_search_cancel(on = true) {
+    if (on) {
+      $('#search-control .icon-plus, #search-control .icon-search').addClass('d-none')
+      $('#search-control .icon-cancel').removeClass('d-none')
+    } else {
+      $('#search-control .icon-plus, #search-control .icon-search').removeClass('d-none')
+      $('#search-control .icon-cancel').addClass('d-none')
+    }
+  }
+
   enableTableFeatures(table) {
 
     // initially update the item count
@@ -19,26 +29,27 @@ export default class MainView {
       $('#search-count').text(info.recordsDisplay)
     })
 
+    const toggle_search_cancel = this.toggle_search_cancel
+
     // enable filtering tables based on a searchfield
     table.on('click', 'a.search-field', function () {
       const text = $(this).text()
       $('#search').val(text)
-      $('#search-control .icon-search').addClass('d-none')
-      $('#search-control .icon-cancel').removeClass('d-none')
+      toggle_search_cancel(true)
       $('table').DataTable().search(text).draw()
     })
 
     // enable searching/filtering
-    $('#search').on('keyup', function(){
-      table.search( this.value ).draw()
+    $('#search').on('keyup', function () {
+      toggle_search_cancel(this.value != '')
+      table.search(this.value).draw()
     })
 
     // enable canceling a search
     $('#search-control .icon-cancel').on('click', () => {
       $('#search').val('')
       table.search('').draw()
-      $('#search-control .icon-search').removeClass('d-none')
-      $('#search-control .icon-cancel').addClass('d-none')
+      toggle_search_cancel(false)
     })
   }
 
@@ -58,10 +69,25 @@ export default class MainView {
     return term ? `<a class='search-field'>${term}</a>` : ''
   }
 
+  manage_actions(id) {
+    const edit = `<a href='${this.module}/${id}/edit' class='icon-pencil'></a>`
+    const del = `<a class='delete text-danger'><i class='icon-cancel'</a>`
+
+    if (this.moderator && this.admin) return edit + del
+    else if (this.moderator) return edit
+    else if (this.admin) return del
+    else return ''
+  }
+
   mount() {
 
     // assign socket to view so we don't have to import it in each view
     this.socket = socket
+
+    // establish roles
+    this.authenticated = $('body').data('authenticated')
+    this.moderator = $('body').data('moderator')
+    this.admin = $('body').data('admin')
 
     // enable login button
     $('#signInBtn').click(() => login())

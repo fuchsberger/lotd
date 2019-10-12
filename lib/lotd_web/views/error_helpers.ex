@@ -18,6 +18,15 @@ defmodule LotdWeb.ErrorHelpers do
     end)
   end
 
+  def error_map(changeset) do
+    changeset.errors
+    |> Enum.map(fn error ->
+        {field, {error, _  }} = error
+        {field, error}
+      end)
+    |> Enum.into(%{})
+  end
+
   @doc """
   Translates an error message using gettext.
   """

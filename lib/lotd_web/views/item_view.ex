@@ -1,6 +1,7 @@
 defmodule LotdWeb.ItemView do
   use LotdWeb, :view
 
+  alias Lotd.Repo
   alias Lotd.Gallery.Item
 
   def render("item.json", %{ item: i, character_items: citems }) do
@@ -16,12 +17,13 @@ defmodule LotdWeb.ItemView do
   end
 
   def render("item.json", %{ item: i }) do
+    i = Repo.preload(i, :display)
     [
       i.id,
       i.name,
       i.url,
-      (if i.location, do: i.location.name, else: nil),
-      (if i.quest, do: i.quest.name, else: nil),
+      (if Ecto.assoc_loaded?(i.location), do: i.location.name, else: nil),
+      (if Ecto.assoc_loaded?(i.quest), do: i.quest.name, else: nil),
       i.display.name
     ]
   end
