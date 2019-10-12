@@ -95,6 +95,24 @@ defmodule Lotd.Accounts do
     |> Repo.update!()
   end
 
+  def update_character_add_mod(%Character{} = character, mod) do
+    character = Repo.preload(character, :mods)
+
+    character
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:mods, [ mod | character.mods ])
+    |> Repo.update!()
+  end
+
+  def update_character_remove_mod(%Character{} = character, mod_id) do
+    character = Repo.preload(character, :mods)
+
+    character
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, fn m -> m.id == mod_id end))
+    |> Repo.update!()
+  end
+
   def delete_character(%Character{} = character), do: Repo.delete(character)
   def change_character(%Character{} = character), do: Character.changeset(character, %{})
 end

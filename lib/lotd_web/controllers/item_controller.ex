@@ -1,7 +1,7 @@
 defmodule LotdWeb.ItemController do
   use LotdWeb, :controller
 
-  alias Lotd.{Accounts, Gallery, Skyrim}
+  alias Lotd.{Gallery, Skyrim}
   alias Lotd.Gallery.Item
 
   plug :load_displays when action in [:new, :create, :edit, :update]

@@ -54,15 +54,13 @@ defmodule LotdWeb.ModController do
   end
 
   def activate(conn, %{"id" => mod_id}) do
-    mods = character(conn).mods ++ [Skyrim.get_mod!(mod_id)]
-    Accounts.update_character(character(conn), :mods, mods)
+    Accounts.update_character_add_mod(character(conn), Skyrim.get_mod!(mod_id))
     redirect(conn, to: Routes.mod_path(conn, :index))
   end
 
   def deactivate(conn, %{"id" => mod_id}) do
     mod_id = String.to_integer(mod_id)
-    mods = Enum.reject(character(conn).mods, fn m -> m.id == mod_id end)
-    Accounts.update_character(character(conn), :mods, mods)
+    Accounts.update_character_remove_mod(character(conn), mod_id)
     redirect(conn, to: Routes.mod_path(conn, :index))
   end
 
