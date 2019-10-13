@@ -27,11 +27,11 @@
 #loader-wrapper {
   background-color: #FFF;
   position: fixed;
-  top: 56px;
+  top: 0;
   left: 0;
   right: 0;
-  bottom: 56px;
-  z-index: 1000;
+  bottom: 0;
+  z-index: 2000;
 }
 
 #loader {

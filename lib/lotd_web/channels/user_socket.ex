@@ -2,7 +2,7 @@ defmodule LotdWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "items", LotdWeb.ItemChannel
+  channel "public", LotdWeb.PublicChannel
 
   @max_age 2 * 7 * 24 * 60 * 60
 
@@ -24,9 +24,9 @@ defmodule LotdWeb.UserSocket do
   def character(socket), do:
     if Map.has_key?(socket.assigns, :user), do: socket.assigns.user.active_character, else: nil
 
-  def moderator?(socket), do: Map.has_key?(socket.assigns, :user) && socket.assigns.user.moderator
-
-  def admin?(socket), do: Map.has_key?(socket.assigns, :user) && socket.assigns.user.admin
+  def authenticated?(socket), do: Map.has_key?(socket.assigns, :user)
+  def moderator?(socket), do: authenticated?(socket) && socket.assigns.user.moderator
+  def admin?(socket), do: authenticated?(socket) && socket.assigns.user.admin
 
   # authenticated users should be able to be recogized so that on a logout all sockets are disconnected.
   def id(socket) do

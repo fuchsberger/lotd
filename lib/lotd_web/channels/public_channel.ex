@@ -1,23 +1,43 @@
-defmodule LotdWeb.ItemChannel do
+defmodule LotdWeb.PublicChannel do
   use LotdWeb, :channel
 
-  alias Lotd.{Accounts, Gallery}
-  alias LotdWeb.ItemView
+  alias Lotd.{Accounts, Gallery, Skyrim}
+  alias LotdWeb.{ItemView, LocationView}
 
-  def join("items", _params, socket) do
+  def join("public", _params, socket) do
 
     if character(socket) do
       citems = Accounts.get_character_item_ids(character(socket))
+      cmods = Enum.map(character(socket).mods, fn m -> m.id end)
 
       items = character(socket).mods
       |> Enum.map(fn m -> m.id end)
       |> Gallery.list_items()
       |> Phoenix.View.render_many(ItemView, "item.json", character_items: citems )
 
-      {:ok, %{ items: items, moderator: moderator?(socket) }, socket}
+      locations = Skyrim.list_locations(cmods)
+      |> Enum.map(fn l ->
+        common_ids = l.items -- citems
+        common_ids = l.items -- common_ids
+        Map.put(l, :found_items, Enum.count(common_ids))
+      end)
+      |> Phoenix.View.render_many(LocationView, "location.json", character_items: citems )
+
+      {:ok, %{
+        admin: admin?(socket),
+        user: authenticated?(socket),
+        items: items,
+        locations: locations,
+        moderator: moderator?(socket)
+      }, socket}
     else
-      items = Phoenix.View.render_many(Gallery.list_items(), ItemView, "item.json" )
-      {:ok, %{ items: items, moderator: moderator?(socket) }, socket}
+      {:ok, %{
+        admin: false,
+        moderator: false,
+        user: false,
+        items: Phoenix.View.render_many(Gallery.list_items(), ItemView, "item.json" ),
+        locations: Phoenix.View.render_many(Gallery.list_locations(), LocationView, "location.json" )
+      }, socket}
     end
   end
 

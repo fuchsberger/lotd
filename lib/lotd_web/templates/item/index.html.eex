@@ -3,7 +3,7 @@
     <table id='item-table' class='display nowrap' width="100%"></table>
   </div>
   <div class="collapse multi-collapse" data-parent="#page-content" id="locations">
-    Locations
+    <table id='location-table' class='display nowrap' width="100%"></table>
   </div>
   <div class="collapse multi-collapse" data-parent="#page-content" id="quests">
     Quests

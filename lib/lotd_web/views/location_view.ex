@@ -1,7 +1,28 @@
 defmodule LotdWeb.LocationView do
   use LotdWeb, :view
 
+  alias Lotd.Repo
   alias Lotd.Skyrim.Location
+
+  def render("location.json", %{ location: l, character_items: citems }) do
+    [
+      l.id,
+      l.name,
+      l.url,
+      Enum.count(l.items),
+      l.found_items
+    ]
+  end
+
+  def render("location.json", %{ location: l }) do
+    l = Repo.preload(l, :items)
+    [
+      l.id,
+      l.name,
+      l.url,
+      Enum.count(l.items)
+    ]
+  end
 
   def location_actions(conn, %Location{} = l) do
     [btn_edit(conn, l), btn_delete(conn, l)]

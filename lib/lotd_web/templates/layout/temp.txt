@@ -17,7 +17,7 @@
         <%= if authenticated?(@conn) do %>
           <%= logout_button(@conn) %>
         <% else %>
-          <a id='signInBtn' class="nav-link font-weight-bold">
+          <a id='login-button' class="nav-link font-weight-bold">
             Sign In
           </a>
           <%# Login Form (hidden) %>

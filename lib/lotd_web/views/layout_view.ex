@@ -37,12 +37,4 @@ defmodule LotdWeb.LayoutView do
     path = get_path(conn, :index, module: module)
     link("#{title}s", class: "dropdown-item#{active}", to: path)
   end
-
-  def unique_view_name(view_module, view_template) do
-    [action, "html"] = String.split(view_template, ".")
-
-    view_module
-    |> Phoenix.Naming.resource_name()
-    |> String.replace("_view", "/#{action}")
-  end
 end
