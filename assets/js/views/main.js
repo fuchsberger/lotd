@@ -95,6 +95,25 @@ export default class MainView {
     // on clicking logout, disconnect all sockets
     $('#logout-button').click(() => window.userChannel.push("logout"))
 
+    // enable menu
+    let page = 'items'
+
+    $('#menu a').click(function (e) {
+
+      e.preventDefault()
+      let id = $(this).data('id')
+
+      // do nothing if clicking on current page
+      if (page == id) return
+
+      // otherwise close previous page and open the new one
+      $('#menu .nav-item').removeClass('active')
+
+      $(this).parent().addClass('active')
+      $(`#${id}`).collapse('show')
+      page = id
+    })
+
     // if we have a table (not item table), create a datatable
     if ($('table').not( "#item-table" ).length ) {
 

@@ -1,4 +1,17 @@
-<table id='item-table' class='display nowrap' width="100%"></table>
+<main id="page-content" class="accordion">
+  <div class="collapse multi-collapse show" data-parent="#page-content" id="items">
+    <table id='item-table' class='display nowrap' width="100%"></table>
+  </div>
+  <div class="collapse multi-collapse" data-parent="#page-content" id="locations">
+    Locations
+  </div>
+  <div class="collapse multi-collapse" data-parent="#page-content" id="quests">
+    Quests
+  </div>
+  <div class="collapse multi-collapse" data-parent="#page-content" id="displays">
+    Displays
+  </div>
+</main>
 
 <div id="modal" class="modal fade" tabindex="-1" role="dialog">
   <form>

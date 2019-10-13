@@ -20,41 +20,25 @@
     </div>
   </div>
 
-  <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#menu-collapse" aria-controls="menu-collapse" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-  <div class="ml-2 collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav">
-
-      <%= menu_link(@conn, :item) %>
-      <%= menu_link(@conn, :display) %>
-      <%= menu_link(@conn, :quest) %>
-      <%= menu_link(@conn, :location) %>
-
-      <%= if authenticated?(@conn) do %>
-        <li class='nav-item dropdown'>
-          <a class="nav-link dropdown-toggle" href="#" role="button"  id="navbarDropdown" data-toggle="dropdown">Manage</a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <%= dropdown_link(@conn, :character) %>
-            <%= dropdown_link(@conn, :mod) %>
-            <%= if admin?(@conn) do dropdown_link(@conn, :user) end %>
-          </div>
-        </li>
-      <% end %>
-      <li class="nav-item">
-        <%= if authenticated?(@conn) do %>
-          <%= logout_button(@conn) %>
-        <% else %>
-          <a id='signInBtn' class="nav-link font-weight-bold">
-            Sign In
-          </a>
-          <%# Login Form (hidden) %>
-          <%= f = form_for @conn, Routes.session_path(@conn, :create), [id: "login-form"] %>
-            <%= hidden_input(f, :api_key) %>
-          </form>
-        <% end %>
+  <div class="ml-2 collapse navbar-collapse" id="menu-collapse">
+    <ul id='menu' class="navbar-nav">
+      <li class='nav-item active'>
+        <a class='nav-link' data-id='items' href='#items'>Items</a>
       </li>
+      <li class='nav-item'>
+        <a class='nav-link' data-id='locations' href='#locations'>Locations</a>
+      </li>
+      <li class='nav-item'>
+        <a class='nav-link' data-id='quests' href='#quests'>Quests</a>
+      </li>
+      <li class='nav-item'>
+        <a class='nav-link' data-id='displays' href='#displays'>Displays</a>
+      </li>
+
     </ul>
   </div>
 </nav>
