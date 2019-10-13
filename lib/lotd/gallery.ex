@@ -16,15 +16,7 @@ defmodule Lotd.Gallery do
       preload: [:display, :quest, :location]
   end
 
-  def list_items(), do: Repo.all(item_query())
-
-  def list_items(mod_ids) do
-    mod_ids = mod_ids ++ [1,2,3,4,5]
-
-    item_query()
-    |> where([i], i.mod_id in ^mod_ids)
-    |> Repo.all()
-  end
+  def list_items, do: Repo.all(Item)
 
   def list_character_item_ids(character) do
     character
@@ -54,12 +46,7 @@ defmodule Lotd.Gallery do
     Item.changeset(item, %{})
   end
 
-  def list_displays do
-    Display
-    |> preload(:items)
-    |> Repo.alphabetical()
-    |> Repo.all()
-  end
+  def list_displays, do: Repo.all(Display)
 
   def get_display!(id), do: Repo.get!(Display, id)
 

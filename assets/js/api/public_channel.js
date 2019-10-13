@@ -1,52 +1,27 @@
 import $ from 'jquery'
 import socket from './socket'
+import { Menu } from '../utils'
 
-
-const enableTableFeatures = table => {
-
-  // initially update the item count
-  let info = table.page.info()
-  $('#search-count').text(info.recordsDisplay)
-
-  table.on('draw.dt', function () {
-    // update filtered count
-    let info = table.page.info()
-    $('#search-count').text(info.recordsDisplay)
-  })
-
-  // enable filtering tables based on a searchfield
-  table.on('click', 'a.search-field', function () {
-    const text = $(this).text()
-    $('#search').val(text)
-    toggle_search_cancel(true)
-    $('table').DataTable().search(text).draw()
-  })
-
-  // enable searching/filtering
-  $('#search').on('keyup', function () {
-    toggle_search_cancel(this.value != '')
-    table.search(this.value).draw()
-  })
-
-  // enable canceling a search
-  $('#search-control .icon-cancel').on('click', () => {
-    $('#search').val('')
-    table.search('').draw()
-    toggle_search_cancel(false)
-  })
+const TABLE_DEFAULTS = {
+  dom: 't',
+  info: false,
+  order: 0,
+  paging: false,
+  responsive: { details: { type: 'column', target: -1 } },
+  rowId: 0
 }
+
+const cell_name = d => (d.url ? `<a href="${d.url}" target='_blank'>${d.name}</a>` : d.name)
 
 const icon = name => `<span class="icon"><i class="icon-${name}"></i></span>`
 
-const search_field = term => (term ? `<a class='search-field'>${term}</a>` : '')
-
-const manage_actions = (moderator, admin) => {
+const manage_actions = () => {
   const edit = `<a class='icon-pencil'></a>`
   const del = `<a class='delete text-danger'><i class='icon-cancel'</a>`
 
-  if (moderator && admin) return edit + del
-  else if (moderator) return edit
-  else if (admin) return del
+  if (window.moderator && window.admin) return edit + del
+  else if (window.moderator) return edit
+  else if (window.admin) return del
   else return ''
 }
 
@@ -56,17 +31,17 @@ const user_actions = found => (
     : `<a class='collect'>${icon('plus-squared-alt')}</a>`
 )
 
-const add_control_columns = (columns, moderator, admin) => {
+const add_control_columns = columns => {
 
   // if moderator, add action column
-  if (moderator || admin) columns.push({
-    className: 'text-center small-cell',
-    data: 0,
-    render: id => manage_actions(id, moderator, admin),
-    searchable: false,
-    orderable: false,
-    title: 'Actions'
-  })
+  // if (moderator || admin) columns.push({
+  //   className: 'text-center small-cell',
+  //   data: 0,
+  //   render: id => manage_actions(id),
+  //   searchable: false,
+  //   orderable: false,
+  //   title: 'Actions'
+  // })
 
   columns.push({
     className: 'control all small-cell',
@@ -75,138 +50,179 @@ const add_control_columns = (columns, moderator, admin) => {
     orderable: false
   })
 }
-const initialize_item_table = (items, user, moderator, admin) => {
+const initialize_item_table = items => {
+
+  const cell_link = (type, id) => {
+    if (!id) return ''
+    let data
+    switch (type) {
+      case 'location': data = window.locations; break;
+      case 'quest': data = window.quests; break;
+      case 'display': data = window.displays; break;
+    }
+    return `<a class='search-field'>${data.find(i => i.id == id).name}</a>`
+  }
+
   let columns = [
     {
-      title: "Item", className: "all font-weight-bold", data: null, render: d => (
-        d[2] ? `<a href="${d[2]}" target='_blank'>${d[1]}</a>` : d[1]
-    )},
-    { title: "Location", data: 3, render: d => search_field(d)},
-    { title: "Quest", data: 4, render: d => search_field(d)},
-    { title: "Display", data: 5, render: d => search_field(d) },
+      title: "Item",
+      className: "all font-weight-bold",
+      data: null,
+      sort: item => item.name,
+      render: item => cell_name(item)
+    },
+    { data: 'location_id', title: "Location", render: id => cell_link('location', id) },
+    { data: 'quest_id', title: "Quest", render: id => cell_link('quest', id) },
+    { data: 'display_id', title: "Display", render: id => cell_link('display', id) }
   ]
 
   // add control columns
-  add_control_columns(columns, moderator, admin)
+  add_control_columns(columns)
 
   // user was logged in, add collect column
-  if (user) {
+  // if (window.user) {
 
-    // allow collecting of items
-    $('#item-table').on('click', '.collect', function () {
-      let id = parseInt($(this).closest('tr').attr('id'))
-      channel.push("collect", { id })
-        .receive('ok', () => {
-          // find entry in items and mark as collected
-          $('#item-table').DataTable().cell($(this).parent()).data(true)
-        })
-    })
+  //   // allow collecting of items
+  //   $('#item-table').on('click', '.collect', function () {
+  //     let id = parseInt($(this).closest('tr').attr('id'))
+  //     channel.push("collect", { id })
+  //       .receive('ok', () => {
+  //         // find entry in items and mark as collected
+  //         $('#item-table').DataTable().cell($(this).parent()).data(true)
+  //       })
+  //   })
 
-    // allow borrowing of items
-    $('#item-table').on('click', '.remove', function () {
-      let id = parseInt($(this).closest('tr').attr('id'))
-      channel.push("remove", { id })
-        .receive('ok', () => {
-          // find entry in items and mark as collected
-          $('#item-table').DataTable().cell($(this).parent()).data(false)
-        })
-    })
+  //   // allow borrowing of items
+  //   $('#item-table').on('click', '.remove', function () {
+  //     let id = parseInt($(this).closest('tr').attr('id'))
+  //     channel.push("remove", { id })
+  //       .receive('ok', () => {
+  //         // find entry in items and mark as collected
+  //         $('#item-table').DataTable().cell($(this).parent()).data(false)
+  //       })
+  //   })
 
-    // allow deleting of items
-    if (moderator) {
-      $('#item-table').on('click', '.delete', function () {
-        let id = parseInt($(this).closest('tr').attr('id'))
-        channel.push("delete", { id })
-      })
-    }
+  //   // allow deleting of items
+  //   if (window.admin) {
+  //     $('#item-table').on('click', '.delete', function () {
+  //       let id = parseInt($(this).closest('tr').attr('id'))
+  //       channel.push("delete", { id })
+  //     })
+  //   }
 
-    // add collect / borrow column
-    columns.splice(0, 0, {
-      className: "all small-cell",
-      render: found => user_actions(found),
-      searchable: false,
-      sortable: false,
-      title: icon('ok-squared'),
-      width: "25px"
-    })
-  }
+  //   // add collect / borrow column
+  //   columns.splice(0, 0, {
+  //     className: "all small-cell",
+  //     render: found => user_actions(found),
+  //     searchable: false,
+  //     sortable: false,
+  //     title: icon('ok-squared'),
+  //     width: "25px"
+  //   })
+  // }
 
-  if (moderator) {
-    $('#modal form').submit(function (e) {
-      e.preventDefault()
+  // if (window.moderator) {
+  //   $('#modal form').submit(function (e) {
+  //     e.preventDefault()
 
-      const data = $(this).serializeArray().reduce(function(obj, item) {
-        obj[item.name] = item.value;
-        return obj;
-      }, {})
+  //     const data = $(this).serializeArray().reduce(function(obj, item) {
+  //       obj[item.name] = item.value;
+  //       return obj;
+  //     }, {})
 
-      channel.push('add', data)
-        .receive('ok', () => reset_modal())
-        .receive('error', ({ errors }) => {
-          for (var key in errors) {
-            if (errors.hasOwnProperty(key)) {
-              $(`#${key}`).addClass('is-invalid')
-                .after(`<div class="invalid-feedback">${errors[key]}</div>`)
-            }
-          }
-        })
+  //     channel.push('add', data)
+  //       .receive('ok', () => reset_modal())
+  //       .receive('error', ({ errors }) => {
+  //         for (var key in errors) {
+  //           if (errors.hasOwnProperty(key)) {
+  //             $(`#${key}`).addClass('is-invalid')
+  //               .after(`<div class="invalid-feedback">${errors[key]}</div>`)
+  //           }
+  //         }
+  //       })
 
-    })
-  }
+  //   })
+  // }
 
   window.item_table = $('#item-table').DataTable({
+    ...TABLE_DEFAULTS,
     data: items,
-    dom: 't',
-    paging: false,
-    info: false,
-    order: [[user ? 1 : 0, 'asc']],
-    responsive: {
-      details: {
-        type: 'column',
-        target: -1
-      }
-    },
-    rowId: 0,
+    // order: [[window.user ? 1 : 0, 'asc']],
     columns
   })
-
-  enableTableFeatures(window.item_table)
 }
 
 
-const initialize_location_table = (locations, moderator, admin) => {
+const initialize_location_table = (locations) => {
   let columns = [
     {
-      title: "Location", className: "all font-weight-bold", data: null, render: d => (
-        d[2] ? `<a href="${d[2]}" target='_blank'>${d[1]}</a>` : d[1]
-    )},
-    { title: "Items Found", data: 4 },
-    { title: "Items Total", data: 3 }
+      title: "Location",
+      className: "all font-weight-bold",
+      data: null,
+      render: location => cell_name(location)
+    },
+    // { title: "Items Total", data: 3 }
   ]
 
+  // users that are logged in should see the items found column
+  // if (user) columns.splice(1, 0, {
+  //   data: 4,
+  //   searchable: false,
+  //   title: "Items Found",
+  // })
+
   // add control columns
-  add_control_columns(columns, moderator, admin)
+  add_control_columns(columns)
 
   // allow deleting of items
-  if (moderator) {
-    $('#location-table').on('click', '.delete', function () {
-      let id = parseInt($(this).closest('tr').attr('id'))
-      channel.push("delete", { id })
-    })
-  }
+  // if (window.moderator) {
+  //   $('#location-table').on('click', '.delete', function () {
+  //     let id = parseInt($(this).closest('tr').attr('id'))
+  //     channel.push("delete", { id })
+  //   })
+  // }
 
   window.location_table = $('#location-table').DataTable({
+    ...TABLE_DEFAULTS,
     data: locations,
-    dom: 't',
-    paging: false,
-    info: false,
-    order: 0,
-    responsive: { details: { type: 'column', target: -1 } },
-    rowId: 0,
     columns
   })
+}
 
-  enableTableFeatures(window.location_table)
+const initialize_quest_table = quests => {
+  let columns = [
+    {
+      title: "Quest",
+      className: "all font-weight-bold",
+      data: null,
+      render: quest => cell_name(quest)
+    },
+    // { title: "Quests Total", data: 3 }
+  ]
+
+  // users that are logged in should see the items found column
+  // if (user) columns.splice(1, 0, {
+  //   data: 4,
+  //   searchable: false,
+  //   title: "Items Found",
+  // })
+
+  // add control columns
+  add_control_columns(columns)
+
+  // allow deleting of items
+  // if (window.moderator) {
+  //   $('#location-table').on('click', '.delete', function () {
+  //     let id = parseInt($(this).closest('tr').attr('id'))
+  //     channel.push("delete", { id })
+  //   })
+  // }
+
+  window.quest_table = $('#quest-table').DataTable({
+    ...TABLE_DEFAULTS,
+    data: quests,
+    columns
+  })
 }
 
 const reset_modal = () => {
@@ -236,10 +252,23 @@ const configure_public_channel = () => {
   channel.on('delete', ({ id }) => window.item_table.row(`#${id}`).remove().draw())
 
   channel.join()
-    .receive("ok", ({ items, locations, user, moderator, admin }) => {
+    .receive("ok", ({ displays, items, locations, quests, user, moderator, admin }) => {
 
-      initialize_item_table(items, user, moderator, admin)
-      initialize_location_table(locations, moderator, admin)
+      window.user = user
+      window.moderator = moderator
+      window.admin = admin
+
+      window.displays = displays
+      window.items = items
+      window.locations = locations
+      window.quests = quests
+
+
+      initialize_item_table(items)
+      initialize_location_table(locations)
+      initialize_quest_table(quests)
+
+      Menu.search('')
 
       $('#loader-wrapper').addClass('d-none')
     })

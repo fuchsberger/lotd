@@ -11,21 +11,7 @@ defmodule Lotd.Skyrim do
 
   # quests
 
-  def list_quests do
-    Quest
-    |> preload(:items)
-    |> Repo.alphabetical()
-    |> Repo.all()
-  end
-
-  def list_quests(mod_ids) do
-    mod_ids = mod_ids ++ [1,2,3,4,5]
-    Quest
-    |> preload(:items)
-    |> where([q], q.mod_id in ^mod_ids)
-    |> Repo.alphabetical()
-    |> Repo.all()
-  end
+  def list_quests, do: Repo.all(Quest)
 
   def get_quest!(id), do: Repo.get!(Quest, id)
 
@@ -51,23 +37,7 @@ defmodule Lotd.Skyrim do
 
   # locations
 
-  defp item_query, do: from(i in Item, select: i.id)
-
-  def list_locations do
-    Location
-    |> preload([items: ^item_query()])
-    |> Repo.alphabetical()
-    |> Repo.all()
-  end
-
-  def list_locations(mod_ids) do
-    mod_ids = mod_ids ++ [1,2,3,4,5]
-    Location
-    |> preload([items: ^item_query()])
-    |> where([l], l.mod_id in ^mod_ids)
-    |> Repo.alphabetical()
-    |> Repo.all()
-  end
+  def list_locations, do: Repo.all(Location)
 
   def get_location!(id), do: Repo.get!(Location, id)
 
@@ -95,13 +65,7 @@ defmodule Lotd.Skyrim do
 
   def list_mod_ids, do: from(m in Mod, select: m.id)
 
-  def list_mods do
-    item_query = from(i in Item, select: i.id)
-    Mod
-    |> preload(items: ^item_query)
-    |> Repo.alphabetical()
-    |> Repo.all()
-  end
+  def list_mods, do: Repo.all(Mod)
 
   def get_mod!(id), do: Repo.get!(Mod, id)
 

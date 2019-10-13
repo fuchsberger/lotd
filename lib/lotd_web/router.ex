@@ -21,8 +21,6 @@ defmodule LotdWeb.Router do
     resources "/", ItemController, only: [:index]
     resources "/session", SessionController, only: [:create, :delete]
     resources "/displays", DisplayController, only: [:index]
-    resources "/locations", LocationController, only: [:index]
-    resources "/quests", QuestController, only: [:index]
     resources "/mods", ModController, only: [:index]
   end
 

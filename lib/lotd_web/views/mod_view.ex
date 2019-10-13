@@ -1,6 +1,15 @@
 defmodule LotdWeb.ModView do
   use LotdWeb, :view
 
+  def render("mod.json", %{ mod: m }) do
+    %{
+      id: m.id,
+      filename: m.filename,
+      name: m.name,
+      url: m.url
+    }
+  end
+
   def user_actions(conn, %Lotd.Skyrim.Mod{} = m) do
     cond do
       m.id <= 5 ->
