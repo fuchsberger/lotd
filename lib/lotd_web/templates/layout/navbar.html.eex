@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
 
-  <a id="logo" class="navbar-brand" href="<%= Routes.item_path(@conn, :index) %>" title='Legacy of the Dragonborn - Inventory Manager'></a>
+  <a id="logo" class="navbar-brand" href="<%= Routes.page_path(@conn, :index) %>" title='Legacy of the Dragonborn - Inventory Manager'></a>
 
   <div id="search-control" class='input-group'>
 
@@ -38,6 +38,26 @@
       <li class='nav-item'>
         <a class='nav-link' data-id='displays' href='#displays'>Displays</a>
       </li>
+      <%= if authenticated?(@conn) do %>
+        <li class='nav-item dropdown'>
+          <a class="nav-link dropdown-toggle" href="#" role="button"  id="navbarDropdown" data-toggle="dropdown" title='More...'><i class='icon-cog'></i></a>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            <a class='dropdown-item'>Characters</a>
+            <a class='dropdown-item'>Mods</a>
+            <%= if admin?(@conn) do %><a class='dropdown-item'>Users</a><% end %>
+            <div class="dropdown-divider"></div>
+            <%= logout_button(@conn) %>
+          </div>
+        </li>
+      <% else %>
+      <li class="nav-item">
+        <a id='login-button' class="nav-link font-weight-bold">Sign In</a>
+        <%# Login Form (hidden) %>
+        <%= f = form_for @conn, Routes.session_path(@conn, :create), [id: "login-form"] %>
+          <%= hidden_input(f, :api_key) %>
+        </form>
+      </li>
+      <% end %>
     </ul>
   </div>
 </nav>

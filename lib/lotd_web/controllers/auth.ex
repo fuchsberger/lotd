@@ -47,7 +47,7 @@ defmodule LotdWeb.Auth do
     else
       conn
       |> put_flash(:error, "You must be an logged in to access that page")
-      |> redirect(to: Routes.item_path(conn, :index))
+      |> redirect(to: Routes.page_path(conn, :index))
       |> halt()
     end
   end
@@ -58,7 +58,7 @@ defmodule LotdWeb.Auth do
     else
       conn
       |> put_flash(:error, "You must be a moderator to access that page")
-      |> redirect(to: Routes.item_path(conn, :index))
+      |> redirect(to: Routes.page_path(conn, :index))
       |> halt()
     end
   end
@@ -69,7 +69,7 @@ defmodule LotdWeb.Auth do
     else
       conn
       |> put_flash(:error, "You must be an administrator to access that page")
-      |> redirect(to: Routes.item_path(conn, :index))
+      |> redirect(to: Routes.page_path(conn, :index))
       |> halt()
     end
   end

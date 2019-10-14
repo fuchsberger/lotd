@@ -1,6 +1,8 @@
 body { margin-top: 56px; }
 
-#signInBtn {
+.nav-link.dropdown-toggle::after { display: none; }
+
+#login-button {
   background: url('../static/images/nexusmods.svg');
   background-size: 20px 20px;
   background-repeat: no-repeat;

@@ -5,10 +5,10 @@ import { Menu } from '../utils'
 const TABLE_DEFAULTS = {
   dom: 't',
   info: false,
-  order: 0,
+  order: [[0, 'asc']],
   paging: false,
   responsive: { details: { type: 'column', target: -1 } },
-  rowId: 0
+  rowId: 'id'
 }
 
 const cell_name = d => (d.url ? `<a href="${d.url}" target='_blank'>${d.name}</a>` : d.name)
@@ -50,6 +50,14 @@ const add_control_columns = columns => {
     orderable: false
   })
 }
+
+const add_options = (selector, entries) => {
+  for (let i in entries) {
+    if(entries.hasOwnProperty(i))
+      $(selector).append(`<option value='${entries[i].id}'>${entries[i].name}</option>`)
+  }
+}
+
 const initialize_item_table = items => {
 
   const cell_link = (type, id) => {
@@ -225,6 +233,42 @@ const initialize_quest_table = quests => {
   })
 }
 
+const initialize_display_table = displays => {
+  let columns = [
+    {
+      title: "Display",
+      className: "all font-weight-bold",
+      data: null,
+      render: display => cell_name(display)
+    },
+    // { title: "Quests Total", data: 3 }
+  ]
+
+  // users that are logged in should see the items found column
+  // if (user) columns.splice(1, 0, {
+  //   data: 4,
+  //   searchable: false,
+  //   title: "Items Found",
+  // })
+
+  // add control columns
+  add_control_columns(columns)
+
+  // allow deleting of items
+  // if (window.moderator) {
+  //   $('#location-table').on('click', '.delete', function () {
+  //     let id = parseInt($(this).closest('tr').attr('id'))
+  //     channel.push("delete", { id })
+  //   })
+  // }
+
+  window.display_table = $('#display-table').DataTable({
+    ...TABLE_DEFAULTS,
+    data: displays,
+    columns
+  })
+}
+
 const reset_modal = () => {
   // reset form
   $('#name').val('').removeClass('is-invalid')
@@ -263,10 +307,15 @@ const configure_public_channel = () => {
       window.locations = locations
       window.quests = quests
 
-
       initialize_item_table(items)
       initialize_location_table(locations)
       initialize_quest_table(quests)
+      initialize_display_table(displays)
+
+      // add options to the add / update modal
+      add_options('#location_id', locations)
+      add_options('#quest_id', quests)
+      add_options('#display_id', displays)
 
       Menu.search('')
 

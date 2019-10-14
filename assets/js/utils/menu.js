@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import { Nexus } from '../api'
 
 const toggle_search_cancel = (on = true) => {
   if (on) {
@@ -13,7 +14,7 @@ const toggle_search_cancel = (on = true) => {
 const enable = () => {
 
   // enable login and logout
-  $('#login-button').click(() => login())
+  $('#login-button').click(() => Nexus.login())
   $('#logout-button').click(() => window.userChannel.push("logout"))
 
   // enable switching between menu items

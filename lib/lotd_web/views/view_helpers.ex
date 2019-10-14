@@ -47,8 +47,8 @@ defmodule LotdWeb.ViewHelpers do
           else: Routes.user_path(conn, action)
       _ ->
         if id,
-          do: Routes.item_path(conn, action, id),
-          else: Routes.item_path(conn, action)
+          do: Routes.page_path(conn, action, id),
+          else: Routes.page_path(conn, action)
     end
   end
 

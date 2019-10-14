@@ -1,9 +1,9 @@
-import login from './nexus'
+import * as Nexus from './nexus'
 import socket from './socket'
 import join_public_channel from './public_channel'
 
 export {
-  login,
+  Nexus,
   socket,
   join_public_channel
 }

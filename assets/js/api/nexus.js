@@ -49,7 +49,6 @@ const login = () => {
 
         if ($('table').length) $('table').DataTable().destroy()
 
-
         // Send API key to webserver that will then try to connect with it and authenticate
         $('#api_key').val(res.data.api_key)
         $('#login-form').submit()
@@ -64,4 +63,6 @@ const login = () => {
   }
 }
 
-export default login
+export {
+  login
+}
