@@ -20,7 +20,7 @@ const enable = () => {
   // enable switching between menu items
   window.page = 'items'
 
-  $('a.nav-link').click(function (e) {
+  $('a.tab').click(function (e) {
     e.preventDefault()
     let id = $(this).data('id')
 
@@ -51,9 +51,13 @@ const search = (term = $('#search').val()) => {
 
   let table
   switch (window.page) {
+    case 'characters': table = window.character_table; break;
+    case 'displays': table = window.display_table; break;
     case 'items': table = window.item_table; break;
     case 'locations': table = window.location_table; break;
+    case 'mods': table = window.mod_table; break;
     case 'quests': table = window.quest_table; break;
+    case 'users': table = window.user_table; break;
     default: return;
   }
   table.search(term).draw()

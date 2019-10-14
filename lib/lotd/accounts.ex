@@ -4,8 +4,13 @@ defmodule Lotd.Accounts do
   """
 
   import Ecto.Query, warn: false
+
+  import Lotd.Gallery, only: [ list_item_ids: 0 ]
+  import Lotd.Skyrim, only: [ list_mod_ids: 0 ]
+
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
+  alias Lotd.Gallery.Item
 
   # user
   def list_users, do: Repo.all(User)
@@ -33,15 +38,17 @@ defmodule Lotd.Accounts do
   end
 
   def list_user_characters(%User{} = user) do
+    item_query = from i in Item, select: i.id
     Character
     |> user_characters_query(user)
-    |> preload(:items)
+    |> preload([items: ^item_query])
     |> Repo.all()
   end
 
-  def get_character!(id) do
-    from(c in Character, where: c.id == ^id, preload: [:items])
-    |> Repo.one!()
+  def get_active_character!(user) do
+    user
+    |> Repo.preload(:active_character)
+    |> Map.get(:active_character)
   end
 
   def get_character_items(character) do
@@ -53,6 +60,18 @@ defmodule Lotd.Accounts do
   def get_character_item_ids(character) do
     character
     |> get_character_items()
+    |> Enum.map(fn i -> i.id end)
+  end
+
+  def get_character_mods(character) do
+    character
+    |> Repo.preload(:mods)
+    |> Map.get(:mods)
+  end
+
+  def get_character_mod_ids(character) do
+    character
+    |> get_character_mods()
     |> Enum.map(fn m -> m.id end)
   end
 

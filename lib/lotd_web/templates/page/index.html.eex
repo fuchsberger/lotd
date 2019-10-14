@@ -11,6 +11,14 @@
   <div class="collapse multi-collapse" data-parent="#page-content" id="displays">
     <table id='display-table' class='display nowrap' width="100%"></table>
   </div>
+<%= if authenticated?(@conn) do %>
+  <div class="collapse multi-collapse" data-parent="#page-content" id="characters">
+    <table id='character-table' class='display nowrap' width="100%"></table>
+  </div>
+  <div class="collapse multi-collapse" data-parent="#page-content" id="mods">
+    <table id='mod-table' class='display nowrap' width="100%"></table>
+  </div>
+<% end %>
 </main>
 
 

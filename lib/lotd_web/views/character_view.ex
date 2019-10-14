@@ -1,6 +1,14 @@
 defmodule LotdWeb.CharacterView do
   use LotdWeb, :view
 
+  def render("character.json", %{ character: c }) do
+    %{
+      id: c.id,
+      name: c.name,
+      items_found: Enum.count(c.items)
+    }
+  end
+
   def character_actions(conn, %Lotd.Accounts.Character{} = c) do
     [btn_activate(conn, c), btn_edit(conn, c),btn_delete(conn, c)]
   end
