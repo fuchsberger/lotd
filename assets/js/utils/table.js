@@ -19,6 +19,24 @@ const cell_name = d => (d.url ? `<a href="${d.url}" target='_blank'>${d.name}</a
 
 const cell_time = t => `<time datetime='${t}'></time`
 
+const calculate_item_columns = (entries, key) => {
+  // calculate found items and item count if user is authenticated
+  for (let i in entries) {
+    if (entries.hasOwnProperty(i)) {
+      if(window.user) entries[i].items_found = 0
+      entries[i].item_count = 0
+
+      window.items.forEach(item => {
+        if (item[key] == entries[i].id) {
+          entries[i].item_count++
+          if (window.user && window.character_items.find(j => j == item.id))
+          entries[i].items_found++
+        }
+      })
+    }
+  }
+}
+
 const icon = name => `<i class="icon-${name}"></i>`
 
 const manage_actions = () => {
@@ -67,6 +85,8 @@ const character = characters => {
 
       characters[i].active = window.character_id == characters[i].id
 
+      characters[i].found_items = characters[i].items.length
+
       characters[i].item_count = 0
       const active_mods = window.character_mods.concat([1,2,3,4,5])
       window.items.forEach(item => {
@@ -90,7 +110,7 @@ const character = characters => {
       data: 'name'
     },
     { title: "Mods", data: 'mods', render: mods => mods.length + 5, searchable: false },
-    { title: "Items Found", data: 'items', render: items => items.length, searchable: false },
+    { title: "Items Found", data: 'found_items', searchable: false },
     { title: "Items Total", data: 'item_count', searchable: false },
     {
       title: "Created",
@@ -160,25 +180,6 @@ const item = items => {
       }
     }
 
-  //   // allow collecting of items
-  //   $('#item-table').on('click', '.collect', function () {
-  //     let id = parseInt($(this).closest('tr').attr('id'))
-  //     channel.push("collect", { id })
-  //       .receive('ok', () => {
-  //         // find entry in items and mark as collected
-  //         $('#item-table').DataTable().cell($(this).parent()).data(true)
-  //       })
-  //   })
-
-  //   // allow borrowing of items
-  //   $('#item-table').on('click', '.remove', function () {
-  //     let id = parseInt($(this).closest('tr').attr('id'))
-  //     channel.push("remove", { id })
-  //       .receive('ok', () => {
-  //         // find entry in items and mark as collected
-  //         $('#item-table').DataTable().cell($(this).parent()).data(false)
-  //       })
-  //   })
 
   //   // allow deleting of items
   //   if (window.admin) {
@@ -231,20 +232,8 @@ const item = items => {
 }
 
 const location = locations => {
-  // calculate found items and item count
-  for (let i in locations) {
-    if (locations.hasOwnProperty(i)) {
-      locations[i].items_found = 0
-      locations[i].item_count = 0
 
-      window.items.forEach(item => {
-        if (item.quest_id == locations[i].id) {
-          locations[i].item_count++
-          if(window.character_items.find(j => j == item.id)) locations[i].items_found++
-        }
-      })
-    }
-  }
+  calculate_item_columns(locations, 'location_id')
 
   let columns = [
     {
@@ -253,16 +242,11 @@ const location = locations => {
       data: null,
       render: location => cell_name(location)
     },
-    { title: 'Items Found', data: 'items_found', searchable: false  },
     { title: 'Items Total', data: 'item_count', searchable: false  }
   ]
 
   // users that are logged in should see the items found column
-  // if (user) columns.splice(1, 0, {
-  //   data: 4,
-  //   searchable: false,
-  //   title: "Items Found",
-  // })
+  if (user) columns.splice(1, 0, { title: 'Items Found', data: 'items_found', searchable: false })
 
   // add control columns
   add_control_columns(columns)
@@ -332,20 +316,7 @@ const mod = mods => {
 }
 
 const quest = quests => {
-  // calculate found items and item count
-  for (let i in quests) {
-    if (quests.hasOwnProperty(i)) {
-      quests[i].items_found = 0
-      quests[i].item_count = 0
-
-      window.items.forEach(item => {
-        if (item.quest_id == quests[i].id) {
-          quests[i].item_count++
-          if(window.character_items.find(j => j == item.id)) quests[i].items_found++
-        }
-      })
-    }
-  }
+  calculate_item_columns(quests, 'quest_id')
 
   let columns = [
     {
@@ -354,16 +325,11 @@ const quest = quests => {
       data: null,
       render: quest => cell_name(quest)
     },
-    { title: 'Items Found', data: 'items_found', searchable: false  },
     { title: 'Items Total', data: 'item_count', searchable: false  }
   ]
 
   // users that are logged in should see the items found column
-  // if (user) columns.splice(1, 0, {
-  //   data: 4,
-  //   searchable: false,
-  //   title: "Items Found",
-  // })
+  if (user) columns.splice(1, 0, { title: 'Items Found', data: 'items_found', searchable: false })
 
   // add control columns
   add_control_columns(columns)
@@ -384,20 +350,7 @@ const quest = quests => {
 }
 
 const display = displays => {
-  // calculate found items and item count
-  for (let i in displays) {
-    if (displays.hasOwnProperty(i)) {
-      displays[i].items_found = 0
-      displays[i].item_count = 0
-
-      window.items.forEach(item => {
-        if (item.display_id == displays[i].id) {
-          displays[i].item_count++
-          if(window.character_items.find(j => j == item.id)) displays[i].items_found++
-        }
-      })
-    }
-  }
+  calculate_item_columns(displays, 'display_id')
 
   let columns = [
     {
@@ -406,16 +359,11 @@ const display = displays => {
       data: null,
       render: display => cell_name(display)
     },
-    { title: 'Items Found', data: 'items_found', searchable: false  },
     { title: 'Items Total', data: 'item_count', searchable: false  }
   ]
 
   // users that are logged in should see the items found column
-  // if (user) columns.splice(1, 0, {
-  //   data: 4,
-  //   searchable: false,
-  //   title: "Items Found",
-  // })
+  if (user) columns.splice(1, 0, { title: 'Items Found', data: 'items_found', searchable: false })
 
   // add control columns
   add_control_columns(columns)

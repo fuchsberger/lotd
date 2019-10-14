@@ -12,7 +12,7 @@ defmodule Lotd.Skyrim do
 
   # quests
 
-  def list_quests, do: Repo.all(Quest)
+  def list_quests, do: Repo.sort_by_id(Quest) |> Repo.all()
 
   def get_quest!(id), do: Repo.get!(Quest, id)
 
@@ -38,7 +38,7 @@ defmodule Lotd.Skyrim do
 
   # locations
 
-  def list_locations, do: Repo.all(Location)
+  def list_locations, do: Repo.sort_by_id(Location) |> Repo.all()
 
   def get_location!(id), do: Repo.get!(Location, id)
 
@@ -66,7 +66,7 @@ defmodule Lotd.Skyrim do
 
   def list_mod_ids, do: from(m in Mod, select: m.id)
 
-  def list_mods, do: Repo.all(Mod)
+  def list_mods, do: Repo.sort_by_id(Mod) |> Repo.all()
 
   def get_mod!(id), do: Repo.get!(Mod, id)
 

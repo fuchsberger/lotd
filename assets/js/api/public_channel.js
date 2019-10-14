@@ -29,7 +29,12 @@ const configure_public_channel = () => {
   channel.on('delete', ({ id }) => window.item_table.row(`#${id}`).remove().draw())
 
   channel.join()
-    .receive("ok", ({ displays, items, locations, quests, user, moderator, admin }) => {
+    .receive("ok", params => {
+
+      // user has joined already, do nothing...
+      if (window.user != undefined) return
+
+      const { displays, items, locations, quests, user, moderator, admin } = params
 
       window.user = user
       window.moderator = moderator
@@ -53,7 +58,6 @@ const configure_public_channel = () => {
       }
     })
     .receive("error", resp => { console.log("Unable to join", resp) })
-
 }
 
 export default configure_public_channel

@@ -4,32 +4,7 @@ defmodule LotdWeb.PublicChannel do
   alias Lotd.{Accounts, Gallery, Skyrim}
   alias LotdWeb.{DisplayView, ItemView, LocationView, QuestView}
 
-
-
-  # items = character(socket).mods
-  # |> Enum.map(fn m -> m.id end)
-  # |> Gallery.list_items()
-  # |> Phoenix.View.render_many(ItemView, "item.json", character_items: citems )
-
-  # locations = Skyrim.list_locations(cmods)
-  # |> calculate_found_items(citems)
-  # |> Phoenix.View.render_many(LocationView, "location.json")
-
-  # quests = Skyrim.list_quests(cmods)
-  # |> calculate_found_items(citems)
-  # |> Phoenix.View.render_many(QuestView, "quest.json")
-
-  # {:ok, %{
-  #   admin: admin?(socket),
-  #   moderator: moderator?(socket),
-  #   user: authenticated?(socket),
-  #   items: items,
-  #   locations: locations,
-  #   quests: quests
-  # }, socket}
-
   def join("public", _params, socket) do
-
     displays = Gallery.list_displays()
     items = Gallery.list_items()
     locations = Skyrim.list_locations()
@@ -43,9 +18,8 @@ defmodule LotdWeb.PublicChannel do
       items: Phoenix.View.render_many(items, ItemView, "item.json" ),
       locations: Phoenix.View.render_many(locations, LocationView, "location.json" ),
       quests: Phoenix.View.render_many(quests, QuestView, "quest.json" )
-    }, socket}
+    }, assign(socket, :joined_public, true)}
   end
-
 
   def handle_in("add", item_params, socket) do
     if moderator?(socket) do

@@ -6,7 +6,7 @@ defmodule Lotd.Repo do
   import Ecto.Query, warn: false
   import Ecto.Changeset, only: [validate_change: 3]
 
-  def alphabetical(query), do: from(c in query, order_by: c.name)
+  def sort_by_id(query), do: from(c in query, order_by: c.id)
 
   def validate_url(changeset, field, opts \\ []) do
     validate_change changeset, field, fn _, value ->

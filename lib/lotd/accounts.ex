@@ -41,11 +41,12 @@ defmodule Lotd.Accounts do
     item_query = from i in Item, select: i.id
     Character
     |> user_characters_query(user)
+    |> Repo.sort_by_id()
     |> preload([items: ^list_item_ids, mods: ^list_mod_ids()])
     |> Repo.all()
   end
 
-  def get_active_character!(user) do
+  def get_active_character(user) do
     user
     |> Repo.preload(:active_character)
     |> Map.get(:active_character)
