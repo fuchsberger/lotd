@@ -4,8 +4,10 @@ defmodule LotdWeb.CharacterView do
   def render("character.json", %{ character: c }) do
     %{
       id: c.id,
+      items: c.items,
+      mods: c.mods,
       name: c.name,
-      items_found: Enum.count(c.items)
+      created: NaiveDateTime.to_iso8601(c.inserted_at) <> "Z"
     }
   end
 

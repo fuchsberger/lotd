@@ -40,16 +40,17 @@ const configure_public_channel = () => {
       window.locations = locations
       window.quests = quests
 
-      Table.item(items)
-      Table.location(locations)
-      Table.quest(quests)
-      Table.display(displays)
+      if (user) {
+        join_user_channel(user)
+      } else {
+        Table.item(items)
+        Table.location(locations)
+        Table.quest(quests)
+        Table.display(displays)
 
-      if(user) join_user_channel(user)
-
-      Menu.search('')
-
-      $('#loader-wrapper').addClass('d-none')
+        Menu.search('')
+        $('#loader-wrapper').addClass('d-none')
+      }
     })
     .receive("error", resp => { console.log("Unable to join", resp) })
 

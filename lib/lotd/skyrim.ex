@@ -4,6 +4,7 @@ defmodule Lotd.Skyrim do
   """
 
   import Ecto.Query, warn: false
+  import Lotd.Gallery, only: [list_item_ids: 0]
 
   alias Lotd.Repo
   alias Lotd.Gallery.Item

@@ -41,7 +41,7 @@ defmodule Lotd.Accounts do
     item_query = from i in Item, select: i.id
     Character
     |> user_characters_query(user)
-    |> preload([items: ^item_query])
+    |> preload([items: ^list_item_ids, mods: ^list_mod_ids()])
     |> Repo.all()
   end
 
