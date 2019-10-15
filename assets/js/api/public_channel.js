@@ -20,18 +20,12 @@ const reset_modal = () => {
 const calculate_item_count = (items, entries, key) => {
   for (let i in entries) {
     if (entries.hasOwnProperty(i)) {
-      if (window.user) entries[i].items_found = 0
-
       entries[i].items_found = 0
+
+      entries[i].item_count = 0
       items.forEach(item => {
         if (item[key] == entries[i].id) entries[i].item_count++
       })
-
-      if (key == 'mod_id') {
-        const mod_items = window.items.filter(item => item.mod_id == mods[i].id)
-        entries[i].item_count = mod_items.length
-      }
-      else entries[i].item_count = 0
     }
   }
 }

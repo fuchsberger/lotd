@@ -42,8 +42,14 @@ const character = characters => {
       sortable: false,
     },
     { title: "Character", className: "all font-weight-bold", data: 'name'},
-    { title: "Mods", data: 'mods', render: mods => mods.length + 5, searchable: false },
-    { title: "Items Found", data: 'found_items', searchable: false },
+    { title: "Mods", data: 'mods', name: 'mods', render: mods => mods.length, searchable: false },
+    {
+      title: "Items Found",
+      data: 'items',
+      name: 'items',
+      render: items => items.length,
+      searchable: false
+    },
     { title: "Items Total", data: 'item_count', searchable: false },
     { title: "Created", data: 'created', render: t => cell_time(t) },
     ...CONTROL_COLUMN
@@ -113,7 +119,13 @@ const location = locations => {
       data: null,
       render: location => cell_name(location)
     },
-    { title: 'Items Found', data: 'items_found', searchable: false, visible: false },
+    {
+      title: 'Items Found',
+      name: 'found',
+      data: 'items_found',
+      searchable: false,
+      visible: false
+    },
     { title: 'Items Total', data: 'item_count', searchable: false },
     { data: 'mod_id', name: 'mod', sortable: false, visible: false },
     ...CONTROL_COLUMN
@@ -132,6 +144,7 @@ const mod = mods => {
       title: icon('ok-squared'),
       className: "all small-cell",
       data: null,
+      name: 'active',
       render: d => d.id <= 5 ? icon('ok-squared') : cell_check(d.active),
       searchable: false,
       sortable: false,
@@ -144,7 +157,13 @@ const mod = mods => {
       render: mod => cell_name(mod)
     },
     { title: 'Filename', data: 'filename'},
-    { title: 'Items Found', data: 'items_found', searchable: false, visible: false },
+    {
+      title: 'Items Found',
+      name: 'found',
+      data: 'items_found',
+      searchable: false,
+      visible: false
+    },
     { title: 'Items Total', data: 'item_count', searchable: false },
     // { data: 'mod_id', name: 'mod', sortable: false, visible: false },
     ...CONTROL_COLUMN
@@ -167,7 +186,13 @@ const quest = quests => {
       data: null,
       render: quest => cell_name(quest)
     },
-    { title: 'Items Found', data: 'items_found', searchable: false, visible: false },
+    {
+      title: 'Items Found',
+      name: 'found',
+      data: 'items_found',
+      searchable: false,
+      visible: false
+    },
     { title: 'Items Total', data: 'item_count', searchable: false },
     { data: 'mod_id', name: 'mod', sortable: false, visible: false },
     ...CONTROL_COLUMN
@@ -188,7 +213,13 @@ const display = displays => {
       data: null,
       render: display => cell_name(display)
     },
-    { title: 'Items Found', data: 'items_found', searchable: false, visible: false },
+    {
+      title: 'Items Found',
+      name: 'found',
+      data: 'items_found',
+      searchable: false,
+      visible: false
+    },
     { title: 'Items Total', data: 'item_count', searchable: false },
     ...CONTROL_COLUMN
   ]
