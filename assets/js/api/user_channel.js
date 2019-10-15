@@ -10,14 +10,24 @@ const add_options = (selector, entries) => {
 }
 
 const switch_character = id => {
-  window.character_id = id
-  window.character_items = window.characters.find(c => c.id == id).items
-  window.character_mods = window.characters.find(c => c.id == id).mods
+
+  // window.character_items = window.characters.find(c => c.id == id).items
+  // window.character_mods = window.characters.find(c => c.id == id).mods
 
   // update character table
-  // window.character_table.cell(`#${window.character_id}`, 0).data(false).draw()
-  window.character_table.column('active:name').data(false)
+  if (window.character_id)
+    window.character_table.cell(`#${window.character_id}`, 0).data(false).draw()
   window.character_table.cell(`#${id}`, 0).data(true).draw()
+
+  // update items table
+
+  // update mods table
+
+  // update display table
+
+  // update more tables...
+
+  window.character_id = id
 }
 
 const configure_user_channel = id => {
@@ -29,7 +39,7 @@ const configure_user_channel = id => {
       // user has joined already, do nothing...
       if (window.character_id != undefined) return
 
-      const { character_id, characters, mods } = params
+      const { character_id, characters } = params
 
       // initialize item count
       for (let i in characters) {
@@ -37,34 +47,17 @@ const configure_user_channel = id => {
           characters[i].active = window.character_id == characters[i].id
           characters[i].found_items = characters[i].items.length
           characters[i].item_count = 0
-          // const active_mods = window.character_mods.concat([1,2,3,4,5])
-          // window.items.forEach(item => {
-          //   if(active_mods.find(m => m == item.mod_id)) characters[i].item_count++
-          // })
-        }
-      }
 
-      // calculate found items and item count
-      for (let i in mods) {
-        if (mods.hasOwnProperty(i)) {
-          mods[i].active = false
-            // mods[i].id <= 5 || window.character_mods.find(m => m.id == mods[i].id) != undefined
-
-          const mod_items = window.items.filter(item => item.mod_id == mods[i].id)
-          mods[i].item_count = mod_items.length
-
-          mods[i].items_found = 0
-          // window.character_items.forEach(j => {
-          //   if(mod_items.find(item => item.id == j)) mods[i].items_found++
-          // })
+          const active_mods = characters[i].mods.concat([1,2,3,4,5])
+          window.items.forEach(item => {
+            if(active_mods.find(m => m == item.mod_id)) characters[i].item_count++
+          })
         }
       }
 
       window.characters = characters
-      window.mods = mods
 
       Table.character(characters)
-      Table.mod(mods)
 
       switch_character(character_id)
 
@@ -133,11 +126,8 @@ const configure_user_channel = id => {
         let id = parseInt($(this).closest('tr').attr('id'))
         channel.push("activate_character", { id })
           .receive('ok', ({ info }) => {
-
             // update character table
             switch_character(id)
-
-
             Flash.info(info)
           })
           .receive('error', reason => Flash.error(reason))
@@ -182,9 +172,8 @@ const configure_user_channel = id => {
       // add_options('#mod_id', mods)
 
       Menu.search('')
-      $('#loader-wrapper').addClass('d-none')
     })
-    .receive("error", resp => { console.log("Unable to join", resp) })
+    .receive("error", ({ reason }) => Flash.error(reason))
 }
 
 export default configure_user_channel

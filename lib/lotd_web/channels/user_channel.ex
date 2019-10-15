@@ -1,21 +1,43 @@
 defmodule LotdWeb.UserChannel do
   use LotdWeb, :channel
 
-  alias Lotd.{Accounts, Gallery, Skyrim}
-  alias LotdWeb.{CharacterView, ModView}
+  alias Lotd.{Accounts, Gallery}
+  alias LotdWeb.{CharacterView, ItemView}
 
   def join("user:" <> user_id, _params, socket) do
     if authenticated?(socket) && socket.assigns.user.id == String.to_integer(user_id) do
       characters = Accounts.list_user_characters(socket.assigns.user)
-      mods = Skyrim.list_mods()
-
       {:ok, %{
         character_id: socket.assigns.user.active_character_id,
         characters: Phoenix.View.render_many(characters, CharacterView, "character.json" ),
-        mods: Phoenix.View.render_many(mods, ModView, "mod.json" )
-      }, assign(socket, :joined_user, true)}
+      }, socket}
     else
       {:error, %{ reason: "You must be authenticated to join this channel." }}
+    end
+  end
+
+  def handle_in("add", item_params, socket) do
+    if moderator?(socket) do
+      case Gallery.create_item(item_params) do
+        {:ok, item} ->
+          item = Phoenix.View.render_one(item, ItemView, "item.json")
+          broadcast(socket, "add", %{ item: item})
+          {:reply, :ok, socket}
+        {:error, %Ecto.Changeset{} = changeset} ->
+          {:reply, {:error, %{errors: error_map(changeset)}}, socket}
+      end
+    else
+      {:reply, :error, socket}
+    end
+  end
+
+  def handle_in("delete", %{ "id" => id}, socket) do
+    if admin?(socket) do
+      {:ok, item} = Gallery.get_item!(id) |> Gallery.delete_item()
+      broadcast(socket, "delete", %{ id: item.id})
+      {:reply, :ok, socket}
+    else
+      {:reply, :error, socket}
     end
   end
 

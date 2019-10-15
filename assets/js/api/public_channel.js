@@ -20,12 +20,18 @@ const reset_modal = () => {
 const calculate_item_count = (items, entries, key) => {
   for (let i in entries) {
     if (entries.hasOwnProperty(i)) {
-      if(window.user) entries[i].items_found = 0
-      entries[i].item_count = 0
+      if (window.user) entries[i].items_found = 0
+
       entries[i].items_found = 0
       items.forEach(item => {
         if (item[key] == entries[i].id) entries[i].item_count++
       })
+
+      if (key == 'mod_id') {
+        const mod_items = window.items.filter(item => item.mod_id == mods[i].id)
+        entries[i].item_count = mod_items.length
+      }
+      else entries[i].item_count = 0
     }
   }
 }
@@ -48,7 +54,7 @@ const configure_public_channel = () => {
       // user has joined already, do nothing...
       if (window.user != undefined) return
 
-      const { displays, items, locations, quests, user, moderator, admin } = params
+      const { displays, items, locations, mods, quests, user, moderator, admin } = params
 
       window.user = user
       window.moderator = moderator
@@ -58,6 +64,7 @@ const configure_public_channel = () => {
       window.items = items
       window.locations = locations
       window.quests = quests
+      window.mods = mods
 
       // add item.active = false to all items
       for (let i in items) {
@@ -66,11 +73,13 @@ const configure_public_channel = () => {
       calculate_item_count(items, displays, 'display_id')
       calculate_item_count(items, locations, 'location_id')
       calculate_item_count(items, quests, 'quest_id')
+      calculate_item_count(items, mods, 'mod_id')
 
       Table.item(items)
       Table.location(locations)
       Table.quest(quests)
       Table.display(displays)
+      Table.mod(mods)
 
       Menu.search('')
       $('#loader-wrapper').addClass('d-none')

@@ -1,4 +1,8 @@
 <main id="page-content" class="accordion">
+  <div class="collapse multi-collapse" data-parent="#page-content" id="about">
+    <h2>About</h2>
+    <p>This definately needs filling...</p>
+  </div>
   <div class="collapse multi-collapse show" data-parent="#page-content" id="items">
     <table id='item-table' class='display nowrap' width="100%"></table>
   </div>
@@ -11,12 +15,12 @@
   <div class="collapse multi-collapse" data-parent="#page-content" id="displays">
     <table id='display-table' class='display nowrap' width="100%"></table>
   </div>
+  <div class="collapse multi-collapse" data-parent="#page-content" id="mods">
+    <table id='mod-table' class='display nowrap' width="100%"></table>
+  </div>
 <%= if authenticated?(@conn) do %>
   <div class="collapse multi-collapse" data-parent="#page-content" id="characters">
     <table id='character-table' class='display nowrap' width="100%"></table>
-  </div>
-  <div class="collapse multi-collapse" data-parent="#page-content" id="mods">
-    <table id='mod-table' class='display nowrap' width="100%"></table>
   </div>
 <% end %>
 </main>

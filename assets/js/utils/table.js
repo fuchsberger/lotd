@@ -92,7 +92,9 @@ const item = items => {
     },
     { data: 'location_id', title: "Location", render: id => cell_link('location', id) },
     { data: 'quest_id', title: "Quest", render: id => cell_link('quest', id) },
-    { data: 'display_id', title: "Display", render: id => cell_link('display', id) }
+    { data: 'display_id', title: "Display", render: id => cell_link('display', id) },
+    { data: 'mod_id', name: 'mod', searchable: false, sortable: false, visible: false },
+    ...CONTROL_COLUMN
   ]
 
   window.item_table = $('#item-table').DataTable({
@@ -131,7 +133,8 @@ const mod = mods => {
       data: null,
       render: d => d.id <= 5 ? icon('ok-squared') : cell_check(d.active),
       searchable: false,
-      sortable: false
+      sortable: false,
+      visible: false
     },
     {
       title: "Mod",
@@ -140,7 +143,7 @@ const mod = mods => {
       render: mod => cell_name(mod)
     },
     { title: 'Filename', data: 'filename'},
-    { title: 'Items Found', data: 'items_found', searchable: false  },
+    { title: 'Items Found', data: 'items_found', searchable: false, visible: false },
     { title: 'Items Total', data: 'item_count', searchable: false },
     ...CONTROL_COLUMN
   ]

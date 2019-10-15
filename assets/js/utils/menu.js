@@ -60,7 +60,10 @@ const search = (term = $('#search').val()) => {
     case 'users': table = window.user_table; break;
     default: return;
   }
-  table.search(term).draw()
+  // get current mod ids
+  const modIDs = window.mod_table ? window.mod_table.rows().ids().toArray() : 'all'
+  console.log(modIDs)
+  table.search(term).draw() // .columns(5).search()
   $('#search-count').text(table.page.info().recordsDisplay)
 }
 
