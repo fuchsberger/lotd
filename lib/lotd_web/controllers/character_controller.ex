@@ -4,12 +4,10 @@ defmodule LotdWeb.CharacterController do
   alias Lotd.Accounts
   alias Lotd.Accounts.Character
 
-  plug :load_characters when action in [:index, :edit, :update, :activate, :delete]
+  plug :load_characters when action in [:edit, :update, :activate, :delete]
 
   defp load_characters(conn, _),
     do: assign conn, :characters, Accounts.list_user_characters(user(conn))
-
-  def index(conn, _params), do: render(conn, "index.html")
 
   def new(conn, _params) do
     changeset = Accounts.change_character(%Character{})
@@ -43,26 +41,6 @@ defmodule LotdWeb.CharacterController do
     character = Enum.find(conn.assigns.characters, fn c -> c.id == String.to_integer(id) end)
     Accounts.update_character(character, character_params)
     redirect(conn, to: Routes.character_path(conn, :index))
-  end
-
-  def activate(conn, %{"id" => id}) do
-    character = Enum.find(conn.assigns.characters, fn c -> c.id == String.to_integer(id) end)
-    if is_nil(character) do
-      conn
-      |> put_flash(:info, "This character does not exist or you do not own him.")
-      |> redirect(to: Routes.character_path(conn, :index))
-    else
-      case Accounts.update_user(user(conn),  %{ active_character_id: character.id }) do
-        {:ok, _user} ->
-          conn
-          |> put_flash(:info, "#{character.name} is hunting relics...")
-          |> redirect(to: Routes.character_path(conn, :index))
-        {:error, _reason} ->
-          conn
-          |> put_flash(:info, "Database Error. Character could not be activated.")
-          |> redirect(to: Routes.character_path(conn, :index))
-      end
-    end
   end
 
   def delete(conn, %{"id" => id}) do

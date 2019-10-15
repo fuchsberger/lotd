@@ -1,26 +1,8 @@
 defmodule LotdWeb.ModController do
   use LotdWeb, :controller
 
-  alias Lotd.{Accounts, Skyrim}
+  alias Lotd.Skyrim
   alias Lotd.Skyrim.Mod
-
-  def index(conn, _params) do
-    if authenticated?(conn) do
-      character_mod_ids = Enum.map(character(conn).mods, fn m -> m.id end)
-      character_item_ids = Enum.map(character(conn).items, fn i -> i.id end)
-
-      mods = Skyrim.list_mods()
-      |> Enum.map(fn m ->
-        common_ids = m.items -- character_item_ids
-        common_ids = m.items -- common_ids
-        Map.put(m, :found_items, Enum.count(common_ids))
-      end)
-
-      render conn, "index.html", mods: mods, character_mod_ids: character_mod_ids
-    else
-      render conn, "index.html", mods: Skyrim.list_mods()
-    end
-  end
 
   def new(conn, _params) do
     changeset = Skyrim.change_mod(%Mod{})
@@ -51,17 +33,6 @@ defmodule LotdWeb.ModController do
       {:error, changeset} ->
         render(conn, "edit.html", changeset: changeset)
     end
-  end
-
-  def activate(conn, %{"id" => mod_id}) do
-    Accounts.update_character_add_mod(character(conn), Skyrim.get_mod!(mod_id))
-    redirect(conn, to: Routes.mod_path(conn, :index))
-  end
-
-  def deactivate(conn, %{"id" => mod_id}) do
-    mod_id = String.to_integer(mod_id)
-    Accounts.update_character_remove_mod(character(conn), mod_id)
-    redirect(conn, to: Routes.mod_path(conn, :index))
   end
 
   def delete(conn, %{"id" => id}) do
