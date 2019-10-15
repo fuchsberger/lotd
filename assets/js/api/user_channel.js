@@ -1,6 +1,7 @@
 import $ from 'jquery'
 import socket from './socket'
 import { Flash, Menu, Table } from '../utils'
+import { mod } from '../utils/table'
 
 const add_options = (selector, entries) => {
   for (let i in entries) {
@@ -11,17 +12,12 @@ const add_options = (selector, entries) => {
 
 const switch_character = id => {
 
-  // window.character_items = window.characters.find(c => c.id == id).items
-
   // update character table
   if (window.character_id)
     window.character_table.cell(`#${window.character_id}`, 0).data(false).draw()
   window.character_table.cell(`#${id}`, 0).data(true).draw()
 
-  // update mods table
-
   const character_items = window.character_table.cell(`#${id}`, 'items:name').data()
-  // const character_mods = window.character_table.cell(`#${id}`, 'mods:name').data()
 
   // update items / locations / display tables
   const items = window.item_table.rows().data().toArray()
@@ -81,9 +77,12 @@ const switch_character = id => {
   }
 
   // update mod table
+  const character_mods = window.character_table.cell(`#${id}`, 'mods:name').data()
   const mods = window.mod_table.rows().ids().toArray()
   for (let i = 0; i < mods.length; i++) {
+    const active = character_mods.find(m => m == mods[i]) != undefined
     const count = mod_count[mods[i]] || 0
+    window.mod_table.cell(`#${mods[i]}`, 'active:name').data(active).draw()
     window.mod_table.cell(`#${mods[i]}`, 'found:name').data(count).draw()
   }
 
@@ -196,6 +195,37 @@ const configure_user_channel = id => {
             Flash.info(info)
           })
           .receive('error', reason => Flash.error(reason))
+      })
+
+      // allow activating mods
+      $('#mod-table').on('click', 'a.uncheck', function () {
+        let id = parseInt($(this).closest('tr').attr('id'))
+        channel.push("activate_mod", { id })
+          .receive('ok', () => {
+            let cmods = window.character_table.cell(`#${window.character_id}`, 'mods:name').data()
+            cmods.push(id)
+            window.character_table.cell(`#${window.character_id}`, 'mods:name').data(cmods).draw()
+            switch_character(window.character_id)
+          })
+      })
+
+      // allow deactivating mods
+      $('#mod-table').on('click', 'a.check', function () {
+        let id = parseInt($(this).closest('tr').attr('id'))
+        channel.push("deactivate_mod", { id })
+          .receive('ok', () => {
+            let character_mods =
+              window.character_table.cell(`#${window.character_id}`, 'mods:name').data()
+            for( var i = 0; i < character_mods.length; i++){
+              if ( character_mods[i] == id) {
+                character_mods.splice(i, 1);
+                break
+              }
+            }
+            window.character_table.cell(`#${window.character_id}`, 'mods:name')
+            .data(character_mods).draw()
+            switch_character(window.character_id)
+          })
       })
 
   //   // allow deleting of items

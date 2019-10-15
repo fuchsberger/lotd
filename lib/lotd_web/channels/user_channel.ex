@@ -1,7 +1,7 @@
 defmodule LotdWeb.UserChannel do
   use LotdWeb, :channel
 
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Accounts, Gallery, Skyrim}
   alias LotdWeb.{CharacterView, ItemView}
 
   def join("user:" <> user_id, _params, socket) do
@@ -67,6 +67,18 @@ defmodule LotdWeb.UserChannel do
             {:reply, { :error, %{ reason: "Database Error. #{reason}"}}, socket}
         end
     end
+  end
+
+  def handle_in("activate_mod", %{ "id" => id}, socket) do
+    Accounts.get_active_character(socket.assigns.user)
+    |> Accounts.update_character_add_mod(Skyrim.get_mod!(id))
+    {:reply, :ok, socket}
+  end
+
+  def handle_in("deactivate_mod", %{ "id" => id}, socket) do
+    Accounts.get_active_character(socket.assigns.user)
+    |> Accounts.update_character_remove_mod(id)
+    {:reply, :ok, socket}
   end
 
   def handle_in("logout", _params, socket) do

@@ -62,10 +62,11 @@ const search = (term = $('#search').val()) => {
   }
 
   // filter table and remove rows that do not have a matching row id
-  if (window.page == 'characters' || window.page == 'displays') {
+  if (!window.character_id || window.page == 'characters' || window.page == 'displays') {
     table.search(term).draw()
   } else {
-    const modIDs = window.mod_table.rows().ids().toArray().toString().replace(/,/g, "|")
+    const modIDs = window.mod_table.rows().data().toArray()
+      .filter(m => m.active).map(m => m.id).toString().replace(/,/g, "|")
     table.search(term).columns('mod:name').search(modIDs, true).draw()
   }
   $('#search-count').text(table.page.info().recordsDisplay)

@@ -3,6 +3,7 @@ defmodule LotdWeb.ModView do
 
   def render("mod.json", %{ mod: m }) do
     %{
+      active: false,
       id: m.id,
       filename: m.filename,
       name: m.name,

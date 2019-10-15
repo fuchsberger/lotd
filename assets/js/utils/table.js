@@ -143,9 +143,9 @@ const mod = mods => {
     {
       title: icon('ok-squared'),
       className: "all small-cell",
-      data: null,
+      data: 'active',
       name: 'active',
-      render: d => d.id <= 5 ? icon('ok-squared') : cell_check(d.active),
+      render: (active, undefined, d) => d.id <= 5 ? icon('ok-squared') : cell_check(active),
       searchable: false,
       sortable: false,
       visible: false
