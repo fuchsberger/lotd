@@ -1,14 +1,6 @@
 import $ from 'jquery'
 import socket from './socket'
 import { Flash, Menu, Table } from '../utils'
-import { mod } from '../utils/table'
-
-const add_options = (selector, entries) => {
-  for (let i in entries) {
-    if(entries.hasOwnProperty(i))
-      $(selector).append(`<option value='${entries[i].id}'>${entries[i].name}</option>`)
-  }
-}
 
 const switch_character = id => {
 
@@ -229,11 +221,7 @@ const configure_user_channel = id => {
   //   })
   // }
 
-      // // add options to the add / update modal
-      // add_options('#location_id', locations)
-      // add_options('#quest_id', quests)
-      // add_options('#display_id', displays)
-      // add_options('#mod_id', mods)
+
 
       Menu.search('')
     })

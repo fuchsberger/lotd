@@ -16,31 +16,6 @@ defmodule LotdWeb.UserChannel do
     end
   end
 
-  def handle_in("add", item_params, socket) do
-    if moderator?(socket) do
-      case Gallery.create_item(item_params) do
-        {:ok, item} ->
-          item = Phoenix.View.render_one(item, ItemView, "item.json")
-          broadcast(socket, "add", %{ item: item})
-          {:reply, :ok, socket}
-        {:error, %Ecto.Changeset{} = changeset} ->
-          {:reply, {:error, %{errors: error_map(changeset)}}, socket}
-      end
-    else
-      {:reply, :error, socket}
-    end
-  end
-
-  def handle_in("delete", %{ "id" => id}, socket) do
-    if admin?(socket) do
-      {:ok, item} = Gallery.get_item!(id) |> Gallery.delete_item()
-      broadcast(socket, "delete", %{ id: item.id})
-      {:reply, :ok, socket}
-    else
-      {:reply, :error, socket}
-    end
-  end
-
   def handle_in("collect_item", %{ "id" => id}, socket) do
     Accounts.get_active_character(socket.assigns.user)
     |> Accounts.update_character_add_item(Gallery.get_item!(id))

@@ -7,7 +7,7 @@
     <div class='input-group-prepend'>
       <div class='input-group-text'>
       <%= if moderator?(@conn) do %>
-        <a class='icon-plus' data-toggle="modal" data-target="#modal"></a>
+        <a class='icon-plus'></a>
       <% else %>
         <i class="icon-search text-black-50"></i>
       <% end %>

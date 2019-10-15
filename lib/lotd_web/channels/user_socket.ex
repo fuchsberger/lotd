@@ -4,6 +4,7 @@ defmodule LotdWeb.UserSocket do
   ## Channels
   channel "public", LotdWeb.PublicChannel
   channel "user:*", LotdWeb.UserChannel
+  channel "moderator", LotdWeb.ModeratorChannel
 
   @max_age 2 * 7 * 24 * 60 * 60
 

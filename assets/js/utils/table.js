@@ -11,13 +11,21 @@ const TABLE_DEFAULTS = {
 
 const icon = name => `<i class="icon-${name}"></i>`
 
-const CONTROL_COLUMN = [{
-  className: 'control all small-cell',
+const MODERATOR_COLUMN = [{
+  className: 'all small-cell',
   defaultContent: `<a class='icon-pencil'></a>`,
+  name: 'edit',
   orderable: false,
   sortable: false,
   title: icon('pencil'),
   visible: false
+}]
+
+const CONTROL_COLUMN = [{
+  className: 'control all small-cell',
+  defaultContent: '',
+  orderable: false,
+  sortable: false
 }]
 
 const cell_check = active => (
@@ -29,6 +37,18 @@ const cell_check = active => (
 const cell_name = d => (d.url ? `<a href="${d.url}" target='_blank'>${d.name}</a>` : d.name)
 
 const cell_time = t => `<time datetime='${t}'></time`
+
+const get = name => {
+  switch (name) {
+    case 'item': return window.item_table
+    case 'display': return window.display_table
+    case 'mod': return window.mod_table
+    case 'quest': return window.quest_table
+    case 'location': return window.location_table
+    case 'character': return window.character_table
+    case 'user': return window.user_table
+  }
+}
 
 const character = characters => {
   let columns = [
@@ -100,6 +120,7 @@ const item = items => {
     { data: 'quest_id', title: "Quest", render: id => cell_link('quest', id) },
     { data: 'display_id', title: "Display", render: id => cell_link('display', id) },
     { data: 'mod_id', name: 'mod', sortable: false, visible: false },
+    ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
 
@@ -128,6 +149,7 @@ const location = locations => {
     },
     { title: 'Items Total', data: 'item_count', searchable: false },
     { data: 'mod_id', name: 'mod', sortable: false, visible: false },
+    ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
 
@@ -165,7 +187,7 @@ const mod = mods => {
       visible: false
     },
     { title: 'Items Total', data: 'item_count', searchable: false },
-    // { data: 'mod_id', name: 'mod', sortable: false, visible: false },
+    ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
 
@@ -195,6 +217,7 @@ const quest = quests => {
     },
     { title: 'Items Total', data: 'item_count', searchable: false },
     { data: 'mod_id', name: 'mod', sortable: false, visible: false },
+    ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
 
@@ -221,6 +244,7 @@ const display = displays => {
       visible: false
     },
     { title: 'Items Total', data: 'item_count', searchable: false },
+    ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
 
@@ -234,6 +258,7 @@ const display = displays => {
 export {
   character,
   display,
+  get,
   item,
   location,
   mod,

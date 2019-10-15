@@ -1,20 +1,6 @@
 import $ from 'jquery'
-import { socket, join_user_channel } from '.'
+import { socket, join_moderator_channel, join_user_channel } from '.'
 import { Menu, Table } from '../utils'
-
-const reset_modal = () => {
-  // reset form
-  $('#name').val('').removeClass('is-invalid')
-  $('#url').val('').removeClass('is-invalid')
-  $('#mod_id').val('').removeClass('is-invalid')
-  $('#quest_id').val('').removeClass('is-invalid')
-  $('#location_id').val('').removeClass('is-invalid')
-  $('#display_id').val('').removeClass('is-invalid')
-  $('.invalid-feedback').remove()
-
-  // close modal if "add more items..." was not checked
-  if (!$('#continue').is(':checked')) $('#modal').modal('hide')
-}
 
 // calculate item count for a given module and sets items_found to 0
 const calculate_item_count = (items, entries, key) => {
@@ -79,6 +65,7 @@ const configure_public_channel = () => {
       $('#loader-wrapper').addClass('d-none')
 
       if (user) join_user_channel(user)
+      if (moderator) join_moderator_channel()
     })
     .receive("error", resp => { console.log("Unable to join", resp) })
 }
