@@ -32,7 +32,7 @@ const enable = () => {
     $('.nav-item').removeClass('active')
     $(this).parent().addClass('active')
     $(`#${id}`).collapse('show')
-    search()
+    if(id != 'about') search()
   })
 
   // enable filtering tables based on a searchfield
@@ -60,10 +60,14 @@ const search = (term = $('#search').val()) => {
     case 'users': table = window.user_table; break;
     default: return;
   }
-  // get current mod ids
-  const modIDs = window.mod_table ? window.mod_table.rows().ids().toArray() : 'all'
-  console.log(modIDs)
-  table.search(term).draw() // .columns(5).search()
+
+  // filter table and remove rows that do not have a matching row id
+  if (window.page == 'characters' || window.page == 'displays') {
+    table.search(term).draw()
+  } else {
+    const modIDs = window.mod_table.rows().ids().toArray().toString().replace(/,/g, "|")
+    table.search(term).columns('mod:name').search(modIDs, true).draw()
+  }
   $('#search-count').text(table.page.info().recordsDisplay)
 }
 

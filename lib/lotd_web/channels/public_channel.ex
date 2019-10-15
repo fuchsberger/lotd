@@ -5,6 +5,7 @@ defmodule LotdWeb.PublicChannel do
   alias LotdWeb.{DisplayView, ItemView, ModView, LocationView, QuestView}
 
   def join("public", _params, socket) do
+
     displays = Gallery.list_displays()
     items = Gallery.list_items()
     locations = Skyrim.list_locations()
