@@ -20,22 +20,30 @@ defmodule LotdWeb.UserChannel do
   end
 
   def handle_in("collect_item", %{ "id" => id}, socket) do
-    if character(socket) do
-      Accounts.get_active_character(socket.assigns.user)
-      |> Accounts.update_character_add_item(Gallery.get_item!(id))
-      {:reply, :ok, socket}
-    else
-      {:reply, :error, socket}
-    end
+    Accounts.get_active_character(socket.assigns.user)
+    |> Accounts.update_character_add_item(Gallery.get_item!(id))
+    {:reply, :ok, socket}
   end
 
   def handle_in("remove_item", %{ "id" => id}, socket) do
-    if character(socket) do
-      Accounts.get_active_character(socket.assigns.user)
-      |> Accounts.update_character_remove_item(id)
-      {:reply, :ok, socket}
-    else
-      {:reply, :error, socket}
+    Accounts.get_active_character(socket.assigns.user)
+    |> Accounts.update_character_remove_item(id)
+    {:reply, :ok, socket}
+  end
+
+  def handle_in("activate_character", %{ "id" => id}, socket) do
+    case Accounts.get_user_character!(socket.assigns.user, id) do
+      nil ->
+        {:reply, { :error, %{
+          reason: "This character does not exist or does not belong to you"}
+        }, socket}
+      character ->
+        case Accounts.update_user(socket.assigns.user, %{ active_character_id: character.id }) do
+          {:ok, _user} ->
+            {:reply, {:ok, %{ info: "#{character.name} is now hunting relics."}}, socket}
+          {:error, reason} ->
+            {:reply, { :error, %{ reason: "Database Error. #{reason}"}}, socket}
+        end
     end
   end
 

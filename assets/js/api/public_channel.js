@@ -16,6 +16,20 @@ const reset_modal = () => {
   if (!$('#continue').is(':checked')) $('#modal').modal('hide')
 }
 
+// calculate item count for a given module and sets items_found to 0
+const calculate_item_count = (items, entries, key) => {
+  for (let i in entries) {
+    if (entries.hasOwnProperty(i)) {
+      if(window.user) entries[i].items_found = 0
+      entries[i].item_count = 0
+      entries[i].items_found = 0
+      items.forEach(item => {
+        if (item[key] == entries[i].id) entries[i].item_count++
+      })
+    }
+  }
+}
+
 const configure_public_channel = () => {
   let channel = socket.channel("public")
 
@@ -45,17 +59,23 @@ const configure_public_channel = () => {
       window.locations = locations
       window.quests = quests
 
-      if (user) {
-        join_user_channel(user)
-      } else {
-        Table.item(items)
-        Table.location(locations)
-        Table.quest(quests)
-        Table.display(displays)
-
-        Menu.search('')
-        $('#loader-wrapper').addClass('d-none')
+      // add item.active = false to all items
+      for (let i in items) {
+        if (items.hasOwnProperty(i)) items[i].active = false
       }
+      calculate_item_count(items, displays, 'display_id')
+      calculate_item_count(items, locations, 'location_id')
+      calculate_item_count(items, quests, 'quest_id')
+
+      Table.item(items)
+      Table.location(locations)
+      Table.quest(quests)
+      Table.display(displays)
+
+      Menu.search('')
+      $('#loader-wrapper').addClass('d-none')
+
+      if (user) join_user_channel(user)
     })
     .receive("error", resp => { console.log("Unable to join", resp) })
 }

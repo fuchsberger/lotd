@@ -46,6 +46,10 @@ defmodule Lotd.Accounts do
     |> Repo.all()
   end
 
+  def get_user_character!(user, id) do
+    Repo.one!(from(c in Character, where: c.user_id == ^user.id and c.id == ^id))
+  end
+
   def get_active_character(user) do
     user
     |> Repo.preload(:active_character)
