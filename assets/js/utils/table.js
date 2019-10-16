@@ -70,7 +70,7 @@ const character = characters => {
       render: items => items.length,
       searchable: false
     },
-    { title: "Items Total", data: 'item_count', searchable: false },
+    { title: "Items Total", data: 'count', name: 'count', searchable: false },
     { title: "Created", data: 'created', render: t => cell_time(t) },
     ...CONTROL_COLUMN
   ]
@@ -143,11 +143,11 @@ const location = locations => {
     {
       title: 'Items Found',
       name: 'found',
-      data: 'items_found',
+      data: 'found',
       searchable: false,
       visible: false
     },
-    { title: 'Items Total', data: 'item_count', searchable: false },
+    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
     { data: 'mod_id', name: 'mod', sortable: false, visible: false },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
@@ -182,11 +182,11 @@ const mod = mods => {
     {
       title: 'Items Found',
       name: 'found',
-      data: 'items_found',
+      data: 'found',
       searchable: false,
       visible: false
     },
-    { title: 'Items Total', data: 'item_count', searchable: false },
+    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
@@ -211,11 +211,11 @@ const quest = quests => {
     {
       title: 'Items Found',
       name: 'found',
-      data: 'items_found',
+      data: 'found',
       searchable: false,
       visible: false
     },
-    { title: 'Items Total', data: 'item_count', searchable: false },
+    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
     { data: 'mod_id', name: 'mod', sortable: false, visible: false },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
@@ -239,11 +239,11 @@ const display = displays => {
     {
       title: 'Items Found',
       name: 'found',
-      data: 'items_found',
+      data: 'found',
       searchable: false,
       visible: false
     },
-    { title: 'Items Total', data: 'item_count', searchable: false },
+    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]

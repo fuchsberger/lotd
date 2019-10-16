@@ -6,6 +6,8 @@ defmodule LotdWeb.LocationView do
   def render("location.json", %{ location: l }) do
     %{
       id: l.id,
+      found: 0,
+      count: 0,
       name: l.name,
       url: l.url,
       mod_id: l.mod_id

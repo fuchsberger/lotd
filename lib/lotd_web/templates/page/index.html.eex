@@ -1,7 +1,7 @@
 <main id="page-content" class="accordion">
   <div class="collapse multi-collapse" data-parent="#page-content" id="about">
     <h2>About</h2>
-    <p>This definately needs filling...</p>
+    <p>This needs filling...</p>
   </div>
   <div class="collapse multi-collapse show" data-parent="#page-content" id="items">
     <table id='item-table' class='display nowrap' width="100%"></table>
@@ -24,7 +24,6 @@
   </div>
 <% end %>
 </main>
-
 
 <%= if moderator?(@conn) || admin?(@conn) do %>
   <div id="modal" class="modal fade" tabindex="-1" role="dialog">
@@ -84,11 +83,12 @@
             </div>
           </div>
           <div class="modal-footer form-inline justify-content-between">
-            <div class="form-group form-check float-left">
+            <button id='delete' class='btn btn-danger btn-outline'>Delete</button>
+            <div class="form-group form-check">
               <input type="checkbox" class="form-check-input" id="continue">
               <label class="form-check-label" for="exampleCheck1">Add more entries...</label>
             </div>
-            <%= submit "", class: "btn btn-primary" %>
+            <%= submit "", id: "submit", class: "btn btn-primary" %>
           </div>
         </div>
       </div>

@@ -1,8 +1,9 @@
 import $ from 'jquery'
 import socket from './socket'
+import { calculate_item_counts } from './public_channel'
 import { Flash, Menu, Table } from '../utils'
 
-const switch_character = id => {
+const update_character = id => {
 
   // update character table
   if (window.character_id)
@@ -48,7 +49,6 @@ const switch_character = id => {
 
   // update display table
   const displays = window.display_table.rows().ids().toArray()
-
   for (let i = 0; i < displays.length; i++) {
     const count = display_count[displays[i]] || 0
     window.display_table.cell(`#${displays[i]}`, 'found:name').data(count).draw()
@@ -114,7 +114,8 @@ const configure_user_channel = id => {
 
       Table.character(characters)
 
-      switch_character(character_id)
+      update_character(character_id)
+      calculate_item_counts()
 
       // allow collecting of items
       $('#item-table').on('click', 'a.uncheck', function () {
@@ -126,7 +127,7 @@ const configure_user_channel = id => {
             citems.push(id)
             window.character_table.cell(`#${window.character_id}`, 'items:name')
               .data(citems).draw()
-            switch_character(window.character_id)
+              update_character(window.character_id)
           })
       })
 
@@ -142,7 +143,7 @@ const configure_user_channel = id => {
             }
             window.character_table.cell(`#${window.character_id}`, 'items:name')
               .data(citems).draw()
-            switch_character(window.character_id)
+            update_character(window.character_id)
           })
       })
 
@@ -152,7 +153,7 @@ const configure_user_channel = id => {
         channel.push("activate_character", { id })
           .receive('ok', ({ info }) => {
             // update character table
-            switch_character(id)
+            update_character(id)
             Flash.info(info)
           })
           .receive('error', reason => Flash.error(reason))
@@ -166,7 +167,7 @@ const configure_user_channel = id => {
             let cmods = window.character_table.cell(`#${window.character_id}`, 'mods:name').data()
             cmods.push(id)
             window.character_table.cell(`#${window.character_id}`, 'mods:name').data(cmods).draw()
-            switch_character(window.character_id)
+            update_character(window.character_id)
           })
       })
 
@@ -185,43 +186,9 @@ const configure_user_channel = id => {
             }
             window.character_table.cell(`#${window.character_id}`, 'mods:name')
             .data(character_mods).draw()
-            switch_character(window.character_id)
+            update_character(window.character_id)
           })
       })
-
-  //   // allow deleting of items
-  //   if (window.admin) {
-  //     $('#item-table').on('click', '.delete', function () {
-  //       let id = parseInt($(this).closest('tr').attr('id'))
-  //       channel.push("delete", { id })
-  //     })
-  //   }
-
-
-  // if (window.moderator) {
-  //   $('#modal form').submit(function (e) {
-  //     e.preventDefault()
-
-  //     const data = $(this).serializeArray().reduce(function(obj, item) {
-  //       obj[item.name] = item.value;
-  //       return obj;
-  //     }, {})
-
-  //     channel.push('add', data)
-  //       .receive('ok', () => reset_modal())
-  //       .receive('error', ({ errors }) => {
-  //         for (var key in errors) {
-  //           if (errors.hasOwnProperty(key)) {
-  //             $(`#${key}`).addClass('is-invalid')
-  //               .after(`<div class="invalid-feedback">${errors[key]}</div>`)
-  //           }
-  //         }
-  //       })
-
-  //   })
-  // }
-
-
 
       Menu.search('')
     })
