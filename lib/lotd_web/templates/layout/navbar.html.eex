@@ -1,53 +1,51 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
 
-  <a id="logo" class="navbar-brand" href="<%= Routes.page_path(@conn, :index) %>" title='Legacy of the Dragonborn - Inventory Manager'></a>
+  <%# Logo %>
+  <span class="navbar-brand" title='Legacy of the Dragonborn - Inventory Manager'></span>
 
   <div id="search-control" class='input-group'>
 
-    <div class='input-group-prepend'>
-      <div class='input-group-text'>
-      <%= if moderator?(@conn) do %>
-        <a class='icon-plus'></a>
-      <% else %>
-        <i class="icon-search text-black-50"></i>
-      <% end %>
-      <a class="icon-cancel text-primary d-none"></a>
-      </div>
-    </div>
+    <%# Control Actions %>
+    <div class='input-group-prepend'><div class='input-group-text'></div></div>
+
+    <%# Search %>
     <input id="search" class="form-control" type="text" placeholder="Find..." >
+
+    <%# Search Count %>
     <div class='input-group-append'>
       <span id='search-count' class='input-group-text font-weight-bold'>0</span>
     </div>
   </div>
 
-  <button class="navbar-toggler ml-2" type="button" data-toggle="collapse" data-target="#menu-collapse" aria-controls="menu-collapse" aria-expanded="false" aria-label="Toggle navigation">
+  <%# Mobile Menu Button %>
+  <button class="navbar-toggler ml-2" data-toggle="collapse" data-target="#menu-collapse">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="ml-2 collapse navbar-collapse" id="menu-collapse">
     <ul id='menu' class="navbar-nav">
       <li class='nav-item active'>
-        <a class='nav-link tab' data-id='items' href='#items'>Items</a>
+        <a class='nav-link tab' data-id='item'>Items</a>
       </li>
       <li class='nav-item'>
-        <a class='nav-link tab' data-id='locations' href='#locations'>Locations</a>
+        <a class='nav-link tab' data-id='location'>Locations</a>
       </li>
       <li class='nav-item'>
-        <a class='nav-link tab' data-id='quests' href='#quests'>Quests</a>
+        <a class='nav-link tab' data-id='quest'>Quests</a>
       </li>
       <li class='nav-item'>
-        <a class='nav-link tab' data-id='displays' href='#displays'>Displays</a>
+        <a class='nav-link tab' data-id='display'>Displays</a>
       </li>
 
       <li class='nav-item dropdown'>
         <a class="nav-link dropdown-toggle" href="#" role="button"  id="navbarDropdown" data-toggle="dropdown" title='More...'><i class='icon-cog'></i></a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-          <a class='dropdown-item tab' data-id='about' href='#about'>About</a>
+          <a class='dropdown-item tab' data-id='about'>About</a>
           <div class="dropdown-divider"></div>
           <%= if authenticated?(@conn) do %>
-            <a class='dropdown-item tab' data-id='characters' href='#characters'>Characters</a>
+            <a class='dropdown-item tab' data-id='character'>Characters</a>
           <% end %>
-          <a class='dropdown-item tab' data-id='mods' href='#mods'>Mods</a>
+          <a class='dropdown-item tab' data-id='mod'>Mods</a>
           <%= if admin?(@conn) do %>
             <a class='dropdown-item tab'>Users</a>
           <% end %>

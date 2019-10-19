@@ -1,4 +1,27 @@
 import $ from 'jquery'
+import { Data } from '.';
+
+// customize default search behavior
+$.fn.dataTable.ext.search.push(
+  function (settings, data) {
+
+    if (!window.character_id) return true
+
+    switch (window.page) {
+      case 'item':
+      case 'location':
+      case 'quest':
+        // find character_mods
+        const character_mods = Data.character_mods()
+
+        // check if mod_id of item/quest/location under character_mods
+        const column = settings.aoColumns.find(c => c.name == 'mod_id')
+        return column && character_mods.find(m => m == data[column.idx])
+
+      default: return true
+    }
+  }
+);
 
 const TABLE_DEFAULTS = {
   dom: 't',
@@ -10,23 +33,6 @@ const TABLE_DEFAULTS = {
 }
 
 const icon = name => `<i class="icon-${name}"></i>`
-
-const MODERATOR_COLUMN = [{
-  className: 'all small-cell',
-  defaultContent: `<a class='icon-pencil'></a>`,
-  name: 'edit',
-  orderable: false,
-  sortable: false,
-  title: icon('pencil'),
-  visible: false
-}]
-
-const CONTROL_COLUMN = [{
-  className: 'control all small-cell',
-  defaultContent: '',
-  orderable: false,
-  sortable: false
-}]
 
 const cell_check = active => (
   active
@@ -50,19 +56,51 @@ const get = name => {
   }
 }
 
+const ACTIVE_COLUMN = [{
+  className: "all small-cell",
+  data: 'active',
+  name: 'active',
+  render: active => cell_check(active),
+  searchable: false,
+  sortable: false,
+  title: icon('ok-squared'),
+  visible: false
+}]
+
+const ITEM_COLUMNS = [
+  { title: 'Items Found', data: 'found', name: 'found', searchable: false, visible: false },
+  { title: 'Items Total', data: 'count', name: 'count', searchable: false }
+]
+
+const MODERATOR_COLUMN = [{
+  className: 'all small-cell',
+  defaultContent: `<a class='icon-pencil'></a>`,
+  name: 'edit',
+  orderable: false,
+  sortable: false,
+  title: icon('pencil'),
+  visible: false
+}]
+
+const CONTROL_COLUMN = [{
+  className: 'control all small-cell',
+  defaultContent: '',
+  orderable: false,
+  sortable: false,
+  width: '25px'
+}]
+
 const character = characters => {
   let columns = [
-    {
-      title: icon('star'),
-      className: "all small-cell",
-      data: 'active',
-      name: 'active',
-      render: active => cell_check(active),
-      searchable: false,
-      sortable: false,
-    },
+    ...ACTIVE_COLUMN,
     { title: "Character", className: "all font-weight-bold", data: 'name'},
-    { title: "Mods", data: 'mods', name: 'mods', render: mods => mods.length, searchable: false },
+    {
+      title: "Mods",
+      data: 'mods',
+      name: 'mods',
+      render: mods => mods.length,
+      searchable: false
+    },
     {
       title: "Items Found",
       data: 'items',
@@ -74,6 +112,7 @@ const character = characters => {
     { title: "Created", data: 'created', render: t => cell_time(t) },
     ...CONTROL_COLUMN
   ]
+  columns[0].visible = true
 
   window.character_table = $('#character-table').DataTable({
     ...TABLE_DEFAULTS,
@@ -85,30 +124,30 @@ const character = characters => {
   window.character_table.on( 'draw', () => $('time').timeago())
 }
 
-const item = items => {
-
-  const cell_link = (type, id) => {
-    if (!id) return ''
-    let data
-    switch (type) {
-      case 'location': data = window.locations; break;
-      case 'quest': data = window.quests; break;
-      case 'display': data = window.displays; break;
-    }
-    return `<a class='search-field'>${data.find(i => i.id == id).name}</a>`
-  }
-
+const display = displays => {
   let columns = [
     {
-      className: "all small-cell",
-      data: 'active',
-      name: 'active',
-      render: active => cell_check(active),
-      searchable: false,
-      sortable: false,
-      title: icon('ok-squared'),
-      visible: false
+      title: "Display",
+      className: "all font-weight-bold",
+      data: 'name',
+      name: 'name',
+      render: (_name, _type, display) => cell_name(display)
     },
+    ...ITEM_COLUMNS,
+    ...MODERATOR_COLUMN,
+    ...CONTROL_COLUMN
+  ]
+  window.display_table =
+    $('#display-table').DataTable({ ...TABLE_DEFAULTS, data: displays, columns })
+}
+
+const item = items => {
+
+  const cell_link = (type, id) =>
+    (id ? `<a class='search-field'>${get(type).cell(`#${id}`, 'name:name').data()}</a>` : '')
+
+  let columns = [
+    ...ACTIVE_COLUMN,
     {
       title: "Item",
       className: "all font-weight-bold",
@@ -119,7 +158,8 @@ const item = items => {
     { data: 'location_id', title: "Location", render: id => cell_link('location', id) },
     { data: 'quest_id', title: "Quest", render: id => cell_link('quest', id) },
     { data: 'display_id', title: "Display", render: id => cell_link('display', id) },
-    { data: 'mod_id', name: 'mod', sortable: false, visible: false },
+    { data: 'mod_id', name: 'mod_id', visible: false },
+    { data: 'mod_id', title: 'Mod', name: 'mod', render: id => cell_link('mod', id) },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
@@ -137,56 +177,32 @@ const location = locations => {
     {
       title: "Location",
       className: "all font-weight-bold",
-      data: null,
-      render: location => cell_name(location)
+      data: 'name',
+      name: 'name',
+      render: (_name, _type, location) => cell_name(location)
     },
-    {
-      title: 'Items Found',
-      name: 'found',
-      data: 'found',
-      searchable: false,
-      visible: false
-    },
-    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
-    { data: 'mod_id', name: 'mod', sortable: false, visible: false },
+    { data: 'mod_id', name: 'mod_id', visible: false },
+    ...ITEM_COLUMNS,
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
-
-  window.location_table = $('#location-table').DataTable({
-    ...TABLE_DEFAULTS,
-    data: locations,
-    columns
-  })
+  window.location_table =
+    $('#location-table').DataTable({ ...TABLE_DEFAULTS, data: locations, columns })
 }
+
 
 const mod = mods => {
   let columns = [
-    {
-      title: icon('ok-squared'),
-      className: "all small-cell",
-      data: 'active',
-      name: 'active',
-      render: (active, undefined, d) => d.id <= 5 ? icon('ok-squared') : cell_check(active),
-      searchable: false,
-      sortable: false,
-      visible: false
-    },
+    ...ACTIVE_COLUMN,
     {
       title: "Mod",
       className: "all font-weight-bold",
-      data: null,
-      render: mod => cell_name(mod)
+      data: 'name',
+      name: 'name',
+      render: (_name, _type, mod) => cell_name(mod)
     },
     { title: 'Filename', data: 'filename'},
-    {
-      title: 'Items Found',
-      name: 'found',
-      data: 'found',
-      searchable: false,
-      visible: false
-    },
-    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
+    ...ITEM_COLUMNS,
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
@@ -200,67 +216,20 @@ const mod = mods => {
 }
 
 const quest = quests => {
-
   let columns = [
     {
       title: "Quest",
       className: "all font-weight-bold",
-      data: null,
-      render: quest => cell_name(quest)
+      data: 'name',
+      name: 'name',
+      render: (_name, _type, quests) => cell_name(quests)
     },
-    {
-      title: 'Items Found',
-      name: 'found',
-      data: 'found',
-      searchable: false,
-      visible: false
-    },
-    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
-    { data: 'mod_id', name: 'mod', sortable: false, visible: false },
+    { data: 'mod_id', name: 'mod_id', visible: false },
+    ...ITEM_COLUMNS,
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
-
-  window.quest_table = $('#quest-table').DataTable({
-    ...TABLE_DEFAULTS,
-    data: quests,
-    columns
-  })
+  window.quest_table = $('#quest-table').DataTable({ ...TABLE_DEFAULTS, data: quests, columns })
 }
 
-const display = displays => {
-  let columns = [
-    {
-      title: "Display",
-      className: "all font-weight-bold",
-      data: null,
-      render: display => cell_name(display)
-    },
-    {
-      title: 'Items Found',
-      name: 'found',
-      data: 'found',
-      searchable: false,
-      visible: false
-    },
-    { title: 'Items Total', data: 'count', name: 'count', searchable: false },
-    ...MODERATOR_COLUMN,
-    ...CONTROL_COLUMN
-  ]
-
-  window.display_table = $('#display-table').DataTable({
-    ...TABLE_DEFAULTS,
-    data: displays,
-    columns
-  })
-}
-
-export {
-  character,
-  display,
-  get,
-  item,
-  location,
-  mod,
-  quest
-}
+export { character, display, get, item, location, mod, quest }

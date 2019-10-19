@@ -10,8 +10,6 @@ import { join_public_channel } from './api'
 import { Menu } from './utils'
 
 // Executed when page is loaded
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 $( document ).ready(function() {
 
   // enable menu functionality
@@ -19,5 +17,4 @@ $( document ).ready(function() {
 
   // set up and connect channels
   join_public_channel()
-
 })

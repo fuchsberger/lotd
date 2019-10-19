@@ -3,6 +3,7 @@ defmodule LotdWeb.ItemView do
 
   def render("item.json", %{ item: i }) do
     %{
+      active: false,
       id: i.id,
       name: i.name,
       url: i.url,

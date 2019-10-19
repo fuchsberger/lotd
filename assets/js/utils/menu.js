@@ -1,39 +1,64 @@
 import $ from 'jquery'
 import { Nexus } from '../api'
+import * as Table from './table'
 
-const toggle_search_cancel = (on = true) => {
-  if (on) {
-    $('#search-control .icon-plus, #search-control .icon-search').addClass('d-none')
-    $('#search-control .icon-cancel').removeClass('d-none')
-  } else {
-    $('#search-control .icon-plus, #search-control .icon-search').removeClass('d-none')
-    $('#search-control .icon-cancel').addClass('d-none')
+const search_control = () => {
+  let content
+  if ($('#search').val() != '')
+    content = "<a class='icon-cancel text-primary'></a>"
+  else if (window.moderator || window.admin || (window.user &&
+    (window.page == 'characters' || window.page == 'mods')))
+    content = "<a class='icon-plus'></a>"
+  else
+    content = "<i class='icon-search text-black-50'></i>"
+
+  $('#search-control .input-group-prepend .input-group-text').html(content)
+}
+
+const switch_tab = e => {
+
+  const tab = $(e.target).data('id')
+
+  // do nothing if we are already at correct page
+  if (window.page == tab) return
+
+  window.page = tab
+
+  // mark the correct tab as active
+  $('.nav-item').removeClass('active')
+  $(e.target).parent().addClass('active')
+
+  // disable search on about page
+  if (tab == 'about')
+    $('#search').attr('disabled', true).siblings('.input-group-append').addClass('d-none')
+  else {
+    $('#search').attr('disabled', false).siblings('.input-group-append').removeClass('d-none')
+
+    // provide the right search control option
+    search_control()
+
+    // update search in target table
+    search()
   }
+
+  // enable and show new page
+  $(`#${tab}`).collapse('show')
 }
 
 const enable = () => {
+
+  // enable switching between menu items
+  window.page = 'item'
 
   // enable login and logout
   $('#login-button').click(() => Nexus.login())
   $('#logout-button').click(() => window.userChannel.push("logout"))
 
-  // enable switching between menu items
-  window.page = 'items'
+  // provide the right search control option
+  search_control()
 
-  $('a.tab').click(function (e) {
-    e.preventDefault()
-    let id = $(this).data('id')
-
-    // do nothing if clicking on current page
-    if (window.page == id) return
-
-    // otherwise close previous page and open the new one
-    window.page = id
-    $('.nav-item').removeClass('active')
-    $(this).parent().addClass('active')
-    $(`#${id}`).collapse('show')
-    if(id != 'about') search()
-  })
+  // allow to navigate different tabs
+  $('a.tab').click(switch_tab)
 
   // enable filtering tables based on a searchfield
   $('table').on('click', 'a.search-field', function () { search($(this).text()) })
@@ -42,34 +67,14 @@ const enable = () => {
   $('#search').on('keyup', function () { search(this.value) })
 
   // enable clearing search field and redraw currently active table
-  $('#search-control a.icon-cancel').click(() => search(''))
+  $('#search-control').on('click', 'a.icon-cancel', () => search(''))
 }
 
 const search = (term = $('#search').val()) => {
   $('#search').val(term)
-  toggle_search_cancel(term != '')
-
-  let table
-  switch (window.page) {
-    case 'characters': table = window.character_table; break;
-    case 'displays': table = window.display_table; break;
-    case 'items': table = window.item_table; break;
-    case 'locations': table = window.location_table; break;
-    case 'mods': table = window.mod_table; break;
-    case 'quests': table = window.quest_table; break;
-    case 'users': table = window.user_table; break;
-    default: return;
-  }
-
-  // filter table and remove rows that do not have a matching row id
-  if (!window.character_id || window.page == 'characters' || window.page == 'displays') {
-    table.search(term).draw()
-  } else {
-    const modIDs = window.mod_table.rows().data().toArray()
-      .filter(m => m.active).map(m => m.id).toString().replace(/,/g, "|")
-    table.search(term).columns('mod:name').search(modIDs, true).draw()
-  }
-  $('#search-count').text(table.page.info().recordsDisplay)
+  search_control()
+  Table.get(window.page).search(term).draw()
+  $('#search-count').text(Table.get(window.page).page.info().recordsDisplay)
 }
 
 export {
