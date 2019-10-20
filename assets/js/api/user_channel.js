@@ -1,6 +1,5 @@
 import $ from 'jquery'
 import socket from './socket'
-import { calculate_item_counts } from './public_channel'
 import { Data, Flash, Menu, Table } from '../utils'
 
 const configure_user_channel = id => {
@@ -14,23 +13,10 @@ const configure_user_channel = id => {
 
       const { character_id, characters } = params
 
-      // initialize item count
-      for (let i in characters) {
-        if (characters.hasOwnProperty(i)) {
-          characters[i].active = window.character_id == characters[i].id
-          characters[i].item_count = 0
-          window.items.forEach(item => {
-            if(characters[i].mods.find(m => m == item.mod_id)) characters[i].item_count++
-          })
-        }
-      }
-
-      window.characters = characters
-
+      // create character table
       Table.character(characters)
 
-      Data.update_character(character_id)
-      Data.calculate_item_counts()
+      Data.activate_character(character_id)
 
       // allow collecting of items
       $('#item-table').on('click', 'a.uncheck', function () {
@@ -66,11 +52,7 @@ const configure_user_channel = id => {
       $('#character-table').on('click', 'a.uncheck', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
         channel.push("activate_character", { id })
-          .receive('ok', ({ info }) => {
-            // update character table
-            update_character(id)
-            Flash.info(info)
-          })
+          .receive('ok', () => Data.activate_character(id))
           .receive('error', reason => Flash.error(reason))
       })
 

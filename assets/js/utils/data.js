@@ -1,173 +1,199 @@
 import * as Table from './table'
 
-const character_mods = (id = window.character_id) => {
-  const character = window.character_table.row(`#${id}`).data()
-  return character ? character.mods : null
-}
+const list_characters = () => window.character_table.rows().data().toArray()
+
+const list_displays = () => window.display_table.rows().data().toArray()
+const list_display_ids = () => window.display_table.rows().ids().toArray()
+
+const list_items = () => window.item_table.rows().data().toArray()
+const list_item_ids = () => window.item_table.rows().ids().toArray()
+
+const list_locations = () => window.location_table.rows().data().toArray()
+const list_location_ids = () => window.location_table.rows().ids().toArray()
+
+const list_mod_ids = () => window.mod_table.rows().ids().toArray()
+
+const list_quests = () => window.quest_table.rows().data().toArray()
+const list_quest_ids = () => window.quest_table.rows().ids().toArray()
+
+// if character table was initialized show character item ids, otherwise all item ids
+const list_character_item_ids = (id = window.character_id) => ( window.character_id
+  ? window.character_table.cell(`#${id}`, 'items:name').data()
+  : list_item_ids()
+)
+
+// if character table was initialized show character mod ids, otherwise all mod ids
+const list_character_mod_ids = (id = window.character_id) => (window.character_id
+  ? window.character_table.cell(`#${id}`, 'mods:name').data()
+  : list_mod_ids()
+)
 
 // calculate item count for a given module and sets items_found to 0
 const calculate_item_counts = () => {
-  items = Table.get('item').rows().data().toArray()
 
-  const character_count = {}, display_count = {}, location_count = {}, mod_count = {}, quest_count = {}
+  // prepare found and count for displays
+  const display_count = {}, display_ids = list_display_ids()
+  for (let i = 0; i < display_ids.length; i++) { display_count[display_ids[i]] = 0 }
 
-  const characters = window.character_id ? Table.get('character').rows().data().toArray() : null
+  // prepare found and count for mods
+  const mod_count = {}, mod_ids = list_mod_ids()
+  for (let i = 0; i < mod_ids.length; i++) { mod_count[mod_ids[i]] = 0 }
 
+  // prepare found and count for locations
+  const location_count = {}, location_ids = list_location_ids()
+  for (let i = 0; i < location_ids.length; i++) { location_count[location_ids[i]] = 0 }
+
+  // prepare found and count for quests
+  const quest_count = {}, quest_ids = list_quest_ids()
+  for (let i = 0; i < quest_ids.length; i++) { quest_count[quest_ids[i]] = 0 }
+
+  const items = list_items()
   for (let i in items) {
     if (items.hasOwnProperty(i)) {
       const item = items[i]
-
-      // count characters
-      if (characters) {
-        for (let c in characters) {
-          if (characters.hasOwnProperty(c)) {
-            if (characters[c].mods.find(c => c == item.mod_id)) {
-              if (character_count[characters[c].id]) character_count[characters[c].id]++
-              else character_count[characters[c].id] = 1
-            }
-          }
-        }
-      }
-
-      // count displays
-      if (display_count[item.display_id]) display_count[item.display_id]++
-      else display_count[item.display_id] = 1
-
-      // count mods
-      if (mod_count[item.mod_id]) mod_count[item.mod_id]++
-      else mod_count[item.mod_id] = 1
-
-      // count locations
-      if (item.location_id) {
-        if (location_count[item.location_id]) location_count[item.location_id]++
-        else location_count[item.location_id] = 1
-      }
-
-      // count quests
-      if (item.quest_id) {
-        if (quest_count[item.quest_id]) quest_count[item.quest_id]++
-        else quest_count[item.quest_id] = 1
-      }
-    }
-  }
-
-  // update character table
-  if (characters) {
-    const c = Table.get('character').rows().ids().toArray()
-    for (let i = 0; i < c.length; i++) {
-      window.character_table.cell(`#${c[i]}`, 'count:name')
-        .data(character_count[c[i]] || 0).draw()
+      // prepare count for displays, mods, locations, and quests
+      display_count[item.display_id]++
+      mod_count[item.mod_id]++
+      location_count[item.location_id]++
+      quest_count[item.quest_id]++
     }
   }
 
   // update display table
-  const d = Table.get('display').rows().ids().toArray()
-  for (let i = 0; i < d.length; i++) {
-    window.display_table.cell(`#${d[i]}`, 'count:name').data(display_count[d[i]] || 0).draw()
+  for (let i = 0; i < display_ids.length; i++) {
+    window.display_table
+      .cell(`#${display_ids[i]}`, 'count:name').data(display_count[display_ids[i]]).draw()
   }
 
   // update location table
-  const locations = window.location_table.rows().ids().toArray()
-  for (let i = 0; i < locations.length; i++) {
-    window.location_table.cell(`#${locations[i]}`, 'count:name').data(location_count[locations[i]] || 0).draw()
+  for (let i = 0; i < location_ids.length; i++) {
+    window.location_table
+      .cell(`#${location_ids[i]}`, 'count:name').data(location_count[location_ids[i]]).draw()
   }
 
   // update quest table
-  const quests = window.quest_table.rows().ids().toArray()
-  for (let i = 0; i < quests.length; i++) {
-    window.quest_table.cell(`#${quests[i]}`, 'count:name').data(quest_count[quests[i]] || 0).draw()
+  for (let i = 0; i < quest_ids.length; i++) {
+    window.quest_table
+      .cell(`#${quest_ids[i]}`, 'count:name').data(quest_count[quest_ids[i]]).draw()
   }
 
   // update mod table
-  const mods = window.mod_table.rows().ids().toArray()
-  for (let i = 0; i < mods.length; i++) {
-    window.mod_table.cell(`#${mods[i]}`, 'count:name').data(mod_count[mods[i]] || 0).draw()
+  for (let i = 0; i < mod_ids.length; i++) {
+    window.mod_table.cell(`#${mod_ids[i]}`, 'count:name').data(mod_count[mod_ids[i]]).draw()
   }
 }
 
-const update_character = id => {
+const activate_character = id => {
 
-  // update character table
-  if (window.character_id)
-    window.character_table.cell(`#${window.character_id}`, 0).data(false).draw()
-  window.character_table.cell(`#${id}`, 0).data(true).draw()
+  // prepare found and count for displays
+  const display_found = {}, display_count = {}, display_ids = list_display_ids()
+  for (let i = 0; i < display_ids.length; i++) {
+    display_found[display_ids[i]] = 0
+    display_count[display_ids[i]] = 0
+  }
 
-  const character_items = window.character_table.cell(`#${id}`, 'items:name').data()
+  // prepare found and count for mods
+  const mod_found = {}, mod_count = {}, mod_ids = list_mod_ids()
+  for (let i = 0; i < mod_ids.length; i++) {
+    mod_found[mod_ids[i]] = 0
+    mod_count[mod_ids[i]] = 0
+  }
 
-  // update items / locations / display tables
-  const items = window.item_table.rows().data().toArray()
+  // prepare found and count for locations
+  const location_found = {}, location_count = {}, location_ids = list_location_ids()
+  for (let i = 0; i < location_ids.length; i++) {
+    location_found[location_ids[i]] = 0
+    location_count[location_ids[i]] = 0
+  }
 
-  const display_count = {}, location_count = {}, mod_count = {}, quest_count = {}
+  // prepare found and count for mods
+  const quest_found = {}, quest_count = {}, quest_ids = list_quest_ids()
+  for (let i = 0; i < quest_ids.length; i++) {
+    quest_found[quest_ids[i]] = 0
+    quest_count[quest_ids[i]] = 0
+  }
+
+  const items = list_items()
+  const character_item_ids = list_character_item_ids(id)
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i]
-    const active = character_items.find(citem => citem == item.id) != undefined
+
+    // update item table: active state
+    const active = character_item_ids.find(id => id == item.id) != undefined
     window.item_table.cell(`#${item.id}`, 'active:name').data(active).draw()
 
-    // count displays
+    // prepare found for displays, mods, locations, and quests
     if (active) {
+      display_found[item.display_id]++
+      mod_found[item.mod_id]++
 
-      // count displays
-      if (display_count[item.display_id]) display_count[item.display_id]++
-      else display_count[item.display_id] = 1
-
-      // count mods
-      if (mod_count[item.mod_id]) mod_count[item.mod_id]++
-      else mod_count[item.mod_id] = 1
-
-      // count locations
-      if (item.location_id) {
-        if (location_count[item.location_id]) location_count[item.location_id]++
-        else location_count[item.location_id] = 1
-      }
-
-      // count quests
-      if (item.quest_id) {
-        if (quest_count[item.quest_id]) quest_count[item.quest_id]++
-        else quest_count[item.quest_id] = 1
-      }
+      if (item.location_id) location_found[item.location_id]++
+      if (item.quest_id) quest_found[item.quest_id]++
     }
+
+    // prepare count for displays, mods, locations, and quests
+    display_count[item.display_id]++
+    mod_count[item.mod_id]++
+    location_count[item.location_id]++
+    quest_count[item.quest_id]++
   }
 
   // update display table
-  const displays = window.display_table.rows().ids().toArray()
-  for (let i = 0; i < displays.length; i++) {
-    const count = display_count[displays[i]] || 0
-    window.display_table.cell(`#${displays[i]}`, 'found:name').data(count).draw()
+  for (let i = 0; i < display_ids.length; i++) {
+    window.display_table
+      .cell(`#${display_ids[i]}`, 'found:name').data(display_found[display_ids[i]])
+      .cell(`#${display_ids[i]}`, 'count:name').data(display_count[display_ids[i]])
+      .draw()
   }
 
   // update location table
-  const locations = window.location_table.rows().ids().toArray()
-  for (let i = 0; i < locations.length; i++) {
-    const count = location_count[locations[i]] || 0
-    window.location_table.cell(`#${locations[i]}`, 'found:name').data(count).draw()
+  for (let i = 0; i < location_ids.length; i++) {
+    window.location_table
+      .cell(`#${location_ids[i]}`, 'found:name').data(location_found[location_ids[i]])
+      .cell(`#${location_ids[i]}`, 'count:name').data(location_count[location_ids[i]])
+      .draw()
   }
 
   // update quest table
-  const quests = window.quest_table.rows().ids().toArray()
-  for (let i = 0; i < quests.length; i++) {
-    const count = quest_count[quests[i]] || 0
-    window.quest_table.cell(`#${quests[i]}`, 'found:name').data(count).draw()
+  for (let i = 0; i < quest_ids.length; i++) {
+    window.quest_table
+      .cell(`#${quest_ids[i]}`, 'found:name').data(quest_found[quest_ids[i]])
+      .cell(`#${quest_ids[i]}`, 'count:name').data(quest_count[quest_ids[i]])
+      .draw()
   }
 
   // update mod table
-  const character_mods = window.character_table.cell(`#${id}`, 'mods:name').data()
-  const mods = window.mod_table.rows().ids().toArray()
-  for (let i = 0; i < mods.length; i++) {
-    const active = character_mods.find(m => m == mods[i]) != undefined
-    const count = mod_count[mods[i]] || 0
-    window.mod_table.cell(`#${mods[i]}`, 'active:name').data(active).draw()
-    window.mod_table.cell(`#${mods[i]}`, 'found:name').data(count).draw()
+  const character_mod_ids = list_character_mod_ids(id)
+  for (let i = 0; i < mod_ids.length; i++) {
+    const active = character_mod_ids.find(id => id == mod_ids[i]) != undefined
+    window.mod_table
+      .cell(`#${mod_ids[i]}`, 'active:name').data(active)
+      .cell(`#${mod_ids[i]}`, 'found:name').data(mod_found[mod_ids[i]])
+      .cell(`#${mod_ids[i]}`, 'count:name').data(mod_count[mod_ids[i]])
+      .draw()
   }
 
-  // show all user columns
-  window.item_table.column('active:name').visible(true).draw()
-  window.display_table.column('found:name').visible(true).draw()
-  window.location_table.column('found:name').visible(true).draw()
-  window.mod_table.columns(['active:name', 'found:name']).visible(true).draw()
-  window.quest_table.column('found:name').visible(true).draw()
+  // show all user columns if still hidden, deactivate old active character
+  if (!window.character_id) {
+    window.item_table.column('active:name').visible(true).draw()
+    window.display_table.column('found:name').visible(true).draw()
+    window.location_table.column('found:name').visible(true).draw()
+    window.mod_table.columns(['active:name', 'found:name']).visible(true).draw()
+    window.quest_table.column('found:name').visible(true).draw()
+  } else {
+    window.character_table.cell(`#${window.character_id}`, 0).data(false).draw()
+  }
 
+  // set new character as active
+  window.character_table.cell(`#${id}`, 0).data(true).draw()
   window.character_id = id
 }
 
-export { character_mods, calculate_item_counts, update_character }
+export {
+  activate_character,
+  calculate_item_counts,
+  list_character_item_ids,
+  list_character_mod_ids,
+  list_items
+}

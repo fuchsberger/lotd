@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import { socket, join_moderator_channel, join_user_channel } from '.'
-import { Data, Menu, Table, Flash } from '../utils'
+import { Data, Table, Flash } from '../utils'
 
 const configure_public_channel = () => {
   let channel = socket.channel("public")
@@ -27,12 +27,6 @@ const configure_public_channel = () => {
       window.user = user
       window.moderator = moderator
       window.admin = admin
-
-      window.displays = displays
-      window.items = items
-      window.locations = locations
-      window.quests = quests
-      window.mods = mods
 
       Table.location(locations)
       Table.quest(quests)

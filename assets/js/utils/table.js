@@ -11,12 +11,9 @@ $.fn.dataTable.ext.search.push(
       case 'item':
       case 'location':
       case 'quest':
-        // find character_mods
-        const character_mods = Data.character_mods()
-
-        // check if mod_id of item/quest/location under character_mods
+        // check if mod_id of item/quest/location under character_mod_ids
         const column = settings.aoColumns.find(c => c.name == 'mod_id')
-        return column && character_mods.find(m => m == data[column.idx])
+        return column && Data.list_character_mod_ids().find(id => id == data[column.idx])
 
       default: return true
     }
@@ -91,8 +88,29 @@ const CONTROL_COLUMN = [{
 }]
 
 const character = characters => {
+
+  // calculate item counts
+  const items = Data.list_items()
+  for (let i in characters) {
+    if (characters.hasOwnProperty(i)) {
+      characters[i].active = window.character_id == characters[i].id
+      characters[i].item_count = 0
+      items.forEach(item => {
+        if(characters[i].mods.find(m => m == item.mod_id)) characters[i].item_count++
+      })
+    }
+  }
+
   let columns = [
-    ...ACTIVE_COLUMN,
+    {
+      className: "all small-cell",
+      data: 'active',
+      name: 'active',
+      render: active => cell_check(active),
+      searchable: false,
+      sortable: false,
+      title: icon('ok-squared')
+    },
     { title: "Character", className: "all font-weight-bold", data: 'name'},
     {
       title: "Mods",
@@ -112,7 +130,6 @@ const character = characters => {
     { title: "Created", data: 'created', render: t => cell_time(t) },
     ...CONTROL_COLUMN
   ]
-  columns[0].visible = true
 
   window.character_table = $('#character-table').DataTable({
     ...TABLE_DEFAULTS,
