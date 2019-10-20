@@ -21,31 +21,13 @@ const configure_user_channel = id => {
       // allow collecting of items
       $('#item-table').on('click', 'a.uncheck', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
-        channel.push("collect_item", { id })
-          .receive('ok', () => {
-            let citems =
-              window.character_table.cell(`#${window.character_id}`, 'items:name').data()
-            citems.push(id)
-            window.character_table.cell(`#${window.character_id}`, 'items:name')
-              .data(citems).draw()
-              update_character(window.character_id)
-          })
+        channel.push("collect_item", { id }).receive('ok', () => Data.collect_item(id))
       })
 
       // allow borrowing of items
       $('#item-table').on('click', 'a.check', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
-        channel.push("remove_item", { id })
-          .receive('ok', () => {
-            let citems =
-              window.character_table.cell(`#${window.character_id}`, 'items:name').data()
-            for( var i = 0; i < citems.length; i++){
-              if ( citems[i] == id) { citems.splice(i, 1); break }
-            }
-            window.character_table.cell(`#${window.character_id}`, 'items:name')
-              .data(citems).draw()
-            update_character(window.character_id)
-          })
+        channel.push("remove_item", { id }).receive('ok', () => Data.remove_item(id))
       })
 
       // allow activating a different character
