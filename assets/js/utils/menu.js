@@ -94,6 +94,7 @@ const enable = () => {
 
       default:
         $('#modal h5').text(`Create ${capitalize(window.page)}`)
+        $('#more').show()
         $('#submit').text('Add')
         $('#modal').modal('show')
     }
@@ -106,6 +107,7 @@ const enable = () => {
     const id = parseInt($(this).closest('tr').attr('id'))
     const data = Table.get(window.page).row(`#${id}`).data()
 
+    $('#id').val(data.id || '')
     $('#name').val(data.name || '')
     $('#url').val(data.url || '')
     $('#display_id').val(data.display_id || '')
@@ -132,6 +134,7 @@ const enable = () => {
 
       default:
         $('#modal h5').text(`Edit ${capitalize(window.page)}`)
+        $('#delete').show()
         $('#submit').text('Update')
         $('#modal').modal('show')
     }
@@ -165,13 +168,22 @@ const enable = () => {
         }
       })
   })
+
+  // allow deleting of data
+  $('#delete').on('click', e => {
+    e.preventDefault()
+    const channel = window.page == 'character' ? window.userChannel : window.moderatorChannel
+    channel.push(`delete-${window.page}`, { id: $('#id').val() })
+    .receive('ok', () => $('#modal').modal('hide'))
+  })
 }
 
 const reset_modal = () => {
   $('#name, #url').val('').removeClass('is-invalid').parent().show()
   $('#mod_id, #quest_id, #location_id, #display_id').val('').removeClass('is-invalid').parent().hide()
+  $('#id').val('')
   $('.invalid-feedback').remove()
-  $('#delete').hide()
+  $('#delete, #more').hide()
 }
 
 const search = (term = $('#search').val()) => {

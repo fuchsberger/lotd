@@ -37,6 +37,8 @@
             </button>
           </div>
           <div class="modal-body">
+            <%# ID %>
+            <input id="id" name="id" type="hidden">
 
             <%# name %>
             <div class="form-group">
@@ -84,7 +86,7 @@
           </div>
           <div class="modal-footer form-inline justify-content-between">
             <button id='delete' class='btn btn-danger btn-outline'>Delete</button>
-            <div class="form-group form-check">
+            <div id='more' class="form-group form-check">
               <input type="checkbox" class="form-check-input" id="continue">
               <label class="form-check-label" for="exampleCheck1">Add more entries...</label>
             </div>

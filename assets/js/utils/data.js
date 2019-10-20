@@ -237,10 +237,13 @@ const add_character = character => {
   window.character_table.row.add(character).draw()
 }
 
+const delete_character = id => window.character_table.row(`#${id}`).remove().draw()
+
 export {
   activate_character,
   activate_mod,
   add_character,
+  delete_character,
   deactivate_mod,
   get_item_count,
   list_character_item_ids,

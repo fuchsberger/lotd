@@ -17,19 +17,11 @@ const configure_moderator_channel = () => {
 
   channel.join()
     .receive("ok", () => {
-
       // add options to the add / update modal
       add_options('display')
       add_options('location')
       add_options('quest')
       add_options('mod')
-
-      // allow deleting of items
-      if (window.admin) {
-        $('#delete').on('click', function () {
-          channel.push(`delete-${window.page.slice(0,-1)}`, { id: $(this).data('id') })
-        })
-      }
 
       // show moderator columns
       window.item_table.column('edit:name').visible(true).draw()

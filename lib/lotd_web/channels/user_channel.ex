@@ -59,6 +59,23 @@ defmodule LotdWeb.UserChannel do
     end
   end
 
+  def handle_in("delete-character", %{"id" => id}, socket) do
+    # if this is the active character do not allow deleting it
+    if socket.assigns.user.active_character_id == String.to_integer(id) do
+      {:reply, :error, socket}
+    else
+      user_characters = Accounts.list_user_characters(socket.assigns.user)
+      character = Enum.find(user_characters, fn c -> c.id == String.to_integer(id) end)
+      case Accounts.delete_character(character) do
+        {:ok, character} ->
+          broadcast(socket, "delete-character", %{ id: character.id })
+          {:reply, :ok, socket}
+        {:error, changeset} ->
+          {:reply, {:error, %{errors: error_map(changeset)}}, socket}
+      end
+    end
+  end
+
   def handle_in("activate_mod", %{ "id" => id}, socket) do
     Accounts.get_active_character(socket.assigns.user)
     |> Accounts.update_character_add_mod(Skyrim.get_mod!(id))

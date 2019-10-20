@@ -7,6 +7,7 @@ const configure_user_channel = id => {
 
   // listen for events
   channel.on('add-character', character => Data.add_character(character))
+  channel.on('delete-character', ({ id }) => Data.delete_character(id))
 
   channel.join()
     .receive("ok", params => {
