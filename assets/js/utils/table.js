@@ -113,7 +113,7 @@ const character = characters => {
       sortable: false,
       title: icon('ok-squared')
     },
-    { title: "Character", className: "all font-weight-bold", data: 'name'},
+    { title: "Character", className: "all font-weight-bold", data: 'name', name: 'name' },
     {
       title: "Mods",
       data: 'mods',

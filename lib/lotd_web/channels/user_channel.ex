@@ -59,6 +59,18 @@ defmodule LotdWeb.UserChannel do
     end
   end
 
+  def handle_in("update-character", %{"id" => id, "name" => name}, socket) do
+    character = Accounts.get_user_character!(socket.assigns.user, id)
+    case Accounts.update_character(character, %{ name: name }) do
+      {:ok, character} ->
+        broadcast(socket, "update-character", %{ id: character.id, name: character.name })
+        {:reply, :ok, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:reply, {:error, %{errors: error_map(changeset)}}, socket}
+    end
+  end
+
   def handle_in("delete-character", %{"id" => id}, socket) do
     # if this is the active character do not allow deleting it
     if socket.assigns.user.active_character_id == String.to_integer(id) do
