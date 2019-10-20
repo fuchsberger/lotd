@@ -2,6 +2,14 @@ import $ from 'jquery'
 import { socket, join_moderator_channel, join_user_channel } from '.'
 import { Data, Table, Flash } from '../utils'
 
+const initial_options = data => {
+  const options = {}
+  for (let i = 0; i < data.length; i++) {
+    if (data.hasOwnProperty(i)) options[data[i].id] = data[i].name
+  }
+  return options
+}
+
 const configure_public_channel = () => {
   let channel = socket.channel("public")
 
@@ -28,15 +36,20 @@ const configure_public_channel = () => {
       window.moderator = moderator
       window.admin = admin
 
-      Table.location(locations)
-      Table.quest(quests)
-      Table.display(displays)
-      Table.mod(mods)
-      Table.item(items)
+      const options = {
+        displays: initial_options(displays),
+        locations: initial_options(locations),
+        mods: initial_options(mods),
+        quests: initial_options(quests)
+      }
+
+      Table.item(items, options)
+      Table.location(Data.get_item_count(locations, items, 'location_id'))
+      Table.quest(Data.get_item_count(quests, items, 'quest_id'))
+      Table.display(Data.get_item_count(displays, items, 'display_id'))
+      Table.mod(Data.get_item_count(mods, items, 'mod_id'))
 
       if (user) join_user_channel(user)
-      else Data.calculate_item_counts()
-
       if (moderator) join_moderator_channel()
 
       $('#loader-wrapper').addClass('d-none')

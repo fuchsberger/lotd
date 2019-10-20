@@ -5,7 +5,6 @@ defmodule LotdWeb.CharacterView do
     %{
       id: c.id,
       items: c.items,
-      count: 0,
       mods: c.mods,
       name: c.name,
       created: NaiveDateTime.to_iso8601(c.inserted_at) <> "Z"

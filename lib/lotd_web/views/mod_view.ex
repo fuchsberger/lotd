@@ -5,8 +5,6 @@ defmodule LotdWeb.ModView do
     %{
       active: false,
       id: m.id,
-      found: 0,
-      count: 0,
       filename: m.filename,
       name: m.name,
       url: m.url

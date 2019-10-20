@@ -81,6 +81,8 @@ const MODERATOR_COLUMN = [{
 
 const CONTROL_COLUMN = [{
   className: 'control all small-cell',
+  data: 'id',
+  name: 'id',
   defaultContent: '',
   orderable: false,
   sortable: false,
@@ -94,9 +96,9 @@ const character = characters => {
   for (let i in characters) {
     if (characters.hasOwnProperty(i)) {
       characters[i].active = window.character_id == characters[i].id
-      characters[i].item_count = 0
+      characters[i].count = 0
       items.forEach(item => {
-        if(characters[i].mods.find(m => m == item.mod_id)) characters[i].item_count++
+        if(characters[i].mods.find(m => m == item.mod_id)) characters[i].count++
       })
     }
   }
@@ -141,7 +143,8 @@ const character = characters => {
   window.character_table.on( 'draw', () => $('time').timeago())
 }
 
-const display = displays => {
+const display = (displays) => {
+
   let columns = [
     {
       title: "Display",
@@ -158,11 +161,7 @@ const display = displays => {
     $('#display-table').DataTable({ ...TABLE_DEFAULTS, data: displays, columns })
 }
 
-const item = items => {
-
-  const cell_link = (type, id) =>
-    (id ? `<a class='search-field'>${get(type).cell(`#${id}`, 'name:name').data()}</a>` : '')
-
+const item = (items, options) => {
   let columns = [
     ...ACTIVE_COLUMN,
     {
@@ -172,11 +171,28 @@ const item = items => {
       sort: item => item.name,
       render: item => cell_name(item)
     },
-    { data: 'location_id', title: "Location", render: id => cell_link('location', id) },
-    { data: 'quest_id', title: "Quest", render: id => cell_link('quest', id) },
-    { data: 'display_id', title: "Display", render: id => cell_link('display', id) },
+    {
+      data: 'location_id',
+      title: "Location",
+      render: id => id ? `<a class='search-field'>${options.locations[id]}</a>` : ''
+    },
+    {
+      data: 'quest_id',
+      title: "Quest",
+      render: id => id ? `<a class='search-field'>${options.quests[id]}</a>` : ''
+    },
+    {
+      data: 'display_id',
+      title: "Display",
+      render: id => id ? `<a class='search-field'>${options.displays[id]}</a>` : ''
+    },
     { data: 'mod_id', name: 'mod_id', visible: false },
-    { data: 'mod_id', title: 'Mod', name: 'mod', render: id => cell_link('mod', id) },
+    {
+      data: 'mod_id',
+      title: 'Mod',
+      name: 'mod',
+      render: id => id ? `<a class='search-field'>${options.mods[id]}</a>` : ''
+    },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
@@ -206,7 +222,6 @@ const location = locations => {
   window.location_table =
     $('#location-table').DataTable({ ...TABLE_DEFAULTS, data: locations, columns })
 }
-
 
 const mod = mods => {
   let columns = [

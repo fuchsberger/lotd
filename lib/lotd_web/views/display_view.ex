@@ -5,9 +5,7 @@ defmodule LotdWeb.DisplayView do
     %{
       id: d.id,
       name: d.name,
-      url: d.url,
-      found: 0,
-      count: 0
+      url: d.url
     }
   end
 end

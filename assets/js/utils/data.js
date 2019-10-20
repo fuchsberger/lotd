@@ -1,9 +1,13 @@
 import * as Table from './table'
 
 const list_characters = () => window.character_table.rows().data().toArray()
+const list_character_options = () =>
+  window.character_table.coumns(['id:name', 'name:name']).data().toArray()
 
 const list_displays = () => window.display_table.rows().data().toArray()
 const list_display_ids = () => window.display_table.rows().ids().toArray()
+const list_display_options = () =>
+  window.display_table.coumns(['id:name', 'name:name']).data().toArray()
 
 const list_items = () => window.item_table.rows().data().toArray()
 const list_item_ids = () => window.item_table.rows().ids().toArray()
@@ -28,59 +32,24 @@ const list_character_mod_ids = (id = window.character_id) => (window.character_i
   : list_mod_ids()
 )
 
-// calculate item count for a given module and sets items_found to 0
-const calculate_item_counts = () => {
-
-  // prepare found and count for displays
-  const display_count = {}, display_ids = list_display_ids()
-  for (let i = 0; i < display_ids.length; i++) { display_count[display_ids[i]] = 0 }
-
-  // prepare found and count for mods
-  const mod_count = {}, mod_ids = list_mod_ids()
-  for (let i = 0; i < mod_ids.length; i++) { mod_count[mod_ids[i]] = 0 }
-
-  // prepare found and count for locations
-  const location_count = {}, location_ids = list_location_ids()
-  for (let i = 0; i < location_ids.length; i++) { location_count[location_ids[i]] = 0 }
-
-  // prepare found and count for quests
-  const quest_count = {}, quest_ids = list_quest_ids()
-  for (let i = 0; i < quest_ids.length; i++) { quest_count[quest_ids[i]] = 0 }
-
-  const items = list_items()
-  for (let i in items) {
-    if (items.hasOwnProperty(i)) {
-      const item = items[i]
-      // prepare count for displays, mods, locations, and quests
-      display_count[item.display_id]++
-      mod_count[item.mod_id]++
-      location_count[item.location_id]++
-      quest_count[item.quest_id]++
+const get_item_count = (data, items, property) => {
+  const count = {}
+  for (let i = 0; i < items.length; i++) {
+    if (items.hasOwnProperty(i) && items[i][property]) {
+      count[items[i][property]] = count[items[i][property]]
+        ? count[items[i][property]]++
+        : 1
     }
   }
 
-  // update display table
-  for (let i = 0; i < display_ids.length; i++) {
-    window.display_table
-      .cell(`#${display_ids[i]}`, 'count:name').data(display_count[display_ids[i]]).draw()
+  // apply count to all locations / quests / mods / displays
+  for (let i = 0; i < data.length; i++) {
+    if (items.hasOwnProperty(i)) {
+      data[i].found = 0
+      data[i].count = count[data[i].id] || 0
+    }
   }
-
-  // update location table
-  for (let i = 0; i < location_ids.length; i++) {
-    window.location_table
-      .cell(`#${location_ids[i]}`, 'count:name').data(location_count[location_ids[i]]).draw()
-  }
-
-  // update quest table
-  for (let i = 0; i < quest_ids.length; i++) {
-    window.quest_table
-      .cell(`#${quest_ids[i]}`, 'count:name').data(quest_count[quest_ids[i]]).draw()
-  }
-
-  // update mod table
-  for (let i = 0; i < mod_ids.length; i++) {
-    window.mod_table.cell(`#${mod_ids[i]}`, 'count:name').data(mod_count[mod_ids[i]]).draw()
-  }
+  return data
 }
 
 const activate_character = id => {
@@ -192,7 +161,7 @@ const activate_character = id => {
 
 export {
   activate_character,
-  calculate_item_counts,
+  get_item_count,
   list_character_item_ids,
   list_character_mod_ids,
   list_items
