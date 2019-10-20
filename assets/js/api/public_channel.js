@@ -27,8 +27,7 @@ const configure_public_channel = () => {
   channel.join()
     .receive("ok", params => {
 
-      // user has joined already, do nothing...
-      if (window.user != undefined) return
+      if (window.public_channel) return
 
       const { displays, items, locations, mods, quests, user, moderator, admin } = params
 
@@ -52,6 +51,8 @@ const configure_public_channel = () => {
       if (user) join_user_channel(user)
       if (moderator) join_moderator_channel()
       if (admin) join_admin_channel()
+
+      window.publicChannel = channel
 
       $('#loader-wrapper').addClass('d-none')
     })

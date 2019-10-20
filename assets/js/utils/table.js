@@ -275,9 +275,43 @@ const user = users => {
       render: (name, _type, user) =>
         `<a href='https://www.nexusmods.com/users/${user.nexus_id}' target='_blank'>${name}</a>`
     },
+    {
+      title: "Roles",
+      data: null,
+      render: user => ((user.admin ? "Admin " : "") + " " + (user.moderator ? "Moderator" : ""))
+    },
+    { title: "Joined", data: 'created', render: t => cell_time(t) },
+    {
+      className: 'small-cell',
+      data: 'admin',
+      name: 'admin',
+      searchable: false,
+      sortable: false,
+      title: icon('user-plus'),
+      render: admin => {
+        return admin
+          ? `<a class='demote-admin icon-user-times' title='Demote Admin'></a>`
+          : `<a class='promote-admin icon-user-plus' title='Promote Admin'></a>`
+      }
+    },
+    {
+      className: 'small-cell',
+      data: 'moderator',
+      name: 'moderator',
+      searchable: false,
+      sortable: false,
+      title: icon('user-plus'),
+      render: moderator => {
+        return moderator
+          ? `<a class='demote-moderator icon-user-times' title='Demote Moderator'></a>`
+          : `<a class='promote-moderator icon-user-plus' title='Promote Moderator'></a>`
+      }
+    },
     ...CONTROL_COLUMN
   ]
   window.user_table = $('#user-table').DataTable({ ...TABLE_DEFAULTS, data: users, columns })
+
+  window.user_table.on( 'draw', () => $('time').timeago())
 }
 
 export { character, display, get, item, location, mod, quest, user }
