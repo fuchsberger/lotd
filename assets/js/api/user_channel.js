@@ -5,6 +5,9 @@ import { Data, Flash, Menu, Table } from '../utils'
 const configure_user_channel = id => {
   let channel = socket.channel(`user:${id}`)
 
+  // listen for events
+  channel.on('add-character', character => Data.add_character(character))
+
   channel.join()
     .receive("ok", params => {
 
@@ -13,9 +16,8 @@ const configure_user_channel = id => {
 
       const { character_id, characters } = params
 
-      // create character table
+      // create character table and activate current caracter
       Table.character(characters)
-
       Data.activate_character(character_id)
 
       // allow collecting of items
@@ -50,7 +52,10 @@ const configure_user_channel = id => {
         channel.push("deactivate_mod", { id }).receive('ok', () => Data.deactivate_mod(id))
       })
 
+      window.character_table.column('edit:name').visible(true).draw()
       Menu.search('')
+
+      window.userChannel = channel
     })
     .receive("error", ({ reason }) => Flash.error(reason))
 }

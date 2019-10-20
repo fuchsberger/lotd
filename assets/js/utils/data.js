@@ -1,5 +1,3 @@
-import * as Table from './table'
-
 const list_characters = () => window.character_table.rows().data().toArray()
 const list_character_options = () =>
   window.character_table.coumns(['id:name', 'name:name']).data().toArray()
@@ -232,9 +230,17 @@ const remove_item = id => {
   window.mod_table.cell(`#${item.mod_id}`, 'found:name').data(found - 1)
 }
 
+const add_character = character => {
+  character.active = false
+  character.found = 0
+  character.count = 0
+  window.character_table.row.add(character).draw()
+}
+
 export {
   activate_character,
   activate_mod,
+  add_character,
   deactivate_mod,
   get_item_count,
   list_character_item_ids,

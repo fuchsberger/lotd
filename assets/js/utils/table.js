@@ -130,6 +130,7 @@ const character = characters => {
     },
     { title: "Items Total", data: 'count', name: 'count', searchable: false },
     { title: "Created", data: 'created', render: t => cell_time(t) },
+    ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
 

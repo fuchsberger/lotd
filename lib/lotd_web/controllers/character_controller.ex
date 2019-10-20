@@ -2,34 +2,11 @@ defmodule LotdWeb.CharacterController do
   use LotdWeb, :controller
 
   alias Lotd.Accounts
-  alias Lotd.Accounts.Character
 
-  plug :load_characters when action in [:edit, :update, :activate, :delete]
+  plug :load_characters when action in [:edit, :update]
 
   defp load_characters(conn, _),
     do: assign conn, :characters, Accounts.list_user_characters(user(conn))
-
-  def new(conn, _params) do
-    changeset = Accounts.change_character(%Character{})
-    render(conn, "new.html", changeset: changeset)
-  end
-
-  def create(conn, %{"character" => character_params}) do
-    user = user(conn)
-    case Accounts.create_character(user, character_params) do
-      {:ok, character} ->
-
-        #  automatically activate it
-        Accounts.update_user(user, %{ active_character_id: character.id})
-
-        conn
-        |> put_flash(:info, "Character was sucessfully created and activated. Please select the mods you are going to use:")
-        |> redirect(to: Routes.mod_path(conn, :index))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
-    end
-  end
 
   def edit(conn, %{"id" => id}) do
     character = Enum.find(conn.assigns.characters, fn c -> c.id == String.to_integer(id) end)

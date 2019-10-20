@@ -2,7 +2,7 @@ defmodule LotdWeb.UserChannel do
   use LotdWeb, :channel
 
   alias Lotd.{Accounts, Gallery, Skyrim}
-  alias LotdWeb.{CharacterView, ItemView}
+  alias LotdWeb.{CharacterView}
 
   def join("user:" <> user_id, _params, socket) do
     if authenticated?(socket) && socket.assigns.user.id == String.to_integer(user_id) do
@@ -41,6 +41,21 @@ defmodule LotdWeb.UserChannel do
           {:error, reason} ->
             {:reply, { :error, %{ reason: "Database Error. #{reason}"}}, socket}
         end
+    end
+  end
+
+  def handle_in("add-character", params, socket) do
+    case Accounts.create_character(socket.assigns.user, params) do
+      {:ok, character} ->
+        character = character
+          |> Map.put(:items, [])
+          |> Map.put(:mods, [])
+          |> Phoenix.View.render_one(CharacterView, "character.json")
+        broadcast(socket, "add-character", character)
+        {:reply, :ok, socket}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:reply, {:error, %{errors: error_map(changeset)}}, socket}
     end
   end
 

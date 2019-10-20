@@ -2,6 +2,8 @@ import $ from 'jquery'
 import { Nexus } from '../api'
 import * as Table from './table'
 
+const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1)
+
 const search_control = () => {
   let content
   if ($('#search').val() != '')
@@ -68,6 +70,108 @@ const enable = () => {
 
   // enable clearing search field and redraw currently active table
   $('#search-control').on('click', 'a.icon-cancel', () => search(''))
+
+  // enable add button
+  $('#search-control').on('click', 'a.icon-plus', () => {
+    reset_modal()
+
+    switch (window.page) {
+      case 'about':
+      case 'user':
+        return
+
+      case 'item':
+          $('#quest_id').parent().show()
+          $('#location_id').parent().show()
+          $('#display_id').parent().show()
+
+      case 'location':
+      case 'quest':
+        $('#mod_id').parent().show()
+
+      case 'character':
+        $('#url').parent().hide()
+
+      default:
+        $('#modal h5').text(`Create ${capitalize(window.page)}`)
+        $('#submit').text('Add')
+        $('#modal').modal('show')
+    }
+  })
+
+  // enable edit button
+  $('table').on('click', 'td a.icon-pencil', function () {
+
+    reset_modal()
+    const id = parseInt($(this).closest('tr').attr('id'))
+    const data = Table.get(window.page).row(`#${id}`).data()
+
+    $('#name').val(data.name || '')
+    $('#url').val(data.url || '')
+    $('#display_id').val(data.display_id || '')
+    $('#mod_id').val(data.mod_id || '')
+    $('#location_id').val(data.location_id || '')
+    $('#quest_id').val(data.quest_id || '')
+
+    switch (window.page) {
+      case 'about':
+      case 'users':
+        return
+
+      case 'items':
+        $('#quest_id').parent().show()
+        $('#location_id').parent().show()
+        $('#display_id').parent().show()
+
+      case 'location':
+      case 'quest':
+          $('#mod_id').parent().show()
+
+      case 'character':
+        $('#url').parent().hide()
+
+      default:
+        $('#modal h5').text(`Edit ${capitalize(window.page)}`)
+        $('#submit').text('Update')
+        $('#modal').modal('show')
+    }
+  })
+
+
+  // allow adding / modifying entries
+  $('#modal form').submit(function (e) {
+    e.preventDefault()
+
+    const data = $(this).serializeArray().reduce(function(obj, item) {
+      obj[item.name] = item.value;
+      return obj;
+    }, {})
+
+    const event = $('#submit').text().toLowerCase() + '-' + window.page
+
+    const channel = window.page == 'character' ? window.userChannel : window.moderatorChannel
+
+    channel.push(event, data)
+      .receive('ok', () => {
+        // close modal if "add more entries..." was not checked
+        if (!$('#continue').is(':checked')) $('#modal').modal('hide')
+      })
+      .receive('error', ({ errors }) => {
+        for (var key in errors) {
+          if (errors.hasOwnProperty(key)) {
+            $(`#${key}`).addClass('is-invalid')
+              .after(`<div class="invalid-feedback">${errors[key]}</div>`)
+          }
+        }
+      })
+  })
+}
+
+const reset_modal = () => {
+  $('#name, #url').val('').removeClass('is-invalid').parent().show()
+  $('#mod_id, #quest_id, #location_id, #display_id').val('').removeClass('is-invalid').parent().hide()
+  $('.invalid-feedback').remove()
+  $('#delete').hide()
 }
 
 const search = (term = $('#search').val()) => {
