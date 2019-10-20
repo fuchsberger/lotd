@@ -172,7 +172,7 @@ const enable = () => {
   // allow deleting of data
   $('#delete').on('click', e => {
     e.preventDefault()
-    const channel = window.page == 'character' ? window.userChannel : window.moderatorChannel
+    const channel = window.page == 'character' ? window.userChannel : window.adminChannel
     channel.push(`delete-${window.page}`, { id: $('#id').val() })
     .receive('ok', () => $('#modal').modal('hide'))
   })

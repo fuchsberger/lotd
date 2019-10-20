@@ -1,8 +1,8 @@
 defmodule LotdWeb.PublicChannel do
   use LotdWeb, :channel
 
+  alias Phoenix.View
   alias Lotd.{Gallery, Skyrim}
-  alias LotdWeb.{DisplayView, ItemView, ModView, LocationView, QuestView}
 
   def join("public", _params, socket) do
 
@@ -16,11 +16,11 @@ defmodule LotdWeb.PublicChannel do
       admin: admin?(socket),
       moderator: moderator?(socket),
       user: authenticated?(socket) && socket.assigns.user.id,
-      displays: Phoenix.View.render_many(displays, DisplayView, "display.json" ),
-      items: Phoenix.View.render_many(items, ItemView, "item.json" ),
-      locations: Phoenix.View.render_many(locations, LocationView, "location.json" ),
-      quests: Phoenix.View.render_many(quests, QuestView, "quest.json" ),
-      mods: Phoenix.View.render_many(mods, ModView, "mod.json" )
+      displays: View.render_many(displays, DataView, "display.json" ),
+      items: View.render_many(items, DataView, "item.json" ),
+      locations: View.render_many(locations, DataView, "location.json" ),
+      quests: View.render_many(quests, DataView, "quest.json" ),
+      mods: View.render_many(mods, DataView, "mod.json" )
     }, socket}
   end
 end

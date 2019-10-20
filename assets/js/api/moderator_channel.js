@@ -1,14 +1,12 @@
 import $ from 'jquery'
 import socket from './socket'
-import { Flash, Menu, Table } from '../utils'
-
-const add_option = (selector, entry) =>
-  $(selector).append(`<option value='${entry.id}'>${entry.name}</option>`)
+import { Flash, Table } from '../utils'
 
 const add_options = name => {
   const entries = Table.get(name).data().toArray()
   for (let i in entries) {
-    if(entries.hasOwnProperty(i)) add_option(`#${name}_id`, entries[i])
+    if (entries.hasOwnProperty(i))
+      $(`#${name}_id`).append(`<option value='${entries[i].id}'>${entries[i].name}</option>`)
   }
 }
 

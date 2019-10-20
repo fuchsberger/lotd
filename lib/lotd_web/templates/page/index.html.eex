@@ -23,6 +23,11 @@
     <table id='character-table' class='display nowrap' width="100%"></table>
   </div>
 <% end %>
+<%= if admin?(@conn) do %>
+  <div class="collapse multi-collapse" data-parent="#page-content" id="user">
+    <table id='user-table' class='display nowrap' width="100%"></table>
+  </div>
+<% end %>
 </main>
 
 <%= if moderator?(@conn) || admin?(@conn) do %>

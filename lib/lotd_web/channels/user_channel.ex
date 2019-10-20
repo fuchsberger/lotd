@@ -2,14 +2,13 @@ defmodule LotdWeb.UserChannel do
   use LotdWeb, :channel
 
   alias Lotd.{Accounts, Gallery, Skyrim}
-  alias LotdWeb.{CharacterView}
 
   def join("user:" <> user_id, _params, socket) do
     if authenticated?(socket) && socket.assigns.user.id == String.to_integer(user_id) do
       characters = Accounts.list_user_characters(socket.assigns.user)
       {:ok, %{
         character_id: socket.assigns.user.active_character_id,
-        characters: Phoenix.View.render_many(characters, CharacterView, "character.json" ),
+        characters: Phoenix.View.render_many(characters, DataView, "character.json" ),
       }, socket}
     else
       {:error, %{ reason: "You must be authenticated to join this channel." }}
@@ -50,7 +49,7 @@ defmodule LotdWeb.UserChannel do
         character = character
           |> Map.put(:items, [])
           |> Map.put(:mods, [])
-          |> Phoenix.View.render_one(CharacterView, "character.json")
+          |> Phoenix.View.render_one(DataView, "character.json")
         broadcast(socket, "add-character", character)
         {:reply, :ok, socket}
 

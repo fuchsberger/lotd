@@ -265,4 +265,19 @@ const quest = quests => {
   window.quest_table = $('#quest-table').DataTable({ ...TABLE_DEFAULTS, data: quests, columns })
 }
 
-export { character, display, get, item, location, mod, quest }
+const user = users => {
+  const columns = [
+    {
+      title: "Name",
+      className: "all font-weight-bold",
+      data: 'nexus_name',
+      name: 'name',
+      render: (name, _type, user) =>
+        `<a href='https://www.nexusmods.com/users/${user.nexus_id}' target='_blank'>${name}</a>`
+    },
+    ...CONTROL_COLUMN
+  ]
+  window.user_table = $('#user-table').DataTable({ ...TABLE_DEFAULTS, data: users, columns })
+}
+
+export { character, display, get, item, location, mod, quest, user }

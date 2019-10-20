@@ -1,7 +1,8 @@
 defmodule LotdWeb.UserSocket do
   use Phoenix.Socket
 
-  ## Channels
+  # Channels
+  channel "admin", LotdWeb.AdminChannel
   channel "public", LotdWeb.PublicChannel
   channel "user:*", LotdWeb.UserChannel
   channel "moderator", LotdWeb.ModeratorChannel

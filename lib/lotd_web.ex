@@ -72,6 +72,8 @@ defmodule LotdWeb do
       import LotdWeb.Gettext
       import LotdWeb.ErrorHelpers, only: [error_map: 1]
       import LotdWeb.UserSocket, only: [character: 1, authenticated?: 1, moderator?: 1, admin?: 1]
+
+      alias LotdWeb.DataView
     end
   end
 

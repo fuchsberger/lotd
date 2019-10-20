@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import { socket, join_moderator_channel, join_user_channel } from '.'
+import { socket, join_admin_channel, join_moderator_channel, join_user_channel } from '.'
 import { Data, Table, Flash } from '../utils'
 
 const initial_options = data => {
@@ -51,6 +51,7 @@ const configure_public_channel = () => {
 
       if (user) join_user_channel(user)
       if (moderator) join_moderator_channel()
+      if (admin) join_admin_channel()
 
       $('#loader-wrapper').addClass('d-none')
     })
