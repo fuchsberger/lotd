@@ -48,7 +48,7 @@ const get_item_count = (data, items, property) => {
   return data
 }
 
-const activate_character = id => {
+const activate_character = (id = window.character_id) => {
 
   // prepare found and count for displays
   const display_found = {}, display_count = {}, display_ids = list_display_ids()
@@ -156,6 +156,24 @@ const activate_character = id => {
   window.character_id = id
 }
 
+const activate_mod = id => {
+  const character_mod_ids = list_character_mod_ids()
+  character_mod_ids.push(id)
+  window.character_table.cell(`#${window.character_id}`, 'items:name').data(character_mod_ids)
+  window.mod_table.cell(`#${id}`, 'active:name').data(true).draw()
+  activate_character()
+}
+
+const deactivate_mod = id => {
+  const character_mod_ids = list_character_mod_ids()
+  for( var i = 0; i < character_mod_ids.length; i++){
+    if ( character_mod_ids[i] == id) character_mod_ids.splice(i, 1)
+  }
+  window.character_table.cell(`#${window.character_id}`, 'items:name').data(character_mod_ids)
+  window.mod_table.cell(`#${id}`, 'active:name').data(false).draw()
+  activate_character()
+}
+
 const collect_item = id => {
   // update tables
   window.item_table.cell(`#${id}`, 'active:name').data(true).draw()
@@ -216,6 +234,8 @@ const remove_item = id => {
 
 export {
   activate_character,
+  activate_mod,
+  deactivate_mod,
   get_item_count,
   list_character_item_ids,
   list_character_mod_ids,

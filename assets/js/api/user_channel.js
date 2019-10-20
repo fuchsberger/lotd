@@ -41,32 +41,13 @@ const configure_user_channel = id => {
       // allow activating mods
       $('#mod-table').on('click', 'a.uncheck', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
-        channel.push("activate_mod", { id })
-          .receive('ok', () => {
-            let cmods = window.character_table.cell(`#${window.character_id}`, 'mods:name').data()
-            cmods.push(id)
-            window.character_table.cell(`#${window.character_id}`, 'mods:name').data(cmods).draw()
-            update_character(window.character_id)
-          })
+        channel.push("activate_mod", { id }).receive('ok', () => Data.activate_mod(id))
       })
 
       // allow deactivating mods
       $('#mod-table').on('click', 'a.check', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
-        channel.push("deactivate_mod", { id })
-          .receive('ok', () => {
-            let character_mods =
-              window.character_table.cell(`#${window.character_id}`, 'mods:name').data()
-            for( var i = 0; i < character_mods.length; i++){
-              if ( character_mods[i] == id) {
-                character_mods.splice(i, 1);
-                break
-              }
-            }
-            window.character_table.cell(`#${window.character_id}`, 'mods:name')
-            .data(character_mods).draw()
-            update_character(window.character_id)
-          })
+        channel.push("deactivate_mod", { id }).receive('ok', () => Data.deactivate_mod(id))
       })
 
       Menu.search('')
