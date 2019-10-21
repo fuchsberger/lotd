@@ -8,8 +8,7 @@ const search_control = () => {
   let content
   if ($('#search').val() != '')
     content = "<a class='icon-cancel text-primary'></a>"
-  else if (window.moderator || window.admin || (window.user &&
-    (window.page == 'characters' || window.page == 'mods')))
+  else if (window.moderator || (window.user && (window.page == 'characters' )))
     content = "<a class='icon-plus'></a>"
   else
     content = "<i class='icon-search text-black-50'></i>"

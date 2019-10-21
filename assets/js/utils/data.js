@@ -242,6 +242,11 @@ const rename_character = (id, name) =>
 
 const delete_character = id => window.character_table.row(`#${id}`).remove().draw()
 
+const update_user = user => {
+  window.user_table.row(`#${user.id}`).data(user).draw()
+  if(window.user == user.id) window.location.reload()
+}
+
 export {
   activate_character,
   activate_mod,
@@ -254,5 +259,6 @@ export {
   list_character_mod_ids,
   list_items,
   collect_item,
-  remove_item
+  remove_item,
+  update_user
 }

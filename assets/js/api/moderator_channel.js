@@ -11,6 +11,9 @@ const add_options = name => {
 }
 
 const configure_moderator_channel = () => {
+
+  if (window.moderator_channel) return
+
   let channel = socket.channel(`moderator`)
 
   channel.join()

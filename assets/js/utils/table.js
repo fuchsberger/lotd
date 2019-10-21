@@ -303,8 +303,8 @@ const user = users => {
       title: icon('user-plus'),
       render: moderator => {
         return moderator
-          ? `<a class='demote-moderator icon-user-times' title='Demote Moderator'></a>`
-          : `<a class='promote-moderator icon-user-plus' title='Promote Moderator'></a>`
+          ? `<a class='demote-moderator icon-user-times text-success' title='Demote Moderator'></a>`
+          : `<a class='promote-moderator icon-user-plus text-success' title='Promote Moderator'></a>`
       }
     },
     ...CONTROL_COLUMN

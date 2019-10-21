@@ -13,6 +13,16 @@ defmodule LotdWeb.AdminChannel do
     end
   end
 
+  def handle_in("update-user", %{"id" => id, "params" => params}, socket) do
+    case Accounts.update_user(Accounts.get_user!(id), params) do
+      {:ok, user} ->
+        broadcast(socket, "update-user", Phoenix.View.render_one(user, DataView, "user.json" ))
+        {:reply, :ok, socket}
+      {:error, _changeset} ->
+        {:reply, :error, socket}
+    end
+  end
+
   def handle_in("delete-item", %{ "id" => id}, socket) do
     if admin?(socket) do
       {:ok, item} = Gallery.get_item!(id) |> Gallery.delete_item()

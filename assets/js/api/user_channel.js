@@ -3,6 +3,9 @@ import socket from './socket'
 import { Data, Flash, Menu, Table } from '../utils'
 
 const configure_user_channel = id => {
+
+  if (window.user_channel) return
+
   let channel = socket.channel(`user:${id}`)
 
   // listen for events
