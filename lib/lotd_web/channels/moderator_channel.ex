@@ -16,7 +16,7 @@ defmodule LotdWeb.ModeratorChannel do
     case Gallery.create_item(item_params) do
       {:ok, item} ->
         item = Phoenix.View.render_one(item, DataView, "item.json")
-        Endpoint.broadcast("public", "add-item", %{ item: item})
+        Endpoint.broadcast("public", "add-item", item)
         {:reply, :ok, socket}
       {:error, %Ecto.Changeset{} = changeset} ->
         {:reply, {:error, %{errors: error_map(changeset)}}, socket}

@@ -230,11 +230,119 @@ const remove_item = id => {
   window.mod_table.cell(`#${item.mod_id}`, 'found:name').data(found - 1)
 }
 
+
+const delete_item = item => {
+
+  const active = window.item_table.row(`#${item.id}`).data().active
+
+  // update location table
+  if (item.location_id) {
+    const location = window.location_table.row(`#${item.location_id}`).data()
+    const found = active ? location.found - 1 : location.found
+    const count = location.count - 1
+    window.location_table
+      .cell(`#${item.location_id}`, 'found:name').data(found)
+      .cell(`#${item.location_id}`, 'count:name').data(count)
+      .draw()
+  }
+
+  // update quest table
+  if (item.quest_id) {
+    const quest = window.quest_table.row(`#${item.quest_id}`).data()
+    const found = active ? quest.found - 1 : quest.found
+    const count = quest.count - 1
+    window.quest_table
+      .cell(`#${item.quest_id}`, 'found:name').data(found)
+      .cell(`#${item.quest_id}`, 'count:name').data(count)
+      .draw()
+  }
+
+  // update display table
+  const display = window.display_table.row(`#${item.display_id}`).data()
+  let found = active ? display.found - 1 : display.found
+  let count = display.count - 1
+  window.display_table
+    .cell(`#${item.display_id}`, 'found:name').data(found)
+    .cell(`#${item.display_id}`, 'count:name').data(count)
+    .draw()
+
+  // update mod table
+  const mod = window.mod_table.row(`#${item.mod_id}`).data()
+  found = active ? mod.found - 1 : mod.found
+  count = mod.count - 1
+  window.mod_table
+    .cell(`#${item.mod_id}`, 'found:name').data(found)
+    .cell(`#${item.mod_id}`, 'count:name').data(count)
+    .draw()
+
+  // update character table
+  const characters = list_characters()
+  for (let i = 0; i < characters.length; i++) {
+    if (characters.hasOwnProperty(i)) {
+      if (characters[i].items.find(x => x.id == item.id)) {
+        const citems = characters[i].items
+        for (var j = 0; j < citems.length; j++){
+          if ( citems[j] == id) citems.splice(j, 1)
+        }
+        window.character_table.cell(`#${characters[i].id}`, 'items:name').data(citems).draw()
+      }
+      if (characters[i].mods.find(m => m.id == item.mod_id)) {
+        const cmods = characters[i].mods
+        for (var j = 0; j < citems.length; j++){
+          if ( cmods[j] == id) cmods.splice(j, 1)
+        }
+        window.character_table.cell(`#${characters[i].id}`, 'mods:name').data(cmods).draw()
+      }
+    }
+  }
+
+  // update item table
+  window.item_table.row(`#${item.id}`).remove().draw()
+}
+
 const add_character = character => {
   character.active = false
   character.found = 0
   character.count = 0
   window.character_table.row.add(character).draw()
+}
+
+const add_item = item => {
+
+  let count
+
+  // update location table
+  if (item.location_id) {
+    count = window.location_table.row(`#${item.location_id}`).data().count + 1
+    window.location_table.cell(`#${item.location_id}`, 'count:name').data(count).draw()
+  }
+
+  // update quest table
+  if (item.quest_id) {
+    count = window.quest_table.row(`#${item.quest_id}`).data().count + 1
+    window.quest_table.cell(`#${item.quest_id}`, 'count:name').data(count).draw()
+  }
+
+  // update display table
+  count = window.display_table.row(`#${item.display_id}`).data().count + 1
+  window.display_table.cell(`#${item.display_id}`, 'count:name').data(count).draw()
+
+  // update mod table
+  count = window.mod_table.row(`#${item.mod_id}`).data().count + 1
+  window.mod_table.cell(`#${item.mod_id}`, 'count:name').data(count).draw()
+
+  // update character table
+  const characters = list_characters()
+  for (let i = 0; i < characters.length; i++) {
+    if (characters.hasOwnProperty(i)) {
+      if (characters[i].mods.find(m => m.id == item.mod_id)) {
+        count = window.character_table.cell(`#${characters[i].id}`, 'count:name').data().count + 1
+        window.character_table.cell(`#${characters[i].id}`, 'count:name').data(cmods).draw()
+      }
+    }
+  }
+
+  window.item_table.row.add(item).draw()
 }
 
 const rename_character = (id, name) =>
@@ -243,16 +351,18 @@ const rename_character = (id, name) =>
 const delete_character = id => window.character_table.row(`#${id}`).remove().draw()
 
 const update_user = user => {
-  window.user_table.row(`#${user.id}`).data(user).draw()
-  if(window.user == user.id) window.location.reload()
+  window.table.row(`#${user.id}`).data(user).draw()
+  if(window.user_id == user.id) window.location.reload()
 }
 
 export {
   activate_character,
   activate_mod,
   add_character,
+  add_item,
   rename_character,
   delete_character,
+  delete_item,
   deactivate_mod,
   get_item_count,
   list_character_item_ids,

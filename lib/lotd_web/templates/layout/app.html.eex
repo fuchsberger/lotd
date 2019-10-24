@@ -7,14 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><%= gettext "LOTD Inventory Manager" %></title>
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
-    <script>window.userToken = "<%= assigns[:user_token] %>"</script>
+    <script>
+      window.userToken = "<%= assigns[:user_token] %>";
+      window.user_id = <%= authenticated?(@conn) && @conn.assigns.current_user.id %>;
+      window.moderator = <%= moderator?(@conn) %>;
+      window.admin = <%= admin?(@conn) %>;
+    </script>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
   </head>
-  <body
-    data-authenticated='<%= authenticated?(@conn) %>'
-    data-moderator='<%= moderator?(@conn) %>'
-    data-admin='<%= admin?(@conn) %>'
-  >
+  <body>
     <div id="loader-wrapper"><div id="loader"></div></div>
     <%= render "navbar.html", assigns %>
     <%= render "flash.html", flash: get_flash(@conn) %>

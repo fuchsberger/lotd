@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import { Data } from '.';
+import * as Menu from './menu'
 
 // customize default search behavior
 $.fn.dataTable.ext.search.push(
@@ -40,6 +41,13 @@ const cell_check = active => (
 const cell_name = d => (d.url ? `<a href="${d.url}" target='_blank'>${d.name}</a>` : d.name)
 
 const cell_time = t => `<time datetime='${t}'></time`
+
+const destroy_old_table = () => {
+  if (window.table) {
+    window.table.destroy();
+    $('table').empty()
+  }
+}
 
 const get = name => {
   switch (name) {
@@ -83,8 +91,8 @@ const CONTROL_COLUMN = [{
   className: 'control all small-cell',
   data: 'id',
   name: 'id',
-  defaultContent: '',
-  orderable: false,
+  render: () => '',
+  searchable: false,
   sortable: false,
   width: '25px'
 }]
@@ -162,9 +170,19 @@ const display = (displays) => {
     $('#display-table').DataTable({ ...TABLE_DEFAULTS, data: displays, columns })
 }
 
-const item = (items, options) => {
+const item = items => {
+  const search_field = name => name ? `<a class='search-field'>${name}</a>` : ''
+
   let columns = [
-    ...ACTIVE_COLUMN,
+    {
+      className: "all small-cell",
+      data: 'active',
+      render: active => cell_check(active),
+      searchable: false,
+      sortable: false,
+      title: icon('ok-squared'),
+      visible: !!window.userToken
+    },
     {
       title: "Item",
       className: "all font-weight-bold",
@@ -172,38 +190,25 @@ const item = (items, options) => {
       sort: item => item.name,
       render: item => cell_name(item)
     },
-    {
-      data: 'location_id',
-      title: "Location",
-      render: id => id ? `<a class='search-field'>${options.locations[id]}</a>` : ''
-    },
-    {
-      data: 'quest_id',
-      title: "Quest",
-      render: id => id ? `<a class='search-field'>${options.quests[id]}</a>` : ''
-    },
-    {
-      data: 'display_id',
-      title: "Display",
-      render: id => id ? `<a class='search-field'>${options.displays[id]}</a>` : ''
-    },
-    { data: 'mod_id', name: 'mod_id', visible: false },
-    {
-      data: 'mod_id',
-      title: 'Mod',
-      name: 'mod',
-      render: id => id ? `<a class='search-field'>${options.mods[id]}</a>` : ''
-    },
+    { data: 'location', title: "Location", render: l => search_field(l) },
+    { data: 'quest', title: "Quest", render: q => search_field(q) },
+    { data: 'display', title: "Display", render: d => search_field(d) },
+    { data: 'mod', title: 'Mod', render: m => search_field(m) },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
 
-  window.item_table = $('#item-table').DataTable({
+  // destroy old table before creating new one
+  destroy_old_table()
+
+  window.table = $('table').DataTable({
     ...TABLE_DEFAULTS,
     data: items,
     order: [[1, 'asc']],
     columns
   })
+
+  ready()
 }
 
 const location = locations => {
@@ -216,12 +221,26 @@ const location = locations => {
       render: (_name, _type, location) => cell_name(location)
     },
     { data: 'mod_id', name: 'mod_id', visible: false },
-    ...ITEM_COLUMNS,
+    {
+      title: 'Items Found',
+      data: 'found',
+      name: 'found',
+      searchable: false,
+      visible: window.user_id != false
+    },
+    {
+      title: 'Items Total',
+      data: 'count',
+      name: 'count',
+      searchable: false
+    },
     ...MODERATOR_COLUMN,
     ...CONTROL_COLUMN
   ]
-  window.location_table =
-    $('#location-table').DataTable({ ...TABLE_DEFAULTS, data: locations, columns })
+
+  // destroy old table before creating new one
+  destroy_old_table()
+  window.table = $('table').DataTable({ ...TABLE_DEFAULTS, data: locations, columns })
 }
 
 const mod = mods => {
@@ -265,6 +284,13 @@ const quest = quests => {
   window.quest_table = $('#quest-table').DataTable({ ...TABLE_DEFAULTS, data: quests, columns })
 }
 
+const ready = () => {
+  $('#search').attr('disabled', false).siblings('.input-group-append').removeClass('d-none')
+  $('#about').addClass('d-none')
+  $('table').removeClass('d-none')
+  Menu.search()
+}
+
 const user = users => {
   const columns = [
     {
@@ -272,15 +298,15 @@ const user = users => {
       className: "all font-weight-bold",
       data: 'nexus_name',
       name: 'name',
-      render: (name, _type, user) =>
-        `<a href='https://www.nexusmods.com/users/${user.nexus_id}' target='_blank'>${name}</a>`
+      render: (name, _type, u) =>
+        `<a href='https://www.nexusmods.com/users/${u.nexus_id}' target='_blank'>${name}</a>`
     },
     {
       title: "Roles",
       data: null,
-      render: user => ((user.admin ? "Admin " : "") + " " + (user.moderator ? "Moderator" : ""))
+      render: u => ((u.admin ? "Admin " : "") + " " + (u.moderator ? "Moderator" : ""))
     },
-    { title: "Joined", data: 'created', render: t => cell_time(t) },
+    { title: "Joined", data: 'created', render: t => cell_time(t), searchable: false },
     {
       className: 'small-cell',
       data: 'admin',
@@ -288,11 +314,11 @@ const user = users => {
       searchable: false,
       sortable: false,
       title: icon('user-plus'),
-      render: admin => {
-        return admin
+      render: admin => (
+        admin
           ? `<a class='demote-admin icon-user-times' title='Demote Admin'></a>`
           : `<a class='promote-admin icon-user-plus' title='Promote Admin'></a>`
-      }
+      )
     },
     {
       className: 'small-cell',
@@ -301,17 +327,21 @@ const user = users => {
       searchable: false,
       sortable: false,
       title: icon('user-plus'),
-      render: moderator => {
-        return moderator
-          ? `<a class='demote-moderator icon-user-times text-success' title='Demote Moderator'></a>`
-          : `<a class='promote-moderator icon-user-plus text-success' title='Promote Moderator'></a>`
-      }
+      render: moderator => (moderator
+        ? `<a class='demote-moderator icon-user-times text-success' title='Demote Moderator'></a>`
+        : `<a class='promote-moderator icon-user-plus text-success' title='Promote Moderator'></a>`
+      )
     },
     ...CONTROL_COLUMN
   ]
-  window.user_table = $('#user-table').DataTable({ ...TABLE_DEFAULTS, data: users, columns })
 
-  window.user_table.on( 'draw', () => $('time').timeago())
+  // destroy old table before creating new one
+  destroy_old_table()
+
+  window.table = $('table').DataTable({...TABLE_DEFAULTS, data: users, columns })
+  window.table.on('draw', () => $('time').timeago())
+
+  ready()
 }
 
 export { character, display, get, item, location, mod, quest, user }

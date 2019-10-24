@@ -2,7 +2,10 @@ import $ from 'jquery'
 import socket from './socket'
 import { Flash, Table, Data } from '../utils'
 
-const configure_admin_channel = () => {
+const configure_channel = () => {
+
+  $('#loader-wrapper').removeClass('d-none')
+
   let channel = socket.channel(`admin`)
 
   // listen for events
@@ -11,34 +14,39 @@ const configure_admin_channel = () => {
   channel.join()
     .receive("ok", ({ users }) => {
 
-      if (window.admin_channel) return
-
-      Table.user(users)
+      if(window.channel) window.channel.leave()
 
       // handle role events
-      $('#user-table').on('click', 'a.demote-admin', function () {
+      $('table').on('click', 'a.demote-admin', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
         channel.push("update-user", { id, params: { admin: false }})
       })
 
-      $('#user-table').on('click', 'a.promote-admin', function () {
+      $('table').on('click', 'a.promote-admin', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
         channel.push("update-user", { id, params: { admin: true }})
       })
 
-      $('#user-table').on('click', 'a.demote-moderator', function () {
+      $('table').on('click', 'a.demote-moderator', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
         channel.push("update-user", { id, params: { moderator: false }})
       })
 
-      $('#user-table').on('click', 'a.promote-moderator', function () {
+      $('table').on('click', 'a.promote-moderator', function () {
         let id = parseInt($(this).closest('tr').attr('id'))
         channel.push("update-user", { id, params: { moderator: true }})
       })
 
-      window.adminChannel = channel
+      Table.user(users)
+
+      window.channel = channel
+
+      $('#loader-wrapper').addClass('d-none')
     })
-    .receive("error", ({ reason }) => Flash.error(reason))
+    .receive("error", ({ reason }) => {
+      Flash.error(reason)
+      $('#loader-wrapper').addClass('d-none')
+    })
 }
 
-export default configure_admin_channel
+export default configure_channel

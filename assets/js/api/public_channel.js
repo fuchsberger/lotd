@@ -14,15 +14,8 @@ const configure_public_channel = () => {
   let channel = socket.channel("public")
 
   // listen for events
-  channel.on('add-item', ({ item }) => {
-    window.item_table.row.add(item).draw().node()
-    calculate_item_counts()
-  })
-
-  channel.on('delete-item', ({ id }) => {
-    window.item_table.row(`#${id}`).remove().draw()
-    calculate_item_counts()
-  })
+  channel.on('add-item', item => Data.add_item(item))
+  channel.on('delete-item', item => Data.delete_item(item))
 
   channel.join()
     .receive("ok", params => {

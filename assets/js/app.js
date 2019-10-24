@@ -6,7 +6,7 @@ import 'datatables.net'
 import 'datatables.net-responsive'
 import 'timeago'
 import "phoenix_html"
-import { join_public_channel } from './api'
+import { Channel } from './api'
 import { Menu } from './utils'
 
 // Executed when page is loaded
@@ -16,5 +16,7 @@ $( document ).ready(function() {
   Menu.enable()
 
   // set up and connect channels
-  join_public_channel()
+  Channel.item()
+
+  // join_public_channel()
 })

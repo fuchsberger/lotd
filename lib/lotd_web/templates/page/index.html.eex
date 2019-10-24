@@ -1,34 +1,10 @@
-<main id="page-content" class="accordion">
-  <div class="collapse multi-collapse" data-parent="#page-content" id="about">
-    <h2>About</h2>
-    <p>This needs filling...</p>
-  </div>
-  <div class="collapse multi-collapse show" data-parent="#page-content" id="item">
-    <table id='item-table' class='display nowrap' width="100%"></table>
-  </div>
-  <div class="collapse multi-collapse" data-parent="#page-content" id="location">
-    <table id='location-table' class='display nowrap' width="100%"></table>
-  </div>
-  <div class="collapse multi-collapse" data-parent="#page-content" id="quest">
-    <table id='quest-table' class='display nowrap' width="100%"></table>
-  </div>
-  <div class="collapse multi-collapse" data-parent="#page-content" id="display">
-    <table id='display-table' class='display nowrap' width="100%"></table>
-  </div>
-  <div class="collapse multi-collapse" data-parent="#page-content" id="mod">
-    <table id='mod-table' class='display nowrap' width="100%"></table>
-  </div>
-<%= if authenticated?(@conn) do %>
-  <div class="collapse multi-collapse" data-parent="#page-content" id="character">
-    <table id='character-table' class='display nowrap' width="100%"></table>
-  </div>
-<% end %>
-<%= if admin?(@conn) do %>
-  <div class="collapse multi-collapse" data-parent="#page-content" id="user">
-    <table id='user-table' class='display nowrap' width="100%"></table>
-  </div>
-<% end %>
-</main>
+
+<div id='about' class="container d-none">
+  <h2>About</h2>
+  <p>This needs filling...</p>
+</div>
+
+<table class='display nowrap w-100'></table>
 
 <%= if moderator?(@conn) || admin?(@conn) do %>
   <div id="modal" class="modal fade" tabindex="-1" role="dialog">

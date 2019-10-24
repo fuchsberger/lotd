@@ -17,7 +17,7 @@ const configure_user_channel = id => {
     .receive("ok", params => {
 
       // user has joined already, do nothing...
-      if (window.character_id != undefined) return
+      if (window.userChannel) return
 
       const { character_id, characters } = params
 

@@ -1,5 +1,5 @@
 import $ from 'jquery'
-import { Nexus } from '../api'
+import { Channel, Nexus } from '../api'
 import * as Table from './table'
 
 const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1)
@@ -30,20 +30,17 @@ const switch_tab = e => {
   $(e.target).parent().addClass('active')
 
   // disable search on about page
-  if (tab == 'about')
-    $('#search').attr('disabled', true).siblings('.input-group-append').addClass('d-none')
-  else {
-    $('#search').attr('disabled', false).siblings('.input-group-append').removeClass('d-none')
+  switch (tab) {
+    case 'about':
+      $('#search').attr('disabled', true).siblings('.input-group-append').addClass('d-none')
+      $('#about').removeClass('d-none')
+      $('table').addClass('d-none')
+      break
 
-    // provide the right search control option
-    search_control()
-
-    // update search in target table
-    search()
+    case 'item': Channel.item(); break
+    case 'location': Channel.location(); break
+    case 'user': Channel.admin(); break
   }
-
-  // enable and show new page
-  $(`#${tab}`).collapse('show')
 }
 
 const enable = () => {
@@ -139,7 +136,6 @@ const enable = () => {
     }
   })
 
-
   // allow adding / modifying entries
   $('#modal form').submit(function (e) {
     e.preventDefault()
@@ -188,8 +184,8 @@ const reset_modal = () => {
 const search = (term = $('#search').val()) => {
   $('#search').val(term)
   search_control()
-  Table.get(window.page).search(term).draw()
-  $('#search-count').text(Table.get(window.page).page.info().recordsDisplay)
+  window.table.search(term).draw()
+  $('#search-count').text(window.table.page.info().recordsDisplay)
 }
 
 export {

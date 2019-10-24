@@ -3,6 +3,8 @@ defmodule LotdWeb.UserSocket do
 
   # Channels
   channel "admin", LotdWeb.AdminChannel
+  channel "item", LotdWeb.ItemChannel
+  channel "location", LotdWeb.LocationChannel
   channel "public", LotdWeb.PublicChannel
   channel "user:*", LotdWeb.UserChannel
   channel "moderator", LotdWeb.ModeratorChannel

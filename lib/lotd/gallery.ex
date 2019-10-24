@@ -6,7 +6,9 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
+  alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Display, Item}
+  alias Lotd.Skyrim.{Location, Mod, Quest}
 
   def list_item_ids, do: from(i in Item, select: i.id)
 
@@ -16,7 +18,23 @@ defmodule Lotd.Gallery do
       preload: [:display, :quest, :location]
   end
 
-  def list_items, do: Repo.sort_by_id(Item) |> Repo.all()
+  defp name_query(struct), do: from(e in struct, select: e.name)
+
+  def list_items do
+    character_query = from c in Character, select: c.id
+    display_query = from d in Display, select: d.name
+    location_query = from l in Location, select: l.name
+    mod_query = from m in Mod, select: m.name
+    quest_query = from q in Quest, select: q.name
+
+    Repo.all from i in Item, preload: [
+      characters: ^character_query,
+      display: ^display_query,
+      location: ^location_query,
+      mod: ^mod_query,
+      quest: ^quest_query
+    ]
+  end
 
   def list_character_item_ids(character) do
     character

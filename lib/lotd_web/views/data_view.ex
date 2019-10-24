@@ -19,22 +19,24 @@ defmodule LotdWeb.DataView do
     }
   end
 
-  def render("item.json", %{ data: i }) do
+  def render("item.json", %{ data: i, cid: cid }) do
     %{
-      active: false,
       id: i.id,
+      active: Enum.member?(i.characters, cid),
       name: i.name,
       url: i.url,
-      location_id: i.location_id,
-      quest_id: i.quest_id,
-      mod_id: i.mod_id,
-      display_id: i.display_id
+      location: i.location,
+      mod: i.mod,
+      display: i.display,
+      quest: i.quest
     }
   end
 
-  def render("location.json", %{ data: l }) do
+  def render("location.json", %{ data: l, found_ids: found_ids }) do
     %{
       id: l.id,
+      count: Enum.count(l.items),
+      found: Enum.count(found_ids, fn id -> id == l.id end),
       name: l.name,
       url: l.url,
       mod_id: l.mod_id

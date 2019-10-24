@@ -26,7 +26,7 @@ defmodule LotdWeb.AdminChannel do
   def handle_in("delete-item", %{ "id" => id}, socket) do
     if admin?(socket) do
       {:ok, item} = Gallery.get_item!(id) |> Gallery.delete_item()
-      Endpoint.broadcast("public", "delete-item", %{ id: item.id})
+      Endpoint.broadcast("public", "delete-item", Phoenix.View.render_one(item, DataView, "item.json" ))
       {:reply, :ok, socket}
     else
       {:reply, :error, socket}

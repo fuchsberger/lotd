@@ -62,6 +62,14 @@ defmodule Lotd.Accounts do
     |> Map.get(:items)
   end
 
+  def load_location_ids(character) do
+    query = from i in Item, select: i.location_id, where: not is_nil(i.location_id)
+
+    character
+    |> Repo.preload([items: query])
+    |> Map.get(:items)
+  end
+
   def get_character_item_ids(character) do
     character
     |> get_character_items()

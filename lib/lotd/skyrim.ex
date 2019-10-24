@@ -38,7 +38,11 @@ defmodule Lotd.Skyrim do
 
   # locations
 
-  def list_locations, do: Repo.sort_by_id(Location) |> Repo.all()
+  def list_locations do
+    query = from i in Item, select: i.id
+    from(l in Location, preload: [items: ^query])
+    |> Repo.all()
+  end
 
   def get_location!(id), do: Repo.get!(Location, id)
 
