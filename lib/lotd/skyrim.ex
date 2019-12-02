@@ -4,11 +4,16 @@ defmodule Lotd.Skyrim do
   """
 
   import Ecto.Query, warn: false
-  import Lotd.Gallery, only: [list_item_ids: 0]
 
   alias Lotd.Repo
   alias Lotd.Gallery.Item
   alias Lotd.Skyrim.{Quest, Location, Mod}
+
+  def list_options(module) do
+    from(x in module, select: {x.id, x.name}, order_by: x.name)
+    |> Repo.all()
+    |> Enum.into(%{}, fn x -> x end)
+  end
 
   # quests
 

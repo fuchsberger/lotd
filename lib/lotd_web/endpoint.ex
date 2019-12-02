@@ -1,6 +1,8 @@
 defmodule LotdWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :lotd
 
+  socket "/live", Phoenix.LiveView.Socket
+
   socket "/socket", LotdWeb.UserSocket,
     websocket: true,
     longpoll: false

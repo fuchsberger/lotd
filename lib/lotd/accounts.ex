@@ -15,7 +15,11 @@ defmodule Lotd.Accounts do
   # user
   def list_users, do: Repo.all(User)
 
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id) do
+    User
+    |> preload(:active_character)
+    |> Repo.get!(id)
+  end
 
   def get_user_by(params), do: Repo.get_by(User, params)
 
@@ -38,11 +42,10 @@ defmodule Lotd.Accounts do
   end
 
   def list_user_characters(%User{} = user) do
-    item_query = from i in Item, select: i.id
     Character
     |> user_characters_query(user)
     |> Repo.sort_by_id()
-    |> preload([items: ^list_item_ids, mods: ^list_mod_ids()])
+    |> preload([items: ^list_item_ids(), mods: ^list_mod_ids()])
     |> Repo.all()
   end
 

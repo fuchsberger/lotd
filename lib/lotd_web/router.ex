@@ -4,10 +4,11 @@ defmodule LotdWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug LotdWeb.Auth
     plug :fetch_flash
+    plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug LotdWeb.Auth
   end
 
   pipeline :api do
@@ -16,6 +17,9 @@ defmodule LotdWeb.Router do
 
   scope "/", LotdWeb do
     pipe_through :browser
+
+    live "/items", ItemLive.Index, session: [:user_id]
+
     get "/", PageController, :index
     resources "/session", SessionController, only: [:create, :delete]
     get "/:path", PageController, :not_found

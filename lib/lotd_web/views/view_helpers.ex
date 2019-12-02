@@ -10,7 +10,9 @@ defmodule LotdWeb.ViewHelpers do
 
   alias LotdWeb.Router.Helpers, as: Routes
 
-  def authenticated?(conn), do: not is_nil(conn.assigns.current_user)
+  def authenticated?(%Plug.Conn{} = conn), do: not is_nil(conn.assigns.current_user)
+  def authenticated?(%Phoenix.LiveView.Socket{} = socket), do: Map.has_key?(socket.assigns, :user)
+
   def moderator?(conn), do: authenticated?(conn) && conn.assigns.current_user.moderator
   def admin?(conn), do: authenticated?(conn) && conn.assigns.current_user.admin
   def user(conn), do: conn.assigns.current_user
@@ -82,6 +84,14 @@ defmodule LotdWeb.ViewHelpers do
 
     icon = content_tag :i, "", class: "icon-#{name}"
     content_tag :span, icon, class: "icon #{class}", title: title
+  end
+
+  def link_title(object) do
+    if object.url do
+      link object.name, to: object.url, target: "_blank"
+    else
+      object.name
+    end
   end
 
   def render_form(conn, action) do

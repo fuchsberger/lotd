@@ -1,0 +1,30 @@
+<table class='display nowrap w-100'>
+  <thead>
+    <tr>
+      <%= if authenticated?(@socket) do %>
+        <th class='all small-cell' data-searchable="false" data-sortable='false'>
+          <i class='icon-ok-squared'></i>
+        </th>
+      <% end %>
+      <th class='all'>Item</th>
+      <th>Location</th>
+      <th>Quest</th>
+      <th>Display</th>
+      <th>Mod</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for item <- @items do %>
+      <%= live_component @socket, LotdWeb.ItemsLive.ItemComponent,
+        id: item.id, item: item, character: @user.active_character %>
+    <% end %>
+  </tbody>
+</table>
+
+<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :add] %>
+  <%= label f, :name %>
+  <%= text_input f, :name, placeholder: "Name" %>
+  <%= error_tag f, :name %>
+
+  <%= submit "Add", phx_disable_with: "Adding" %>
+</form>

@@ -22,6 +22,7 @@ defmodule LotdWeb do
       use Phoenix.Controller, namespace: LotdWeb
 
       import Plug.Conn
+      import Phoenix.LiveView.Controller
       import LotdWeb.Gettext
 
       import LotdWeb.ViewHelpers, only: [
@@ -40,12 +41,29 @@ defmodule LotdWeb do
     end
   end
 
+  def live_view do
+    quote do
+      use Phoenix.LiveView, root: "lib/lotd_web/templates", namespace: LotdWeb
+      use Phoenix.HTML
+
+      import LotdWeb.ViewHelpers, only: [authenticated?: 1]
+      # import LotdWeb.ErrorHelpers
+      # import LotdWeb.Gettext
+      # alias LotdWeb.Router.Helpers, as: Routes
+    end
+  end
+
   def view do
     quote do
       use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [controller_module: 1, get_flash: 1, get_flash: 2, view_module: 1]
+
+      import Phoenix.LiveView, only: [
+        live_render: 2, live_render: 3, live_link: 1, live_link: 2,
+        live_component: 2, live_component: 3, live_component: 4
+      ]
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
@@ -62,6 +80,7 @@ defmodule LotdWeb do
       use Phoenix.Router
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
       import LotdWeb.Auth, only: [is_authenticated: 2, is_moderator: 2, is_admin: 2]
     end
   end

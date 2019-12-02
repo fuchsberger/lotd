@@ -18,22 +18,8 @@ defmodule Lotd.Gallery do
       preload: [:display, :quest, :location]
   end
 
-  defp name_query(struct), do: from(e in struct, select: e.name)
-
   def list_items do
-    character_query = from c in Character, select: c.id
-    display_query = from d in Display, select: d.name
-    location_query = from l in Location, select: l.name
-    mod_query = from m in Mod, select: m.name
-    quest_query = from q in Quest, select: q.name
-
-    Repo.all from i in Item, preload: [
-      characters: ^character_query,
-      display: ^display_query,
-      location: ^location_query,
-      mod: ^mod_query,
-      quest: ^quest_query
-    ]
+    Repo.all from i in Item
   end
 
   def list_character_item_ids(character) do
@@ -60,8 +46,8 @@ defmodule Lotd.Gallery do
     Repo.delete(item)
   end
 
-  def change_item(%Item{} = item) do
-    Item.changeset(item, %{})
+  def change_item(%Item{} = item, params \\ %{}) do
+    Item.changeset(item, params)
   end
 
   def list_displays, do: Repo.sort_by_id(Display) |> Repo.all()

@@ -13,10 +13,10 @@ import { Menu } from './utils'
 $( document ).ready(function() {
 
   // enable menu functionality
-  Menu.enable()
+  // Menu.enable()
 
-  // set up and connect channels
-  Channel.item()
+  // // set up and connect channels
+  // Channel.item()
 
   // join_public_channel()
 })
