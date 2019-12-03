@@ -18,7 +18,8 @@
   <body>
     <%# <div id="loader-wrapper"><div id="loader"></div></div> %>
     <%= render "navbar.html", assigns %>
-    <%= render "flash.html", flash: get_flash(@conn) %>
+    <%= error(get_flash(@conn)["error"]) %>
+    <%= info(get_flash(@conn)["info"]) %>
     <%= render @view_module, @view_template, assigns %>
   </body>
 </html>

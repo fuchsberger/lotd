@@ -10,6 +10,8 @@ defmodule LotdWeb.ViewHelpers do
 
   alias LotdWeb.Router.Helpers, as: Routes
 
+  # access control
+
   def authenticated?(%Plug.Conn{} = conn), do: not is_nil(conn.assigns.current_user)
 
   def authenticated?(%Phoenix.LiveView.Socket{} = socket), do: Map.has_key?(socket.assigns, :user)
@@ -25,6 +27,16 @@ defmodule LotdWeb.ViewHelpers do
 
   def admin?(%Phoenix.LiveView.Socket{} = socket),
     do: authenticated?(socket) && socket.assigns.user.admin
+
+  # flash messages
+
+  def error(msg) do
+    if msg, do: render LotdWeb.LayoutView, "flash.html", color: "danger", msg: msg
+  end
+
+  def info(msg) do
+    if msg, do: render LotdWeb.LayoutView, "flash.html", color: "info", msg: msg
+  end
 
   def user(conn), do: conn.assigns.current_user
   def character(conn), do: authenticated?(conn) && conn.assigns.current_user.active_character

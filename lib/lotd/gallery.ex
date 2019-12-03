@@ -28,6 +28,8 @@ defmodule Lotd.Gallery do
 
   def get_item!(id), do: Repo.get!(Item, id)
 
+  def save_item(item_changeset), do: Repo.insert_or_update(item_changeset)
+
   def create_item(attrs \\ %{}) do
     %Item{}
     |> Item.changeset(attrs)

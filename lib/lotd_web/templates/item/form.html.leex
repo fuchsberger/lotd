@@ -1,6 +1,7 @@
 <%= f = form_for @changeset, "#",
   class: form_class(@submitted), novalidate: true,
   phx_change: :validate, phx_submit: :save %>
+
   <div class="modal-header">
     <h5 class="modal-title">Add Item</h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -10,6 +11,9 @@
 
   <div class="modal-body">
     <%= unless is_nil(@changeset.data.id), do: hidden_input f, :id %>
+
+    <%= error(@error) %>
+    <%= info(@info) %>
 
     <div class="form-group">
       <%= label f, :name %>
@@ -59,11 +63,15 @@
     </div>
   </div>
   <div class="modal-footer form-inline justify-content-between">
-    <button id='delete' class='btn btn-danger btn-outline'>Delete</button>
-    <div id='more' class="form-group form-check">
-      <input type="checkbox" class="form-check-input" id="continue">
-      <label class="form-check-label" for="exampleCheck1">Add more entries...</label>
-    </div>
+    <%= if is_nil(@changeset.data.id) do %>
+      <div id='more' class="form-group form-check">
+        <%= checkbox f, :more, class: "form-check-input" %>
+        <%= label f, :more, "Add more entries..." %>
+      </div>
+    <%= else %>
+      <button id='delete' class='btn btn-danger btn-outline'>Delete</button>
+    <% end %>
+
     <%= submit "Save", class: "btn btn-primary", phx_disable_with: "Saving..." %>
   </div>
 </form>

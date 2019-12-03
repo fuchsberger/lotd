@@ -4,7 +4,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <%= live_component @socket, LotdWeb.ItemFormComponent,
-          id: "item_changeset", submitted: false,
+          id: "item_changeset", error: nil, info: nil, submitted: false,
           changeset: @changeset, display_options: @display_options, mod_options: @mod_options, location_options: @location_options, quest_options: @quest_options %>
       </div>
     </div>

@@ -1,16 +1,6 @@
-<%= if @flash["error"] do %>
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <%= @flash["error"] %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-<% end %>
-<%= if @flash["info"] do %>
-  <div class="alert alert-info alert-dismissible fade show" role="alert">
-    <%= @flash["info"] %>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-<% end %>
+<div class="alert alert-<%= @color %> alert-dismissible fade show" role="alert">
+  <%= @msg %>
+  <button type="button" class="close" phx-click="dismiss" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
