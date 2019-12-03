@@ -1,4 +1,4 @@
-defmodule Lotd.Gallery.Item do
+defmodule Lotd.Museum.Item do
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -7,10 +7,10 @@ defmodule Lotd.Gallery.Item do
   schema "items" do
     field :name, :string
     field :url, :string
-    belongs_to :display, Lotd.Gallery.Display
-    belongs_to :location, Lotd.Skyrim.Location
-    belongs_to :mod, Lotd.Skyrim.Mod
-    belongs_to :quest, Lotd.Skyrim.Quest
+    belongs_to :display, Lotd.Museum.Display
+    belongs_to :location, Lotd.Museum.Location
+    belongs_to :mod, Lotd.Museum.Mod
+    belongs_to :quest, Lotd.Museum.Quest
     many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_items"
   end
 

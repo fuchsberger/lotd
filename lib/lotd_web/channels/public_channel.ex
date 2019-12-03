@@ -2,15 +2,15 @@ defmodule LotdWeb.PublicChannel do
   use LotdWeb, :channel
 
   alias Phoenix.View
-  alias Lotd.{Gallery, Skyrim}
+  alias Lotd.Museum
 
   def join("public", _params, socket) do
 
-    displays = Gallery.list_displays()
-    items = Gallery.list_items()
-    locations = Skyrim.list_locations()
-    quests = Skyrim.list_quests()
-    mods = Skyrim.list_mods()
+    displays = Museum.list_displays()
+    items = Museum.list_items()
+    locations = Museum.list_locations()
+    quests = Museum.list_quests()
+    mods = Museum.list_mods()
 
     {:ok, %{
       admin: admin?(socket),

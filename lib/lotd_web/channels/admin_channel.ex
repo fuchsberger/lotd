@@ -1,7 +1,7 @@
 defmodule LotdWeb.AdminChannel do
   use LotdWeb, :channel
 
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Accounts, Museum}
   alias LotdWeb.Endpoint
 
   def join("admin", _params, socket) do
@@ -25,7 +25,7 @@ defmodule LotdWeb.AdminChannel do
 
   def handle_in("delete-item", %{ "id" => id}, socket) do
     if admin?(socket) do
-      {:ok, item} = Gallery.get_item!(id) |> Gallery.delete_item()
+      {:ok, item} = Museum.get_item!(id) |> Museum.delete_item()
       Endpoint.broadcast("public", "delete-item", Phoenix.View.render_one(item, DataView, "item.json" ))
       {:reply, :ok, socket}
     else

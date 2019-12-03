@@ -6,6 +6,18 @@ defmodule Lotd.Repo do
   import Ecto.Query, warn: false
   import Ecto.Changeset, only: [validate_change: 3]
 
+  @topic inspect(__MODULE__)
+
+  def subscribe do
+    Phoenix.PubSub.subscribe(Lotd.PubSub, @topic)
+  end
+
+  def list_options(module) do
+    from(x in module, select: {x.id, x.name}, order_by: x.name)
+    |> all()
+    |> Enum.into(%{}, fn x -> x end)
+  end
+
   def sort_by_id(query), do: from(c in query, order_by: c.id)
   def sort_by_name(query), do: from(c in query, order_by: c.id)
 

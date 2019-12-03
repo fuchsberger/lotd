@@ -1,16 +1,16 @@
 defmodule LotdWeb.DisplayController do
   use LotdWeb, :controller
 
-  alias Lotd.Gallery
-  alias Lotd.Gallery.Display
+  alias Lotd.Museum
+  alias Lotd.Museum.Display
 
   def new(conn, _params) do
-    changeset = Gallery.change_display(%Display{})
+    changeset = Museum.change_display(%Display{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"display" => display_params}) do
-    case Gallery.create_display(display_params) do
+    case Museum.create_display(display_params) do
       {:ok, _display} ->
         redirect(conn, to: Routes.display_path(conn, :index))
 
@@ -20,14 +20,14 @@ defmodule LotdWeb.DisplayController do
   end
 
   def edit(conn, %{"id" => id}) do
-    display = Gallery.get_display!(id)
-    changeset = Gallery.change_display(display)
+    display = Museum.get_display!(id)
+    changeset = Museum.change_display(display)
     render(conn, "edit.html", changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "display" => display_params}) do
-    display = Gallery.get_display!(id)
-    case Gallery.update_display(display, display_params) do
+    display = Museum.get_display!(id)
+    case Museum.update_display(display, display_params) do
       {:ok, _display} ->
         redirect(conn, to: Routes.display_path(conn, :index))
       {:error, changeset} ->
@@ -36,8 +36,8 @@ defmodule LotdWeb.DisplayController do
   end
 
   def delete(conn, %{"id" => id}) do
-    display = Gallery.get_display!(id)
-    {:ok, _display} = Gallery.delete_display(display)
+    display = Museum.get_display!(id)
+    {:ok, _display} = Museum.delete_display(display)
 
     conn
     |> put_flash(:info, "Display with all contained items deleted successfully.")

@@ -1,19 +1,19 @@
-defmodule Lotd.Skyrim.Location do
+defmodule Lotd.Museum.Quest do
   use Ecto.Schema
 
   import Ecto.Changeset
   import Lotd.Repo, only: [validate_url: 2]
 
-  schema "locations" do
+  schema "quests" do
     field :name, :string
     field :url, :string
-    belongs_to :mod, Lotd.Skyrim.Mod
-    has_many :items, Lotd.Gallery.Item
+    belongs_to :mod, Lotd.Museum.Mod
+    has_many :items, Lotd.Museum.Item
   end
 
   @doc false
-  def changeset(location, attrs) do
-    location
+  def changeset(quest, attrs) do
+    quest
     |> cast(attrs, [:name, :url, :mod_id])
     |> validate_required([:name, :mod_id])
     |> validate_length(:name, min: 3, max: 80)

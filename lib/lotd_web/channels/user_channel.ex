@@ -1,7 +1,7 @@
 defmodule LotdWeb.UserChannel do
   use LotdWeb, :channel
 
-  alias Lotd.{Accounts, Gallery, Skyrim}
+  alias Lotd.{Accounts, Museum}
 
   def join("user:" <> user_id, _params, socket) do
     if authenticated?(socket) && socket.assigns.user.id == String.to_integer(user_id) do
@@ -17,7 +17,7 @@ defmodule LotdWeb.UserChannel do
 
   def handle_in("collect_item", %{ "id" => id}, socket) do
     Accounts.get_active_character(socket.assigns.user)
-    |> Accounts.update_character_add_item(Gallery.get_item!(id))
+    |> Accounts.update_character_add_item(Museum.get_item!(id))
     {:reply, :ok, socket}
   end
 
@@ -89,7 +89,7 @@ defmodule LotdWeb.UserChannel do
 
   def handle_in("activate_mod", %{ "id" => id}, socket) do
     Accounts.get_active_character(socket.assigns.user)
-    |> Accounts.update_character_add_mod(Skyrim.get_mod!(id))
+    |> Accounts.update_character_add_mod(Museum.get_mod!(id))
     {:reply, :ok, socket}
   end
 

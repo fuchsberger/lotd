@@ -1,4 +1,4 @@
-defmodule Lotd.Gallery.Display do
+defmodule Lotd.Museum.Display do
   use Ecto.Schema
 
   import Ecto.Changeset
@@ -7,7 +7,7 @@ defmodule Lotd.Gallery.Display do
   schema "displays" do
     field :name, :string
     field :url, :string
-    has_many :items, Lotd.Gallery.Item
+    has_many :items, Lotd.Museum.Item
   end
 
   @doc false

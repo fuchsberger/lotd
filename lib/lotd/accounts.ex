@@ -5,12 +5,11 @@ defmodule Lotd.Accounts do
 
   import Ecto.Query, warn: false
 
-  import Lotd.Gallery, only: [ list_item_ids: 0 ]
-  import Lotd.Skyrim, only: [ list_mod_ids: 0 ]
+  import Lotd.Museum, only: [ list_item_ids: 0, list_mod_ids: 0 ]
 
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
-  alias Lotd.Gallery.Item
+  alias Lotd.Museum.Item
 
   # user
   def list_users, do: Repo.all(User)

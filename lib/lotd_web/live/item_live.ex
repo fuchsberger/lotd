@@ -2,9 +2,8 @@ defmodule LotdWeb.ItemLive do
 
   use LotdWeb, :live
 
-  alias Lotd.{Accounts, Gallery, Skyrim}
-  alias Lotd.Gallery.{Item, Display}
-  alias Lotd.Skyrim.{Location, Mod, Quest}
+  alias Lotd.{Accounts, Museum}
+  alias Lotd.Museum.{Item, Display, Location, Mod, Quest}
 
   alias LotdWeb.ItemView
 
@@ -24,14 +23,14 @@ defmodule LotdWeb.ItemLive do
   def handle_event("validate", %{"item" => params}, socket) do
     changeset =
       %Item{}
-      |> Gallery.change_item(params)
+      |> Museum.change_item(params)
       |> Map.put(:action, :insert)
 
     {:noreply, assign(socket, changeset: changeset)}
   end
 
   def handle_event("add", %{"item" => item }, socket) do
-    case Gallery.create_item(item) do
+    case Museum.create_item(item) do
       {:ok, _item} ->
         # item = Phoenix.View.render_one(item, DataView, "item.json")
         # Endpoint.broadcast("public", "add-item", item)
@@ -48,12 +47,12 @@ defmodule LotdWeb.ItemLive do
   defp fetch(socket) do
 
     # get map data for secondary information
-    locations= Skyrim.list_options(Location)
-    quests = Skyrim.list_options(Quest)
-    mods = Skyrim.list_options(Mod)
-    displays = Skyrim.list_options(Display)
+    locations= Museum.list_options(Location)
+    quests = Museum.list_options(Quest)
+    mods = Museum.list_options(Mod)
+    displays = Museum.list_options(Display)
 
-    items = Gallery.list_items()
+    items = Museum.list_items()
     |> Enum.map(fn item -> Map.put(item, :location, Map.get(locations, item.location_id)) end)
     |> Enum.map(fn item -> Map.put(item, :quest, Map.get(quests, item.quest_id)) end)
     |> Enum.map(fn item -> Map.put(item, :display, Map.get(displays, item.display_id)) end)
@@ -70,7 +69,7 @@ defmodule LotdWeb.ItemLive do
     end
 
     assign socket,
-      changeset: Gallery.change_item(%Item{}),
+      changeset: Museum.change_item(%Item{}),
       items: items,
       location_options: reverse_map(locations),
       quest_options: reverse_map(quests),

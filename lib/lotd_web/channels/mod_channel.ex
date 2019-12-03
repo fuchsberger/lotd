@@ -2,7 +2,7 @@ defmodule LotdWeb.ModChannel do
   use LotdWeb, :channel
 
   alias Phoenix.View
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Accounts, Museum}
 
   def join("mod", _params, socket) do
     found_ids = if authenticated?(socket) do
@@ -18,7 +18,7 @@ defmodule LotdWeb.ModChannel do
       |> Accounts.get_user_character!(socket.assigns.user.active_character_id)
       |> Accounts.get_character_mods()
     else
-      Gallery.list_mods()
+      Museum.list_mods()
     end
 
     {:ok, %{ mods: View.render_many(mods, DataView, "mod.json", found_ids: found_ids)}, socket}

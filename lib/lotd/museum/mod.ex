@@ -1,4 +1,4 @@
-defmodule Lotd.Skyrim.Mod do
+defmodule Lotd.Museum.Mod do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,9 +6,9 @@ defmodule Lotd.Skyrim.Mod do
     field :filename, :string
     field :name, :string
     field :url, :string
-    has_many :items, Lotd.Gallery.Item
-    has_many :quests, Lotd.Skyrim.Quest
-    has_many :locations, Lotd.Skyrim.Location
+    has_many :items, Lotd.Museum.Item
+    has_many :quests, Lotd.Museum.Quest
+    has_many :locations, Lotd.Museum.Location
     many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_mods"
   end
 

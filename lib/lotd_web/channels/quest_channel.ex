@@ -2,7 +2,7 @@ defmodule LotdWeb.QuestChannel do
   use LotdWeb, :channel
 
   alias Phoenix.View
-  alias Lotd.{Accounts, Skyrim}
+  alias Lotd.{Accounts, Museum}
 
   def join("quest", _params, socket) do
     found_ids = if authenticated?(socket) do
@@ -13,7 +13,7 @@ defmodule LotdWeb.QuestChannel do
       []
     end
 
-    quests = Skyrim.list_quests()
+    quests = Museum.list_quests()
     |> View.render_many(DataView, "quest.json", found_ids: found_ids)
 
     {:ok, %{ quests: quests}, socket}

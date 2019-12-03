@@ -2,7 +2,7 @@ defmodule LotdWeb.LocationChannel do
   use LotdWeb, :channel
 
   alias Phoenix.View
-  alias Lotd.{Accounts, Skyrim}
+  alias Lotd.{Accounts, Museum}
 
   def join("location", _params, socket) do
     found_ids = if authenticated?(socket) do
@@ -13,7 +13,7 @@ defmodule LotdWeb.LocationChannel do
       []
     end
 
-    locations = Skyrim.list_locations()
+    locations = Museum.list_locations()
     |> View.render_many(DataView, "location.json", found_ids: found_ids)
 
     {:ok, %{ locations: locations}, socket}
