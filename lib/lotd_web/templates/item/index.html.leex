@@ -1,3 +1,17 @@
+<%# Form %>
+<%= if moderator?(@socket) || admin?(@socket) do %>
+  <div id="modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <%= live_component @socket, LotdWeb.ItemFormComponent,
+          id: "item_changeset", submitted: false,
+          changeset: @changeset, display_options: @display_options, mod_options: @mod_options, location_options: @location_options, quest_options: @quest_options %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%# Item Table %>
 <table class='display nowrap w-100'>
   <thead>
     <tr>
@@ -15,16 +29,8 @@
   </thead>
   <tbody>
     <%= for item <- @items do %>
-      <%= live_component @socket, LotdWeb.ItemsLive.ItemComponent,
-        id: item.id, item: item, character: @user.active_character %>
+      <%= live_component @socket, LotdWeb.ItemComponent, id: item.id, item: item %>
     <% end %>
   </tbody>
 </table>
 
-<%= f = form_for @changeset, "#", [phx_change: :validate, phx_submit: :add] %>
-  <%= label f, :name %>
-  <%= text_input f, :name, placeholder: "Name" %>
-  <%= error_tag f, :name %>
-
-  <%= submit "Add", phx_disable_with: "Adding" %>
-</form>

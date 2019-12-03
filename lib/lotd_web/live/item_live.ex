@@ -1,10 +1,14 @@
-defmodule LotdWeb.ItemLive.Index do
-  use LotdWeb, :live_view
+defmodule LotdWeb.ItemLive do
+
+  use LotdWeb, :live
 
   alias Lotd.{Accounts, Gallery, Skyrim}
   alias Lotd.Gallery.{Item, Display}
   alias Lotd.Skyrim.{Location, Mod, Quest}
+
   alias LotdWeb.ItemView
+
+  def render(assigns), do: ItemView.render("index.html", assigns)
 
   def mount(session, socket) do
 
@@ -40,9 +44,6 @@ defmodule LotdWeb.ItemLive.Index do
     end
   end
 
-  def render(assigns) do
-    ItemView.render("index.html", assigns)
-  end
 
   defp fetch(socket) do
 
@@ -71,9 +72,11 @@ defmodule LotdWeb.ItemLive.Index do
     assign socket,
       changeset: Gallery.change_item(%Item{}),
       items: items,
-      location_options: locations,
-      quest_options: quests,
-      mod_options: mods,
-      display_options: displays
+      location_options: reverse_map(locations),
+      quest_options: reverse_map(quests),
+      mod_options: reverse_map(mods),
+      display_options: reverse_map(displays)
   end
+
+  defp reverse_map(map), do: Enum.into(map, %{}, fn {k, v} -> {v, k} end)
 end

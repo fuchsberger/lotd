@@ -1,4 +1,4 @@
-defmodule LotdWeb.ItemsLive.ItemComponent do
+defmodule LotdWeb.ItemComponent do
   use Phoenix.LiveComponent
   use Phoenix.HTML
 

@@ -6,9 +6,7 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
-  alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Display, Item}
-  alias Lotd.Skyrim.{Location, Mod, Quest}
 
   def list_item_ids, do: from(i in Item, select: i.id)
 
@@ -50,7 +48,7 @@ defmodule Lotd.Gallery do
     Item.changeset(item, params)
   end
 
-  def list_displays, do: Repo.sort_by_id(Display) |> Repo.all()
+  def list_displays, do: Repo.sort_by_name(Display) |> Repo.all()
 
   def get_display!(id), do: Repo.get!(Display, id)
 

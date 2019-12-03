@@ -5,6 +5,15 @@ defmodule LotdWeb.ErrorHelpers do
 
   use Phoenix.HTML
 
+  def form_class(submitted) do
+    if submitted, do: "was-validated"
+  end
+
+  def control_class(form, field) do
+    if Keyword.has_key?(form.source.errors, field),
+      do: "form-control invalid", else: "form-control valid"
+  end
+
   def error_class(form, field) do
     Enum.map(Keyword.get_values(form.errors, field), fn _error -> " is-invalid" end)
   end
@@ -13,7 +22,7 @@ defmodule LotdWeb.ErrorHelpers do
   Generates tag for inlined form input errors.
   """
   def error_tag(form, field) do
-    Enum.map(Keyword.get_values(form.errors, field), fn error ->
+    Enum.map(Keyword.get_values(form.source.errors, field), fn error ->
       content_tag(:small, translate_error(error), class: "form-text text-muted")
     end)
   end

@@ -11,10 +11,21 @@ defmodule LotdWeb.ViewHelpers do
   alias LotdWeb.Router.Helpers, as: Routes
 
   def authenticated?(%Plug.Conn{} = conn), do: not is_nil(conn.assigns.current_user)
+
   def authenticated?(%Phoenix.LiveView.Socket{} = socket), do: Map.has_key?(socket.assigns, :user)
 
-  def moderator?(conn), do: authenticated?(conn) && conn.assigns.current_user.moderator
-  def admin?(conn), do: authenticated?(conn) && conn.assigns.current_user.admin
+  def moderator?(%Plug.Conn{} = conn),
+    do: authenticated?(conn) && conn.assigns.current_user.moderator
+
+  def moderator?(%Phoenix.LiveView.Socket{} = socket),
+    do: authenticated?(socket) && socket.assigns.user.moderator
+
+  def admin?(%Plug.Conn{} = conn),
+    do: authenticated?(conn) && conn.assigns.current_user.admin
+
+  def admin?(%Phoenix.LiveView.Socket{} = socket),
+    do: authenticated?(socket) && socket.assigns.user.admin
+
   def user(conn), do: conn.assigns.current_user
   def character(conn), do: authenticated?(conn) && conn.assigns.current_user.active_character
 
