@@ -6,7 +6,15 @@
   <div id="search-control" class='input-group'>
 
     <%# Control Actions %>
-    <div class='input-group-prepend'><div class='input-group-text'></div></div>
+    <div class='input-group-prepend'>
+      <div class='input-group-text'>
+        <%= if @user && (@user.moderator || @user.admin) do %>
+          <a phx-click='toggle_modal'><i class='icon-plus'></i></a>
+        <% else %>
+          <a></a>
+        <% end %>
+      </div>
+    </div>
 
     <%# Search %>
     <input id="search" class="form-control" type="text" placeholder="Find..." >
@@ -41,25 +49,26 @@
         <a class="nav-link dropdown-toggle" href="#" role="button"  id="navbarDropdown" data-toggle="dropdown" title='More...'><i class='icon-cog'></i></a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
           <a class='dropdown-item tab' data-id='about'>About</a>
-          <div class="dropdown-divider"></div>
-          <%= if authenticated?(@conn) do %>
-            <a class='dropdown-item tab' data-id='character'>Characters</a>
-          <% end %>
           <a class='dropdown-item tab' data-id='mod'>Mods</a>
-          <%= if admin?(@conn) do %>
+          <%= if @user && @user.admin do %>
+            <div class="dropdown-divider"></div>
+            <div class='dropdown-item text-muted'>Administration</div>
             <a class='dropdown-item tab' data-id='user'>Users</a>
           <% end %>
-          <%= if authenticated?(@conn) do %>
+          <%= if @user do %>
             <div class="dropdown-divider"></div>
-            <%= logout_button(@conn) %>
+            <div class='dropdown-item text-muted'><%= @socket.assigns.user.nexus_name %></div>
+            <a class='dropdown-item tab' data-id='character'>Characters</a>
+            <%= logout_button(@socket) %>
           <% end %>
         </div>
       </li>
-      <%= unless authenticated?(@conn) do %>
+      <%= unless @user do %>
         <li class="nav-item">
           <a id='login-button' class="nav-link font-weight-bold">Sign In</a>
           <%# Login Form (hidden) %>
-          <%= f = form_for @conn, Routes.session_path(@conn, :create), [id: "login-form"] %>
+          <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
+            <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
             <%= hidden_input(f, :api_key) %>
           </form>
         </li>

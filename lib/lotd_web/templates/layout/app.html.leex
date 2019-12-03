@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8"/>
+    <%= csrf_meta_tag() %>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="author" content="Alexander Fuchsberger"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <title><%= gettext "LOTD Inventory Manager" %></title>
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
     <script>
@@ -17,7 +18,6 @@
   </head>
   <body>
     <%# <div id="loader-wrapper"><div id="loader"></div></div> %>
-    <%= render "navbar.html", assigns %>
     <%= error(get_flash(@conn)["error"]) %>
     <%= info(get_flash(@conn)["info"]) %>
     <%= render @view_module, @view_template, assigns %>

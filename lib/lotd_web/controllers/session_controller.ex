@@ -11,10 +11,12 @@ defmodule LotdWeb.SessionController do
     if not, create user, login and send session token back to client
     if yes, login and send session token back to client
   """
-  def create(conn, %{"api_key" => api_key}) do
+  def create(conn, %{"session" => session}) do
 
     url = Application.get_env(:lotd, Lotd.NexusAPI)[:user_url]
-    header = Application.get_env(:lotd, Lotd.NexusAPI)[:header] |> Keyword.put(:apikey, api_key)
+    header =
+      Application.get_env(:lotd, Lotd.NexusAPI)[:header]
+      |> Keyword.put(:apikey, session["api_key"])
 
     case HTTPoison.get(url, header) do
       {:ok, response} ->

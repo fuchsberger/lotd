@@ -32,7 +32,7 @@
 
     <div class="form-group">
       <%= label f, :display_id %>
-      <%= select f, :display_id, @display_options,
+      <%= select f, :display_id, options(@displays),
         [class: "form-control form-control-sm", prompt: "Display"] ++
         input_validations(f, :display_id) %>
       <%= error_tag f, :display_id %>
@@ -40,7 +40,7 @@
 
     <div class="form-group">
       <%= label f, :mod_id %>
-      <%= select f, :mod_id, @mod_options,
+      <%= select f, :mod_id, options(@mods),
         [class: "form-control form-control-sm", prompt: "Mod"] ++
         input_validations(f, :mod_id) %>
       <%= error_tag f, :mod_id %>
@@ -48,7 +48,7 @@
 
     <div class="form-group">
       <%= label f, :location_id %>
-      <%= select f, :location_id, @location_options,
+      <%= select f, :location_id, options(@locations),
         [class: "form-control form-control-sm", prompt: "Location"] ++
         input_validations(f, :location_id) %>
       <%= error_tag f, :location_id %>
@@ -56,22 +56,17 @@
 
     <div class="form-group">
       <%= label f, :quest_id %>
-      <%= select f, :quest_id, @quest_options,
+      <%= select f, :quest_id, options(@quests),
         [class: "form-control form-control-sm", prompt: "Quest"] ++
         input_validations(f, :quest_id) %>
       <%= error_tag f, :quest_id %>
     </div>
   </div>
   <div class="modal-footer form-inline justify-content-between">
-    <%= if is_nil(@changeset.data.id) do %>
-      <div id='more' class="form-group form-check">
-        <%= checkbox f, :more, class: "form-check-input" %>
-        <%= label f, :more, "Add more entries..." %>
-      </div>
-    <%= else %>
+    <%= unless is_nil(@changeset.data.id) do %>
       <button id='delete' class='btn btn-danger btn-outline'>Delete</button>
     <% end %>
-
+    <div class='flex-grow-1'></div>
     <%= submit "Save", class: "btn btn-primary", phx_disable_with: "Saving..." %>
   </div>
 </form>

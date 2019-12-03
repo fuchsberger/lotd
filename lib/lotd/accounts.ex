@@ -2,7 +2,6 @@ defmodule Lotd.Accounts do
   @moduledoc """
   The Accounts context.
   """
-
   import Ecto.Query, warn: false
 
   import Lotd.Museum, only: [ list_item_ids: 0, list_mod_ids: 0 ]

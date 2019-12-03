@@ -1,14 +1,18 @@
+<%= live_component @socket, LotdWeb.NavbarComponent,
+  id: "navbar", user: Map.get(@socket.assigns, :user) %>
+
 <%# Form %>
-<%= if moderator?(@socket) || admin?(@socket) do %>
+<%= if @modal do %>
   <div id="modal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <%= live_component @socket, LotdWeb.ItemFormComponent,
-          id: "item_changeset", error: nil, info: nil, submitted: false,
-          changeset: @changeset, display_options: @display_options, mod_options: @mod_options, location_options: @location_options, quest_options: @quest_options %>
+          id: "item_changeset", error: nil, info: nil, submitted: false, changeset: @changeset,
+          displays: @displays, mods: @mods, locations: @locations, quests: @quests %>
       </div>
     </div>
   </div>
+  <script>$('#modal').modal('show')</script>
 <% end %>
 
 <%# Item Table %>

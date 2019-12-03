@@ -2,11 +2,17 @@ defmodule Lotd.Museum do
   @moduledoc """
   The Museum context.
   """
-
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
+
+  # topics for live_view channels
+  @topic_displays "displays"
+  @topic_items "items"
+  @topic_locations "locations"
+  @topic_mods "mods"
+  @topic_quest "quests"
 
   # DISPLAYS
 
@@ -52,18 +58,19 @@ defmodule Lotd.Museum do
 
   def get_item!(id), do: Repo.get!(Item, id)
 
-  def save_item(item_changeset), do: Repo.insert_or_update(item_changeset)
+  def item_owned?(item, character_id) do
+    item = Repo.preload(item, :characters)
 
-  def create_item(attrs \\ %{}) do
-    %Item{}
-    |> Item.changeset(attrs)
-    |> Repo.insert()
+    item.characters
+    |> Enum.map(fn c -> c.id end)
+    |> Enum.member?(character_id)
   end
 
-  def update_item(%Item{} = item, attrs) do
+  def save_item(%Item{} = item, attrs) do
     item
     |> Item.changeset(attrs)
-    |> Repo.update()
+    |> Repo.insert_or_update()
+    |> Lotd.broadcast_change(@topic_items, [:item, :saved])
   end
 
   def delete_item(%Item{} = item), do: Repo.delete(item)

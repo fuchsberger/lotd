@@ -1,12 +1,11 @@
 defmodule LotdWeb.LayoutView do
   use LotdWeb, :view
 
-  def logout_button(conn) do
+  def logout_button(socket) do
     link [icon("off"), "Logout"],
-      to: Routes.session_path(conn, :delete, user(conn).id),
+      to: Routes.session_path(socket, :delete, socket.assigns.user.id),
       method: "delete",
       id: "logout-button",
-      class: "dropdown-item",
-      title: "Logout #{user(conn).nexus_name}"
+      class: "dropdown-item"
   end
 end

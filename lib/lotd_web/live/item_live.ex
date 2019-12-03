@@ -2,6 +2,8 @@ defmodule LotdWeb.ItemLive do
 
   use LotdWeb, :live
 
+  import Lotd.Repo, only: [list_options: 1]
+
   alias Lotd.{Accounts, Museum}
   alias Lotd.Museum.{Item, Display, Location, Mod, Quest}
 
@@ -11,11 +13,14 @@ defmodule LotdWeb.ItemLive do
 
   def mount(session, socket) do
 
+    Lotd.subscribe("items")
+
     # as neither the user or character is changed during the items view we can attach the entire structure once without having to query again and again.
     if session.user_id do
-      socket = assign socket, user: Accounts.get_user!(session.user_id)
+      socket = assign socket, modal: false, user: Accounts.get_user!(session.user_id)
       {:ok, fetch(socket)}
     else
+      socket = assign socket, modal: false
       {:ok, fetch(socket)}
     end
   end
@@ -43,14 +48,38 @@ defmodule LotdWeb.ItemLive do
     end
   end
 
+  def handle_info({:toggle_modal, _params}, socket) do
+    {:noreply, assign(socket, modal: !socket.assigns.modal)}
+  end
+
+  def handle_info({Lotd, [:item, :saved], item}, socket) do
+    item = if authenticated?(socket), do:
+      Map.put(item, :found, Museum.item_owned?(item, socket.assigns.user.active_character_id)),
+      else: item
+
+    item = item
+    |> Map.put(:location, Map.get(socket.assigns.locations, item.location_id))
+    |> Map.put(:quest, Map.get(socket.assigns.quests, item.quest_id))
+    |> Map.put(:mod, Map.get(socket.assigns.mods, item.mod_id))
+    |> Map.put(:display, Map.get(socket.assigns.displays, item.display_id))
+
+    # if element is already in list, replace it, otherwise add it
+    items = socket.assigns.items
+    if index = Enum.find_index(items, fn i -> i.id == item.id end) do
+      # could also do: https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html#send_update/2
+      {:noreply, assign(socket, :items, List.replace_at(items, index, item))}
+    else
+      {:noreply, assign(socket, :items, [ item | items ])}
+    end
+  end
 
   defp fetch(socket) do
 
     # get map data for secondary information
-    locations= Museum.list_options(Location)
-    quests = Museum.list_options(Quest)
-    mods = Museum.list_options(Mod)
-    displays = Museum.list_options(Display)
+    locations= list_options(Location)
+    quests = list_options(Quest)
+    mods = list_options(Mod)
+    displays = list_options(Display)
 
     items = Museum.list_items()
     |> Enum.map(fn item -> Map.put(item, :location, Map.get(locations, item.location_id)) end)
@@ -71,11 +100,9 @@ defmodule LotdWeb.ItemLive do
     assign socket,
       changeset: Museum.change_item(%Item{}),
       items: items,
-      location_options: reverse_map(locations),
-      quest_options: reverse_map(quests),
-      mod_options: reverse_map(mods),
-      display_options: reverse_map(displays)
+      locations: locations,
+      quests: quests,
+      mods: mods,
+      displays: displays
   end
-
-  defp reverse_map(map), do: Enum.into(map, %{}, fn {k, v} -> {v, k} end)
 end

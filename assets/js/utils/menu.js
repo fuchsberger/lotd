@@ -53,7 +53,7 @@ const enable = () => {
   $('#logout-button').click(() => window.userChannel.push("logout"))
 
   // provide the right search control option
-  search_control()
+  // search_control()
 
   // allow to navigate different tabs
   $('a.tab').click(switch_tab)
@@ -65,36 +65,36 @@ const enable = () => {
   $('#search').on('keyup', function () { search(this.value) })
 
   // enable clearing search field and redraw currently active table
-  $('#search-control').on('click', 'a.icon-cancel', () => search(''))
+  // $('#search-control').on('click', 'a.icon-cancel', () => search(''))
 
-  // enable add button
-  $('#search-control').on('click', 'a.icon-plus', () => {
-    reset_modal()
+  // // enable add button
+  // $('#search-control').on('click', 'a.icon-plus', () => {
+  //   reset_modal()
 
-    switch (window.page) {
-      case 'about':
-      case 'user':
-        return
+  //   switch (window.page) {
+  //     case 'about':
+  //     case 'user':
+  //       return
 
-      case 'item':
-          $('#quest_id').parent().show()
-          $('#location_id').parent().show()
-          $('#display_id').parent().show()
+  //     case 'item':
+  //         $('#quest_id').parent().show()
+  //         $('#location_id').parent().show()
+  //         $('#display_id').parent().show()
 
-      case 'location':
-      case 'quest':
-        $('#mod_id').parent().show()
+  //     case 'location':
+  //     case 'quest':
+  //       $('#mod_id').parent().show()
 
-      case 'character':
-        $('#url').parent().hide()
+  //     case 'character':
+  //       $('#url').parent().hide()
 
-      default:
-        $('#modal h5').text(`Create ${capitalize(window.page)}`)
-        $('#more').show()
-        $('#submit').text('Add')
-        $('#modal').modal('show')
-    }
-  })
+  //     default:
+  //       $('#modal h5').text(`Create ${capitalize(window.page)}`)
+  //       $('#more').show()
+  //       $('#submit').text('Add')
+  //       $('#modal').modal('show')
+  //   }
+  // })
 
   // enable edit button
   $('table').on('click', 'td a.icon-pencil', function () {
@@ -183,7 +183,7 @@ const reset_modal = () => {
 
 const search = (term = $('#search').val()) => {
   $('#search').val(term)
-  search_control()
+  // search_control()
   window.table.search(term).draw()
   $('#search-count').text(window.table.page.info().recordsDisplay)
 }

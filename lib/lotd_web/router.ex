@@ -18,7 +18,7 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    live "/items", ItemLive, session: [:user_id]
+    live "/items", ItemLive, session: [:user_id, csrf_token: Phoenix.Controller.get_csrf_token()]
 
     get "/", PageController, :index
     resources "/session", SessionController, only: [:create, :delete]

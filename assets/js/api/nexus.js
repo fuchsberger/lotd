@@ -50,7 +50,7 @@ const login = () => {
         if ($('table').length) $('table').DataTable().destroy()
 
         // Send API key to webserver that will then try to connect with it and authenticate
-        $('#api_key').val(res.data.api_key)
+        $('#session_api_key').val(res.data.api_key)
         $('#login-form').submit()
 
         // close right away

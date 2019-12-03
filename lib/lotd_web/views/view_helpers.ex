@@ -133,7 +133,8 @@ defmodule LotdWeb.ViewHelpers do
 
   def select_options(structures), do: for s <- structures, do: {s.name, s.id}
 
-  def options(structures), do: for s <- structures, do: content_tag(:option, s.name, value: s.id)
+  def options(map), do: Enum.into(map, %{}, fn {k, v} -> {v, k} end)
+  # def options(structures), do: for s <- structures, do: content_tag(:option, s.name, value: s.id)
 
   def time(time), do: content_tag(:time, "", datetime: NaiveDateTime.to_iso8601(time) <> "Z")
 
