@@ -56,7 +56,7 @@ defmodule LotdWeb.ItemLive do
   end
 
   def handle_info({ :updated_item, item }, socket) do
-    send_update(Lotd.ItemComponent, id: item.id)
+    send_update(LotdWeb.ItemComponent, id: item.id, character: socket.assigns.character)
     {:noreply, socket}
   end
 
@@ -91,22 +91,6 @@ defmodule LotdWeb.ItemLive do
     mods = list_options(Mod)
     displays = list_options(Display)
 
-    items = Museum.list_items()
-    |> Enum.map(fn item -> Map.put(item, :location, Map.get(locations, item.location_id)) end)
-    |> Enum.map(fn item -> Map.put(item, :quest, Map.get(quests, item.quest_id)) end)
-    |> Enum.map(fn item -> Map.put(item, :display, Map.get(displays, item.display_id)) end)
-    |> Enum.map(fn item -> Map.put(item, :mod, Map.get(mods, item.mod_id)) end)
-
-    # items = if authenticated?(socket) do
-    #   ids =
-    #     socket.assigns.user.active_character
-    #     |> Accounts.get_character_items()
-    #     |> Enum.map(fn item -> item.id end)
-    #   Enum.map(items, fn item -> Map.put(item, :found, Enum.member?(ids, item.id)) end)
-    # else
-    #   items
-    # end
-
     socket = if authenticated?(socket) do
       assign(socket, character: socket.assigns.user.active_character)
     else
@@ -116,7 +100,6 @@ defmodule LotdWeb.ItemLive do
     assign socket,
       changeset: Museum.change_item(%Item{}),
       item_ids: item_ids,
-      items: items,
       locations: locations,
       quests: quests,
       mods: mods,

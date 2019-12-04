@@ -2,6 +2,7 @@ defmodule LotdWeb.ItemComponent do
   use Phoenix.LiveComponent
 
   alias Lotd.{Accounts, Museum}
+  alias Lotd.Accounts.Character
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
   alias Lotd.Repo
   import Ecto.Query
@@ -9,9 +10,9 @@ defmodule LotdWeb.ItemComponent do
   defp items_topic(socket), do: "items"
 
   def preload(list_of_assigns) do
-
     list_of_ids = Enum.map(list_of_assigns, & &1.id)
 
+    characters_query = from(c in Character, select: c.id)
     display_query = from(d in Display, select: d.name)
     location_query = from(l in Location, select: l.name)
     mod_query = from(m in Mod, select: m.name)
@@ -21,6 +22,7 @@ defmodule LotdWeb.ItemComponent do
       from(i in Item,
         select: {i.id, i},
         preload: [
+          characters: ^characters_query,
           display: ^display_query,
           location: ^location_query,
           mod: ^mod_query,
@@ -35,21 +37,21 @@ defmodule LotdWeb.ItemComponent do
     end)
   end
 
+  def update(assigns, socket) do
+    item = Map.put(assigns.item, :found, Enum.member?(assigns.item.characters, assigns.character.id))
+    {:ok, assign(socket, character: assigns.character, item: item)}
+  end
+
   def render(assigns) do
     Phoenix.View.render(LotdWeb.ItemView, "item.html", assigns)
   end
 
-  def handle_event("collect", _params, socket) do
+  def handle_event("toggle_collect", _params, socket) do
     item = socket.assigns.item
-    Accounts.update_character_collect_item(socket.assigns.character, item)
 
-    send self(), {:updated_item, item}
-    {:noreply, socket}
-  end
-
-  def handle_event("remove", _params, socket) do
-    item = socket.assigns.item
-    Accounts.update_character_remove_item(socket.assigns.character, item.id)
+    if item.found,
+      do: Accounts.update_character_remove_item(socket.assigns.character, item.id),
+      else: Accounts.update_character_collect_item(socket.assigns.character, item)
 
     send self(), {:updated_item, item}
     {:noreply, socket}
