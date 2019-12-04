@@ -38,7 +38,7 @@ defmodule Lotd.Museum do
 
   # ITEMS
 
-  def list_item_ids, do: from(i in Item, select: i.id)
+  def list_item_ids, do: Repo.all(from(i in Item, select: i.id))
 
   def item_query() do
     from i in Item,

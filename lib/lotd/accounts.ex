@@ -102,7 +102,7 @@ defmodule Lotd.Accounts do
     |> Repo.update()
   end
 
-  def update_character_add_item(%Character{} = character, item) do
+  def update_character_collect_item(%Character{} = character, item) do
     character = Repo.preload(character, :items)
 
     character

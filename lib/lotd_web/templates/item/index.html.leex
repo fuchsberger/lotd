@@ -32,8 +32,8 @@
     </tr>
   </thead>
   <tbody>
-    <%= for item <- @items do %>
-      <%= live_component @socket, LotdWeb.ItemComponent, id: item.id, item: item %>
+    <%= for item_id <- @item_ids do %>
+      <%= live_component @socket, LotdWeb.ItemComponent, id: item_id, character: @character, character_items: @character_items %>
     <% end %>
   </tbody>
 </table>

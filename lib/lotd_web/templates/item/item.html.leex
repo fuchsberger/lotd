@@ -1,7 +1,11 @@
 <tr>
-  <%= if Map.has_key?(@item, :found) do %>
+  <%= unless is_nil(@character) do %>
     <td class='text-center'>
-      <%= checkbox :item, :found, [phx_click: :toggle_found, value: @item.found] %>
+      <%= if Enum.map(@character_items, & &1.id) |> Enum.member?(@item.id) do %>
+        <%= checkbox :item, :found, [ phx_click: :remove, value: true ] %>
+      <%= else %>
+        <%= checkbox :item, :found, [ phx_click: :collect, value: false ] %>
+      <% end %>
     </td>
   <% end %>
   <td class='all font-weight-bold' data-sort='<%= @item.name %>'>

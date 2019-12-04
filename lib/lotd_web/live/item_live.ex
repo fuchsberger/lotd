@@ -17,7 +17,10 @@ defmodule LotdWeb.ItemLive do
 
     # as neither the user or character is changed during the items view we can attach the entire structure once without having to query again and again.
     if session.user_id do
-      socket = assign socket, modal: false, user: Accounts.get_user!(session.user_id)
+      user = Accounts.get_user!(session.user_id)
+      socket = assign socket, modal: false,
+        character_items: Accounts.get_character_items(user.active_character),
+        user: user
       {:ok, fetch(socket)}
     else
       socket = assign socket, modal: false
@@ -52,6 +55,11 @@ defmodule LotdWeb.ItemLive do
     {:noreply, assign(socket, modal: !socket.assigns.modal)}
   end
 
+  def handle_info({ :updated_item, item }, socket) do
+    send_update(Lotd.ItemComponent, id: item.id)
+    {:noreply, socket}
+  end
+
   def handle_info({Lotd, [:item, :saved], item}, socket) do
     item = if authenticated?(socket), do:
       Map.put(item, :found, Museum.item_owned?(item, socket.assigns.user.active_character_id)),
@@ -75,6 +83,8 @@ defmodule LotdWeb.ItemLive do
 
   defp fetch(socket) do
 
+    item_ids = Museum.list_item_ids()
+
     # get map data for secondary information
     locations= list_options(Location)
     quests = list_options(Quest)
@@ -87,18 +97,25 @@ defmodule LotdWeb.ItemLive do
     |> Enum.map(fn item -> Map.put(item, :display, Map.get(displays, item.display_id)) end)
     |> Enum.map(fn item -> Map.put(item, :mod, Map.get(mods, item.mod_id)) end)
 
-    items = if authenticated?(socket) do
-      ids =
-        socket.assigns.user.active_character
-        |> Accounts.get_character_items()
-        |> Enum.map(fn item -> item.id end)
-      Enum.map(items, fn item -> Map.put(item, :found, Enum.member?(ids, item.id)) end)
+    # items = if authenticated?(socket) do
+    #   ids =
+    #     socket.assigns.user.active_character
+    #     |> Accounts.get_character_items()
+    #     |> Enum.map(fn item -> item.id end)
+    #   Enum.map(items, fn item -> Map.put(item, :found, Enum.member?(ids, item.id)) end)
+    # else
+    #   items
+    # end
+
+    socket = if authenticated?(socket) do
+      assign(socket, character: socket.assigns.user.active_character)
     else
-      items
+      assign(socket, character: nil)
     end
 
     assign socket,
       changeset: Museum.change_item(%Item{}),
+      item_ids: item_ids,
       items: items,
       locations: locations,
       quests: quests,
