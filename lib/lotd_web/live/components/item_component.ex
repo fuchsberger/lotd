@@ -10,8 +10,6 @@ defmodule LotdWeb.ItemComponent do
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
   alias Lotd.Repo
 
-
-
   defp items_topic(socket), do: "items"
 
   def preload(list_of_assigns) do

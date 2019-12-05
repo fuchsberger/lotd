@@ -2,7 +2,7 @@
   id: "navbar", user: Map.get(@socket.assigns, :user) %>
 
 <%# Modal %>
-<%= if authenticated?(@socket) do %>
+<%= if moderator?(@socket) || admin?(@socket) do %>
   <%= live_component @socket, LotdWeb.ModalComponent,
     id: "modal",
     changeset: @changeset,
@@ -14,8 +14,8 @@
   %>
 <% end %>
 
-<%# Item Table %>6
-<div class='container-fluid p-0' phx-hook='ItemList'>
+<%# Mod Table %>6
+<div class='container-fluid p-0'>
   <%# <table class='display nowrap w-100'> %>
   <table class='table table-sm'>
     <thead>
@@ -25,7 +25,7 @@
             <i class='icon-ok-squared'></i>
           </th>
         <% end %>
-        <th class='all'>Item</th>
+        <th class='all'>Mod</th>
         <th>Location</th>
         <th>Quest</th>
         <th>Display</th>

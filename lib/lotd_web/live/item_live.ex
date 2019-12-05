@@ -22,7 +22,8 @@ defmodule LotdWeb.ItemLive do
         displays: list_options(Display),
         locations: list_options(Location),
         mods: list_options(Mod),
-        quests: list_options(Quest)
+        quests: list_options(Quest),
+        url: true
       },
       show_modal: false
 

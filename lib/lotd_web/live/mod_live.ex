@@ -9,7 +9,7 @@ defmodule LotdWeb.ModLive do
 
   alias LotdWeb.ItemView
 
-  def render(assigns), do: ItemView.render("index.html", assigns)
+  def render(assigns), do: LotdWeb.ModView.render("index.html", assigns)
 
   def mount(session, socket) do
 
@@ -17,40 +17,34 @@ defmodule LotdWeb.ModLive do
 
     # get initial options for modal
     socket = assign socket,
-      changeset: Museum.change_item(%Item{}),
-      options: %{
-        displays: list_options(Display),
-        locations: list_options(Location),
-        mods: list_options(Mod),
-        quests: list_options(Quest)
-      },
+      changeset: Museum.change_mod(%Mod{}),
+      options: %{ url: true },
       show_modal: false
 
     # as neither the user or character is changed during the items view we can attach the entire structure once without having to query again and again.
     if session.user_id do
       user = Accounts.get_user!(session.user_id)
       socket = assign socket,
-        character_items: Accounts.get_character_items(user.active_character),
+        character_mods: Accounts.get_character_mods(user.active_character),
         user: user
       {:ok, fetch(socket)}
     else
-      socket = assign socket, modal: false
       {:ok, fetch(socket)}
     end
   end
 
-  def handle_event("validate", %{"item" => params}, socket) do
+  def handle_event("validate", %{"mod" => mod_params}, socket) do
     changeset =
-      %Item{}
-      |> Museum.change_item(params)
+      %Mod{}
+      |> Museum.change_mod(mod_params)
       |> Map.put(:action, :insert)
 
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  def handle_event("add", %{"item" => item }, socket) do
-    case Museum.create_item(item) do
-      {:ok, _item} ->
+  def handle_event("add", %{"mod" => mod }, socket) do
+    case Museum.create_item(mod) do
+      {:ok, _mod} ->
         # item = Phoenix.View.render_one(item, DataView, "item.json")
         # Endpoint.broadcast("public", "add-item", item)
         # {:reply, :ok, socket}
@@ -63,7 +57,7 @@ defmodule LotdWeb.ModLive do
   end
 
   def handle_info({:toggle_modal, _params}, socket) do
-    {:noreply, assign(socket, modal: !socket.assigns.modal)}
+    {:noreply, assign(socket, show_modal: !socket.assigns.show_modal)}
   end
 
   def handle_info({ :updated_item, item }, socket) do
