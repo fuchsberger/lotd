@@ -14,7 +14,7 @@
   %>
 <% end %>
 
-<%# Mod Table %>6
+<%# Mod Table %>
 <div class='container-fluid p-0'>
   <%# <table class='display nowrap w-100'> %>
   <table class='table table-sm'>
@@ -26,15 +26,13 @@
           </th>
         <% end %>
         <th class='all'>Mod</th>
-        <th>Location</th>
-        <th>Quest</th>
-        <th>Display</th>
-        <th>Mod</th>
+        <th>Locations</th>
+        <th>Quests</th>
       </tr>
     </thead>
     <tbody>
-      <%= for item_id <- @item_ids do %>
-        <%= live_component @socket, LotdWeb.ItemComponent, id: item_id, character: @user && @user.active_character, character_items: @character_items %>
+      <%= for mod_id <- @mod_ids do %>
+        <%= live_component @socket, LotdWeb.ModComponent, id: mod_id, character: @user && @user.active_character, character_mods: @character_mods %>
       <% end %>
     </tbody>
   </table>

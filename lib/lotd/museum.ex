@@ -111,7 +111,7 @@ defmodule Lotd.Museum do
 
   # MODS
 
-  def list_mod_ids, do: from(m in Mod, select: m.id)
+  def list_mod_ids(_search_string), do: Repo.all(mod_ids_query())
 
   def list_mods, do: Repo.sort_by_id(Mod) |> Repo.all()
 

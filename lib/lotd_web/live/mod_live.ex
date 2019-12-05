@@ -60,8 +60,8 @@ defmodule LotdWeb.ModLive do
     {:noreply, assign(socket, show_modal: !socket.assigns.show_modal)}
   end
 
-  def handle_info({ :updated_item, item }, socket) do
-    send_update(LotdWeb.ItemComponent, id: item.id, character: socket.assigns.user.active_character)
+  def handle_info({ :updated_mod, mod }, socket) do
+    send_update(LotdWeb.ModComponent, id: mod.id, character: socket.assigns.user.active_character)
     {:noreply, socket}
   end
 
@@ -87,7 +87,6 @@ defmodule LotdWeb.ModLive do
   end
 
   defp fetch(socket) do
-    character = authenticated?(socket) && socket.assigns.user.active_character
-    assign(socket, :item_ids, Museum.list_item_ids(character, ""))
+    assign(socket, :mod_ids, Museum.list_mod_ids(""))
   end
 end
