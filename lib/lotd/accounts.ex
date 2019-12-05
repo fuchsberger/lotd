@@ -4,11 +4,10 @@ defmodule Lotd.Accounts do
   """
   import Ecto.Query, warn: false
 
-  import Lotd.Museum, only: [ list_item_ids: 0, list_mod_ids: 0 ]
-
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
-  alias Lotd.Museum.Item
+  alias Lotd.Museum
+  alias Lotd.Museum.{Item, Mod}
 
   # user
   def list_users, do: Repo.all(User)
@@ -43,7 +42,7 @@ defmodule Lotd.Accounts do
     Character
     |> user_characters_query(user)
     |> Repo.sort_by_id()
-    |> preload([items: ^list_item_ids(), mods: ^list_mod_ids()])
+    |> preload([items: ^Museum.item_ids_query(), mods: ^Museum.mods_id_query()])
     |> Repo.all()
   end
 
@@ -63,18 +62,10 @@ defmodule Lotd.Accounts do
     |> Map.get(:items)
   end
 
-  def load_location_ids(character) do
-    query = from i in Item, select: i.location_id, where: not is_nil(i.location_id)
-
-    character
-    |> Repo.preload([items: query])
-    |> Map.get(:items)
-  end
-
   def get_character_item_ids(character) do
     character
-    |> get_character_items()
-    |> Enum.map(fn i -> i.id end)
+    |> Repo.preload(items: Museum.item_ids_query())
+    |> Map.get(:items)
   end
 
   def get_character_mods(character) do
@@ -85,8 +76,8 @@ defmodule Lotd.Accounts do
 
   def get_character_mod_ids(character) do
     character
-    |> get_character_mods()
-    |> Enum.map(fn m -> m.id end)
+    |> Repo.preload(mods: Museum.mod_ids_query())
+    |> Map.get(:mods)
   end
 
   def create_character(%User{} = user, attrs \\ %{}) do
@@ -100,6 +91,14 @@ defmodule Lotd.Accounts do
     character
     |> Character.changeset(attrs)
     |> Repo.update()
+  end
+
+  def load_location_ids(character) do
+    query = from i in Item, select: i.location_id, where: not is_nil(i.location_id)
+
+    character
+    |> Repo.preload([items: query])
+    |> Map.get(:items)
   end
 
   def update_character_collect_item(%Character{} = character, item) do

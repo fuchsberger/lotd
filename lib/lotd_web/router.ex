@@ -1,6 +1,8 @@
 defmodule LotdWeb.Router do
   use LotdWeb, :router
 
+  @session [session: [:user_id, csrf_token: Phoenix.Controller.get_csrf_token()]]
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -11,16 +13,13 @@ defmodule LotdWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
   scope "/", LotdWeb do
     pipe_through :browser
 
-    live "/items", ItemLive, session: [:user_id, csrf_token: Phoenix.Controller.get_csrf_token()]
+    live "/", ItemLive, @session
+    live "/mods", ModLive, @session
 
-    get "/", PageController, :index
+    # get "/", ItemLive, :index
     resources "/session", SessionController, only: [:create, :delete]
     get "/:path", PageController, :not_found
   end

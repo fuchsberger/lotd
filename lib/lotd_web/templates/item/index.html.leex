@@ -1,40 +1,39 @@
 <%= live_component @socket, LotdWeb.NavbarComponent,
   id: "navbar", user: Map.get(@socket.assigns, :user) %>
 
-<%# Form %>
-<%= if @modal do %>
-  <div id="modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <%= live_component @socket, LotdWeb.ItemFormComponent,
-          id: "item_changeset", error: nil, info: nil, submitted: false, changeset: @changeset,
-          displays: @displays, mods: @mods, locations: @locations, quests: @quests %>
-      </div>
-    </div>
-  </div>
-  <script>$('#modal').modal('show')</script>
+<%# Modal %>
+<%= if authenticated?(@socket) do %>
+  <%= live_component @socket, LotdWeb.ModalComponent,
+    id: "modal",
+    changeset: @changeset,
+    options: @options,
+    show_modal: @show_modal
+  %>
 <% end %>
 
 <%# Item Table %>
-<table class='display nowrap w-100'>
-  <thead>
-    <tr>
-      <%= if authenticated?(@socket) do %>
-        <th class='all small-cell' data-searchable="false" data-sortable='false'>
-          <i class='icon-ok-squared'></i>
-        </th>
+<div class='container-fluid p-0' phx-hook='ItemList'>
+  <%# <table class='display nowrap w-100'> %>
+  <table class='table table-sm'>
+    <thead>
+      <tr>
+        <%= if authenticated?(@socket) do %>
+          <th class='all small-cell' data-searchable="false" data-sortable='false'>
+            <i class='icon-ok-squared'></i>
+          </th>
+        <% end %>
+        <th class='all'>Item</th>
+        <th>Location</th>
+        <th>Quest</th>
+        <th>Display</th>
+        <th>Mod</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for item_id <- @item_ids do %>
+        <%= live_component @socket, LotdWeb.ItemComponent, id: item_id, character: @user && @user.active_character, character_items: @character_items %>
       <% end %>
-      <th class='all'>Item</th>
-      <th>Location</th>
-      <th>Quest</th>
-      <th>Display</th>
-      <th>Mod</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= for item_id <- @item_ids do %>
-      <%= live_component @socket, LotdWeb.ItemComponent, id: item_id, character: @character, character_items: @character_items %>
-    <% end %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</div>
 

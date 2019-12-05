@@ -32,7 +32,7 @@
 
     <div class="form-group">
       <%= label f, :display_id %>
-      <%= select f, :display_id, options(@displays),
+      <%= select f, :display_id, options(@options.displays),
         [class: "form-control form-control-sm", prompt: "Display"] ++
         input_validations(f, :display_id) %>
       <%= error_tag f, :display_id %>
@@ -40,7 +40,7 @@
 
     <div class="form-group">
       <%= label f, :mod_id %>
-      <%= select f, :mod_id, options(@mods),
+      <%= select f, :mod_id, options(@options.mods),
         [class: "form-control form-control-sm", prompt: "Mod"] ++
         input_validations(f, :mod_id) %>
       <%= error_tag f, :mod_id %>
@@ -48,7 +48,7 @@
 
     <div class="form-group">
       <%= label f, :location_id %>
-      <%= select f, :location_id, options(@locations),
+      <%= select f, :location_id, options(@options.locations),
         [class: "form-control form-control-sm", prompt: "Location"] ++
         input_validations(f, :location_id) %>
       <%= error_tag f, :location_id %>
@@ -56,7 +56,7 @@
 
     <div class="form-group">
       <%= label f, :quest_id %>
-      <%= select f, :quest_id, options(@quests),
+      <%= select f, :quest_id, options(@options.quests),
         [class: "form-control form-control-sm", prompt: "Quest"] ++
         input_validations(f, :quest_id) %>
       <%= error_tag f, :quest_id %>

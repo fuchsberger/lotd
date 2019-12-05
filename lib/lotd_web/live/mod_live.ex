@@ -1,4 +1,4 @@
-defmodule LotdWeb.ItemLive do
+defmodule LotdWeb.ModLive do
 
   use LotdWeb, :live
 
@@ -13,7 +13,7 @@ defmodule LotdWeb.ItemLive do
 
   def mount(session, socket) do
 
-    Lotd.subscribe("items")
+    Lotd.subscribe("mods")
 
     # get initial options for modal
     socket = assign socket,

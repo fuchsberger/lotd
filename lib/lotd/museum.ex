@@ -5,14 +5,12 @@ defmodule Lotd.Museum do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
+  alias Lotd.Accounts
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
 
-  # topics for live_view channels
-  @topic_displays "displays"
-  @topic_items "items"
-  @topic_locations "locations"
-  @topic_mods "mods"
-  @topic_quest "quests"
+  # Helper Query Functions
+  def item_ids_query, do: from(i in Item, select: i.id)
+  def mod_ids_query, do: from(m in Mod, select: m.id)
 
   # DISPLAYS
 
@@ -38,7 +36,17 @@ defmodule Lotd.Museum do
 
   # ITEMS
 
-  def list_item_ids, do: Repo.all(from(i in Item, select: i.id))
+  def list_item_ids(character, _search \\ "") do
+    mod_ids = if character,
+      do: Accounts.get_character_mod_ids(character),
+      else: Repo.all(mod_ids_query)
+
+    Repo.all(from(i in Item,
+      select: i.id,
+      order_by: [i.name],
+      where: i.mod_id in ^mod_ids
+    ))
+  end
 
   def item_query() do
     from i in Item,
@@ -46,9 +54,7 @@ defmodule Lotd.Museum do
       preload: [:display, :quest, :location]
   end
 
-  def list_items do
-    Repo.all from i in Item
-  end
+  def list_items, do: Repo.all from i in Item
 
   def list_character_item_ids(character) do
     character

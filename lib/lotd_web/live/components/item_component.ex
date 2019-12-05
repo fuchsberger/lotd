@@ -1,11 +1,16 @@
 defmodule LotdWeb.ItemComponent do
   use Phoenix.LiveComponent
 
+  import Ecto.Query
+  import Phoenix.HTML.Form, only: [checkbox: 3]
+  import LotdWeb.ViewHelpers, only: [link_title: 1]
+
   alias Lotd.{Accounts, Museum}
   alias Lotd.Accounts.Character
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
   alias Lotd.Repo
-  import Ecto.Query
+
+
 
   defp items_topic(socket), do: "items"
 
@@ -38,12 +43,33 @@ defmodule LotdWeb.ItemComponent do
   end
 
   def update(assigns, socket) do
-    item = Map.put(assigns.item, :found, Enum.member?(assigns.item.characters, assigns.character.id))
-    {:ok, assign(socket, character: assigns.character, item: item)}
+    found = cond do
+      is_nil(assigns.character) -> false
+      true -> Enum.member?(assigns.item.characters, assigns.character.id)
+    end
+    {:ok, assign(socket,
+      character: assigns.character,
+      item: Map.put(assigns.item, :found, found))
+    }
   end
 
   def render(assigns) do
-    Phoenix.View.render(LotdWeb.ItemView, "item.html", assigns)
+    ~L"""
+      <tr phx-hook='Item'>
+        <%= unless is_nil(@character) do %>
+          <td class='text-center'>
+            <%= checkbox :item, :found, [ phx_click: :toggle_collect, value: @item.found ] %>
+          </td>
+        <% end %>
+        <td class='all font-weight-bold' data-sort='<%= @item.name %>'>
+          <%= link_title(@item) %>
+        </td>
+        <td><a class='search-field'><%= @item.location %></a></td>
+        <td><a class='search-field'><%= @item.quest %></a></td>
+        <td><a class='search-field'><%= @item.display %></a></td>
+        <td><a class='search-field'><%= @item.mod %></a></td>
+      </tr>
+    """
   end
 
   def handle_event("toggle_collect", _params, socket) do
