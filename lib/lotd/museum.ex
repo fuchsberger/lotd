@@ -8,10 +8,6 @@ defmodule Lotd.Museum do
   alias Lotd.Accounts
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
 
-  # Helper Query Functions
-  def item_ids_query, do: from(i in Item, select: i.id)
-  def mod_ids_query, do: from(m in Mod, select: m.id)
-
   # DISPLAYS
 
   def list_displays, do: Repo.sort_by_name(Display) |> Repo.all()
@@ -39,7 +35,7 @@ defmodule Lotd.Museum do
   def list_item_ids(character, _search \\ "") do
     mod_ids = if character,
       do: Accounts.get_character_mod_ids(character),
-      else: Repo.all(mod_ids_query)
+      else: Mod |> Repo.ids() |> Repo.all()
 
     Repo.all(from(i in Item,
       select: i.id,
@@ -111,9 +107,20 @@ defmodule Lotd.Museum do
 
   # MODS
 
-  def list_mod_ids(_search_string), do: Repo.all(mod_ids_query())
+  def list_mod_ids(_search_string), do: Mod |> Repo.ids() |> Repo.all()
 
-  def list_mods, do: Repo.sort_by_id(Mod) |> Repo.all()
+  def list_mods(list_of_ids) do
+    from(m in Mod,
+      select: {m.id, m},
+      preload: [
+        items: ^Repo.ids(Item),
+        locations: ^Repo.ids(Location),
+        quests: ^Repo.ids(Quest)
+      ],
+      where: m.id in ^list_of_ids
+    )
+    |> Repo.all()
+  end
 
   def get_mod!(id), do: Repo.get!(Mod, id)
 

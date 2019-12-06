@@ -9,7 +9,7 @@ const TABLE_DEFAULTS = {
   order: [[0, 'asc']],
   paging: false,
   responsive: { details: { type: 'column', target: -1 } },
-  rowId: 'data-phx-component',
+  rowId: 'phx-component',
   stateSave: true
 }
 
@@ -17,24 +17,20 @@ const TABLE_DEFAULTS = {
 
 let Hooks = {}
 
-// Hooks.ItemList = {
-//   mounted(){
-//     console.log("VIEW")
-//     if(!window.table) window.table = $('table').DataTable({
-//       ...TABLE_DEFAULTS,
-//       order: [[1, 'asc']]
-//     })
-//   }
-// }
-// Hooks.Item = {
-//   mounted(){
-//     console.log("ITEM")
-//   },
-//   updated(){
-//     const newData = window.table.row(this.el).data()
-//     console.log(newData, window.table)
-//   }
-// }
+Hooks.mod_list = {
+  mounted(){
+    window.table = $('#mod-table').DataTable({
+      ...TABLE_DEFAULTS,
+      order: [[1, 'asc']]
+    })
+  },
+  updated() {
+    const newRows = []
+    $("#table-source tr").each(function() { newRows.push(this) })
+    window.table.rows.add(newRows).draw()
+    window.table.responsive.recalc()
+  }
+}
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {

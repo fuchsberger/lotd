@@ -1,76 +1,71 @@
 defmodule LotdWeb.ModComponent do
   use Phoenix.LiveComponent
 
-  import Ecto.Query
   import Phoenix.HTML.Form, only: [checkbox: 3]
   import LotdWeb.ViewHelpers, only: [link_title: 1]
 
   alias Lotd.{Accounts, Museum}
-  alias Lotd.Accounts.Character
-  alias Lotd.Museum.{Item, Location, Mod, Quest}
-  alias Lotd.Repo
-
-  defp items_topic(socket), do: "items"
 
   def preload(list_of_assigns) do
+
     list_of_ids = Enum.map(list_of_assigns, & &1.id)
 
-    location_query = from(l in Location, select: l.id)
-    quest_query = from(q in Quest, select: q.id)
+    mods = Museum.list_mods(list_of_ids)
+    user = List.first(list_of_assigns).user
 
-    mods =
-      from(m in Mod,
-        select: {m.id, m},
-        preload: [
-          locations: ^location_query,
-          quests: ^quest_query
-        ],
-        where: m.id in ^list_of_ids)
-      # |> Repo.aggregate(:count, :locations)
-      |> Repo.all()
+    mods = unless is_nil(user) do
+      character_mod_ids = Accounts.get_character_mod_ids(user.active_character)
+      mods
+      |> Enum.map(fn {k, v} -> {k, Map.put(v, :active, Enum.member?(character_mod_ids, k))} end)
       |> Map.new()
-
-    Enum.map(list_of_assigns, fn assigns ->
-      Map.put(assigns, :mod, mods[assigns.id])
-    end)
-  end
-
-  def update(assigns, socket) do
-    activated = cond do
-      is_nil(assigns.character) -> false
-      true -> Enum.member?(assigns.character_mods, assigns.mod.id)
+    else
+      Map.new(mods)
     end
-    {:ok, assign(socket,
-      character: assigns.character,
-      mod: Map.put(assigns.mod, :activated, activated))
-    }
+
+    Enum.map(list_of_assigns, fn assigns -> Map.put(assigns, :mod, mods[assigns.id]) end)
   end
 
   def render(assigns) do
     ~L"""
-      <tr phx-hook='Mod'>
-        <%= unless is_nil(@character) do %>
-          <td class='text-center'>
-            <%= checkbox :mod, :activated, [ phx_click: :toggle_active, value: @mod.activated ] %>
+      <tr id='row<%= @mod.id %>'>
+        <%= unless is_nil(@user) do %>
+          <td>
+            <a phx-click='toggle_active'>
+              <i class='<%= icon_active(@mod.active) %>'></i>
+            </a>
           </td>
         <% end %>
-        <td class='all font-weight-bold' data-sort='<%= @mod.name %>'>
+        <td class='font-weight-bold' data-sort='<%= @mod.name %>'>
           <%= link_title(@mod) %>
         </td>
+        <td><%= @mod.filename %></td>
+        <td><%= Enum.count(@mod.items) %></td>
         <td><%= Enum.count(@mod.locations) %></td>
         <td><%= Enum.count(@mod.quests) %></td>
+        <%= if @user && @user.moderator do %>
+          <td><a class='icon-pencil'></a></td>
+        <% end %>
+        <td class='control'></td>
       </tr>
     """
   end
 
   def handle_event("toggle_active", _params, socket) do
+
+    character = socket.assigns.user.active_character
     mod = socket.assigns.mod
 
-    if mod.activated,
-      do: Accounts.update_character_remove_mod(socket.assigns.character, mod.id),
-      else: Accounts.update_character_add_mod(socket.assigns.character, mod)
+    if mod.active,
+      do: Accounts.update_character_remove_mod(character, mod.id),
+      else: Accounts.update_character_add_mod(character, mod)
 
     send self(), {:updated_mod, mod}
+
+    # {:noreply, assign(socket, :mod, Map.put( mod, :active, !mod.active ))}
     {:noreply, socket}
+  end
+
+  defp icon_active(active) do
+    if active, do: "icon-ok-squared", else: "icon-plus-squared-alt"
   end
 end

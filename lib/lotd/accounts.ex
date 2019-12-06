@@ -42,7 +42,7 @@ defmodule Lotd.Accounts do
     Character
     |> user_characters_query(user)
     |> Repo.sort_by_id()
-    |> preload([items: ^Museum.item_ids_query(), mods: ^Museum.mods_id_query()])
+    |> preload([items: ^Repo.ids(Item), mods: ^Repo.ids(Mod)])
     |> Repo.all()
   end
 
@@ -64,7 +64,7 @@ defmodule Lotd.Accounts do
 
   def get_character_item_ids(character) do
     character
-    |> Repo.preload(items: Museum.item_ids_query())
+    |> Repo.preload(items: Repo.ids(Item))
     |> Map.get(:items)
   end
 
@@ -76,7 +76,7 @@ defmodule Lotd.Accounts do
 
   def get_character_mod_ids(character) do
     character
-    |> Repo.preload(mods: Museum.mod_ids_query())
+    |> Repo.preload(mods: Repo.ids(Mod))
     |> Map.get(:mods)
   end
 

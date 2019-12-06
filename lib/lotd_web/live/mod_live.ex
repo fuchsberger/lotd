@@ -2,18 +2,16 @@ defmodule LotdWeb.ModLive do
 
   use LotdWeb, :live
 
-  import Lotd.Repo, only: [list_options: 1]
-
   alias Lotd.{Accounts, Museum}
-  alias Lotd.Museum.{Item, Display, Location, Mod, Quest}
+  alias Lotd.Museum.Mod
 
-  alias LotdWeb.ItemView
+  @topic inspect(__MODULE__)
 
   def render(assigns), do: LotdWeb.ModView.render("index.html", assigns)
 
   def mount(session, socket) do
 
-    Lotd.subscribe("mods")
+    Lotd.subscribe(@topic)
 
     # get initial options for modal
     socket = assign socket,
@@ -25,7 +23,7 @@ defmodule LotdWeb.ModLive do
     if session.user_id do
       user = Accounts.get_user!(session.user_id)
       socket = assign socket,
-        character_mods: Accounts.get_character_mods(user.active_character),
+        # character_mods: Accounts.get_character_mods(user.active_character),
         user: user
       {:ok, fetch(socket)}
     else
@@ -43,6 +41,7 @@ defmodule LotdWeb.ModLive do
   end
 
   def handle_event("add", %{"mod" => mod }, socket) do
+
     case Museum.create_item(mod) do
       {:ok, _mod} ->
         # item = Phoenix.View.render_one(item, DataView, "item.json")
@@ -60,8 +59,8 @@ defmodule LotdWeb.ModLive do
     {:noreply, assign(socket, show_modal: !socket.assigns.show_modal)}
   end
 
-  def handle_info({ :updated_mod, mod }, socket) do
-    send_update(LotdWeb.ModComponent, id: mod.id, character: socket.assigns.user.active_character)
+  def handle_info({ :updated_mod, %Mod{:id => id} }, socket) do
+    send_update(LotdWeb.ModComponent, id: id, user: socket.assigns.user)
     {:noreply, socket}
   end
 

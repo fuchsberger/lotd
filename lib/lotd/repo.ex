@@ -6,6 +6,8 @@ defmodule Lotd.Repo do
   import Ecto.Query, warn: false
   import Ecto.Changeset, only: [validate_change: 3]
 
+  def ids(module), do: from(i in module, select: i.id)
+
   def list_options(module) do
     from(x in module, select: {x.id, x.name}, order_by: x.name)
     |> all()
