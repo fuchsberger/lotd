@@ -26,9 +26,9 @@ Hooks.mod_list = {
   },
   updated() {
     const newRows = []
-    $("#table-source tr").each(function() { newRows.push(this) })
-    window.table.rows.add(newRows).draw()
-    window.table.responsive.recalc()
+    $("#table-source tr").each(function () { newRows.push(this) })
+
+    window.table.rows.add(newRows).draw().responsive.recalc()
   }
 }
 
