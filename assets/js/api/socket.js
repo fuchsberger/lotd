@@ -4,10 +4,12 @@ import LiveSocket from "phoenix_live_view"
 
 // Table settings
 const TABLE_DEFAULTS = {
+  deferRender: true,
   dom: 't',
   info: false,
   order: [[0, 'asc']],
   paging: false,
+  processing: true,
   responsive: { details: { type: 'column', target: -1 } },
   rowId: 'phx-component',
   stateSave: true
@@ -17,20 +19,20 @@ const TABLE_DEFAULTS = {
 
 let Hooks = {}
 
-Hooks.mod_list = {
-  mounted(){
-    window.table = $('#mod-table').DataTable({
-      ...TABLE_DEFAULTS,
-      order: [[1, 'asc']]
-    })
-  },
-  updated() {
-    const newRows = []
-    $("#table-source tr").each(function () { newRows.push(this) })
+// Hooks.mod_list = {
+//   mounted(){
+//     window.table = $('#mod-table').DataTable({
+//       ...TABLE_DEFAULTS,
+//       order: [[1, 'asc']]
+//     })
+//   },
+//   updated() {
+//     const newRows = []
+//     $("#table-source tr").each(function () { newRows.push(this) })
 
-    window.table.rows.add(newRows).draw().responsive.recalc()
-  }
-}
+//     window.table.rows.add(newRows).draw().responsive.recalc()
+//   }
+// }
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {

@@ -7,6 +7,7 @@ defmodule LotdWeb.ViewHelpers do
 
   import Phoenix.Controller, only: [view_module: 1]
   import Phoenix.View, only: [render: 3]
+  import Phoenix.LiveView, only: [ live_link: 2 ]
 
   alias LotdWeb.Router.Helpers, as: Routes
 
@@ -132,6 +133,16 @@ defmodule LotdWeb.ViewHelpers do
   end
 
   def select_options(structures), do: for s <- structures, do: {s.name, s.id}
+
+  def th_sort(title, sort_by, current_sort \\ nil) do
+    link = live_link(title,
+      to: Routes.live_path(LotdWeb.Endpoint, LotdWeb.ModLive, %{sort_by: sort_by}),
+      class: "text-body")
+    color = unless current_sort == sort_by, do: " text-white"
+    icon = content_tag(:i, "", class: "icon-sort#{color}")
+
+    content_tag :th, [link, icon]
+  end
 
   def options(map), do: Enum.into(map, %{}, fn {k, v} -> {v, k} end)
   # def options(structures), do: for s <- structures, do: content_tag(:option, s.name, value: s.id)

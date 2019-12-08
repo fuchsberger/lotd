@@ -2,45 +2,42 @@
   id: "navbar", user: Map.get(@socket.assigns, :user) %>
 
 <%# Modal %>
-<%= live_component @socket, LotdWeb.ModalComponent,
-  id: "modal",
-  changeset: @changeset,
-  error: nil,
-  info: nil,
-  options: @options,
-  show_modal: @show_modal,
-  submitted: false
-%>
+<%= if @modal, do: live_component @socket, LotdWeb.ModalComponent,
+  [ {:search, @search} | Map.to_list(@modal) ] %>
 
 <%# Mod Table %>
-<div class='container-fluid m-0 p-0' phx-hook='mod_list' phx-update='ignore'>
-  <table id='mod-table' class="display dt-responsive nowrap" width='100%'>
+<%# <div class='container-fluid m-0 p-0' phx-hook='mod_list' phx-update='ignore'> %>
+<div class='container-fluid m-0 p-0'>
+  <%# <table id='mod-table' class="display dt-responsive nowrap" width='100%'> %>
+  <table id='mod-table' class="table table-sm table-striped">
     <thead>
       <tr>
         <%= if authenticated?(@socket) do %>
-          <th class='all small-cell' data-searchable="false" data-sortable='false'>
+          <th class='text-center' data-searchable="false" data-sortable='false'>
             <i class='icon-ok-squared'></i>
           </th>
         <% end %>
-        <th class='all'>Mod</th>
-        <th>Filename</th>
-        <th data-priority="3">Displays</th>
-        <th data-priority="3">Locations</th>
-        <th data-priority="3">Quests</th>
+
+        <%= th_sort "Mod", "name", @sort %>
+        <%= th_sort "Filename", "filename", @sort %>
+        <%= th_sort "Displays", "display_count", @sort %>
+        <%= th_sort "Locations", "location_count", @sort %>
+        <%= th_sort "Quests", "quest_count", @sort %>
 
         <%= if moderator?(@socket) do %>
           <th class='all small-cell' data-priority="2" data-searchable='false' data-sortable='false'>
             <i class='icon-pencil'></i>
           </th>
         <% end %>
-        <th class='control all small-cell' data-searchable='false' data-sortable='false'></th>
       </tr>
     </thead>
+    <tbody>
+      <%= for mod <- @visible_mods do %>
+        <%= live_component @socket, LotdWeb.ModComponent, id: mod.id,
+          mod: mod,
+          moderator: @user && @user.moderator
+        %>
+      <% end %>
+    </tbody>
   </table>
 </div>
-
-<table id='table-source' class='d-none'>
-  <%= for mod_id <- @mod_ids do %>
-    <%= live_component @socket, LotdWeb.ModComponent, id: mod_id, user: @user %>
-  <% end %>
-</table>

@@ -17,7 +17,9 @@
     </div>
 
     <%# Search %>
-    <input id="search" class="form-control" type="text" placeholder="Find..." >
+    <form phx-change="search" class="search-form">
+      <%= text_input :search_field, :query, class: "form-control", placeholder: "Find...", autofocus: true, "phx-debounce": "300" %>
+    </form>
 
     <%# Search Count %>
     <div class='input-group-append'>

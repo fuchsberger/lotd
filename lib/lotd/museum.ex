@@ -109,17 +109,12 @@ defmodule Lotd.Museum do
 
   def list_mod_ids(_search_string), do: Mod |> Repo.ids() |> Repo.all()
 
-  def list_mods(list_of_ids) do
-    from(m in Mod,
-      select: {m.id, m},
-      preload: [
-        items: ^Repo.ids(Item),
-        locations: ^Repo.ids(Location),
-        quests: ^Repo.ids(Quest)
-      ],
-      where: m.id in ^list_of_ids
-    )
-    |> Repo.all()
+  def list_mods() do
+    from(m in Mod, preload: [
+      items: ^Repo.ids(Item),
+      locations: ^Repo.ids(Location),
+      quests: ^Repo.ids(Quest)
+    ]) |> Repo.all()
   end
 
   def get_mod!(id), do: Repo.get!(Mod, id)

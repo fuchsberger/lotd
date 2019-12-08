@@ -54,22 +54,20 @@
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
 
-.icon-off:before { content: '\e800'; } /* '' */
-.icon-search:before { content: '\e801'; } /* '' */
-.icon-plus:before { content: '\e802'; } /* '' */
-.icon-cog:before { content: '\e803'; } /* '' */
-.icon-star:before { content: '\e804'; } /* '' */
-.icon-star-empty:before { content: '\e805'; } /* '' */
-.icon-cancel:before { content: '\e806'; } /* '' */
-.icon-pencil:before { content: '\e807'; } /* '' */
-.icon-vector-pencil:before { content: '\e808'; } /* '' */
-.icon-crown-plus:before { content: '\e845'; } /* '' */
-.icon-crown-minus:before { content: '\e846'; } /* '' */
-.icon-direction:before { content: '\f124'; } /* '' */
-.icon-angle-circled-up:before { content: '\f139'; } /* '' */
-.icon-angle-circled-down:before { content: '\f13a'; } /* '' */
-.icon-ok-squared:before { content: '\f14a'; } /* '' */
-.icon-plus-squared-alt:before { content: '\f196'; } /* '' */
-.icon-cubes:before { content: '\f1b3'; } /* '' */
-.icon-user-plus:before { content: '\f234'; } /* '' */
-.icon-user-times:before { content: '\f235'; } /* '' */
+.icon-off:before { content: '\e800'; } /* 'î €' */
+.icon-search:before { content: '\e801'; } /* 'î ' */
+.icon-plus:before { content: '\e802'; } /* 'î ‚' */
+.icon-cog:before { content: '\e803'; } /* 'î ƒ' */
+.icon-star:before { content: '\e804'; } /* 'î „' */
+.icon-star-empty:before { content: '\e805'; } /* 'î …' */
+.icon-cancel:before { content: '\e806'; } /* 'î †' */
+.icon-pencil:before { content: '\e807'; } /* 'î ‡' */
+.icon-sort:before { content: '\f0dc'; } /* 'ïƒœ' */
+.icon-angle-double-up:before { content: '\f102'; } /* 'ï„‚' */
+.icon-angle-double-down:before { content: '\f103'; } /* 'ï„ƒ' */
+.icon-minus-squared:before { content: '\f146'; } /* 'ï…†' */
+.icon-minus-squared-alt:before { content: '\f147'; } /* 'ï…‡' */
+.icon-ok-squared:before { content: '\f14a'; } /* 'ï…Š' */
+.icon-plus-squared-alt:before { content: '\f196'; } /* 'ï†–' */
+.icon-user-plus:before { content: '\f234'; } /* 'ïˆ´' */
+.icon-user-times:before { content: '\f235'; } /* 'ïˆµ' */

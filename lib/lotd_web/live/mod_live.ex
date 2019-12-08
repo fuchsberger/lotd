@@ -11,24 +11,32 @@ defmodule LotdWeb.ModLive do
 
   def mount(session, socket) do
 
-    Lotd.subscribe(@topic)
+    user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
-    # get initial options for modal
-    socket = assign socket,
-      changeset: Museum.change_mod(%Mod{}),
-      options: %{ url: true },
-      show_modal: false
+    mods = unless is_nil(user) do
+      character_mod_ids = Accounts.get_character_mod_ids(user.active_character)
 
-    # as neither the user or character is changed during the items view we can attach the entire structure once without having to query again and again.
-    if session.user_id do
-      user = Accounts.get_user!(session.user_id)
-      socket = assign socket,
-        # character_mods: Accounts.get_character_mods(user.active_character),
-        user: user
-      {:ok, fetch(socket)}
+      Museum.list_mods()
+      |> Enum.map(fn mod -> Map.put(mod, :active, Enum.member?(character_mod_ids, mod.id)) end)
     else
-      {:ok, fetch(socket)}
+      Museum.list_mods()
     end
+
+    socket = assign socket,
+      modal: %{
+        changeset: Museum.change_mod(%Mod{}),
+        error: nil,
+        info: nil,
+        options: %{ url: true },
+        show: false,
+        submitted: false
+      },
+      mods: mods,
+      search: "",
+      sort: nil,
+      user: user
+
+    {:ok, socket}
   end
 
   def handle_event("validate", %{"mod" => mod_params}, socket) do
@@ -55,13 +63,40 @@ defmodule LotdWeb.ModLive do
     end
   end
 
+  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
+    case sort_by do
+      sort_by
+      when sort_by in ~w(name filename display_count location_count quest_count) ->
+        socket = assign(socket, mods: sort(socket.assigns.mods, sort_by, sort_by == socket.assigns.sort), sort: sort_by)
+        {:noreply, filter(socket)}
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_params(_params, _uri, socket) do
+    {:noreply, socket}
+  end
+
+  def handle_info({:search, search_query}, socket) do
+    {:noreply, filter(socket, search_query)}
+  end
+
   def handle_info({:toggle_modal, _params}, socket) do
     {:noreply, assign(socket, show_modal: !socket.assigns.show_modal)}
   end
 
-  def handle_info({ :updated_mod, %Mod{:id => id} }, socket) do
-    send_update(LotdWeb.ModComponent, id: id, user: socket.assigns.user)
-    {:noreply, socket}
+  def handle_info({ :toggle_active, %Mod{} = mod }, socket) do
+
+    character = socket.assigns.user.active_character
+
+    if mod.active,
+      do: Accounts.update_character_remove_mod(character, mod.id),
+      else: Accounts.update_character_add_mod(character, mod)
+
+    mod = Map.put(mod, :active, !mod.active)
+
+    {:noreply, update_mod(socket, mod)}
   end
 
   def handle_info({Lotd, [:item, :saved], item}, socket) do
@@ -85,7 +120,21 @@ defmodule LotdWeb.ModLive do
     end
   end
 
-  defp fetch(socket) do
-    assign(socket, :mod_ids, Museum.list_mod_ids(""))
+  defp filter(socket, search_query \\ nil) do
+
+    filter = if is_nil(search_query), do: socket.assigns.search, else: search_query
+    filter = String.downcase(filter)
+
+    visible_mods = Enum.filter(socket.assigns.mods, fn m ->
+      String.contains?(String.downcase(m.name), filter)
+    end)
+
+    assign(socket, visible_mods: visible_mods)
+  end
+
+  defp update_mod(socket, mod) do
+    index = Enum.find_index(socket.assigns.mods, fn m -> m.id == mod.id end)
+    mods = List.replace_at(socket.assigns.mods, index, mod)
+    assign(socket, :mods, mods)
   end
 end
