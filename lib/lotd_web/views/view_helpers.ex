@@ -134,6 +134,11 @@ defmodule LotdWeb.ViewHelpers do
 
   def select_options(structures), do: for s <- structures, do: {s.name, s.id}
 
+  def th_edit do
+    icon = content_tag :i, "", class: "icon-pencil"
+    content_tag :th, icon, class: "text-center"
+  end
+
   def th_sort(title, sort_by, current_sort \\ nil) do
     link = live_link(title,
       to: Routes.live_path(LotdWeb.Endpoint, LotdWeb.ModLive, %{sort_by: sort_by}),

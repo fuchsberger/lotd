@@ -8,10 +8,10 @@ defmodule LotdWeb.ModComponent do
 
   def render(assigns) do
     ~L"""
-      <tr id='row<%= @mod.id %>'>
+      <tr>
         <%= if Map.has_key?(@mod, :active) do %>
           <td class='text-center'>
-            <a phx-click='toggle_active'>
+            <a phx-click='toggle_active' phx-value-id='<%= @mod.id %>'>
               <i class='<%= icon_active(@mod.active) %>'></i>
             </a>
           </td>
@@ -24,11 +24,6 @@ defmodule LotdWeb.ModComponent do
         <%= if @moderator do %><td><a class='icon-pencil'></a></td><% end %>
       </tr>
     """
-  end
-
-  def handle_event("toggle_active", _params, socket) do
-    send self(), {:toggle_active, socket.assigns.mod}
-    {:noreply, socket}
   end
 
   defp icon_active(active) do

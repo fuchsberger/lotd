@@ -13,23 +13,17 @@
     <thead>
       <tr>
         <%= if authenticated?(@socket), do: th_toggle() %>
-
         <%= th_sort "Mod", "name", @sort %>
         <%= th_sort "Filename", "filename", @sort %>
         <%= th_sort "Displays", "display_count", @sort %>
         <%= th_sort "Locations", "location_count", @sort %>
         <%= th_sort "Quests", "quest_count", @sort %>
-
-        <%= if moderator?(@socket) do %>
-          <th class='all small-cell' data-priority="2" data-searchable='false' data-sortable='false'>
-            <i class='icon-pencil'></i>
-          </th>
-        <% end %>
+        <%= if moderator?(@socket), do: th_edit() %>
       </tr>
     </thead>
     <tbody>
       <%= for mod <- @visible_mods do %>
-        <%= live_component @socket, LotdWeb.ModComponent, id: mod.id,
+        <%= live_component @socket, LotdWeb.ModComponent,
           mod: mod,
           moderator: @user && @user.moderator
         %>
