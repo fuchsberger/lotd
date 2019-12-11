@@ -144,6 +144,11 @@ defmodule LotdWeb.ViewHelpers do
     content_tag :th, [link, icon]
   end
 
+  def th_toggle do
+    icon = content_tag :i, "", class: "icon-ok-squared"
+    content_tag :th, icon, class: "text-center"
+  end
+
   def options(map), do: Enum.into(map, %{}, fn {k, v} -> {v, k} end)
   # def options(structures), do: for s <- structures, do: content_tag(:option, s.name, value: s.id)
 

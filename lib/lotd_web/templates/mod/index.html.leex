@@ -12,11 +12,7 @@
   <table id='mod-table' class="table table-sm table-striped">
     <thead>
       <tr>
-        <%= if authenticated?(@socket) do %>
-          <th class='text-center' data-searchable="false" data-sortable='false'>
-            <i class='icon-ok-squared'></i>
-          </th>
-        <% end %>
+        <%= if authenticated?(@socket), do: th_toggle() %>
 
         <%= th_sort "Mod", "name", @sort %>
         <%= th_sort "Filename", "filename", @sort %>
