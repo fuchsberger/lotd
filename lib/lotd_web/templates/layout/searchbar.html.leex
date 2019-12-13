@@ -1,0 +1,25 @@
+ <div id="search-control" class='input-group d-none'>
+
+    <%# Control Actions %>
+    <div class='input-group-prepend'>
+      <div class='input-group-text'>
+        <%= if @user && (@user.moderator || @user.admin) do %>
+          <a phx-click='toggle_modal'><i class='icon-plus'></i></a>
+        <% else %>
+          <a></a>
+        <% end %>
+      </div>
+    </div>
+
+    <%# Search %>
+    <form phx-change="search" class="search-form">
+      <%= text_input :search_field, :query, class: "form-control", placeholder: "Find...", autofocus: true, "phx-debounce": "300" %>
+    </form>
+
+    <%# Search Count %>
+    <%= unless is_nil(@count) do %>
+      <div class='input-group-append'>
+        <span id='search-count' class='input-group-text font-weight-bold'><%= @count %></span>
+      </div>
+    <% end %>
+  </div>

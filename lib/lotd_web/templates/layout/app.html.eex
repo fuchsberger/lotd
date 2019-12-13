@@ -8,17 +8,25 @@
 
     <title><%= gettext "LOTD Inventory Manager" %></title>
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
-    <script>
-      window.userToken = "<%= assigns[:user_token] %>";
-      window.user_id = <%= authenticated?(@conn) && @conn.assigns.current_user.id %>;
-      window.moderator = <%= moderator?(@conn) %>;
-      window.admin = <%= admin?(@conn) %>;
-    </script>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
   </head>
   <body>
-    <%= error(get_flash(@conn)["error"]) %>
-    <%= info(get_flash(@conn)["info"]) %>
+    <%= render "navbar.html", conn: @conn %>
+
+    <%= live_link [icon("items"), "Items"],
+      to: Routes.live_path(LotdWeb.Endpoint, LotdWeb.ItemLive),
+      class: "nav-link tab"
+    %>
+
+    <%# error(get_flash(@conn)["error"]) %>
+    <%# info(get_flash(@conn)["info"]) %>
     <%= render @view_module, @view_template, assigns %>
+
+
+  <div class="d-block d-sm-none">XS</div>
+  <div class="d-none d-sm-block d-md-none">SM</div>
+  <div class="d-none d-md-block d-lg-none">MD</div>
+  <div class="d-none d-lg-block d-xl-none">LG</div>
+  <div class="d-none d-xl-block">XL</div>
   </body>
 </html>

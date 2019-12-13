@@ -1,15 +1,8 @@
-<%= live_component @socket, LotdWeb.NavbarComponent,
-  id: "navbar", user: Map.get(@socket.assigns, :user) %>
-
-<%# Modal %>
 <%= if @modal, do: live_component @socket, LotdWeb.ModalComponent,
   [ {:search, @search} | Map.to_list(@modal) ] %>
 
-<%# Mod Table %>
-<%# <div class='container-fluid m-0 p-0' phx-hook='mod_list' phx-update='ignore'> %>
-<div class='container-fluid m-0 p-0'>
-  <%# <table id='mod-table' class="display dt-responsive nowrap" width='100%'> %>
-  <table id='mod-table' class="table table-sm table-striped">
+<div class='container'>
+  <table id='mod-table' class="table table-sm text-nowrap">
     <thead>
       <tr>
         <%= if authenticated?(@socket), do: th_toggle() %>
@@ -23,11 +16,31 @@
     </thead>
     <tbody>
       <%= for mod <- @visible_mods do %>
-        <%= live_component @socket, LotdWeb.ModComponent,
-          mod: mod,
-          moderator: @user && @user.moderator
-        %>
+        <tr>
+          <%= if authenticated?(@socket) do %>
+            <td class='text-center'>
+              <a phx-click='toggle_active' phx-value-id='<%= mod.id %>'>
+                <i class='<%= icon_active(mod.active) %>'></i>
+              </a>
+            </td>
+          <% end %>
+          <td class='font-weight-bold' data-sort='<%= mod.name %>'><%= link_title(mod) %></td>
+          <td><%= mod.filename %></td>
+          <td><%= Enum.count(mod.items) %></td>
+          <td><%= Enum.count(mod.locations) %></td>
+          <td><%= Enum.count(mod.quests) %></td>
+          <%= if moderator?(@socket) do %>
+            <td class='text-center'><a class='icon-pencil'></a></td>
+          <% end %>
+        </tr>
       <% end %>
     </tbody>
   </table>
 </div>
+
+
+<%# live_component @socket, LotdWeb.NavbarComponent,
+  id: "navbar",
+  count: Enum.count(@visible_mods),
+  user: Map.get(@socket.assigns, :user)
+%>

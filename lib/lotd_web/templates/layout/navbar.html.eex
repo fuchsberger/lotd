@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+  <div class='container'>
+  <%# Logo %>
+  <span class="navbar-brand" title='Legacy of the Dragonborn - Inventory Manager'></span>
+
+  <%# Mobile Menu Button %>
+  <button class="navbar-toggler" data-toggle="collapse" data-target="#menu-collapse">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <%# Menu %>
+  <div class="ml-2 collapse navbar-collapse" id="menu-collapse">
+    <ul id='menu' class="navbar-nav">
+      <%= nav_item @conn, "About", Routes.page_path(@conn, :about), "home" %>
+      <%= nav_item @conn, "Items", Routes.live_path(@conn, LotdWeb.ItemLive), "items" %>
+      <%= nav_item @conn, "Locations", Routes.live_path(@conn, LotdWeb.ModLive), "locations" %>
+      <%= nav_item @conn, "Quests", Routes.live_path(@conn, LotdWeb.ModLive), "quests" %>
+      <%= nav_item @conn, "Displays", Routes.live_path(@conn, LotdWeb.ModLive), "displays" %>
+      <%= nav_item @conn, "Mods", Routes.live_path(@conn, LotdWeb.ModLive), "mods" %>
+      <%= nav_item @conn, "Characters", Routes.live_path(@conn, LotdWeb.ModLive), "characters" %>
+      <%= if admin?(@conn),
+        do: nav_item(@conn, "Users", Routes.live_path(@conn, LotdWeb.ModLive), "admin") %>
+      <li class="nav-item">
+        <%= if authenticated?(@conn) do %>
+          <%= logout_button(@conn) %>
+        <% else %>
+          <a id='login-button' class="nav-link font-weight-bold">Sign In</a>
+          <%# Login Form (hidden) %>
+          <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
+            <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
+            <%= hidden_input(f, :api_key) %>
+          </form>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+  </div>
+</nav>

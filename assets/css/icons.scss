@@ -54,20 +54,22 @@
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
 
-.icon-off:before { content: '\e800'; } /* 'î €' */
+.icon-logout:before { content: '\e800'; } /* 'î €' */
 .icon-search:before { content: '\e801'; } /* 'î ' */
-.icon-plus:before { content: '\e802'; } /* 'î ‚' */
-.icon-cog:before { content: '\e803'; } /* 'î ƒ' */
-.icon-star:before { content: '\e804'; } /* 'î „' */
-.icon-star-empty:before { content: '\e805'; } /* 'î …' */
-.icon-cancel:before { content: '\e806'; } /* 'î †' */
-.icon-pencil:before { content: '\e807'; } /* 'î ‡' */
+.icon-add:before { content: '\e802'; } /* 'î ‚' */
+.icon-settings:before { content: '\e803'; } /* 'î ƒ' */
+.icon-quests:before { content: '\e804'; } /* 'î „' */
+.icon-home:before { content: '\e805'; } /* 'î …' */
+.icon-remove:before { content: '\e806'; } /* 'î †' */
+.icon-edit:before { content: '\e807'; } /* 'î ‡' */
+.icon-items:before { content: '\e808'; } /* 'î ˆ' */
+.icon-characters:before { content: '\e809'; } /* 'î ‰' */
+.icon-admin:before { content: '\e80a'; } /* 'î Š' */
 .icon-sort:before { content: '\f0dc'; } /* 'ïƒœ' */
-.icon-angle-double-up:before { content: '\f102'; } /* 'ï„‚' */
-.icon-angle-double-down:before { content: '\f103'; } /* 'ï„ƒ' */
-.icon-minus-squared:before { content: '\f146'; } /* 'ï…†' */
-.icon-minus-squared-alt:before { content: '\f147'; } /* 'ï…‡' */
-.icon-ok-squared:before { content: '\f14a'; } /* 'ï…Š' */
-.icon-plus-squared-alt:before { content: '\f196'; } /* 'ï†–' */
-.icon-user-plus:before { content: '\f234'; } /* 'ïˆ´' */
-.icon-user-times:before { content: '\f235'; } /* 'ïˆµ' */
+.icon-mods:before { content: '\f12e'; } /* 'ï„®' */
+.icon-active:before { content: '\f14a'; } /* 'ï…Š' */
+.icon-inactive:before { content: '\f196'; } /* 'ï†–' */
+.icon-promote:before { content: '\f234'; } /* 'ïˆ´' */
+.icon-demote:before { content: '\f235'; } /* 'ïˆµ' */
+.icon-locations:before { content: '\f277'; } /* 'ï‰·' */
+.icon-displays:before { content: '\f286'; } /* 'ïŠ†' */

@@ -7,7 +7,7 @@ defmodule LotdWeb.ViewHelpers do
 
   import Phoenix.Controller, only: [view_module: 1]
   import Phoenix.View, only: [render: 3]
-  import Phoenix.LiveView, only: [ live_link: 2 ]
+  import Phoenix.LiveView, only: [ get_connect_params: 1, live_link: 2 ]
 
   alias LotdWeb.Router.Helpers, as: Routes
 
@@ -103,11 +103,12 @@ defmodule LotdWeb.ViewHelpers do
   end
 
   def icon(name, opts \\ [] ) do
-    class = Keyword.get(opts, :class, "")
-    title = Keyword.get(opts, :title)
+    content_tag :i, "",
+      [{:class, "icon-#{name} #{Keyword.get(opts, :class, "")}"} | Keyword.delete(opts, :class)]
+  end
 
-    icon = content_tag :i, "", class: "icon-#{name}"
-    content_tag :span, icon, class: "icon #{class}", title: title
+  def icon_active(active) do
+    if active, do: "icon-ok-squared", else: "icon-plus-squared-alt"
   end
 
   def link_title(object) do
