@@ -1,4 +1,4 @@
-defmodule LotdWeb.NavbarComponent do
+defmodule LotdWeb.SearchbarComponent do
   use Phoenix.LiveComponent
 
   def handle_event("search", %{"search_field" => %{"query" => query}}, socket) do
@@ -11,5 +11,5 @@ defmodule LotdWeb.NavbarComponent do
     {:noreply, socket}
   end
 
-  def render(assigns), do: Phoenix.View.render(LotdWeb.LayoutView, "navbar.html", assigns)
+  def render(assigns), do: Phoenix.View.render(LotdWeb.LayoutView, "searchbar.html", assigns)
 end

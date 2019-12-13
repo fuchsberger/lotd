@@ -1,25 +1,33 @@
- <div id="search-control" class='input-group d-none'>
-
-    <%# Control Actions %>
-    <div class='input-group-prepend'>
-      <div class='input-group-text'>
-        <%= if @user && (@user.moderator || @user.admin) do %>
-          <a phx-click='toggle_modal'><i class='icon-plus'></i></a>
-        <% else %>
-          <a></a>
-        <% end %>
-      </div>
-    </div>
-
-    <%# Search %>
-    <form phx-change="search" class="search-form">
-      <%= text_input :search_field, :query, class: "form-control", placeholder: "Find...", autofocus: true, "phx-debounce": "300" %>
-    </form>
+<nav class="navbar navbar-light bg-light fixed-bottom">
+  <div class='container d-flex justify-content-between'>
 
     <%# Search Count %>
-    <%= unless is_nil(@count) do %>
-      <div class='input-group-append'>
-        <span id='search-count' class='input-group-text font-weight-bold'><%= @count %></span>
+    <span id='search-count' class='navbar-text font-weight-bold mr-1'><%= @visible %>/<%= @total %> visible</span>
+
+    <%# Search %>
+    <div id="search-control" class='input-group d-flex justify-content-between'>
+      <div class='input-group-prepend'>
+        <div class='input-group-text'>
+          <i class='icon-search'></i>
+        </div>
       </div>
+      <form phx-change="search" class="flex-grow-1 search-form">
+        <%= text_input :search_field, :query, class: " form-control", placeholder: "Find...", autofocus: true, phx_debounce: "200", value: @search %>
+      </form>
+      <%= if @search != "" do %>
+        <div class='input-group-append'>
+          <div class='input-group-text'>
+            <a><i class='icon-remove'></i></a>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%# Add button %>
+    <%= if @allow_adding do %>
+      <button class='ml-1 btn btn-outline-dark' phx-click='toggle_modal'>
+        <i class='icon-add'></i> Add
+      </button>
     <% end %>
   </div>
+</nav>

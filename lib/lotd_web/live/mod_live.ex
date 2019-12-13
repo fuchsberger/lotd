@@ -15,6 +15,7 @@ defmodule LotdWeb.ModLive do
 
       Museum.list_mods()
       |> Enum.map(fn mod -> Map.put(mod, :active, Enum.member?(character_mod_ids, mod.id)) end)
+      |> Enum.map(fn mod -> Map.put(mod, :edit, true) end)
     else
       Museum.list_mods()
     end
@@ -60,17 +61,6 @@ defmodule LotdWeb.ModLive do
     end
   end
 
-  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
-    case sort_by do
-      sort_by
-      when sort_by in ~w(name filename display_count location_count quest_count) ->
-        socket = assign(socket, mods: sort(socket.assigns.mods, sort_by, sort_by == socket.assigns.sort), sort: sort_by)
-        {:noreply, filter(socket)}
-      _ ->
-        {:noreply, socket}
-    end
-  end
-
   def handle_event("toggle_active", %{"id" => id}, socket) do
     character = socket.assigns.user.active_character
     mod = Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
@@ -83,8 +73,6 @@ defmodule LotdWeb.ModLive do
 
     {:noreply, update_mod(socket, mod)}
   end
-
-  def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
   def handle_info({:search, search_query}, socket) do
     socket = assign socket, search: search_query
@@ -116,6 +104,18 @@ defmodule LotdWeb.ModLive do
     end
   end
 
+  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
+    case sort_by do
+      sort_by when sort_by in ~w(name filename display_count location_count quest_count) ->
+        socket = assign(socket, mods: sort(socket.assigns.mods, sort_by, sort_by == socket.assigns.sort), sort: sort_by)
+        {:noreply, filter(socket)}
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_params(_params, _uri, socket), do: {:noreply, socket}
+
   defp filter(socket) do
 
     filter = String.downcase(socket.assigns.search)
@@ -124,7 +124,7 @@ defmodule LotdWeb.ModLive do
       String.contains?(String.downcase(m.name), filter)
     end)
 
-    assign(socket, visible_mods: visible_mods)
+    assign socket, visible_mods: visible_mods
   end
 
   defp update_mod(socket, mod) do

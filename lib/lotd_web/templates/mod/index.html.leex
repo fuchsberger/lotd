@@ -11,13 +11,13 @@
         <%= th_sort "Displays", "display_count", @sort %>
         <%= th_sort "Locations", "location_count", @sort %>
         <%= th_sort "Quests", "quest_count", @sort %>
-        <%= if moderator?(@socket), do: th_edit() %>
+        <%= if @user && @user.moderator, do: th_edit() %>
       </tr>
     </thead>
     <tbody>
       <%= for mod <- @visible_mods do %>
         <tr>
-          <%= if authenticated?(@socket) do %>
+          <%= if Map.has_key?(mod, :active) do %>
             <td class='text-center'>
               <a phx-click='toggle_active' phx-value-id='<%= mod.id %>'>
                 <i class='<%= icon_active(mod.active) %>'></i>
@@ -29,8 +29,8 @@
           <td><%= Enum.count(mod.items) %></td>
           <td><%= Enum.count(mod.locations) %></td>
           <td><%= Enum.count(mod.quests) %></td>
-          <%= if moderator?(@socket) do %>
-            <td class='text-center'><a class='icon-pencil'></a></td>
+          <%= if Map.has_key?(mod, :edit) do %>
+            <td class='text-center'><a><%= icon("edit") %></a></td>
           <% end %>
         </tr>
       <% end %>
@@ -38,9 +38,10 @@
   </table>
 </div>
 
-
-<%# live_component @socket, LotdWeb.NavbarComponent,
-  id: "navbar",
-  count: Enum.count(@visible_mods),
-  user: Map.get(@socket.assigns, :user)
+<%= live_component @socket, LotdWeb.SearchbarComponent,
+  id: "searchbar",
+  visible: Enum.count(@visible_mods),
+  total: Enum.count(@mods),
+  allow_adding: @user && @user.moderator,
+  search: @search
 %>

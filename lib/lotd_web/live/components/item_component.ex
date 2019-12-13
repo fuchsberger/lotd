@@ -5,12 +5,10 @@ defmodule LotdWeb.ItemComponent do
   import Phoenix.HTML.Form, only: [checkbox: 3]
   import LotdWeb.ViewHelpers, only: [link_title: 1]
 
-  alias Lotd.{Accounts, Museum}
+  alias Lotd.Accounts
   alias Lotd.Accounts.Character
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
   alias Lotd.Repo
-
-  defp items_topic(socket), do: "items"
 
   def preload(list_of_assigns) do
     list_of_ids = Enum.map(list_of_assigns, & &1.id)

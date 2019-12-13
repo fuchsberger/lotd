@@ -108,7 +108,7 @@ defmodule LotdWeb.ViewHelpers do
   end
 
   def icon_active(active) do
-    if active, do: "icon-ok-squared", else: "icon-plus-squared-alt"
+    if active, do: "icon-active", else: "icon-inactive"
   end
 
   def link_title(object) do
@@ -136,7 +136,7 @@ defmodule LotdWeb.ViewHelpers do
   def select_options(structures), do: for s <- structures, do: {s.name, s.id}
 
   def th_edit do
-    icon = content_tag :i, "", class: "icon-pencil"
+    icon = content_tag :i, "", class: "icon-edit"
     content_tag :th, icon, class: "text-center"
   end
 
@@ -151,7 +151,7 @@ defmodule LotdWeb.ViewHelpers do
   end
 
   def th_toggle do
-    icon = content_tag :i, "", class: "icon-ok-squared"
+    icon = content_tag :i, "", class: "icon-active"
     content_tag :th, icon, class: "text-center"
   end
 
