@@ -21,16 +21,14 @@ defmodule LotdWeb.ModLive do
     end
 
     socket = assign socket,
-      modal: %{
-        changeset: Museum.change_mod(%Mod{}),
-        error: nil,
-        info: nil,
-        options: %{ url: true },
-        show: false,
-        submitted: false
-      },
+      changeset: Museum.change_mod(%Mod{}),
+      error: nil,
+      info: nil,
+      options: %{ url: true },
+      submitted: false,
       mods: mods,
       search: "",
+      show_modal: false,
       sort: nil,
       user: user
 
@@ -77,10 +75,6 @@ defmodule LotdWeb.ModLive do
   def handle_info({:search, search_query}, socket) do
     socket = assign socket, search: search_query
     {:noreply, filter(socket)}
-  end
-
-  def handle_info({:toggle_modal, _params}, socket) do
-    {:noreply, assign(socket, show_modal: !socket.assigns.show_modal)}
   end
 
   def handle_info({Lotd, [:item, :saved], item}, socket) do

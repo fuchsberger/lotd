@@ -1,6 +1,3 @@
-<%= if @modal, do: live_component @socket, LotdWeb.ModalComponent,
-  [ {:search, @search} | Map.to_list(@modal) ] %>
-
 <div class='container'>
   <table id='mod-table' class="table table-sm text-nowrap">
     <thead>
@@ -39,9 +36,16 @@
 </div>
 
 <%= live_component @socket, LotdWeb.SearchbarComponent,
+  changeset: @changeset,
+  error: @error,
   id: "searchbar",
+  info: @info,
   visible: Enum.count(@visible_mods),
   total: Enum.count(@mods),
-  allow_adding: @user && @user.moderator,
-  search: @search
+  moderator: @user && @user.moderator,
+  options: @options,
+  admin: @user && @user.admin,
+  search: @search,
+  show_modal: @show_modal,
+  submitted: @submitted
 %>
