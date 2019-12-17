@@ -125,15 +125,9 @@ defmodule Lotd.Museum do
     |> Repo.insert()
   end
 
-  def update_mod(%Mod{} = mod, attrs) do
-    mod
-    |> Mod.changeset(attrs)
-    |> Repo.update()
-  end
-
   def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
 
-  def change_mod(%Mod{} = mod), do: Mod.changeset(mod, %{})
+  def change_mod(%Mod{} = mod, params \\ %{}), do: Mod.changeset(mod, params)
 
   # QUESTS
 

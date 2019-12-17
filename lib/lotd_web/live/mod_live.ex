@@ -4,9 +4,13 @@ defmodule LotdWeb.ModLive do
   alias Lotd.{Accounts, Museum}
   alias Lotd.Museum.Mod
 
+  @topic "mods"
+
   def render(assigns), do: LotdWeb.ModView.render("index.html", assigns)
 
   def mount(session, socket) do
+
+    LotdWeb.Endpoint.subscribe(@topic)
 
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
@@ -21,15 +25,15 @@ defmodule LotdWeb.ModLive do
     end
 
     socket = assign socket,
+      action: :create,
       changeset: Museum.change_mod(%Mod{}),
       error: nil,
       info: nil,
-      options: %{ url: true },
+      options: [:filename, :url],
       submitted: false,
       mods: mods,
       search: "",
-      show_modal: false,
-      sort: nil,
+      sort: "name",
       user: user
 
     {:ok, filter(socket)}
@@ -44,21 +48,6 @@ defmodule LotdWeb.ModLive do
     {:noreply, assign(socket, changeset: changeset)}
   end
 
-  def handle_event("add", %{"mod" => mod }, socket) do
-
-    case Museum.create_item(mod) do
-      {:ok, _mod} ->
-        # item = Phoenix.View.render_one(item, DataView, "item.json")
-        # Endpoint.broadcast("public", "add-item", item)
-        # {:reply, :ok, socket}
-
-        {:noreply, socket}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
-    end
-  end
-
   def handle_event("toggle_active", %{"id" => id}, socket) do
     character = socket.assigns.user.active_character
     mod = Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
@@ -70,6 +59,23 @@ defmodule LotdWeb.ModLive do
     mod = Map.put(mod, :active, !mod.active)
 
     {:noreply, update_mod(socket, mod)}
+  end
+
+  def handle_info(%{event: "created_mod", payload: mod}, socket) do
+    mod = if moderator?(socket) do
+      mod
+      |> Map.put(:active, false)
+      |> Map.put(:edit, true)
+    else
+      mod
+    end
+    |> Map.put(:items, [])
+    |> Map.put(:locations, [])
+    |> Map.put(:quests, [])
+
+    socket = assign(socket, :mods, [ mod | socket.assigns.mods])
+
+    {:noreply, sort_and_filter(socket)}
   end
 
   def handle_info({:search, search_query}, socket) do
@@ -110,13 +116,15 @@ defmodule LotdWeb.ModLive do
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
+  defp sort_and_filter(socket) do
+    socket = assign(socket, mods: sort(socket.assigns.mods, socket.assigns.sort))
+    |> filter()
+  end
+
   defp filter(socket) do
-
     filter = String.downcase(socket.assigns.search)
-
-    visible_mods = Enum.filter(socket.assigns.mods, fn m ->
-      String.contains?(String.downcase(m.name), filter)
-    end)
+    visible_mods = Enum.filter(socket.assigns.mods,
+      fn m -> String.contains?(String.downcase(m.name), filter) end)
 
     assign socket, visible_mods: visible_mods
   end

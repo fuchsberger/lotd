@@ -1,4 +1,0 @@
-<div class='container text-center'>
-  <h3>Edit Mod</h3>
-  <%= render_form @conn, :update %>
-</div>

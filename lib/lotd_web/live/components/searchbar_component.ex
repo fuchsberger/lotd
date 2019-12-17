@@ -1,6 +1,9 @@
 defmodule LotdWeb.SearchbarComponent do
   use Phoenix.LiveComponent
 
+  alias Lotd.Museum
+  alias Lotd.Museum.Mod
+
   def handle_event("search", %{"search_field" => %{"query" => query}}, socket) do
     send self(), {:search, query}
     { :noreply, socket }

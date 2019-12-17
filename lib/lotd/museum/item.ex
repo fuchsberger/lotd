@@ -7,6 +7,7 @@ defmodule Lotd.Museum.Item do
   schema "items" do
     field :name, :string
     field :url, :string
+    # filed :form_id, :
     belongs_to :display, Lotd.Museum.Display
     belongs_to :location, Lotd.Museum.Location
     belongs_to :mod, Lotd.Museum.Mod

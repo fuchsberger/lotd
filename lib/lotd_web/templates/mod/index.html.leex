@@ -42,10 +42,25 @@
   info: @info,
   visible: Enum.count(@visible_mods),
   total: Enum.count(@mods),
-  moderator: @user && @user.moderator,
-  options: @options,
-  admin: @user && @user.admin,
+  allow_adding: admin?(@socket),
   search: @search,
-  show_modal: @show_modal,
   submitted: @submitted
 %>
+
+<%= if admin?(@socket) do %>
+  <div id="modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <%= live_component @socket, LotdWeb.FormComponent,
+          action: @action,
+          changeset: @changeset,
+          error: @error,
+          id: "form",
+          info: @info,
+          submitted: @submitted
+        %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
