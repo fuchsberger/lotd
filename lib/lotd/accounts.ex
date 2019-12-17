@@ -13,8 +13,10 @@ defmodule Lotd.Accounts do
   def list_users, do: Repo.all(User)
 
   def get_user!(id) do
+    character_item_ids = from(i in Item, select: i.id)
+    character_mod_ids = from(m in Mod, select: m.id)
     User
-    |> preload(:active_character)
+    |> preload(active_character: [:items, mods: ^character_mod_ids])
     |> Repo.get!(id)
   end
 

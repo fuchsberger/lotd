@@ -15,10 +15,19 @@ defmodule LotdWeb.ModLive do
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     mods = unless is_nil(user) do
-      character_mod_ids = Accounts.get_character_mod_ids(user.active_character)
-
       Museum.list_mods()
-      |> Enum.map(fn mod -> Map.put(mod, :active, Enum.member?(character_mod_ids, mod.id)) end)
+      |> Enum.map(fn mod ->
+        Map.put(mod, :active, Enum.member?(user.active_character.mods, mod.id))
+      end)
+
+      |> Enum.map(fn mod ->
+        collected_count =
+          user.active_character.items
+          |> Enum.filter(fn i -> i.mod_id == mod.id end)
+          |> Enum.count()
+
+        Map.put(mod, :collected_count, collected_count)
+      end)
       |> Enum.map(fn mod -> Map.put(mod, :edit, true) end)
     else
       Museum.list_mods()
@@ -33,7 +42,7 @@ defmodule LotdWeb.ModLive do
       submitted: false,
       mods: mods,
       search: "",
-      sort: "name",
+      sort: "displays",
       user: user
 
     {:ok, filter(socket)}

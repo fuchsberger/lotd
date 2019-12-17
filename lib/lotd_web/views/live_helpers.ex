@@ -20,6 +20,13 @@ defmodule LotdWeb.LiveHelpers do
       else: Enum.sort_by(results, fn result -> result.filename end)
   end
 
+  def sort(results, "collected", already_sorted?) do
+    if already_sorted?,
+      do: Enum.reverse(results),
+      else: Enum.sort_by(results, fn result -> Enum.count(result.collected_count) end)
+        |> Enum.reverse()
+  end
+
   def sort(results, "display_count", already_sorted?) do
     if already_sorted?,
       do: Enum.reverse(results),

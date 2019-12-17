@@ -4,11 +4,12 @@
       <tr>
         <%= if authenticated?(@socket), do: th_toggle() %>
         <%= th_sort "Mod", "name", @sort %>
-        <%= th_sort "Filename", "filename", @sort %>
+        <%# th_sort "Filename", "filename", @sort %>
+        <%= if authenticated?(@socket), do: th_sort("Collected", "collected_count", @sort) %>
         <%= th_sort "Displays", "display_count", @sort %>
-        <%= th_sort "Locations", "location_count", @sort %>
-        <%= th_sort "Quests", "quest_count", @sort %>
-        <%= if @user && @user.moderator, do: th_edit() %>
+        <%# th_sort "Locations", "location_count", @sort %>
+        <%# th_sort "Quests", "quest_count", @sort %>
+        <%# if @user && @user.moderator, do: th_edit() %>
       </tr>
     </thead>
     <tbody>
@@ -22,13 +23,16 @@
             </td>
           <% end %>
           <td class='font-weight-bold' data-sort='<%= mod.name %>'><%= link_title(mod) %></td>
-          <td><%= mod.filename %></td>
-          <td><%= Enum.count(mod.items) %></td>
-          <td><%= Enum.count(mod.locations) %></td>
-          <td><%= Enum.count(mod.quests) %></td>
-          <%= if Map.has_key?(mod, :edit) do %>
-            <td class='text-center'><a><%= icon("edit") %></a></td>
+          <%# <td>< %= mod.filename % ></td> %>
+          <%= if authenticated?(@socket) do %>
+            <td><%= mod.collected_count %></td>
           <% end %>
+          <td><%= Enum.count(mod.items) %></td>
+          <%# <td>< %= Enum.count(mod.locations) % ></td>
+          <td>< %= Enum.count(mod.quests) % ></td> %>
+          <%# if Map.has_key?(mod, :edit) do %>
+            <%# <td class='text-center'><a>< %= icon("edit") % ></a></td> %>
+          <%# end %>
         </tr>
       <% end %>
     </tbody>
@@ -47,7 +51,7 @@
   submitted: @submitted
 %>
 
-<%= if admin?(@socket) do %>
+<%= if false && admin?(@socket) do %>
   <div id="modal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
