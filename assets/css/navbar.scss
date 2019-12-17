@@ -1,7 +1,5 @@
 body { margin-top: 56px; margin-bottom: 56px; }
 
-.nav-link.dropdown-toggle::after { display: none; }
-
 #login-button {
   background: url('../static/images/nexusmods.svg');
   background-size: 20px 20px;
@@ -27,16 +25,3 @@ body { margin-top: 56px; margin-bottom: 56px; }
 @include media-breakpoint-down(md) { .navbar-brand { width: 35px; } }
 @include media-breakpoint-down(sm) { .navbar-brand { width: 144px; } }
 @include media-breakpoint-down(xs) { .navbar-brand { width: 144px; } }
-
-#search-control {
-  flex-grow: 1;
-  margin-left: 5px;
-  width: min-content;
-}
-
-#search-control  a { cursor: pointer; color: $primary; }
-
-a.tab { cursor: pointer; }
-
-// make icons in dropdown-menus aligned
-.dropdown-item > .icon { width: 25px; margin-right: 0!important; margin-left: 0!important; }

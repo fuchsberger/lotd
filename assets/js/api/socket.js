@@ -1,19 +1,6 @@
-import $ from 'jquery'
+// import $ from 'jquery'
 import { Socket } from "phoenix"
 import LiveSocket from "phoenix_live_view"
-
-// Table settings
-const TABLE_DEFAULTS = {
-  deferRender: true,
-  dom: 't',
-  info: false,
-  order: [[0, 'asc']],
-  paging: false,
-  processing: true,
-  responsive: { details: { type: 'column', target: -1 } },
-  rowId: 'phx-component',
-  stateSave: true
-}
 
 // modal hook
 
@@ -40,9 +27,3 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken }
 })
 liveSocket.connect()
-
-let socket = new Socket("/socket", { params: { token: window.userToken }})
-
-// socket.connect()
-
-export default socket

@@ -1,40 +1,30 @@
-<%= live_component @socket, LotdWeb.NavbarComponent,
-  id: "navbar", user: Map.get(@socket.assigns, :user) %>
-
-<%# Modal %>
-<%= if authenticated?(@socket) do %>
-  <%= live_component @socket, LotdWeb.ModalComponent,
-    id: "modal",
-    changeset: @changeset,
-    error: nil,
-    info: nil,
-    options: @options,
-    show_modal: @show_modal,
-    submitted: false
-  %>
-<% end %>
-
-<%# Item Table %>6
-<div class='container-fluid p-0' phx-hook='ItemList'>
-  <%# <table class='display nowrap w-100'> %>
-  <table class='table table-sm'>
+<%# Item Table %>
+<div class='container'>
+  <table class='table table-sm text-nowrap'>
     <thead>
       <tr>
-        <%= if authenticated?(@socket) do %>
-          <th class='all small-cell' data-searchable="false" data-sortable='false'>
-            <i class='icon-ok-squared'></i>
-          </th>
-        <% end %>
-        <th class='all'>Item</th>
-        <th>Location</th>
-        <th>Quest</th>
-        <th>Display</th>
-        <th>Mod</th>
+        <%= if authenticated?(@socket), do: th_toggle() %>
+        <%= th_sort "Item", "name", @sort %>
+        <%= th_sort "Display", "display", @sort %>
+        <%= th_sort "Room", "room", @sort %>
+        <%= th_sort "Mod", "room", @sort %>
       </tr>
     </thead>
     <tbody>
-      <%= for item_id <- @item_ids do %>
-        <%= live_component @socket, LotdWeb.ItemComponent, id: item_id, character: @user && @user.active_character, character_items: @character_items %>
+      <%= for item <- @visible_items do %>
+      <tr>
+        <%= if Map.has_key?(item, :collected) do %>
+          <td class='text-center'>
+            <a phx-click='toggle_collected' phx-value-id='<%= item.id %>'>
+              <i class='<%= icon_active(item.collected) %>'></i>
+            </a>
+          </td>
+        <% end %>
+        <td class='font-weight-bold'><%= link_title(item) %></td>
+        <td><a class='search-field'><%= item.display.name %></a></td>
+        <td><a class='search-field'><%= Museum.get_room(item.display.room) %></a></td>
+        <td><a class='search-field'><%= item.mod %></a></td>
+      </tr>
       <% end %>
     </tbody>
   </table>

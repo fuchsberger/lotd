@@ -100,7 +100,7 @@ defmodule Lotd.Museum do
       preload: [:display, :quest, :location]
   end
 
-  def list_items, do: Repo.all from i in Item
+  def list_items, do: Repo.all from(i in Item, preload: :display)
 
   def list_character_item_ids(character) do
     character

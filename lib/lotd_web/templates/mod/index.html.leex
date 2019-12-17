@@ -6,7 +6,7 @@
         <%= th_sort "Mod", "name", @sort %>
         <%# th_sort "Filename", "filename", @sort %>
         <%= if authenticated?(@socket), do: th_sort("Collected", "collected_count", @sort) %>
-        <%= th_sort "Displays", "display_count", @sort %>
+        <%= th_sort "Items", "display_count", @sort %>
         <%# th_sort "Locations", "location_count", @sort %>
         <%# th_sort "Quests", "quest_count", @sort %>
         <%# if @user && @user.moderator, do: th_edit() %>

@@ -4,13 +4,13 @@ defmodule LotdWeb.ModLive do
   alias Lotd.{Accounts, Museum}
   alias Lotd.Museum.Mod
 
-  @topic "mods"
+  # @topic "mods"
 
   def render(assigns), do: LotdWeb.ModView.render("index.html", assigns)
 
   def mount(session, socket) do
 
-    LotdWeb.Endpoint.subscribe(@topic)
+    # LotdWeb.Endpoint.subscribe(@topic)
 
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
@@ -126,7 +126,7 @@ defmodule LotdWeb.ModLive do
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
   defp sort_and_filter(socket) do
-    socket = assign(socket, mods: sort(socket.assigns.mods, socket.assigns.sort))
+    assign(socket, mods: sort(socket.assigns.mods, socket.assigns.sort))
     |> filter()
   end
 
