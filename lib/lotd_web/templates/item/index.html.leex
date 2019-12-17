@@ -16,7 +16,7 @@
         <%= if Map.has_key?(item, :collected) do %>
           <td class='text-center'>
             <a phx-click='toggle_collected' phx-value-id='<%= item.id %>'>
-              <i class='<%= icon_active(item.collected) %>'></i>
+              <i class='<%= icon_active(@user.active_character.items, item.id) %>'></i>
             </a>
           </td>
         <% end %>

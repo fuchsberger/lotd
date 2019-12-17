@@ -5,7 +5,6 @@ const enable = () => {
 
   // enable login and logout
   $('#login-button').click(() => Nexus.login())
-  $('#logout-button').click(() => window.userChannel.push("logout"))
 
   // enable filtering tables based on a searchfield
   // $('table').on('click', 'a.search-field', function () { search($(this).text()) })

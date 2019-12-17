@@ -6,17 +6,14 @@ defmodule Lotd.Accounts do
 
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
-  alias Lotd.Museum
   alias Lotd.Museum.{Item, Mod}
 
   # user
   def list_users, do: Repo.all(User)
 
   def get_user!(id) do
-    character_item_ids = from(i in Item, select: i.id)
-    character_mod_ids = from(m in Mod, select: m.id)
     User
-    |> preload(active_character: [:items, mods: ^character_mod_ids])
+    |> preload(active_character: [:items, :mods])
     |> Repo.get!(id)
   end
 

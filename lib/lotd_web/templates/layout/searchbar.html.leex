@@ -1,19 +1,20 @@
 <nav class="navbar navbar-light bg-light fixed-bottom">
-  <div class='container d-flex justify-content-between'>
-
-    <%# Search Count %>
-    <span id='search-count' class='navbar-text font-weight-bold mr-1'><%= @visible %>/<%= @total %> visible</span>
-
-    <%# Search %>
-    <div id="search-control" class='input-group d-flex justify-content-between'>
+  <div class='container'>
+    <form id="search-control" phx-change="search" class="input-group">
       <div class='input-group-prepend'>
         <div class='input-group-text'>
           <i class='icon-search'></i>
         </div>
       </div>
-      <form phx-change="search" class="flex-grow-1 search-form">
-        <%= text_input :search_field, :query, class: " form-control", placeholder: "Find...", autofocus: true, phx_debounce: "200", value: @search %>
-      </form>
+
+      <%= text_input :search_field, :query,
+        class: " form-control",
+        placeholder: "Find...",
+        autofocus: true,
+        phx_debounce: "200",
+        value: @search
+      %>
+
       <%= if @search != "" do %>
         <div class='input-group-append'>
           <div class='input-group-text'>
@@ -21,13 +22,6 @@
           </div>
         </div>
       <% end %>
-    </div>
-
-    <%# Add button %>
-    <%= if false && @allow_adding do %>
-      <button class='ml-1 btn btn-outline-dark' data-toggle="modal" data-target='#modal'>
-        <i class='icon-add'></i> Add
-      </button>
-    <% end %>
+    </form>
   </div>
 </nav>

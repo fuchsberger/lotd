@@ -61,7 +61,8 @@ defmodule LotdWeb.ViewHelpers do
       [{:class, "icon-#{name} #{Keyword.get(opts, :class, "")}"} | Keyword.delete(opts, :class)]
   end
 
-  def icon_active(active) do
+  def icon_active(list, id) do
+    active = not is_nil(Enum.find(list, fn x -> x.id == id end))
     if active, do: "icon-active", else: "icon-inactive"
   end
 
@@ -78,6 +79,13 @@ defmodule LotdWeb.ViewHelpers do
   def th_edit do
     icon = content_tag :i, "", class: "icon-edit"
     content_tag :th, icon, class: "text-center"
+  end
+
+  def th_title(name, total, visible, user) do
+    base = "visible: #{visible}/#{total}"
+    extension = "activated: #{Enum.count(user.active_character.mods)}"
+    content = if is_nil(user), do: "(#{base})", else: "(#{extension}, #{base})"
+    [name, content_tag(:span, content, class: "badge badge-light")]
   end
 
   def th_sort(title, sort_by, current_sort \\ nil) do

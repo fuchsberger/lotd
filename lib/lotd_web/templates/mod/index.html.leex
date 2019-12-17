@@ -3,68 +3,30 @@
     <thead>
       <tr>
         <%= if authenticated?(@socket), do: th_toggle() %>
-        <%= th_sort "Mod", "name", @sort %>
-        <%# th_sort "Filename", "filename", @sort %>
-        <%= if authenticated?(@socket), do: th_sort("Collected", "collected_count", @sort) %>
-        <%= th_sort "Items", "display_count", @sort %>
-        <%# th_sort "Locations", "location_count", @sort %>
-        <%# th_sort "Quests", "quest_count", @sort %>
-        <%# if @user && @user.moderator, do: th_edit() %>
+        <%= th_sort th_title("Mod", Enum.count(@mods), Enum.count(@visible_mods), @user), "name", @sort %>
+        <%= if authenticated?(@socket), do: content_tag(:th, "Collected") %>
+        <%= th_sort "Items", "items", @sort %>
       </tr>
     </thead>
     <tbody>
       <%= for mod <- @visible_mods do %>
         <tr>
-          <%= if Map.has_key?(mod, :active) do %>
+          <%= unless is_nil(@user) do %>
             <td class='text-center'>
               <a phx-click='toggle_active' phx-value-id='<%= mod.id %>'>
-                <i class='<%= icon_active(mod.active) %>'></i>
+                <i class='<%= icon_active(@user.active_character.mods, mod.id) %>'></i>
               </a>
             </td>
           <% end %>
           <td class='font-weight-bold' data-sort='<%= mod.name %>'><%= link_title(mod) %></td>
-          <%# <td>< %= mod.filename % ></td> %>
-          <%= if authenticated?(@socket) do %>
-            <td><%= mod.collected_count %></td>
+          <%= unless is_nil(@user) do %>
+            <td><%= collected_count(@user, mod) %></td>
           <% end %>
           <td><%= Enum.count(mod.items) %></td>
-          <%# <td>< %= Enum.count(mod.locations) % ></td>
-          <td>< %= Enum.count(mod.quests) % ></td> %>
-          <%# if Map.has_key?(mod, :edit) do %>
-            <%# <td class='text-center'><a>< %= icon("edit") % ></a></td> %>
-          <%# end %>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
 
-<%= live_component @socket, LotdWeb.SearchbarComponent,
-  changeset: @changeset,
-  error: @error,
-  id: "searchbar",
-  info: @info,
-  visible: Enum.count(@visible_mods),
-  total: Enum.count(@mods),
-  allow_adding: admin?(@socket),
-  search: @search,
-  submitted: @submitted
-%>
-
-<%= if false && admin?(@socket) do %>
-  <div id="modal" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <%= live_component @socket, LotdWeb.FormComponent,
-          action: @action,
-          changeset: @changeset,
-          error: @error,
-          id: "form",
-          info: @info,
-          submitted: @submitted
-        %>
-      </div>
-    </div>
-  </div>
-<% end %>
-
+<%= live_component @socket, LotdWeb.SearchbarComponent, id: "search", search: @search %>
