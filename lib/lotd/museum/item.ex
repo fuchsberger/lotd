@@ -7,7 +7,9 @@ defmodule Lotd.Museum.Item do
   schema "items" do
     field :name, :string
     field :url, :string
-    # filed :form_id, :
+    field :form_id, :string
+    field :replica_id, :string
+    field :display_ref, :string
     belongs_to :display, Lotd.Museum.Display
     belongs_to :location, Lotd.Museum.Location
     belongs_to :mod, Lotd.Museum.Mod
@@ -18,14 +20,19 @@ defmodule Lotd.Museum.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:name, :url, :display_id, :location_id, :mod_id, :quest_id])
-    |> validate_required([:name, :display_id, :mod_id])
+    |> cast(attrs, [:name, :url, :form_id, :replica_id, :display_id, :display_id, :location_id, :mod_id, :quest_id])
+    |> validate_required([:name, :display_id, :mod_id, :form_id])
     |> validate_length(:name, min: 3, max: 80)
+    |> validate_length(:form_id, is: 8)
+    |> validate_length(:replica_id, is: 8)
+    |> validate_length(:display_ref, is: 8)
     |> validate_url(:url)
     |> assoc_constraint(:display)
     |> assoc_constraint(:location)
     |> assoc_constraint(:quest)
     |> assoc_constraint(:mod)
     |> unique_constraint(:name)
+    |> unique_constraint(:form_id)
+    |> unique_constraint(:replica_id)
   end
 end

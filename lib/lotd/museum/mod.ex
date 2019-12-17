@@ -16,7 +16,7 @@ defmodule Lotd.Museum.Mod do
   def changeset(mod, attrs) do
     mod
     |> cast(attrs, [:name, :url, :filename])
-    |> validate_required([:name, :filename])
+    |> validate_required([:name])
     |> unique_constraint(:name)
     |> unique_constraint(:url)
     |> unique_constraint(:filename)

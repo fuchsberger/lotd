@@ -8,11 +8,61 @@ defmodule Lotd.Museum do
   alias Lotd.Accounts
   alias Lotd.Museum.{Display, Item, Location, Mod, Quest}
 
+  # ROOMS
+  def get_room(number) do
+    case number do
+      1 -> "Hall of Heroes"
+      2 -> "Library"
+      3 -> "Daedric Gallery"
+      4 -> "Hall of Lost Empires"
+      5 -> "Hall of Oddities"
+      6 -> "Natural Science"
+      7 -> "Dragonborn Hall"
+      8 -> "Armory"
+      9 -> "Hall of Secrets"
+      10 -> "Museum Storeroom"
+      11 -> "Safehouse"
+      12 -> "Guildhouse"
+      nil -> "Unassigned"
+    end
+  end
+
+  def get_room_number(room) do
+    case room do
+      "Hall of Heroes" -> 1
+      "Gallery Library" -> 2
+      "Daedric Gallery" -> 3
+      "Hall of Lost Empires" -> 4
+      "Hall of Oddities" -> 5
+      "Natural Science" -> 6
+      "Dragonborn Hall" -> 7
+      "Armory" -> 8
+      "Hall of Secrets" -> 9
+      "Museum Storeroom" -> 10
+      "Safehouse" -> 11
+      "Guildhouse" -> 12
+      _other -> nil
+    end
+  end
+
+  def get_form_id(id_string) do
+    if id_string == "None" do
+      nil
+    else
+      [_head, tail ] = String.split(id_string, "(")
+      [id, _tail ] = String.split(tail, ")")
+      id
+    end
+  end
+
   # DISPLAYS
 
   def list_displays, do: Repo.sort_by_name(Display) |> Repo.all()
 
   def get_display!(id), do: Repo.get!(Display, id)
+
+  def get_display_id!(name),
+    do: Repo.one!(from(d in Display, select: d.id, where: d.name == ^name))
 
   def create_display(attrs \\ %{}) do
     %Display{}
@@ -68,8 +118,8 @@ defmodule Lotd.Museum do
     |> Enum.member?(character_id)
   end
 
-  def save_item(%Item{} = item, attrs) do
-    item
+  def create_item(attrs) do
+    %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert_or_update()
     |> Lotd.broadcast_change(@topic_items, [:item, :saved])
@@ -118,6 +168,8 @@ defmodule Lotd.Museum do
   end
 
   def get_mod!(id), do: Repo.get!(Mod, id)
+
+  def get_mod_id!(name), do: Repo.one!(from(m in Mod, select: m.id, where: m.name == ^name))
 
   def create_mod(attrs \\ %{}) do
     %Mod{}

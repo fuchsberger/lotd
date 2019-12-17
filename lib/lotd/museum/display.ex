@@ -1,12 +1,10 @@
-defmodule Lotd.Museum.Section do
+defmodule Lotd.Museum.Display do
   use Ecto.Schema
 
   import Ecto.Changeset
   import Lotd.Repo, only: [validate_url: 2]
 
-  # rooms: (1) Hall of Heroes, (2) Gallery Library, (3) Daedric Gallery, (4) Hall of Lost Empires, (5) Hall of Oddities, (6) Natural Science, (7) Dragonborn Hall, (8) Armory, (9) Hall of Secrets, (10) Museum Storeroom, (11) Safehouse, (12) Guildhouse
-
-  schema "sections" do
+  schema "displays" do
     field :name, :string
     field :url, :string
     field :room, :integer
@@ -16,9 +14,11 @@ defmodule Lotd.Museum.Section do
   @doc false
   def changeset(display, attrs) do
     display
-    |> cast(attrs, [:name, :url])
+    |> cast(attrs, [:name, :room, :url])
     |> validate_required([:name])
     |> validate_length(:name, min: 3, max: 80)
+    |> validate_number(:room, greater_than: 0, less_than_or_equal_to: 12)
     |> validate_url(:url)
+    |> unique_constraint(:name)
   end
 end
