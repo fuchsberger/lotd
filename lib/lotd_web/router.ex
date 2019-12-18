@@ -18,6 +18,7 @@ defmodule LotdWeb.Router do
 
     get "/", PageController, :index
     get "/about", PageController, :about
+    live "/characters", CharacterLive, @session
     live "/displays", DisplayLive, @session
     live "/items", ItemLive, @session
     live "/mods", ModLive, @session

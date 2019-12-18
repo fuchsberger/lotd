@@ -9,7 +9,6 @@ defmodule Lotd.Accounts do
   alias Lotd.Museum.{Item, Mod}
 
   # user
-  def list_users, do: Repo.all(User)
 
   def get_user!(id) do
     User
@@ -33,50 +32,21 @@ defmodule Lotd.Accounts do
 
   # character
 
-  defp user_characters_query(query, %User{id: user_id}) do
-    from(c in query, where: c.user_id == ^user_id)
-  end
-
-  def list_user_characters(%User{} = user) do
-    Character
-    |> user_characters_query(user)
-    |> Repo.sort_by_id()
-    |> preload([items: ^Repo.ids(Item), mods: ^Repo.ids(Mod)])
+  def list_characters(%User{} = user) do
+    from(c in Character,
+      preload: [items: ^Repo.ids(Item), mods: ^Repo.ids(Mod)],
+      where: c.user_id == ^user.id
+    )
     |> Repo.all()
   end
 
-  def get_user_character!(user, id) do
-    Repo.one!(from(c in Character, where: c.user_id == ^user.id and c.id == ^id))
-  end
+  def get_character(id), do: Repo.get(Character, id)
 
-  def get_active_character(user) do
+  def activate_character(user, character) do
     user
-    |> Repo.preload(:active_character)
-    |> Map.get(:active_character)
-  end
-
-  def get_character_items(character) do
-    character
-    |> Repo.preload(:items)
-    |> Map.get(:items)
-  end
-
-  def get_character_item_ids(character) do
-    character
-    |> Repo.preload(items: Repo.ids(Item))
-    |> Map.get(:items)
-  end
-
-  def get_character_mods(character) do
-    character
-    |> Repo.preload(:mods)
-    |> Map.get(:mods)
-  end
-
-  def get_character_mod_ids(character) do
-    character
-    |> Repo.preload(mods: Repo.ids(Mod))
-    |> Map.get(:mods)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:active_character, character)
+    |> Repo.update!()
   end
 
   def create_character(%User{} = user, attrs \\ %{}) do
@@ -92,17 +62,7 @@ defmodule Lotd.Accounts do
     |> Repo.update()
   end
 
-  def load_location_ids(character) do
-    query = from i in Item, select: i.location_id, where: not is_nil(i.location_id)
-
-    character
-    |> Repo.preload([items: query])
-    |> Map.get(:items)
-  end
-
   def update_character_collect_item(%Character{} = character, item) do
-    character = Repo.preload(character, :items)
-
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
@@ -110,8 +70,6 @@ defmodule Lotd.Accounts do
   end
 
   def update_character_remove_item(%Character{} = character, item_id) do
-    character = Repo.preload(character, :items)
-
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, fn i -> i.id == item_id end))
@@ -119,8 +77,6 @@ defmodule Lotd.Accounts do
   end
 
   def update_character_add_mod(%Character{} = character, mod) do
-    character = Repo.preload(character, :mods)
-
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:mods, [ mod | character.mods ])
@@ -128,8 +84,6 @@ defmodule Lotd.Accounts do
   end
 
   def update_character_remove_mod(%Character{} = character, mod_id) do
-    character = Repo.preload(character, :mods)
-
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, fn m -> m.id == mod_id end))
