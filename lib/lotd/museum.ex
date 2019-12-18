@@ -57,7 +57,7 @@ defmodule Lotd.Museum do
 
   # DISPLAYS
 
-  def list_displays, do: Repo.all Repo.sort_by_name(Display)
+  def list_displays, do: Repo.all from(d in Display, preload: [ items: ^Repo.ids(Item) ])
 
   def get_display_id!(name),
     do: Repo.one!(from(d in Display, select: d.id, where: d.name == ^name))

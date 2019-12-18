@@ -9,9 +9,9 @@ defmodule LotdWeb.ModLive do
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      mods: sort(Museum.list_mods(), "items"),
+      mods: sort(Museum.list_mods(), "name"),
       search: "",
-      sort: "items",
+      sort: "name",
       user: user
 
     {:ok, filter(socket)}

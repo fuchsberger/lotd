@@ -4,9 +4,9 @@
     <thead>
       <tr>
         <%= unless is_nil(@user), do: th_toggle() %>
-        <%= th_sort th_title("Item", Enum.count(@items), Enum.count(@visible_items), @user && Enum.count(@user.active_character.items)), "name", @sort %>
-        <%= th_sort "Display", "displays", @sort %>
-        <%= th_sort "Room", "room", @sort %>
+        <%= th_sort th_title("Item", Enum.count(@items), Enum.count(@visible_items), @user && Enum.count(@user.active_character.items)), LotdWeb.ItemLive, "name", @sort %>
+        <%= th_sort "Display", LotdWeb.ItemLive, "displays", @sort %>
+        <%= th_sort "Room", LotdWeb.ItemLive, "room", @sort %>
       </tr>
     </thead>
     <tbody>
@@ -20,8 +20,8 @@
           </td>
         <% end %>
         <td class='font-weight-bold'><%= item.name %></td>
-        <td><a class='search-field'><%= item.display.name %></a></td>
-        <td><a class='search-field'><%= Museum.get_room(item.display.room) %></a></td>
+        <td><%= item.display.name %></td>
+        <td><%= Museum.get_room(item.display.room) %></td>
       </tr>
       <% end %>
     </tbody>

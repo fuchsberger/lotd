@@ -3,8 +3,6 @@ defmodule LotdWeb.ItemLive do
   use LotdWeb, :live
 
   alias Lotd.{Accounts, Museum}
-  alias Lotd.Museum.{Display, Mod}
-
   alias LotdWeb.ItemView
 
   def render(assigns), do: ItemView.render("index.html", assigns)

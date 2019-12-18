@@ -5,7 +5,7 @@ defmodule LotdWeb.LiveHelpers do
 
   use Phoenix.HTML
 
-  alias Lotd.Museum\
+  alias Lotd.Museum
 
   def sort(results, name, already_sorted? \\ false)
 
@@ -28,8 +28,9 @@ defmodule LotdWeb.LiveHelpers do
   end
 
   def sort(results, "room", already_sorted?) do
+    IO.inspect "SORT"
     if already_sorted?,
       do: Enum.reverse(results),
-      else: Enum.sort_by(results, fn o -> Museum.get_room(o.display.room) end)
+      else: Enum.sort_by(results, fn o -> if Map.has_key?(o, :room), do: Museum.get_room(o.room), else: Museum.get_room(o.display.room) end)
   end
 end

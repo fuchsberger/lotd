@@ -1,4 +1,0 @@
-<div class='container text-center'>
-  <h3>Add Display</h3>
-  <%= render_form @conn, :create %>
-</div>
