@@ -15,7 +15,7 @@ defmodule LotdWeb.LayoutView do
 
   def nav_item(conn, name, to, icon) do
     active = if current_path(conn, %{}) == to, do: "active", else: ""
-    link = link [icon(icon, class: "d-md-none d-lg-inline-block"), name], to: to, class: "nav-link"
+    link = link [icon(icon), name], to: to, class: "nav-link"
     content_tag :li, link, class: "nav-item #{active}"
   end
 end

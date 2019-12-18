@@ -13,13 +13,9 @@
     <ul id='menu' class="navbar-nav">
       <%= nav_item @conn, "About", Routes.page_path(@conn, :about), "home" %>
       <%= nav_item @conn, "Items", Routes.live_path(@conn, LotdWeb.ItemLive), "items" %>
-      <%# nav_item @conn, "Locations", Routes.live_path(@conn, LotdWeb.ModLive), "locations" %>
-      <%# nav_item @conn, "Quests", Routes.live_path(@conn, LotdWeb.ModLive), "quests" %>
       <%= nav_item @conn, "Displays", Routes.live_path(@conn, LotdWeb.ModLive), "displays" %>
       <%= nav_item @conn, "Mods", Routes.live_path(@conn, LotdWeb.ModLive), "mods" %>
       <%= nav_item @conn, "Characters", Routes.live_path(@conn, LotdWeb.ModLive), "characters" %>
-      <%# if admin?(@conn),
-        do: nav_item(@conn, "Users", Routes.live_path(@conn, LotdWeb.ModLive), "admin") %>
       <li class="nav-item">
         <%= if authenticated?(@conn) do %>
           <%= logout_button(@conn) %>

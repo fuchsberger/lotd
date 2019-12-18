@@ -18,7 +18,7 @@
               </a>
             </td>
           <% end %>
-          <td class='font-weight-bold' data-sort='<%= mod.name %>'><%= link_title(mod) %></td>
+          <td class='font-weight-bold' data-sort='<%= mod.name %>'><%= mod.name %></td>
           <%= unless is_nil(@user) do %>
             <td><%= collected_count(@user, mod) %></td>
           <% end %>

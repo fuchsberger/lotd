@@ -20,7 +20,7 @@
             </a>
           </td>
         <% end %>
-        <td class='font-weight-bold'><%= link_title(item) %></td>
+        <td class='font-weight-bold'><%= item.name %></td>
         <td><a class='search-field'><%= item.display.name %></a></td>
         <td><a class='search-field'><%= Museum.get_room(item.display.room) %></a></td>
         <td><a class='search-field'><%= item.mod %></a></td>

@@ -1,4 +1,0 @@
-<section class="section has-text-centered">
-  <h3 class="title is-3">Add Quest</h3>
-  <%= render_form @conn, :create %>
-</section>

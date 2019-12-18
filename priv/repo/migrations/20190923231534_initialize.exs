@@ -31,14 +31,12 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     create table(:displays) do
       add :name, :string, null: false
       add :room, :integer
-      add :url, :string
     end
     create unique_index(:displays, [:name])
 
     # create items
     create table(:items) do
       add :name, :string, null: false
-      add :url, :string
       add :form_id, :string, null: false
       add :replica_id, :string
       add :display_ref, :string
@@ -47,29 +45,11 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     create unique_index(:items, [:form_id])
     create unique_index(:items, [:replica_id])
 
-    # create locations
-    create table(:locations) do
-      add :name, :string
-      add :url, :string
-    end
-    create unique_index(:locations, [:name])
-
-    # create quests
-    create table(:quests) do
-      add :name, :string
-      add :url, :string
-    end
-    create unique_index(:quests, [:name])
-
     # create mods
     create table(:mods) do
       add :name, :string
-      add :url, :string
-      add :filename, :string
     end
     create unique_index(:mods, [:name])
-    create unique_index(:mods, [:url])
-    create unique_index(:mods, [:filename])
 
     # link items and displays (n:m)
     create table(:characters_items) do
@@ -89,25 +69,11 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     # create foreign keys
     alter table(:items) do
       add :display_id, references(:displays, on_delete: :delete_all), null: false
-      add :location_id, references(:locations, on_delete: :nilify_all)
-      add :mod_id, references(:mods, on_delete: :delete_all), null: false
-      add :quest_id, references(:quests, on_delete: :nilify_all)
-    end
-
-    alter table(:quests) do
-      add :mod_id, references(:mods, on_delete: :delete_all), null: false
-    end
-
-    alter table(:locations) do
       add :mod_id, references(:mods, on_delete: :delete_all), null: false
     end
 
     # create foreign key constraints
     create index(:items, [:display_id])
-    create index(:items, [:location_id])
     create index(:items, [:mod_id])
-    create index(:items, [:quest_id])
-    create index(:locations, [:mod_id])
-    create index(:quests, [:mod_id])
   end
 end

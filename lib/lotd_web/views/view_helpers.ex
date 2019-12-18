@@ -66,14 +66,6 @@ defmodule LotdWeb.ViewHelpers do
     if active, do: "icon-active", else: "icon-inactive"
   end
 
-  def link_title(object) do
-    if object.url do
-      link object.name, to: object.url, target: "_blank"
-    else
-      object.name
-    end
-  end
-
   def select_options(structures), do: for s <- structures, do: {s.name, s.id}
 
   def th_edit do
