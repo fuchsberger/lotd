@@ -2,9 +2,9 @@
   <table id='mod-table' class="table table-sm text-nowrap">
     <thead>
       <tr>
-        <%= if authenticated?(@socket), do: th_toggle() %>
+        <%= unless is_nil(@user), do: th_toggle() %>
         <%= th_sort th_title("Mod", Enum.count(@mods), Enum.count(@visible_mods), @user), "name", @sort %>
-        <%= if authenticated?(@socket), do: content_tag(:th, "Collected") %>
+        <%= unless is_nil(@user), do: content_tag(:th, "Collected") %>
         <%= th_sort "Items", "items", @sort %>
       </tr>
     </thead>
