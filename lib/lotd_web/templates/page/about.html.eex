@@ -1,1 +1,31 @@
-<h2>About</h2>
+<div class="container pt-2">
+  <h4>About</h4>
+  <p class="lead">This tool allows you to easily keep track of the items you have collected for the Legacy of the Dragonborn Museum. Simply sign in via Nexus and start collecting items</p>
+  <p>Currently this tool allow you to:</p>
+  <ul>
+    <li>Select the mods (that add displays) you want to use</li>
+    <li>Mark items as collected.</li>
+    <li>Search for and sort items, displays and mods.</li>
+  </ul>
+
+  <p>Many more features are planned or already implemented (but need further testing):</p>
+  <ul>
+    <li>Support for multiple Characters</li>
+    <li>Ability to moderate content</li>
+    <li>Support for filtering items based on Locations and/or Quests</li>
+    <li>Support for external weblinks to quickly look up content.</li>
+  </ul>
+
+  <h4>Data Usage</h4>
+  <p>This page stores a session cookie on your computer to allow registered users to stay logged in. If you decide to login, your public Nexus id and username will be stored and a default character created, the first time you authenticate. No other information is stored in any way. You may request all your data to be removed at any time via a private message on Nexus. My username is <strong>@Sekhmet13.</strong></p>
+
+  <h4>Permissions</h4>
+  <p>This tool was developed by Alexander Fuchsberger using Elixir/Phoenix and is open-source licened (MIT). You may use this code in partial or full but you need to credit me with a link to the original <a href="https://github.com/fuchsberger/lotd" target='_blank'>Github </a>  repository.
+
+  The best way to provide feedback or report issues is via the official <a href="https://github.com/fuchsberger/lotd" target='_blank'>Github </a> page.</p>
+
+
+  <h4>Credits</h4>
+  <p><strong>IceCreamAssassin</strong> and the entire LOTD team for creating such an awesome mod and allowing me to use their logo.<br>
+  <strong>Pickysaurus</strong> for helping me with the Nexus API and coding a script to extract the necessary information from the involved esps.</p>
+</div>
