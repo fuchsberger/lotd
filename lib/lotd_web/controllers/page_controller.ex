@@ -3,7 +3,7 @@ defmodule LotdWeb.PageController do
 
   def index(conn, _params) do
     if authenticated?(conn),
-      do: redirect(conn, to: Routes.live_path(conn, LotdWeb.ModLive )),
+      do: redirect(conn, to: Routes.live_path(conn, LotdWeb.ItemLive )),
       else: redirect(conn, to: Routes.page_path(conn, :about))
   end
 

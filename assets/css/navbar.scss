@@ -20,8 +20,3 @@ body { margin-top: 56px; margin-bottom: 56px; }
   height: 36px;
   margin-right: 0;
 }
-
-// Make Brand Logo smaller on Mobile only
-@include media-breakpoint-down(md) { .navbar-brand { width: 35px; } }
-@include media-breakpoint-down(sm) { .navbar-brand { width: 144px; } }
-@include media-breakpoint-down(xs) { .navbar-brand { width: 144px; } }

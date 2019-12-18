@@ -73,10 +73,9 @@ defmodule LotdWeb.ViewHelpers do
     content_tag :th, icon, class: "text-center"
   end
 
-  def th_title(name, total, visible, user) do
+  def th_title(name, total, visible, active) do
     base = "visible: #{visible}/#{total}"
-    content = if is_nil(user), do: "(#{base})",
-      else: "(activated: #{Enum.count(user.active_character.mods)}, #{base})"
+    content = if is_nil(active), do: "(#{base})", else: "(activated: #{active}, #{base})"
     [name, content_tag(:span, content, class: "badge badge-light")]
   end
 

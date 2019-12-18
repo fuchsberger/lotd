@@ -2,8 +2,6 @@ defmodule LotdWeb.ItemLive do
 
   use LotdWeb, :live
 
-  import Lotd.Repo, only: [list_options: 1]
-
   alias Lotd.{Accounts, Museum}
   alias Lotd.Museum.{Display, Mod}
 
@@ -13,42 +11,47 @@ defmodule LotdWeb.ItemLive do
 
   def mount(session, socket) do
 
-    mod_options = list_options(Mod)
-
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
-    character_item_ids = Enum.map(user.active_character.items, & &1.id)
-
-    items = unless is_nil(user) do
-      Museum.list_items()
-      |> Enum.map(fn item ->
-        Map.put(item, :collected, Enum.member?(character_item_ids, item.id)) end)
-    else
-      Museum.list_items()
-    end
-    |> Enum.map(fn i -> Map.put(i, :mod, mod_options[i.mod_id]) end)
 
     socket = assign socket,
-      items: items,
+      items: sort(Museum.list_items(user), "displays"),
       search: "",
-      sort: "display",
+      sort: "displays",
       user: user
 
     {:ok, filter(socket)}
   end
 
   def handle_event("toggle_collected", %{"id" => id}, socket) do
-
+    id = String.to_integer(id)
     character = socket.assigns.user.active_character
-    item = Enum.find(socket.assigns.items, & &1.id == String.to_integer(id))
+    item = Enum.find(socket.assigns.items, & &1.id == id)
 
-    if item.collected,
+    unless is_nil(Enum.find(character.items, fn i -> i.id == id end)),
       do: Accounts.update_character_remove_item(character, item.id),
       else: Accounts.update_character_collect_item(character, item)
 
-    item = Map.put(item, :collected, !item.collected)
-
-    {:noreply, update_item(socket, item)}
+    {:noreply, assign(socket, user: Accounts.get_user!(socket.assigns.user.id))}
   end
+
+  def handle_info({:search, search_query}, socket) do
+    socket = assign socket, search: search_query
+    {:noreply, filter(socket)}
+  end
+
+  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
+    case sort_by do
+      sort_by when sort_by in ~w(name displays room) ->
+        socket = assign socket,
+          items: sort(socket.assigns.items, sort_by, sort_by == socket.assigns.sort),
+          sort: sort_by
+        {:noreply, filter(socket)}
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
   defp filter(socket) do
     filter = String.downcase(socket.assigns.search)
@@ -56,14 +59,5 @@ defmodule LotdWeb.ItemLive do
       fn i -> String.contains?(String.downcase(i.name), filter) end)
 
     assign socket, visible_items: visible_items
-  end
-
-  defp update_item(socket, item) do
-    index = Enum.find_index(socket.assigns.items, fn i -> i.id == item.id end)
-    items = List.replace_at(socket.assigns.items, index, item)
-
-    socket
-    |> assign(:items, items)
-    |> filter()
   end
 end

@@ -1,19 +1,18 @@
 <%# Item Table %>
 <div class='container'>
-  <table class='table table-sm text-nowrap'>
+  <table class='table table-sm'>
     <thead>
       <tr>
-        <%= if authenticated?(@socket), do: th_toggle() %>
-        <%= th_sort "Item", "name", @sort %>
-        <%= th_sort "Display", "display", @sort %>
+        <%= unless is_nil(@user), do: th_toggle() %>
+        <%= th_sort th_title("Item", Enum.count(@items), Enum.count(@visible_items), @user && Enum.count(@user.active_character.items)), "name", @sort %>
+        <%= th_sort "Display", "displays", @sort %>
         <%= th_sort "Room", "room", @sort %>
-        <%= th_sort "Mod", "room", @sort %>
       </tr>
     </thead>
     <tbody>
       <%= for item <- @visible_items do %>
       <tr>
-        <%= if Map.has_key?(item, :collected) do %>
+        <%= unless is_nil(@user) do %>
           <td class='text-center'>
             <a phx-click='toggle_collected' phx-value-id='<%= item.id %>'>
               <i class='<%= icon_active(@user.active_character.items, item.id) %>'></i>
@@ -23,10 +22,10 @@
         <td class='font-weight-bold'><%= item.name %></td>
         <td><a class='search-field'><%= item.display.name %></a></td>
         <td><a class='search-field'><%= Museum.get_room(item.display.room) %></a></td>
-        <td><a class='search-field'><%= item.mod %></a></td>
       </tr>
       <% end %>
     </tbody>
   </table>
 </div>
 
+<%= live_component @socket, LotdWeb.SearchbarComponent, id: "search", search: @search %>

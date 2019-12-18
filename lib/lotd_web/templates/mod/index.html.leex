@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <%= unless is_nil(@user), do: th_toggle() %>
-        <%= th_sort th_title("Mod", Enum.count(@mods), Enum.count(@visible_mods), @user), "name", @sort %>
+        <%= th_sort th_title("Mod", Enum.count(@mods), Enum.count(@visible_mods), @user &&Enum.count(@user.active_character.mods)), "name", @sort %>
         <%= unless is_nil(@user), do: content_tag(:th, "Collected") %>
         <%= th_sort "Items", "items", @sort %>
       </tr>

@@ -57,88 +57,35 @@ defmodule Lotd.Museum do
 
   # DISPLAYS
 
-  def list_displays, do: Repo.sort_by_name(Display) |> Repo.all()
-
-  def get_display!(id), do: Repo.get!(Display, id)
+  def list_displays, do: Repo.all Repo.sort_by_name(Display)
 
   def get_display_id!(name),
     do: Repo.one!(from(d in Display, select: d.id, where: d.name == ^name))
 
-  def create_display(attrs \\ %{}) do
+  def create_display(attrs) do
     %Display{}
     |> Display.changeset(attrs)
     |> Repo.insert()
   end
 
-  def update_display(%Display{} = display, attrs) do
-    display
-    |> Display.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def delete_display(%Display{} = display), do: Repo.delete(display)
-
-  def change_display(%Display{} = display), do: Display.changeset(display, %{})
-
   # ITEMS
 
-  def list_item_ids(character, _search \\ "") do
-    mod_ids = if character,
-      do: Accounts.get_character_mod_ids(character),
-      else: Mod |> Repo.ids() |> Repo.all()
+  def list_items(user) when is_nil(user), do: Repo.all from(i in Item, preload: :display)
 
-    Repo.all(from(i in Item,
-      select: i.id,
-      order_by: [i.name],
-      where: i.mod_id in ^mod_ids
-    ))
-  end
-
-  def item_query() do
-    from i in Item,
-      order_by: i.id,
-      preload: [:display, :quest, :location]
-  end
-
-  def list_items, do: Repo.all from(i in Item, preload: :display)
-
-  def list_character_item_ids(character) do
-    character
-    |> Repo.preload(items: from(i in Item, select: i.id))
-    |> Map.get(:items)
-  end
-
-  def get_item!(id), do: Repo.get!(Item, id)
-
-  def item_owned?(item, character_id) do
-    item = Repo.preload(item, :characters)
-
-    item.characters
-    |> Enum.map(fn c -> c.id end)
-    |> Enum.member?(character_id)
+  def list_items(user) do
+    mod_ids = Enum.map(user.active_character.mods, & &1.id)
+    Repo.all from(i in Item, preload: :display, where: i.mod_id in ^mod_ids)
   end
 
   def create_item(attrs) do
     %Item{}
     |> Item.changeset(attrs)
-    |> Repo.insert_or_update()
-    |> Lotd.broadcast_change(@topic_items, [:item, :saved])
+    |> Repo.insert()
   end
-
-  def delete_item(%Item{} = item), do: Repo.delete(item)
-
-  def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
-
-
 
   # MODS
 
-  def list_mod_ids(_search_string), do: Mod |> Repo.ids() |> Repo.all()
-
-  def list_mods() do
-    from(m in Mod, preload: [ items: ^Repo.ids(Item) ])
-    |> Repo.all()
-  end
+  def list_mods, do: Repo.all from(m in Mod, preload: [ items: ^Repo.ids(Item) ])
 
   def get_mod_id!(name), do: Repo.one!(from(m in Mod, select: m.id, where: m.name == ^name))
 
