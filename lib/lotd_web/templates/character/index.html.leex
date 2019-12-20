@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <%= unless is_nil(@user), do: th_toggle() %>
-        <%= th_sort th_title("Character", Enum.count(@characters), Enum.count(@visible_characters)), LotdWeb.CharacterLive, "name", @sort, @dir %>
+        <%= th_sort title("Character", @user, Enum.count(@characters)), LotdWeb.CharacterLive, "name", @sort, @dir %>
         <%= th_sort "Items", LotdWeb.CharacterLive, "items", @sort, @dir %>
       </tr>
     </thead>

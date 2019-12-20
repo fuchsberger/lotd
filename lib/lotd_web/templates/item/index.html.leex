@@ -3,25 +3,32 @@
     <thead>
       <tr>
         <%= unless is_nil(@user), do: th_toggle() %>
-        <%= th_sort "Item", LotdWeb.ItemLive, "name", @sort, @dir %>
+        <%= th_sort title("Item", @user, @item_count), LotdWeb.ItemLive, "name", @sort, @dir %>
         <%= th_sort "Display", LotdWeb.ItemLive, "display", @sort, @dir  %>
         <%= th_sort "Room", LotdWeb.ItemLive, "room", @sort, @dir  %>
       </tr>
     </thead>
     <tbody>
       <%= for item <- @items do %>
-      <tr>
-        <%= unless is_nil(@user) do %>
-          <td class='text-center'>
-            <a phx-click='toggle_collected' phx-value-id='<%= item.id %>'>
-              <i class='<%= icon_active(@user.active_character.items, item.id) %>'></i>
-            </a>
+        <tr>
+          <%= unless is_nil(@user) do %>
+            <td class='text-center'>
+              <a phx-click='toggle_collected' phx-value-id='<%= item.id %>'>
+                <i class='<%= icon_active(@user.active_character.items, item.id) %>'></i>
+              </a>
+            </td>
+          <% end %>
+          <td class='font-weight-bold'><%= item.name %></td>
+          <td><%= item.display %></td>
+          <td><%= item.room %></td>
+        </tr>
+      <% end %>
+      <%= if @user && Enum.count(@user.active_character.mods) == 0 do %>
+        <tr>
+          <td colspan="4" class='text-center'>
+            <strong>Please select the mods for your playthrough first.</strong>
           </td>
-        <% end %>
-        <td class='font-weight-bold'><%= item.name %></td>
-        <td><%= item.display %></td>
-        <td><%= item.room %></td>
-      </tr>
+        </tr>
       <% end %>
     </tbody>
   </table>

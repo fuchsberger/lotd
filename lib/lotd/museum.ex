@@ -127,6 +127,8 @@ defmodule Lotd.Museum do
     )
   end
 
+  def get_item!(id), do: Repo.get!(Item, id)
+
   def create_item(attrs) do
     %Item{}
     |> Item.changeset(attrs)

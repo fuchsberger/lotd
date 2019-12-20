@@ -35,11 +35,10 @@ defmodule LotdWeb.ItemLive do
   end
 
   def handle_event("toggle_collected", %{"id" => id}, socket) do
-    id = String.to_integer(id)
     character = socket.assigns.user.active_character
-    item = Enum.find(socket.assigns.items, & &1.id == id)
+    item = Museum.get_item!(id)
 
-    unless is_nil(Enum.find(character.items, fn i -> i.id == id end)),
+    if Enum.member?(character.items, item),
       do: Accounts.update_character_remove_item(character, item.id),
       else: Accounts.update_character_collect_item(character, item)
 

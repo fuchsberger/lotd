@@ -73,9 +73,17 @@ defmodule LotdWeb.ViewHelpers do
     content_tag :th, icon, class: "text-center"
   end
 
-  def th_title(name, total, active \\ nil) do
-    content = if is_nil(active), do: "(total: #{total})", else: "(activated: #{active}/#{total})"
-    [name, content_tag(:span, content, class: "badge badge-light")]
+  def title(name, nil, total) do
+    [name, content_tag(:span, "(#{total})", class: "badge badge-light")]
+  end
+
+  def title(name, user, total) do
+    active = case name do
+      "Item" -> Enum.count(user.active_character.items)
+      "Mod" -> Enum.count(user.active_character.mods)
+    end
+
+    [name, content_tag(:span, "(#{active}/#{total})", class: "badge badge-light")]
   end
 
   def th_sort(title, view, sort, prev_sort, prev_dir) do
