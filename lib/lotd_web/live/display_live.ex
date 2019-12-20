@@ -6,12 +6,16 @@ defmodule LotdWeb.DisplayLive do
   def render(assigns), do: LotdWeb.DisplayView.render("index.html", assigns)
 
   def mount(session, socket) do
+
+    sort = "name"
+    dir = "asc"
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
       displays: Museum.list_displays(),
       search: "",
-      sort: "name",
+      sort: sort,
+      dir: dir,
       user: user
 
     {:ok, filter(socket)}

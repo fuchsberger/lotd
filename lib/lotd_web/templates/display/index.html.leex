@@ -2,18 +2,16 @@
   <table id='mod-table' class="table table-sm text-nowrap">
     <thead>
       <tr>
-        <%= th_sort title("Display", @user, Enum.count(@displays)),
+        <%= th_sort title("Display", nil, Enum.count(@displays)),
           LotdWeb.DisplayLive, "name", @sort, @dir %>
-        <%= th_sort "Room", LotdWeb.DisplayLive, "room", @sort, @dir %>
         <%= unless is_nil(@user), do: content_tag(:th, "Collected") %>
         <%= th_sort "Items", LotdWeb.DisplayLive, "items", @sort, @dir %>
       </tr>
     </thead>
     <tbody>
-      <%= for display <- @visible_displays do %>
-        <tr>
+      <%= for display <- @displays do %>
+        <tr class='<%= unless display.visible, do: "d-none" %>'>
           <td class='font-weight-bold'><%= display.name %></td>
-          <td><%= Museum.get_room(display.room) %></td>
           <%= unless is_nil(@user) do %>
             <td><%= collected_count(@user, display) %></td>
           <% end %>
