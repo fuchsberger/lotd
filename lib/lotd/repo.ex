@@ -1,5 +1,6 @@
 defmodule Lotd.Repo do
   use Ecto.Repo, otp_app: :lotd, adapter: Ecto.Adapters.Postgres
+  use Scrivener, page_size: 50
 
   import Ecto.Query, warn: false
 

@@ -3,14 +3,14 @@
     <thead>
       <tr>
         <%= unless is_nil(@user), do: th_toggle() %>
-        <%= th_sort th_title("Mod", Enum.count(@mods), Enum.count(@visible_mods), @user &&Enum.count(@user.active_character.mods)), LotdWeb.ModLive, "name", @sort %>
+        <%= th_sort th_title("Mod", Enum.count(@mods), @user &&Enum.count(@user.active_character.mods)), LotdWeb.ModLive, "name", @sort, @dir %>
         <%= unless is_nil(@user), do: content_tag(:th, "Collected") %>
-        <%= th_sort "Items", LotdWeb.ModLive, "items", @sort %>
+        <%= th_sort "Items", LotdWeb.ModLive, "items", @sort, @dir %>
       </tr>
     </thead>
     <tbody>
-      <%= for mod <- @visible_mods do %>
-        <tr>
+      <%= for mod <- @mods do %>
+        <tr class='<%= if hidden?(mod, @search), do: "d-none" %>'>
           <%= unless is_nil(@user) do %>
             <td class='text-center'>
               <a phx-click='toggle_active' phx-value-id='<%= mod.id %>'>

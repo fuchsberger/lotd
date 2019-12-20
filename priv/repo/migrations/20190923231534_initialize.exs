@@ -27,12 +27,16 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     end
     create index(:users, [:active_character_id])
 
+    # create rooms
+    create table(:rooms) do
+      add :name, :string, null: false
+    end
+    create unique_index(:rooms, [:name])
+
     # create displays
     create table(:displays) do
       add :name, :string, null: false
-      add :room, :integer
     end
-    create unique_index(:displays, [:name])
 
     # create items
     create table(:items) do
@@ -70,10 +74,12 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     alter table(:items) do
       add :display_id, references(:displays, on_delete: :delete_all), null: false
       add :mod_id, references(:mods, on_delete: :delete_all), null: false
+      add :room_id, references(:rooms, on_delete: :delete_all), null: false
     end
 
     # create foreign key constraints
     create index(:items, [:display_id])
     create index(:items, [:mod_id])
+    create index(:items, [:room_id])
   end
 end

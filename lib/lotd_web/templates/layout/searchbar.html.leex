@@ -18,7 +18,7 @@
       <%= if @search != "" do %>
         <div class='input-group-append'>
           <div class='input-group-text'>
-            <a><i class='icon-remove'></i></a>
+            <a phx-click="clear_search"><i class='text-primary icon-remove'></i></a>
           </div>
         </div>
       <% end %>

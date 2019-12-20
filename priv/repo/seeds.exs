@@ -33,26 +33,38 @@ case File.read("priv/repo/displays.json") do
   {:ok, file} ->
     {:ok, rows} = Jason.decode(file)
 
-    # create displays
-    displays = Enum.map(rows, fn d ->
-      %{name: d["sectionName"], room: Museum.get_room_number(d["roomName"])}
+    # create rooms
+    rows
+    |> Enum.map(& &1["roomName"])
+    |> Enum.uniq()
+    |> Enum.each(fn room ->
+      case Museum.create_room(%{ name: room }) do
+        {:ok, room} ->
+          Logger.info("Room \"#{room.name}\" created.")
+        {:error, _changeset} ->
+          Logger.info("Room \"#{room.name}\" already exists.")
+      end
     end)
+
+    # create displays
+    rows
+    |> Enum.map(& &1["sectionName"])
     |> Enum.uniq()
     |> Enum.each(fn display ->
-      case Museum.create_display(display) do
+      case Museum.create_display(%{ name: display }) do
         {:ok, display} ->
           Logger.info("Display \"#{display.name}\" created.")
         {:error, _changeset} ->
-          Logger.info("Display \"#{display.name}\" already exists.")
+          Logger.info("Display \"#{display}\" already exists.")
       end
     end)
 
     # create mods
-    mods = Enum.map(rows, fn d -> d["modSource"] end)
+    rows
+    |> Enum.map(& &1["modSource"])
     |> Enum.uniq()
-    |> Enum.map(fn mod -> %{name: mod} end)
     |> Enum.each(fn mod ->
-      case Museum.create_mod(mod) do
+      case Museum.create_mod(%{ name: mod }) do
         {:ok, mod} ->
           Logger.info("Mod \"#{mod.name}\" created.")
         {:error, _changeset} ->
@@ -68,6 +80,7 @@ case File.read("priv/repo/displays.json") do
         replica_id: Museum.get_form_id(item["replicaId"]),
         display_ref: Museum.get_form_id(item["displayRef"]),
         display_id: Museum.get_display_id!(item["sectionName"]),
+        room_id: Museum.get_room_id!(item["roomName"]),
         mod_id: Museum.get_mod_id!(item["modSource"])
       }
 

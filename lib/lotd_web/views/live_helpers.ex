@@ -3,37 +3,19 @@ defmodule LotdWeb.LiveHelpers do
   Conveniences for all live views.
   """
 
-  use Phoenix.HTML
-
-  alias Lotd.Museum
-
   def sort(results, name, already_sorted? \\ false)
 
-  def sort(results, "name", already_sorted?) do
-    if already_sorted?,
-      do: Enum.reverse(results),
-      else: Enum.sort_by(results, fn o -> o.name end)
+  def sort(results, _sortby, true), do: Enum.reverse(results)
+
+  def sort(results, "name", false), do: Enum.sort_by(results, & &1.name)
+
+  def sort(results, "items", false) do
+    results
+    |> Enum.sort_by(& Enum.count(&1.items))
+    |> Enum.reverse()
   end
 
-  def sort(results, "items", already_sorted?) do
-    if already_sorted?,
-      do: Enum.reverse(results),
-      else: Enum.sort_by(results, fn o -> Enum.count(o.items) end) |> Enum.reverse()
-  end
+  def sort(results, "displays", false), do: Enum.sort_by(results, & &1.display)
 
-  def sort(results, "displays", already_sorted?) do
-    if already_sorted?,
-      do: Enum.reverse(results),
-      else: Enum.sort_by(results, fn o -> o.display.name end)
-  end
-
-  def sort(results, "room", already_sorted?) do
-    if already_sorted?,
-      do: Enum.reverse(results),
-      else: Enum.sort_by(results, fn o ->
-        if Map.has_key?(o, :room),
-          do: Museum.get_room(o.room),
-          else: Museum.get_room(o.display.room)
-      end)
-  end
+  def sort(results, "room", false), do: Enum.sort_by(results, & &1.room)
 end

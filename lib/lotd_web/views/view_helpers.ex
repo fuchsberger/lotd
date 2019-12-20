@@ -73,16 +73,25 @@ defmodule LotdWeb.ViewHelpers do
     content_tag :th, icon, class: "text-center"
   end
 
-  def th_title(name, total, visible, active \\ nil) do
-    base = "visible: #{visible}/#{total}"
-    content = if is_nil(active), do: "(#{base})", else: "(activated: #{active}, #{base})"
+  def th_title(name, total, active \\ nil) do
+    content = if is_nil(active), do: "(total: #{total})", else: "(activated: #{active}/#{total})"
     [name, content_tag(:span, content, class: "badge badge-light")]
   end
 
-  def th_sort(title, view, sort_by, current_sort \\ nil) do
+  def th_sort(title, view, sort, prev_sort, prev_dir) do
+    dir = if sort == prev_sort do
+      if prev_dir == "desc", do: "asc", else: "desc"
+    else
+      case sort do
+        _ -> "asc"
+      end
+    end
+
     link = live_link(title,
-      to: Routes.live_path(LotdWeb.Endpoint, view, %{sort_by: sort_by}), class: "text-body")
-    color = unless current_sort == sort_by, do: " text-white"
+      to: Routes.live_path(LotdWeb.Endpoint, view, %{sort: sort, dir: dir}),
+      class: "text-body"
+    )
+    color = unless sort == prev_sort, do: " text-white"
     icon = content_tag(:i, "", class: "icon-sort#{color}")
 
     content_tag :th, [link, icon]

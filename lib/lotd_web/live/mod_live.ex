@@ -6,15 +6,19 @@ defmodule LotdWeb.ModLive do
   def render(assigns), do: LotdWeb.ModView.render("index.html", assigns)
 
   def mount(session, socket) do
+
+    sort = "name"
+    dir = "asc"
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      mods: sort(Museum.list_mods(), "name"),
+      mods: get_mods(sort, dir, user),
       search: "",
-      sort: "name",
+      sort: sort,
+      dir: dir,
       user: user
 
-    {:ok, filter(socket)}
+    {:ok, socket}
   end
 
   def handle_event("toggle_active", %{"id" => id}, socket) do
@@ -31,16 +35,17 @@ defmodule LotdWeb.ModLive do
 
   def handle_info({:search, search_query}, socket) do
     socket = assign socket, search: search_query
-    {:noreply, filter(socket)}
+    {:noreply, socket}
   end
 
-  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
-    case sort_by do
-      sort_by when sort_by in ~w(name items) ->
+  def handle_params(%{"sort" => sort, "dir" => dir}, _uri, socket) do
+    case sort do
+      sort when sort in ~w(name items) ->
         socket = assign socket,
-          mods: sort(socket.assigns.mods, sort_by, sort_by == socket.assigns.sort),
-          sort: sort_by
-        {:noreply, filter(socket)}
+          mods: get_mods(sort, dir, socket.assigns.user),
+          sort: sort,
+          dir: dir
+        {:noreply, socket}
       _ ->
         {:noreply, socket}
     end
@@ -48,11 +53,13 @@ defmodule LotdWeb.ModLive do
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
-  defp filter(socket) do
-    filter = String.downcase(socket.assigns.search)
-    visible_mods = Enum.filter(socket.assigns.mods,
-      fn m -> String.contains?(String.downcase(m.name), filter) end)
-
-    assign socket, visible_mods: visible_mods
+  defp get_mods(sort, dir, user) do
+    if is_nil(user) do
+      Museum.list_mods(sort, dir)
+    else
+      user_mods = Enum.map(user.active_character.mods, & &1.id)
+      Museum.list_mods(sort, dir)
+      |> Enum.map(& Map.put(&1, :active, Enum.member?(user_mods, &1.id)))
+    end
   end
 end

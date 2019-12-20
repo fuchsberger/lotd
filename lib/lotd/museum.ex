@@ -5,44 +5,14 @@ defmodule Lotd.Museum do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
-  alias Lotd.Accounts
-  alias Lotd.Museum.{Display, Item, Mod}
+  alias Lotd.Museum.{Display, Item, Mod, Room}
 
-  # ROOMS
-  def get_room(number) do
-    case number do
-      1 -> "Hall of Heroes"
-      2 -> "Library"
-      3 -> "Daedric Gallery"
-      4 -> "Hall of Lost Empires"
-      5 -> "Hall of Oddities"
-      6 -> "Natural Science"
-      7 -> "Dragonborn Hall"
-      8 -> "Armory"
-      9 -> "Hall of Secrets"
-      10 -> "Museum Storeroom"
-      11 -> "Safehouse"
-      12 -> "Guildhouse"
-      nil -> "Unassigned"
-    end
-  end
-
-  def get_room_number(room) do
-    case room do
-      "Hall of Heroes" -> 1
-      "Gallery Library" -> 2
-      "Daedric Gallery" -> 3
-      "Hall of Lost Empires" -> 4
-      "Hall of Oddities" -> 5
-      "Natural Science" -> 6
-      "Dragonborn Hall" -> 7
-      "Armory" -> 8
-      "Hall of Secrets" -> 9
-      "Museum Storeroom" -> 10
-      "Safehouse" -> 11
-      "Guildhouse" -> 12
-      _other -> nil
-    end
+  # SORTING
+  defp sort_query(query, sort, dir) do
+    # term = String.to_atom(sort)
+    if dir == "asc",
+      do: from(q in query, order_by: [:display]),
+      else: from(q in query, order_by: [desc: :display])
   end
 
   def get_form_id(id_string) do
@@ -54,6 +24,15 @@ defmodule Lotd.Museum do
       id
     end
   end
+
+  # ROOMS
+  def create_room(attrs) do
+    %Room{}
+    |> Room.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_room_id!(name), do: Repo.one!(from(r in Room, select: r.id, where: r.name == ^name))
 
   # DISPLAYS
 
@@ -70,11 +49,82 @@ defmodule Lotd.Museum do
 
   # ITEMS
 
-  def list_items(user) when is_nil(user), do: Repo.all from(i in Item, preload: :display)
+  def list_items(user) when is_nil(user),
+    do: Repo.all from(i in Item, preload: :display, order_by: i.name)
 
-  def list_items(user) do
+  def list_items(page, sort, dir, search, user) do
     mod_ids = Enum.map(user.active_character.mods, & &1.id)
-    Repo.all from(i in Item, preload: :display, where: i.mod_id in ^mod_ids)
+
+    query =
+      case {sort, dir} do
+        {"display", "asc"} ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [asc: d.name],
+            where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+          )
+        {"display", "desc"} ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [desc: d.name],
+            where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+          )
+          {"room", "asc"} ->
+            from(i in Item,
+              left_join: d in assoc(i, :display),
+              left_join: r in assoc(i, :room),
+              select: %{ id: i.id, name: i.name },
+              select_merge: %{ display: d.name, room: r.name },
+              order_by: [asc: r.name],
+              where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+            )
+          {"room", "desc"} ->
+            from(i in Item,
+              left_join: d in assoc(i, :display),
+              left_join: r in assoc(i, :room),
+              select: %{ id: i.id, name: i.name },
+              select_merge: %{ display: d.name, room: r.name },
+              order_by: [desc: r.name],
+              where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+            )
+          {"name", "desc"} ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [desc: i.name],
+            where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+          )
+        _ ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [asc: i.name],
+            where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+          )
+      end
+    |> Repo.paginate(page: page)
+  end
+
+  def item_count(user, search) when is_nil(user) do
+    Repo.one(from i in Item, select: count(i.id))
+  end
+
+  def item_count(user, search) do
+    mod_ids = Enum.map(user.active_character.mods, & &1.id)
+    Repo.one(from i in Item,
+      select: count(i.id),
+      where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+    )
   end
 
   def create_item(attrs) do
@@ -85,7 +135,17 @@ defmodule Lotd.Museum do
 
   # MODS
 
-  def list_mods, do: Repo.all from(m in Mod, preload: [ items: ^Repo.ids(Item) ])
+  def list_mods(sort, dir) do
+    query = from(m in Mod, preload: :items )
+    # |> sort_query(sort, dir)
+    |> Repo.all()
+  end
+
+  def create_item(attrs) do
+    %Item{}
+    |> Item.changeset(attrs)
+    |> Repo.insert()
+  end
 
   def get_mod_id!(name), do: Repo.one!(from(m in Mod, select: m.id, where: m.name == ^name))
 

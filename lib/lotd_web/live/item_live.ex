@@ -9,15 +9,29 @@ defmodule LotdWeb.ItemLive do
 
   def mount(session, socket) do
 
+    page = 1
+    search = ""
+    sort = "name"
+    dir = "asc"
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      items: sort(Museum.list_items(user), "displays"),
-      search: "",
-      sort: "displays",
+      fully_loaded: false,
+      items: get_items(page, sort, dir, search, user),
+      item_count: Museum.item_count(user, search),
+      page: page,
+      search: search,
+      sort: sort,
+      dir: dir,
       user: user
 
-    {:ok, filter(socket)}
+    {:ok, socket}
+  end
+
+  def handle_event("load_more", params, socket) do
+    page = socket.assigns.page + 1
+    items = get_items(page, socket.assigns.sort, socket.assigns.dir, socket.assigns.search, socket.assigns.user)
+    {:noreply, assign(socket, page: page, items: socket.assigns.items ++ items)}
   end
 
   def handle_event("toggle_collected", %{"id" => id}, socket) do
@@ -32,18 +46,23 @@ defmodule LotdWeb.ItemLive do
     {:noreply, assign(socket, user: Accounts.get_user!(socket.assigns.user.id))}
   end
 
-  def handle_info({:search, search_query}, socket) do
-    socket = assign socket, search: search_query
-    {:noreply, filter(socket)}
+  def handle_info({:search, search}, socket) do
+    page = 1
+    items = get_items(page, socket.assigns.sort, socket.assigns.dir, search, socket.assigns.user)
+    item_count = Museum.item_count(socket.assigns.user, search)
+    {:noreply, assign(socket, items: items, item_count: item_count, search: search, page: page)}
   end
 
-  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
-    case sort_by do
-      sort_by when sort_by in ~w(name displays room) ->
+  def handle_params(%{"sort" => sort, "dir" => dir}, _uri, socket) do
+    case sort do
+      sort when sort in ~w(name display room) ->
+        page = 1
         socket = assign socket,
-          items: sort(socket.assigns.items, sort_by, sort_by == socket.assigns.sort),
-          sort: sort_by
-        {:noreply, filter(socket)}
+          items: get_items(page, sort, dir, socket.assigns.search, socket.assigns.user),
+          page: page,
+          sort: sort,
+          dir: dir
+        {:noreply, socket}
       _ ->
         {:noreply, socket}
     end
@@ -51,11 +70,13 @@ defmodule LotdWeb.ItemLive do
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
-  defp filter(socket) do
-    filter = String.downcase(socket.assigns.search)
-    visible_items = Enum.filter(socket.assigns.items,
-      fn i -> String.contains?(String.downcase(i.name), filter) end)
-
-    assign socket, visible_items: visible_items
+  defp get_items(page, sort, dir, search, user) do
+    if is_nil(user) do
+      Museum.list_items(page, sort, dir, search)
+    else
+      user_items = Enum.map(user.active_character.items, & &1.id)
+      Museum.list_items(page, sort, dir, search, user)
+      |> Enum.map(& Map.put(&1, :active, Enum.member?(user_items, &1.id)))
+    end
   end
 end
