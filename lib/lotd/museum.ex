@@ -49,12 +49,71 @@ defmodule Lotd.Museum do
 
   # ITEMS
 
-  def list_items(user) when is_nil(user),
-    do: Repo.all from(i in Item, preload: :display, order_by: i.name)
+  def list_items(page, sort, dir, search, nil) do
+    IO.inspect {sort, dir}
+    IO.inspect {sort, dir} == {"display", "asc"}
+    query =
+      case {sort, dir} do
+        {"display", "asc"} ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [asc: d.name],
+            where: ilike(i.name, ^"%#{search}%")
+          )
+        {"display", "desc"} ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [desc: d.name],
+            where: ilike(i.name, ^"%#{search}%")
+          )
+          {"room", "asc"} ->
+            from(i in Item,
+              left_join: d in assoc(i, :display),
+              left_join: r in assoc(i, :room),
+              select: %{ id: i.id, name: i.name },
+              select_merge: %{ display: d.name, room: r.name },
+              order_by: [asc: r.name],
+              where: ilike(i.name, ^"%#{search}%")
+            )
+          {"room", "desc"} ->
+            from(i in Item,
+              left_join: d in assoc(i, :display),
+              left_join: r in assoc(i, :room),
+              select: %{ id: i.id, name: i.name },
+              select_merge: %{ display: d.name, room: r.name },
+              order_by: [desc: r.name],
+              where: ilike(i.name, ^"%#{search}%")
+            )
+          {"name", "desc"} ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [desc: i.name],
+            where: ilike(i.name, ^"%#{search}%")
+          )
+        _ ->
+          from(i in Item,
+            left_join: d in assoc(i, :display),
+            left_join: r in assoc(i, :room),
+            select: %{ id: i.id, name: i.name },
+            select_merge: %{ display: d.name, room: r.name },
+            order_by: [asc: i.name],
+            where: ilike(i.name, ^"%#{search}%")
+          )
+      end
+    |> Repo.paginate(page: page)
+  end
 
   def list_items(page, sort, dir, search, user) do
     mod_ids = Enum.map(user.active_character.mods, & &1.id)
-
     query =
       case {sort, dir} do
         {"display", "asc"} ->
@@ -115,9 +174,7 @@ defmodule Lotd.Museum do
     |> Repo.paginate(page: page)
   end
 
-  def item_count(user, search) when is_nil(user) do
-    Repo.one(from i in Item, select: count(i.id))
-  end
+  def item_count(nil, search), do: Repo.one(from i in Item, select: count(i.id))
 
   def item_count(user, search) do
     mod_ids = Enum.map(user.active_character.mods, & &1.id)

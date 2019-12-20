@@ -3,13 +3,13 @@
     <thead>
       <tr>
         <%= unless is_nil(@user), do: th_toggle() %>
-        <%= th_sort title("Item", @user, @item_count), LotdWeb.ItemLive, "name", @sort, @dir %>
+        <%= th_sort title("Item", @user, @data.total_entries), LotdWeb.ItemLive, "name", @sort, @dir %>
         <%= th_sort "Display", LotdWeb.ItemLive, "display", @sort, @dir  %>
         <%= th_sort "Room", LotdWeb.ItemLive, "room", @sort, @dir  %>
       </tr>
     </thead>
     <tbody>
-      <%= for item <- @items do %>
+      <%= for item <- @data.entries do %>
         <tr>
           <%= unless is_nil(@user) do %>
             <td class='text-center'>
@@ -32,10 +32,8 @@
       <% end %>
     </tbody>
   </table>
-  <%= if Enum.count(@items) < @item_count do %>
-    <button id='more' class='d-none' phx-click='load_more'>
-      <td colspan='<%= if is_nil(@user), do: 3, else: 4 %>'>Load more...</td>
-    </button>
+  <%= if Enum.count(@data.entries) < @data.total_entries do %>
+    <button id='more' class='d-none' phx-click='load_more'>Load more...</button>
   <% end %>
 </div>
 
