@@ -3,19 +3,15 @@ defmodule LotdWeb.LiveHelpers do
   Conveniences for all live views.
   """
 
-  def sort(results, name, already_sorted? \\ false)
+  def sort(results, "items", "asc"), do: Enum.sort_by(results, fn o -> Enum.count(o.items) end)
+  def sort(results, "items", "desc"), do: Enum.reverse(sort(results, "items", "asc"))
 
-  def sort(results, _sortby, true), do: Enum.reverse(results)
+  def sort(results, sort, "asc"), do:
+    Enum.sort_by(results, fn o -> Map.get(o, String.to_atom(sort)) end)
 
-  def sort(results, "name", false), do: Enum.sort_by(results, & &1.name)
-
-  def sort(results, "items", false) do
+  def sort(results, sort, "desc") do
     results
-    |> Enum.sort_by(& Enum.count(&1.items))
+    |> Enum.sort_by(fn o -> Map.get(o, String.to_atom(sort)) end)
     |> Enum.reverse()
   end
-
-  def sort(results, "displays", false), do: Enum.sort_by(results, & &1.display)
-
-  def sort(results, "room", false), do: Enum.sort_by(results, & &1.room)
 end

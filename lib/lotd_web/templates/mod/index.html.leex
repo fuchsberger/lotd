@@ -10,7 +10,7 @@
     </thead>
     <tbody>
       <%= for mod <- @mods do %>
-        <tr class='<%= if hidden?(mod, @search), do: "d-none" %>'>
+        <tr class='<%= unless mod.visible, do: "d-none" %>'>
           <%= unless is_nil(@user) do %>
             <td class='text-center'>
               <a phx-click='toggle_active' phx-value-id='<%= mod.id %>'>

@@ -6,8 +6,4 @@ defmodule LotdWeb.ModView do
     |> Enum.filter(fn i -> i.mod_id == mod.id end)
     |> Enum.count()
   end
-
-  def hidden?(mod, search) do
-    not String.contains?(String.downcase(mod.name), String.downcase(search))
-  end
 end

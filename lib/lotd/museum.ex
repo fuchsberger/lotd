@@ -137,9 +137,8 @@ defmodule Lotd.Museum do
 
   # MODS
 
-  def list_mods(sort, dir) do
+  def list_mods() do
     query = from(m in Mod, preload: :items )
-    # |> sort_query(sort, dir)
     |> Repo.all()
   end
 

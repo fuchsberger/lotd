@@ -7,18 +7,18 @@ defmodule LotdWeb.ModLive do
 
   def mount(session, socket) do
 
-    sort = "name"
+    sort = "items"
     dir = "asc"
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      mods: get_mods(sort, dir, user),
+      mods: Museum.list_mods(),
       search: "",
       sort: sort,
       dir: dir,
       user: user
 
-    {:ok, socket}
+    {:ok, filter(socket)}
   end
 
   def handle_event("toggle_active", %{"id" => id}, socket) do
@@ -35,17 +35,30 @@ defmodule LotdWeb.ModLive do
 
   def handle_info({:search, search_query}, socket) do
     socket = assign socket, search: search_query
-    {:noreply, socket}
+    {:noreply, filter(socket)}
   end
 
   def handle_params(%{"sort" => sort, "dir" => dir}, _uri, socket) do
     case sort do
       sort when sort in ~w(name items) ->
+        dir = if sort == socket.assigns.sort do
+          case socket.assigns.dir do
+            "asc" -> "desc"
+            "desc" -> "asc"
+          end
+        else
+          case sort do
+            "items" -> "desc"
+            _ -> "asc"
+          end
+        end
+
         socket = assign socket,
-          mods: get_mods(sort, dir, socket.assigns.user),
+          mods: sort(socket.assigns.mods, sort, dir),
           sort: sort,
           dir: dir
-        {:noreply, socket}
+
+        {:noreply, filter(socket)}
       _ ->
         {:noreply, socket}
     end
@@ -53,13 +66,10 @@ defmodule LotdWeb.ModLive do
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
 
-  defp get_mods(sort, dir, user) do
-    if is_nil(user) do
-      Museum.list_mods(sort, dir)
-    else
-      user_mods = Enum.map(user.active_character.mods, & &1.id)
-      Museum.list_mods(sort, dir)
-      |> Enum.map(& Map.put(&1, :active, Enum.member?(user_mods, &1.id)))
-    end
+  defp filter(socket) do
+    filter = String.downcase(socket.assigns.search)
+    assign(socket, mods: Enum.map(socket.assigns.mods, fn m ->
+      Map.put(m, :visible, String.contains?(String.downcase(m.name), filter))
+    end))
   end
 end

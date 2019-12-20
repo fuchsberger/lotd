@@ -6,12 +6,16 @@ defmodule LotdWeb.CharacterLive do
   def render(assigns), do: LotdWeb.CharacterView.render("index.html", assigns)
 
   def mount(session, socket) do
+
+    sort = "items"
+    dir = "desc"
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      characters: sort(Accounts.list_characters(user), "items"),
+      characters: Accounts.get_characters(user),
       search: "",
-      sort: "items",
+      sort: sort,
+      dir: dir,
       user: user
 
     {:ok, filter(socket)}
@@ -36,12 +40,25 @@ defmodule LotdWeb.CharacterLive do
     {:noreply, filter(socket)}
   end
 
-  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
-    case sort_by do
-      sort_by when sort_by in ~w(name items) ->
+  def handle_params(%{"sort" => sort, "dir" => dir}, _uri, socket) do
+    case sort do
+      sort when sort in ~w(name items) ->
+        dir = if sort == socket.assigns.sort do
+          case socket.assigns.dir do
+            "asc" -> "desc"
+            "desc" -> "asc"
+          end
+        else
+          case sort do
+            "items" -> "desc"
+            _ -> "asc"
+          end
+        end
+
         socket = assign socket,
-          characters: sort(socket.assigns.characters, sort_by, sort_by == socket.assigns.sort),
-          sort: sort_by
+          characters: sort(socket.assigns.characters, sort, dir),
+          sort: sort,
+          dir: dir
         {:noreply, filter(socket)}
       _ ->
         {:noreply, socket}
@@ -52,9 +69,8 @@ defmodule LotdWeb.CharacterLive do
 
   defp filter(socket) do
     filter = String.downcase(socket.assigns.search)
-    visible_characters = Enum.filter(socket.assigns.characters,
-      fn c -> String.contains?(String.downcase(c.name), filter) end)
-
-    assign socket, visible_characters: visible_characters
+    assign(socket, characters: Enum.map(socket.assigns.characters, fn c ->
+      Map.put(c, :visible, String.contains?(String.downcase(c.name), filter))
+    end))
   end
 end

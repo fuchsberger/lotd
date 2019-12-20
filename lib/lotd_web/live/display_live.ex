@@ -9,7 +9,7 @@ defmodule LotdWeb.DisplayLive do
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      displays: sort(Museum.list_displays(), "name"),
+      displays: Museum.list_displays(),
       search: "",
       sort: "name",
       user: user
@@ -22,12 +22,25 @@ defmodule LotdWeb.DisplayLive do
     {:noreply, filter(socket)}
   end
 
-  def handle_params(%{"sort_by" => sort_by}, _uri, socket) do
-    case sort_by do
-      sort_by when sort_by in ~w(name room items) ->
+  def handle_params(%{"sort" => sort, "dir" => dir}, _uri, socket) do
+    case sort do
+      sort when sort in ~w(name room items) ->
+        dir = if sort == socket.assigns.sort do
+          case socket.assigns.dir do
+            "asc" -> "desc"
+            "desc" -> "asc"
+          end
+        else
+          case sort do
+            "items" -> "desc"
+            _ -> "asc"
+          end
+        end
+
         socket = assign socket,
-          displays: sort(socket.assigns.displays, sort_by, sort_by == socket.assigns.sort),
-          sort: sort_by
+          displays: sort(socket.assigns.displays, sort, dir),
+          sort: sort,
+          dir: dir
         {:noreply, filter(socket)}
       _ ->
         {:noreply, socket}
@@ -38,9 +51,8 @@ defmodule LotdWeb.DisplayLive do
 
   defp filter(socket) do
     filter = String.downcase(socket.assigns.search)
-    visible_displays = Enum.filter(socket.assigns.displays,
-      fn d -> String.contains?(String.downcase(d.name), filter) end)
-
-    assign socket, visible_displays: visible_displays
+    assign(socket, displays: Enum.map(socket.assigns.displays, fn d ->
+      Map.put(d, :visible, String.contains?(String.downcase(d.name), filter))
+    end))
   end
 end
