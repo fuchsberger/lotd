@@ -40,7 +40,7 @@ defmodule LotdWeb.CharacterLive do
     {:noreply, filter(socket)}
   end
 
-  def handle_params(%{"sort" => sort, "dir" => dir}, _uri, socket) do
+  def handle_params(%{"sort" => sort, "dir" => _dir}, _uri, socket) do
     case sort do
       sort when sort in ~w(name items) ->
         dir = if sort == socket.assigns.sort do

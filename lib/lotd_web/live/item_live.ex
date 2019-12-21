@@ -14,8 +14,7 @@ defmodule LotdWeb.ItemLive do
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      fully_loaded: false,
-      data: get_data(1, sort, dir, search, user),
+      data: Museum.list_items(sort, dir, search, user),
       search: search,
       sort: sort,
       dir: dir,
@@ -24,13 +23,13 @@ defmodule LotdWeb.ItemLive do
     {:ok, socket}
   end
 
-  def handle_event("load_more", params, socket) do
-    data = get_data(
-      socket.assigns.data.page_number + 1,
+  def handle_event("load_more", _params, socket) do
+    data = Museum.list_items(
       socket.assigns.sort,
       socket.assigns.dir,
       socket.assigns.search,
-      socket.assigns.user
+      socket.assigns.user,
+      socket.assigns.data.page_number + 1
     )
 
     {:noreply, assign(socket, data: Map.put(data, :entries, socket.assigns.data.entries ++ data.entries))}
@@ -48,11 +47,11 @@ defmodule LotdWeb.ItemLive do
   end
 
   def handle_info({:search, search}, socket) do
-    data = get_data(1, socket.assigns.sort, socket.assigns.dir, search, socket.assigns.user)
+    data = Museum.list_items(socket.assigns.sort, socket.assigns.dir, search, socket.assigns.user)
     {:noreply, assign(socket, data: data, search: search)}
   end
 
-  def handle_params(%{"sort" => sort, "dir" => dir}, _uri, socket) do
+  def handle_params(%{"sort" => sort, "dir" => _dir}, _uri, socket) do
     case sort do
       sort when sort in ~w(name display room) ->
         dir = if sort == socket.assigns.sort do
@@ -65,7 +64,7 @@ defmodule LotdWeb.ItemLive do
         end
 
         socket = assign socket,
-          items: get_data(1, sort, dir, socket.assigns.search, socket.assigns.user),
+          data: Museum.list_items(sort, dir, socket.assigns.search, socket.assigns.user),
           sort: sort,
           dir: dir
         {:noreply, socket}
@@ -75,15 +74,4 @@ defmodule LotdWeb.ItemLive do
   end
 
   def handle_params(_params, _uri, socket), do: {:noreply, socket}
-
-  defp get_data(page, sort, dir, search, user) do
-    data = Museum.list_items(page, sort, dir, search, user)
-    if is_nil(user) do
-      data
-    else
-      user_items = Enum.map(user.active_character.items, & &1.id)
-      items = Enum.map(data.entries, & Map.put(&1, :active, Enum.member?(user_items, &1.id)))
-      Map.put(data, :entries, items)
-    end
-  end
 end

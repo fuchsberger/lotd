@@ -8,12 +8,6 @@ defmodule Lotd.Museum do
   alias Lotd.Museum.{Display, Item, Mod, Room}
 
   # SORTING
-  defp sort_query(query, sort, dir) do
-    # term = String.to_atom(sort)
-    if dir == "asc",
-      do: from(q in query, order_by: [:display]),
-      else: from(q in query, order_by: [desc: :display])
-  end
 
   def get_form_id(id_string) do
     if id_string == "None" do
@@ -49,139 +43,130 @@ defmodule Lotd.Museum do
 
   # ITEMS
 
-  def list_items(page, sort, dir, search, nil) do
+  def list_items(sort, dir, search, user, page \\ 1)
+
+  def list_items(sort, dir, search, nil, page) do
     IO.inspect {sort, dir}
     IO.inspect {sort, dir} == {"display", "asc"}
-    query =
-      case {sort, dir} do
-        {"display", "asc"} ->
+    case {sort, dir} do
+      {"display", "asc"} ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [asc: d.name],
+          where: ilike(i.name, ^"%#{search}%")
+        )
+      {"display", "desc"} ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [desc: d.name],
+          where: ilike(i.name, ^"%#{search}%")
+        )
+        {"room", "asc"} ->
           from(i in Item,
             left_join: d in assoc(i, :display),
             left_join: r in assoc(i, :room),
             select: %{ id: i.id, name: i.name },
             select_merge: %{ display: d.name, room: r.name },
-            order_by: [asc: d.name],
+            order_by: [asc: r.name],
             where: ilike(i.name, ^"%#{search}%")
           )
-        {"display", "desc"} ->
+        {"room", "desc"} ->
           from(i in Item,
             left_join: d in assoc(i, :display),
             left_join: r in assoc(i, :room),
             select: %{ id: i.id, name: i.name },
             select_merge: %{ display: d.name, room: r.name },
-            order_by: [desc: d.name],
+            order_by: [desc: r.name],
             where: ilike(i.name, ^"%#{search}%")
           )
-          {"room", "asc"} ->
-            from(i in Item,
-              left_join: d in assoc(i, :display),
-              left_join: r in assoc(i, :room),
-              select: %{ id: i.id, name: i.name },
-              select_merge: %{ display: d.name, room: r.name },
-              order_by: [asc: r.name],
-              where: ilike(i.name, ^"%#{search}%")
-            )
-          {"room", "desc"} ->
-            from(i in Item,
-              left_join: d in assoc(i, :display),
-              left_join: r in assoc(i, :room),
-              select: %{ id: i.id, name: i.name },
-              select_merge: %{ display: d.name, room: r.name },
-              order_by: [desc: r.name],
-              where: ilike(i.name, ^"%#{search}%")
-            )
-          {"name", "desc"} ->
-          from(i in Item,
-            left_join: d in assoc(i, :display),
-            left_join: r in assoc(i, :room),
-            select: %{ id: i.id, name: i.name },
-            select_merge: %{ display: d.name, room: r.name },
-            order_by: [desc: i.name],
-            where: ilike(i.name, ^"%#{search}%")
-          )
-        _ ->
-          from(i in Item,
-            left_join: d in assoc(i, :display),
-            left_join: r in assoc(i, :room),
-            select: %{ id: i.id, name: i.name },
-            select_merge: %{ display: d.name, room: r.name },
-            order_by: [asc: i.name],
-            where: ilike(i.name, ^"%#{search}%")
-          )
-      end
+        {"name", "desc"} ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [desc: i.name],
+          where: ilike(i.name, ^"%#{search}%")
+        )
+      _ ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [asc: i.name],
+          where: ilike(i.name, ^"%#{search}%")
+        )
+    end
     |> Repo.paginate(page: page)
   end
 
-  def list_items(page, sort, dir, search, user) do
-    mod_ids = Enum.map(user.active_character.mods, & &1.id)
-    query =
-      case {sort, dir} do
-        {"display", "asc"} ->
+  def list_items(sort, dir, search, user, page) do
+    mod_ids = Enum.map(user.active_character.mods, fn m -> m.id end)
+
+    case {sort, dir} do
+      {"display", "asc"} ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [asc: d.name],
+          where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+        )
+      {"display", "desc"} ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [desc: d.name],
+          where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+        )
+        {"room", "asc"} ->
           from(i in Item,
             left_join: d in assoc(i, :display),
             left_join: r in assoc(i, :room),
             select: %{ id: i.id, name: i.name },
             select_merge: %{ display: d.name, room: r.name },
-            order_by: [asc: d.name],
+            order_by: [asc: r.name],
             where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
           )
-        {"display", "desc"} ->
+        {"room", "desc"} ->
           from(i in Item,
             left_join: d in assoc(i, :display),
             left_join: r in assoc(i, :room),
             select: %{ id: i.id, name: i.name },
             select_merge: %{ display: d.name, room: r.name },
-            order_by: [desc: d.name],
+            order_by: [desc: r.name],
             where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
           )
-          {"room", "asc"} ->
-            from(i in Item,
-              left_join: d in assoc(i, :display),
-              left_join: r in assoc(i, :room),
-              select: %{ id: i.id, name: i.name },
-              select_merge: %{ display: d.name, room: r.name },
-              order_by: [asc: r.name],
-              where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
-            )
-          {"room", "desc"} ->
-            from(i in Item,
-              left_join: d in assoc(i, :display),
-              left_join: r in assoc(i, :room),
-              select: %{ id: i.id, name: i.name },
-              select_merge: %{ display: d.name, room: r.name },
-              order_by: [desc: r.name],
-              where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
-            )
-          {"name", "desc"} ->
-          from(i in Item,
-            left_join: d in assoc(i, :display),
-            left_join: r in assoc(i, :room),
-            select: %{ id: i.id, name: i.name },
-            select_merge: %{ display: d.name, room: r.name },
-            order_by: [desc: i.name],
-            where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
-          )
-        _ ->
-          from(i in Item,
-            left_join: d in assoc(i, :display),
-            left_join: r in assoc(i, :room),
-            select: %{ id: i.id, name: i.name },
-            select_merge: %{ display: d.name, room: r.name },
-            order_by: [asc: i.name],
-            where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
-          )
-      end
+        {"name", "desc"} ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [desc: i.name],
+          where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+        )
+      _ ->
+        from(i in Item,
+          left_join: d in assoc(i, :display),
+          left_join: r in assoc(i, :room),
+          select: %{ id: i.id, name: i.name },
+          select_merge: %{ display: d.name, room: r.name },
+          order_by: [asc: i.name],
+          where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
+        )
+    end
     |> Repo.paginate(page: page)
-  end
-
-  def item_count(nil, search), do: Repo.one(from i in Item, select: count(i.id))
-
-  def item_count(user, search) do
-    mod_ids = Enum.map(user.active_character.mods, & &1.id)
-    Repo.one(from i in Item,
-      select: count(i.id),
-      where: i.mod_id in ^mod_ids and ilike(i.name, ^"%#{search}%")
-    )
   end
 
   def get_item!(id), do: Repo.get!(Item, id)
@@ -194,16 +179,7 @@ defmodule Lotd.Museum do
 
   # MODS
 
-  def list_mods() do
-    query = from(m in Mod, preload: :items )
-    |> Repo.all()
-  end
-
-  def create_item(attrs) do
-    %Item{}
-    |> Item.changeset(attrs)
-    |> Repo.insert()
-  end
+  def list_mods, do: Repo.all(from(m in Mod, preload: :items ))
 
   def get_mod_id!(name), do: Repo.one!(from(m in Mod, select: m.id, where: m.name == ^name))
 
