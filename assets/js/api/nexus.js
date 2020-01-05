@@ -17,7 +17,6 @@ const login = () => {
 
   // Connect to SSO service
   socket.onopen = () => {
-
     const uuid = uuidv4()
 
     // Send the SSO request
@@ -29,6 +28,7 @@ const login = () => {
 
   // When the client receives a message
   socket.onmessage = e => {
+
     // pass all messages back to the client by using the format type:value
     var res = JSON.parse(e.data)
 

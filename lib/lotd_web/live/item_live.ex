@@ -8,6 +8,7 @@ defmodule LotdWeb.ItemLive do
   def render(assigns), do: ItemView.render("index.html", assigns)
 
   def mount(session, socket) do
+
     search = ""
     sort = "name"
     dir = "asc"

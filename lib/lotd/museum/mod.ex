@@ -5,7 +5,7 @@ defmodule Lotd.Museum.Mod do
   schema "mods" do
     field :name, :string
     has_many :items, Lotd.Museum.Item
-    many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_mods"
+    many_to_many :characters, Lotd.Accounts.Character, join_through: "character_mods"
   end
 
   @doc false

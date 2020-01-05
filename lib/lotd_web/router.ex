@@ -1,7 +1,7 @@
 defmodule LotdWeb.Router do
   use LotdWeb, :router
 
-  @session [session: [ :user_id, csrf_token: Phoenix.Controller.get_csrf_token() ]]
+  @session [session: [ :user_id ]]
 
   pipeline :browser do
     plug :accepts, ["html"]

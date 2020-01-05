@@ -56,11 +56,11 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     create unique_index(:mods, [:name])
 
     # link items and displays (n:m)
-    create table(:characters_items) do
+    create table(:character_items) do
       add :character_id, references(:characters, on_delete: :delete_all), null: false
       add :item_id, references(:items, on_delete: :delete_all), null: false
     end
-    create unique_index(:characters_items, [:character_id, :item_id])
+    create unique_index(:character_items, [:character_id, :item_id])
 
     # link characters and mods (n:m)
     create table(:characters_mods) do

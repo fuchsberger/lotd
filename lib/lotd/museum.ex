@@ -46,8 +46,6 @@ defmodule Lotd.Museum do
   def list_items(sort, dir, search, user, page \\ 1)
 
   def list_items(sort, dir, search, nil, page) do
-    IO.inspect {sort, dir}
-    IO.inspect {sort, dir} == {"display", "asc"}
     case {sort, dir} do
       {"display", "asc"} ->
         from(i in Item,

@@ -20,7 +20,7 @@ defmodule Lotd.MixProject do
   def application do
     [
       mod: {Lotd.Application, []},
-      extra_applications: [:logger, :runtime_tools, :scrivener_ecto, :edeliver]
+      extra_applications: [:logger, :runtime_tools, :scrivener_ecto]
     ]
   end
 
@@ -46,9 +46,7 @@ defmodule Lotd.MixProject do
       {:httpoison, "~> 1.5"},
       {:scrivener_ecto, "~> 2.0"},
       {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
-      {:floki, ">= 0.0.0", only: :test},
-      {:edeliver, ">= 1.6.0"},
-      {:distillery, "~> 2.0", warn_missing: false}
+      {:floki, ">= 0.0.0", only: :test}
     ]
   end
 

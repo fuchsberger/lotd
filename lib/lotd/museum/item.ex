@@ -16,7 +16,7 @@ defmodule Lotd.Museum.Item do
     belongs_to :mod, Lotd.Museum.Mod
     belongs_to :room, Lotd.Museum.Room
 
-    many_to_many :characters, Lotd.Accounts.Character, join_through: "characters_items"
+    many_to_many :characters, Lotd.Accounts.Character, join_through: "character_items"
   end
 
   @doc false

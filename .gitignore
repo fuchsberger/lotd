@@ -33,8 +33,6 @@ npm-debug.log
 # this depending on your deployment strategy.
 /priv/static/
 
-.deliver/releases/
-
 # editor & OS artifacts
 **/.DS_Store
 *.code-workspace
