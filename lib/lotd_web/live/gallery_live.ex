@@ -15,7 +15,7 @@ defmodule LotdWeb.GalleryLive do
     {:ok, assign(socket,
       authenticated?: not is_nil(user),
       displays: Gallery.list_displays(),
-      hide_collected: true,
+      hide_collected: not is_nil(user),
       user: user
     )}
   end
@@ -24,16 +24,10 @@ defmodule LotdWeb.GalleryLive do
     room = if room == "", do: nil, else: String.to_integer(room)
 
     # get all items for that room
-    items = Gallery.list_items(room)
+    socket = assign(socket, display: nil, items: Gallery.list_items(room), room: room )
 
-    # update displays with the proper item numbers
-    displays = Enum.map(socket.assigns.displays, fn d ->
-      item_ids = Enum.filter(items, fn i -> i.display_id == d.id end)
-
-      Map.put(d, :count, Enum.count(item_ids))
-    end)
-
-    {:noreply, assign(socket, display: nil, displays: displays, items: items, room: room )}
+    # set visible displays and return socket
+    {:noreply, assign(socket, :visible_displays, calculate_visible_displays(socket))}
   end
 
   def handle_params(_params, uri, socket) do
@@ -48,7 +42,8 @@ defmodule LotdWeb.GalleryLive do
   end
 
   def handle_event("toggle-hide-collected", _params, socket) do
-    {:noreply, assign(socket, :hide_collected, !socket.assigns.hide_collected)}
+    socket = assign(socket, :hide_collected,  !socket.assigns.hide_collected)
+    {:noreply, assign(socket, :visible_displays, calculate_visible_displays(socket))}
   end
 
   def handle_event("toggle-item", %{"id" => id}, socket) do
@@ -65,12 +60,37 @@ defmodule LotdWeb.GalleryLive do
         if Enum.member?(item_ids, item.id) do
           # add item to character
           character = Accounts.remove_item(character, item)
-          {:noreply, assign(socket, :user, Map.put(user, :active_character, character))}
+          socket = assign(socket, :user, Map.put(user, :active_character, character))
+          {:noreply, assign(socket, :visible_displays, calculate_visible_displays(socket))}
         else
           # remove item from character
           character =  Accounts.collect_item(character, item)
-          {:noreply, assign(socket, :user, Map.put(user, :active_character, character))}
+          socket = assign(socket, :user, Map.put(user, :active_character, character))
+          {:noreply, assign(socket, :visible_displays, calculate_visible_displays(socket))}
         end
     end
+  end
+
+  defp calculate_visible_displays(socket) do
+
+    Enum.map(socket.assigns.displays, fn d ->
+
+      item_ids = socket.assigns.items
+        |> Enum.filter(& &1.display_id == d.id)
+        |> Enum.map(& &1.id)
+
+      count = Enum.count(item_ids)
+
+      if socket.assigns.hide_collected do
+        user_item_ids = Enum.map(socket.assigns.user.active_character.items, & &1.id)
+        intersection = user_item_ids -- item_ids
+        intersection = user_item_ids -- intersection
+        found = Enum.count(intersection)
+        Map.put(d, :count, count - found)
+      else
+        Map.put(d, :count, count)
+      end
+    end)
+    |> Enum.filter(& &1.count > 0)
   end
 end

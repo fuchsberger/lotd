@@ -36,7 +36,7 @@ defmodule Lotd.Gallery do
 
   # DISPLAYS
 
-  def list_displays, do: Repo.all from(d in Display)
+  def list_displays, do: Repo.all from(d in Display, order_by: d.name)
 
   def get_display_id!(name),
     do: Repo.one!(from(d in Display, select: d.id, where: d.name == ^name))

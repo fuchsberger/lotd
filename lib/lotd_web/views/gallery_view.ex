@@ -21,15 +21,10 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def display_class(current_display, display) do
-    cond do
-      current_display == display.id ->
-        "#{@base_class} list-group-item-action d-flex list-group-item-secondary"
-      display.count == 0 ->
-        "#{@base_class} list-group-item-action d-none"
-      true ->
-        "#{@base_class} list-group-item-action d-flex"
-    end
+  def display_class(display, current_display) do
+    if current_display == display.id,
+      do: "#{@base_class} list-group-item-action d-flex list-group-item-secondary",
+      else: "#{@base_class} list-group-item-action d-flex"
   end
 
   def item_class(item, display, user, hide_collected) do
@@ -50,6 +45,9 @@ defmodule LotdWeb.GalleryView do
     item_ids = Enum.map(user.active_character.items, & &1.id)
     if Enum.member?(item_ids, item.id), do: "icon-active", else: "icon-inactive"
   end
+
+  def display_count(hide_collected, d),
+    do: if hide_collected, do: d.remaining, else: d.count
 
   def active?(boolean), do: if boolean, do: "icon-active", else: "icon-inactive"
 

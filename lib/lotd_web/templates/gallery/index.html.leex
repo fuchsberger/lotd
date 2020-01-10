@@ -23,9 +23,9 @@
         <span class="badge badge-secondary badge-pill"><%= Enum.count(@items) %></span>
       </button>
 
-      <%= for d <- @displays do %>
+      <%= for d <- @visible_displays do %>
         <button
-          class="<%= display_class(@display, d) %>"
+          class="<%= display_class(d, @display) %>"
           phx-click="show-display"
           phx-value-id="<%= d.id %>"
         >
