@@ -8,7 +8,7 @@ defmodule LotdWeb.Router do
     plug :fetch_session
     plug LotdWeb.Auth
     plug :fetch_flash
-    plug Phoenix.LiveView.Flash
+    # plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -16,14 +16,18 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    get "/about", PageController, :about
+    get "/", GalleryController, :index
+    get "/about", GalleryController, :about
+
+    # Gallery Pages
+    live "/gallery", GalleryLive, @session
+
     live "/characters", CharacterLive, @session
     live "/displays", DisplayLive, @session
-    live "/items", ItemLive, @session
+
     live "/mods", ModLive, @session
 
     resources "/session", SessionController, only: [:create, :delete]
-    get "/:path", PageController, :not_found
+    get "/:path", GalleryController, :not_found
   end
 end

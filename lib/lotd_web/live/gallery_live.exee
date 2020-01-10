@@ -1,11 +1,11 @@
-defmodule LotdWeb.ItemLive do
+defmodule LotdWeb.GalleryLive do
 
   use LotdWeb, :live
 
-  alias Lotd.{Accounts, Museum}
-  alias LotdWeb.ItemView
+  alias Lotd.{Accounts, Gallery}
+  alias LotdWeb.GalleryView
 
-  def render(assigns), do: ItemView.render("index.html", assigns)
+  def render(assigns), do: GalleryView.render("index.html", assigns)
 
   def mount(session, socket) do
 
@@ -15,7 +15,7 @@ defmodule LotdWeb.ItemLive do
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      data: Museum.list_items(sort, dir, search, user),
+      data: Gallery.list_items(sort, dir, search, user),
       search: search,
       sort: sort,
       dir: dir,
@@ -25,7 +25,7 @@ defmodule LotdWeb.ItemLive do
   end
 
   def handle_event("load_more", _params, socket) do
-    data = Museum.list_items(
+    data = Gallery.list_items(
       socket.assigns.sort,
       socket.assigns.dir,
       socket.assigns.search,
@@ -38,7 +38,7 @@ defmodule LotdWeb.ItemLive do
 
   def handle_event("toggle_collected", %{"id" => id}, socket) do
     character = socket.assigns.user.active_character
-    item = Museum.get_item!(id)
+    item = Gallery.get_item!(id)
 
     if Enum.member?(character.items, item),
       do: Accounts.update_character_remove_item(character, item.id),
@@ -48,7 +48,7 @@ defmodule LotdWeb.ItemLive do
   end
 
   def handle_info({:search, search}, socket) do
-    data = Museum.list_items(socket.assigns.sort, socket.assigns.dir, search, socket.assigns.user)
+    data = Gallery.list_items(socket.assigns.sort, socket.assigns.dir, search, socket.assigns.user)
     {:noreply, assign(socket, data: data, search: search)}
   end
 
@@ -65,7 +65,7 @@ defmodule LotdWeb.ItemLive do
         end
 
         socket = assign socket,
-          data: Museum.list_items(sort, dir, socket.assigns.search, socket.assigns.user),
+          data: Gallery.list_items(sort, dir, socket.assigns.search, socket.assigns.user),
           sort: sort,
           dir: dir
         {:noreply, socket}

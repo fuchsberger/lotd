@@ -1,4 +1,6 @@
-body { margin-top: 56px; margin-bottom: 56px; }
+html, body { height: calc(100% - 56px);}
+
+body { margin-top: 56px; }
 
 #login-button {
   background: url('../static/images/nexusmods.svg');
@@ -20,3 +22,5 @@ body { margin-top: 56px; margin-bottom: 56px; }
   height: 36px;
   margin-right: 0;
 }
+
+#display-list { height: calc(100% - 54px);}

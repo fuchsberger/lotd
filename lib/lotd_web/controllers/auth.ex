@@ -13,7 +13,7 @@ defmodule LotdWeb.Auth do
     cond do
       user = conn.assigns[:current_user] ->
         put_current_user(conn, user)
-      user = user_id && Lotd.Accounts.get_user!(user_id) ->
+      user = user_id && Lotd.Accounts.get_basic_user!(user_id) ->
         put_current_user(conn, user)
       true ->
         assign(conn, :current_user, nil)
@@ -29,8 +29,8 @@ defmodule LotdWeb.Auth do
   end
 
   def login(conn, user) do
-    # load user characters and items
-    user = Lotd.Accounts.get_user!(user.id)
+    # load user, active_character and it's items and mods
+    user = Lotd.Accounts.get_basic_user!(user.id)
 
     conn
     |> assign(:current_user, user)
@@ -48,7 +48,7 @@ defmodule LotdWeb.Auth do
     else
       conn
       |> put_flash(:error, "You must be an logged in to access that page")
-      |> redirect(to: Routes.page_path(conn, :index))
+      |> redirect(to: Routes.gallery_path(conn, :index))
       |> halt()
     end
   end
@@ -59,7 +59,7 @@ defmodule LotdWeb.Auth do
     else
       conn
       |> put_flash(:error, "You must be a moderator to access that page")
-      |> redirect(to: Routes.page_path(conn, :index))
+      |> redirect(to: Routes.gallery_path(conn, :index))
       |> halt()
     end
   end
@@ -70,7 +70,7 @@ defmodule LotdWeb.Auth do
     else
       conn
       |> put_flash(:error, "You must be an administrator to access that page")
-      |> redirect(to: Routes.page_path(conn, :index))
+      |> redirect(to: Routes.gallery_path(conn, :index))
       |> halt()
     end
   end

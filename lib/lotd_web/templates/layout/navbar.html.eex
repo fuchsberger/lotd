@@ -11,9 +11,9 @@
   <%# Menu %>
   <div class="ml-2 collapse navbar-collapse" id="menu-collapse">
     <ul id='menu' class="navbar-nav">
-      <%= nav_item @conn, "About", Routes.page_path(@conn, :about), "home" %>
-      <%= nav_item @conn, "Items", Routes.live_path(@conn, LotdWeb.ItemLive), "items" %>
-      <%= nav_item @conn, "Displays", Routes.live_path(@conn, LotdWeb.DisplayLive), "displays" %>
+      <%= nav_item @conn, "About", Routes.gallery_path(@conn, :about), "home" %>
+      <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>
+      <%= nav_item @conn, "Stats", Routes.live_path(@conn, LotdWeb.DisplayLive), "displays" %>
       <%= nav_item @conn, "Mods", Routes.live_path(@conn, LotdWeb.ModLive), "mods" %>
       <%# nav_item @conn, "Characters", Routes.live_path(@conn, LotdWeb.CharacterLive), "characters" %>
       <li class="nav-item">

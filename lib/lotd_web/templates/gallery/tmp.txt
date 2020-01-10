@@ -3,9 +3,9 @@
     <thead>
       <tr>
         <%= unless is_nil(@user), do: th_toggle() %>
-        <%= th_sort title("Item", @user, @data.total_entries), LotdWeb.ItemLive, "name", @sort, @dir %>
-        <%= th_sort "Display", LotdWeb.ItemLive, "display", @sort, @dir  %>
-        <%= th_sort "Room", LotdWeb.ItemLive, "room", @sort, @dir  %>
+        <%= th_sort title("Item", @user, @data.total_entries), LotdWeb.GalleryLive, "name", @sort, @dir %>
+        <%= th_sort "Display", LotdWeb.GalleryLive, "display", @sort, @dir  %>
+        <%= th_sort "Room", LotdWeb.GalleryLive, "room", @sort, @dir  %>
       </tr>
     </thead>
     <tbody>
@@ -36,5 +36,3 @@
     <button id='more' class='d-none' phx-click='load_more'>Load more...</button>
   <% end %>
 </div>
-
-<%= live_component @socket, LotdWeb.SearchbarComponent, id: "search", search: @search %>

@@ -13,7 +13,7 @@ msgstr ""
 
 #, elixir-format
 #: lib/lotd_web/templates/layout/app.html.eex:7
-msgid "LOTD - Museum Inventory"
+msgid "LOTD - Gallery Inventory"
 msgstr ""
 
 #, elixir-format

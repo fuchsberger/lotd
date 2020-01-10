@@ -7,8 +7,8 @@ defmodule Lotd.TestHelpers do
     {:ok, user} =
       attrs
       |> Enum.into(%{
-        nexus_id: id,
-        nexus_name: "user#{id}"
+        id: id,
+        name: "user#{id}"
       })
       |> Accounts.register_user()
     user

@@ -1,7 +1,9 @@
 defmodule LotdWeb.ModLive do
-  use LotdWeb, :live
+  use Phoenix.LiveView, container: {:div, class: "container"}
+  import LotdWeb.LiveHelpers
+  import LotdWeb.ViewHelpers, only: [ authenticated?: 1, admin?: 1, moderator?: 1 ]
 
-  alias Lotd.{Accounts, Museum}
+  alias Lotd.{Accounts, Gallery}
 
   def render(assigns), do: LotdWeb.ModView.render("index.html", assigns)
 
@@ -12,7 +14,7 @@ defmodule LotdWeb.ModLive do
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      mods: Museum.list_mods(),
+      mods: Gallery.list_mods(),
       search: "",
       sort: sort,
       dir: dir,

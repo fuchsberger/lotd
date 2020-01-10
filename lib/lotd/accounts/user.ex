@@ -3,8 +3,7 @@ defmodule Lotd.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :nexus_id, :integer
-    field :nexus_name, :string
+    field :name, :string
     field :admin, :boolean, default: false
     field :moderator, :boolean, default: false
     belongs_to :active_character, Lotd.Accounts.Character
@@ -15,9 +14,8 @@ defmodule Lotd.Accounts.User do
   @doc false
   def register_changeset(user, attrs) do
     user
-    |> cast(attrs, [:nexus_id, :nexus_name])
-    |> validate_required([:nexus_id, :nexus_name])
-    |> unique_constraint(:nexus_id)
+    |> cast(attrs, [:id, :name])
+    |> validate_required([:id, :name])
   end
 
   def changeset(user, attrs) do

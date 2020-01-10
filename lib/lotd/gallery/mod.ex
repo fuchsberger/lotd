@@ -1,10 +1,10 @@
-defmodule Lotd.Museum.Mod do
+defmodule Lotd.Gallery.Mod do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "mods" do
     field :name, :string
-    has_many :items, Lotd.Museum.Item
+    has_many :items, Lotd.Gallery.Item
     many_to_many :characters, Lotd.Accounts.Character, join_through: "character_mods"
   end
 

@@ -1,7 +1,8 @@
 # Script for populating the database. You can run it as:
-# mix run priv/repo/seeds.exs
+# "mix run priv/repo/seeds.exs" or alternatively "mix ecto reset"
+# only run in dev environment!
 
-alias Lotd.{Accounts, Museum}
+alias Lotd.{Accounts, Gallery}
 alias Lotd.Accounts.Character
 
 # require Logger and hide SQL Messages
@@ -9,9 +10,9 @@ require Logger
 Logger.configure(level: :info, truncate: 4096)
 
 # attempt to create admin user
-case Accounts.register_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" }) do
+case Accounts.register_user(%{ id: 811039, name: "Sekhmet13" }) do
   {:ok, user} ->
-    {:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
+    {:ok, %Character{id: id}} = Accounts.create_character(user, %{})
     Accounts.update_user(user, %{ admin: true, moderator: true, active_character_id: id })
     Logger.info("Admin user created.")
   {:error, _changeset} ->
@@ -19,9 +20,9 @@ case Accounts.register_user(%{ nexus_id: 811039, nexus_name: "Sekhmet13" }) do
 end
 
 # attempt to create a test user (can never login)
-case Accounts.register_user(%{ nexus_id: 0, nexus_name: "Test User" }) do
+case Accounts.register_user(%{ id: 0, name: "Test User" }) do
   {:ok, user} ->
-    {:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
+    {:ok, %Character{id: id}} = Accounts.create_character(user, %{})
     Accounts.update_user(user, %{ active_character_id: id })
     Logger.info("Test user created.")
   {:error, _changeset} ->
@@ -33,25 +34,12 @@ case File.read("priv/repo/displays.json") do
   {:ok, file} ->
     {:ok, rows} = Jason.decode(file)
 
-    # create rooms
-    rows
-    |> Enum.map(& &1["roomName"])
-    |> Enum.uniq()
-    |> Enum.each(fn room ->
-      case Museum.create_room(%{ name: room }) do
-        {:ok, room} ->
-          Logger.info("Room \"#{room.name}\" created.")
-        {:error, _changeset} ->
-          Logger.info("Room \"#{room.name}\" already exists.")
-      end
-    end)
-
     # create displays
     rows
     |> Enum.map(& &1["sectionName"])
     |> Enum.uniq()
     |> Enum.each(fn display ->
-      case Museum.create_display(%{ name: display }) do
+      case Gallery.create_display(%{ name: display }) do
         {:ok, display} ->
           Logger.info("Display \"#{display.name}\" created.")
         {:error, _changeset} ->
@@ -64,11 +52,11 @@ case File.read("priv/repo/displays.json") do
     |> Enum.map(& &1["modSource"])
     |> Enum.uniq()
     |> Enum.each(fn mod ->
-      case Museum.create_mod(%{ name: mod }) do
+      case Gallery.create_mod(%{ name: mod }) do
         {:ok, mod} ->
           Logger.info("Mod \"#{mod.name}\" created.")
         {:error, _changeset} ->
-          Logger.info("Mod \"#{mod.name}\" already exists.")
+          Logger.warn("Mod \"#{mod.name}\" already exists.")
       end
     end)
 
@@ -76,19 +64,16 @@ case File.read("priv/repo/displays.json") do
     Enum.each(rows, fn item ->
       item = %{
         name: item["itemName"],
-        form_id: Museum.get_form_id(item["formId"]),
-        replica_id: Museum.get_form_id(item["replicaId"]),
-        display_ref: Museum.get_form_id(item["displayRef"]),
-        display_id: Museum.get_display_id!(item["sectionName"]),
-        room_id: Museum.get_room_id!(item["roomName"]),
-        mod_id: Museum.get_mod_id!(item["modSource"])
+        room: Gallery.get_room_id!(item["roomName"]),
+        display_id: Gallery.get_display_id!(item["sectionName"]),
+        mod_id: Gallery.get_mod_id!(item["modSource"])
       }
 
-      case Museum.create_item(item) do
+      case Gallery.create_item(item) do
         {:ok, item} ->
           Logger.info("Item \"#{item.name}\" created.")
         {:error, _changeset} ->
-          Logger.info("Item \"#{item.name}\" already exists.")
+          Logger.error("Item \"#{item.name}\" could not be created.")
       end
     end)
 

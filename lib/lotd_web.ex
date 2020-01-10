@@ -38,15 +38,6 @@ defmodule LotdWeb do
     end
   end
 
-  def live do
-    quote do
-      use Phoenix.LiveView
-
-      import LotdWeb.LiveHelpers
-      import LotdWeb.ViewHelpers, only: [ authenticated?: 1, admin?: 1, moderator?: 1 ]
-    end
-  end
-
   def view do
     quote do
       use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb

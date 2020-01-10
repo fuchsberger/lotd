@@ -9,25 +9,20 @@ defmodule Lotd.AccountsTest do
     assert [%User{id: ^id}] = Accounts.list_users()
   end
 
-  test "get_user!/1 returns the user with the given id" do
+  test "get_basic_user!/1 returns the user with the given id" do
     %User{id: id} = user_fixture()
-    assert %User{id: ^id, active_character: nil} = Accounts.get_user!(id)
-  end
-
-  test "get_user_by/1 returns a user by one or more attributes" do
-    %User{nexus_id: nexus_id} = user_fixture()
-    assert %User{nexus_id: ^nexus_id} = Accounts.get_user_by(nexus_id: nexus_id)
+    assert %User{id: ^id, active_character: nil} = Accounts.get_basic_user!(id)
   end
 
   describe "register_user/1 registers a new user" do
 
-    @valid_attrs %{nexus_id: 42, nexus_name: "some_nexus_name"}
+    @valid_attrs %{id: 42, name: "some_name"}
     @invalid_attrs %{}
 
     test "with valid data inserts user" do
       assert {:ok, %User{id: id} = user} = Accounts.register_user(@valid_attrs)
-      assert user.nexus_id == 42
-      assert user.nexus_name == "some_nexus_name"
+      assert user.id == 42
+      assert user.name == "some_name"
       assert user.active_character_id == nil
       assert user.moderator == false
       assert user.admin == false
@@ -39,10 +34,10 @@ defmodule Lotd.AccountsTest do
       assert Accounts.list_users() == []
     end
 
-    test "enforces unique nexus_id" do
+    test "enforces unique id" do
       assert {:ok, %User{id: id}} = Accounts.register_user(@valid_attrs)
       assert {:error, changeset} = Accounts.register_user(@valid_attrs)
-      assert %{nexus_id: ["has already been taken"]} = errors_on(changeset)
+      assert %{id: ["has already been taken"]} = errors_on(changeset)
       assert [%User{id: ^id}] = Accounts.list_users()
     end
   end

@@ -2,7 +2,6 @@ defmodule LotdWeb.SessionController do
   use LotdWeb, :controller
 
   alias Lotd.Accounts
-  alias Lotd.Accounts.Character
   alias LotdWeb.Auth
 
   @doc """
@@ -22,43 +21,46 @@ defmodule LotdWeb.SessionController do
       {:ok, response} ->
         # response contains nexus user information such as userid and name
         response = Jason.decode!(response.body)
-        nexus_id = response["user_id"]
-        nexus_name = response["name"]
+        id = response["user_id"]
+        name = response["name"]
 
-        case Accounts.get_user_by(nexus_id: nexus_id) do
+        case Accounts.get_basic_user!(id) do
           # no record found --> create it and authenticate
           nil ->
-            case Accounts.register_user(%{nexus_id: nexus_id, nexus_name: nexus_name}) do
+            case Accounts.register_user(%{id: id, name: name}) do
               {:ok, user} ->
 
-                # also create and activate a default character
-                {:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
-                Accounts.update_user(user, %{ active_character_id: id})
+                # also create a default character
+                {:ok, character} = Accounts.create_character(user, %{name: "Default"})
+
+                # activate character and enable lotd mod
+                Accounts.update_user(user, %{ active_character_id: character.id})
+                Accounts.update_character_add_mod(character, Gallery.get_mod(1))
 
                 # login and redirect to item page
                 conn
                 |> Auth.login(user)
                 |> put_flash(:info, Phoenix.HTML.raw("Welcome to the museum inventory registrar!  If you wish to play with any optional mods than you will need to select them in <i class='icon-cog'></i> >> Mods. Auren and the LOTD team wish you a successful hunt!"))
-                |> redirect(to: Routes.page_path(conn, :index))
+                |> redirect(to: Routes.gallery_path(conn, :index))
 
               {:error, _changeset} ->
                 conn
                 |> put_flash(:error, "Error: Could not create user in database!")
-                |> redirect(to: Routes.page_path(conn, :index))
+                |> redirect(to: Routes.gallery_path(conn, :index))
                 |> halt()
             end
           # user found --> authenticate
           user ->
             conn
             |> Auth.login(user)
-            |> redirect(to: Routes.page_path(conn, :index))
+            |> redirect(to: Routes.gallery_path(conn, :index))
             |> halt()
         end
 
       {:error, %HTTPoison.Error{reason: reason}} ->
         conn
         |> put_flash(:error, "Error connecting to Nexus. #{reason}")
-        |> redirect(to: Routes.page_path(conn, :index))
+        |> redirect(to: Routes.gallery_path(conn, :index))
         |> halt()
     end
   end
@@ -66,7 +68,7 @@ defmodule LotdWeb.SessionController do
   def delete(conn, _) do
     conn
     |> Auth.logout()
-    |> redirect(to: Routes.page_path(conn, :index))
+    |> redirect(to: Routes.gallery_path(conn, :index))
     |> halt()
   end
 end

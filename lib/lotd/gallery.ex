@@ -1,11 +1,11 @@
-defmodule Lotd.Museum do
+defmodule Lotd.Gallery do
   @moduledoc """
-  The Museum context.
+  The Gallery context.
   """
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
-  alias Lotd.Museum.{Display, Item, Mod, Room}
+  alias Lotd.Gallery.{Display, Item, Mod, Room}
 
   # SORTING
 
@@ -20,17 +20,23 @@ defmodule Lotd.Museum do
   end
 
   # ROOMS
-  def create_room(attrs) do
-    %Room{}
-    |> Room.changeset(attrs)
-    |> Repo.insert()
+  def get_room_id!(name) do
+    case name do
+      "Hall of Heroes" -> 1
+      "Armory" -> 2
+      "Gallery Library" -> 3
+      "Daedric Gallery" -> 4
+      "Hall of Lost Empires" -> 4
+      "Hall of Oddities" -> 4
+      "Dragonborn Hall" -> 5
+      "Natural Science" -> 6
+      _ -> nil
+    end
   end
-
-  def get_room_id!(name), do: Repo.one!(from(r in Room, select: r.id, where: r.name == ^name))
 
   # DISPLAYS
 
-  def list_displays, do: Repo.all from(d in Display, preload: [ items: ^Repo.ids(Item) ])
+  def list_displays, do: Repo.all from(d in Display)
 
   def get_display_id!(name),
     do: Repo.one!(from(d in Display, select: d.id, where: d.name == ^name))
@@ -42,6 +48,12 @@ defmodule Lotd.Museum do
   end
 
   # ITEMS
+
+  def list_items(room) do
+    if is_nil(room),
+      do: Repo.all(from(i in Item, order_by: i.name, where: is_nil(i.room))),
+      else: Repo.all(from(i in Item, order_by: i.name, where: i.room == ^room))
+  end
 
   def list_items(sort, dir, search, user, page \\ 1)
 

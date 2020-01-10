@@ -1,0 +1,29 @@
+<%# Gallery Menu %>
+<ul class="nav nav-tabs justify-content-center mb-2">
+  <%= gallery_tab(@room, 1, "Hall of Heroes") %>
+  <%= gallery_tab(@room, 2, "Armory") %>
+  <%= gallery_tab(@room, 3, "Library") %>
+  <%= gallery_tab(@room, 4, "East Exhibits") %>
+  <%= gallery_tab(@room, 5, "Dragonborn Hall") %>
+  <%= gallery_tab(@room, 6, "Natural Science") %>
+  <%= gallery_tab(@room, nil, "Other") %>
+</ul>
+<div class='d-flex flex-grow-1 row h-100'>
+  <div id='display-list' class="col col-md-5">
+    <div class='form-group'><input class="form-control" placeholder='Search...'/>
+    </div>
+
+    <div class="list-group list-group-flush mh-100 overflow-auto">
+      <button class="<%= display_class(@display, nil) %>" phx-click="show-display">All<span class="badge badge-primary badge-pill"><%= Enum.count(@items) %></span></button>
+      <%= for d <- @displays do %>
+        <button class="<%= display_class(@display, d) %>" phx-click="show-display" phx-value-id="<%= d.id %>"><%= d.name %><span class="badge badge-primary badge-pill"><%= d.count %></span></button>
+      <% end %>
+    </div>
+  </div>
+  <div id='item-list' class="col col-md-7 mh-100 overflow-auto">
+    <ul class="list-group list-group-flush">
+      <%= for item <- @items do %>
+        <li class="list-group-item p-1 justify-content-between align-items-center <%= hidden?(item, @display) %>"><%= item.name %></li><% end %>
+    </ul>
+  </div>
+</div>
