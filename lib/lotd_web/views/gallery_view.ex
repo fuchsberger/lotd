@@ -33,10 +33,15 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def item_class(item, display) do
+  def item_class(item, display, user, hide_collected) do
     cond do
+      # hide items that are not in current display
       not is_nil(display) && item.display_id != display ->
         "#{@base_class} d-none"
+      # if hide_collected == true and item was collected, then hide it
+      hide_collected && Enum.find(user.active_character.items, & &1.id == item.id) ->
+        "#{@base_class} d-none"
+      # otherwise show items
       true ->
         "#{@base_class} d-flex"
     end
@@ -46,4 +51,6 @@ defmodule LotdWeb.GalleryView do
     item_ids = Enum.map(user.active_character.items, & &1.id)
     if Enum.member?(item_ids, item.id), do: "icon-active", else: "icon-inactive"
   end
+
+  def active?(boolean), do: if boolean, do: "icon-active", else: "icon-inactive"
 end

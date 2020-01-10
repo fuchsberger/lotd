@@ -10,7 +10,11 @@ defmodule LotdWeb.GalleryLive do
 
   def mount(params, socket) do
     user = Accounts.get_user!(Map.get(params, "user_id"))
-    {:ok, assign(socket, displays: Gallery.list_displays(), user: user )}
+    {:ok, assign(socket,
+      displays: Gallery.list_displays(),
+      hide_collected: true,
+      user: user
+    )}
   end
 
   def handle_params(%{"room" => room}, _uri, socket) do
@@ -38,6 +42,10 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("show-display", params, socket) do
     id = if Map.has_key?(params, "id"), do: String.to_integer(params["id"]), else: nil
     {:noreply, assign(socket, display: id)}
+  end
+
+  def handle_event("toggle-hide-collected", _params, socket) do
+    {:noreply, assign(socket, :hide_collected, !socket.assigns.hide_collected)}
   end
 
   def handle_event("toggle-item", %{"id" => id}, socket) do
