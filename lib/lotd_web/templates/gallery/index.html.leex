@@ -33,13 +33,18 @@
           <span class="badge badge-secondary badge-pill"><%= d.count %></span>
         </button>
       <% end %>
-
-      <div class='list-group-item form-group form-check'>
-        <a class='text-primary' phx-click='toggle-hide-collected'>
-          <i class="<%= active?(@hide_collected) %>"></i>
-          Hide collected items
-        </a>
-      </div>
+      <%= if @authenticated? do %>
+        <div class='list-group-item form-group form-check'>
+          <p class='mb-0'><a class='text-primary' phx-click='toggle-hide-collected'>
+            <i class="<%= active?(@hide_collected) %>"></i>
+            Hide collected items
+            </a></p>
+          <small class='text-secondary'>
+            <span class="badge badge-secondary badge-pill">X</span>
+            <%= hide_collected_legend(@hide_collected) %>
+          </small>
+        </div>
+      <% end %>
     </div>
   </div>
   <div id='item-list' class="col col-md-7 mh-100 overflow-auto">
@@ -47,7 +52,7 @@
       <%= for item <- @items do %>
         <li class="<%= item_class(item, @display, @user, @hide_collected) %>">
           <%= item.name %>
-          <%= if authenticated?(@socket) do %>
+          <%= if @authenticated? do %>
             <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
               <i class='<%= collected?(item, @user) %>' ></i>
             </a>

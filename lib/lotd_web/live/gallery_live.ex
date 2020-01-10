@@ -9,8 +9,11 @@ defmodule LotdWeb.GalleryLive do
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
   def mount(params, socket) do
-    user = Accounts.get_user!(Map.get(params, "user_id"))
+    user_id = Map.get(params, "user_id")
+    user = unless is_nil(user_id), do: Accounts.get_user!(user_id), else: nil
+
     {:ok, assign(socket,
+      authenticated?: not is_nil(user),
       displays: Gallery.list_displays(),
       hide_collected: true,
       user: user

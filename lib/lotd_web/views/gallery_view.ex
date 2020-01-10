@@ -13,7 +13,6 @@ defmodule LotdWeb.GalleryView do
   end
 
   def display_class(current_display, nil) do
-    base = ""
     cond do
       is_nil(current_display) ->
         "#{@base_class} list-group-item-action d-flex list-group-item-secondary"
@@ -39,7 +38,7 @@ defmodule LotdWeb.GalleryView do
       not is_nil(display) && item.display_id != display ->
         "#{@base_class} d-none"
       # if hide_collected == true and item was collected, then hide it
-      hide_collected && Enum.find(user.active_character.items, & &1.id == item.id) ->
+      hide_collected && user && Enum.find(user.active_character.items, & &1.id == item.id) ->
         "#{@base_class} d-none"
       # otherwise show items
       true ->
@@ -53,4 +52,8 @@ defmodule LotdWeb.GalleryView do
   end
 
   def active?(boolean), do: if boolean, do: "icon-active", else: "icon-inactive"
+
+  def hide_collected_legend(hide_collected) do
+    if hide_collected, do: "number of items still to collect", else: "number of items in display"
+  end
 end

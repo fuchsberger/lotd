@@ -1,7 +1,6 @@
 defmodule LotdWeb.CharacterLive do
   use Phoenix.LiveView, container: {:div, class: "container"}
   import LotdWeb.LiveHelpers
-  import LotdWeb.ViewHelpers, only: [ authenticated?: 1, admin?: 1, moderator?: 1 ]
 
   alias Lotd.Accounts
 
@@ -14,7 +13,7 @@ defmodule LotdWeb.CharacterLive do
     user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
 
     socket = assign socket,
-      characters: Accounts.get_characters(user),
+      characters: Accounts.list_characters(user),
       search: "",
       sort: sort,
       dir: dir,

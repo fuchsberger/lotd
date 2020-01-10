@@ -1,7 +1,6 @@
 defmodule LotdWeb.ModLive do
   use Phoenix.LiveView, container: {:div, class: "container"}
   import LotdWeb.LiveHelpers
-  import LotdWeb.ViewHelpers, only: [ authenticated?: 1, admin?: 1, moderator?: 1 ]
 
   alias Lotd.{Accounts, Gallery}
 
