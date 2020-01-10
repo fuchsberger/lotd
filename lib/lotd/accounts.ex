@@ -13,7 +13,7 @@ defmodule Lotd.Accounts do
 
   def get_user!(id) do
     User
-    |> preload(active_character: [items: ^Repo.ids(Item), mods: ^Repo.ids(Mod)])
+    |> preload(active_character: [:items, mods: ^Repo.ids(Mod)])
     |> Repo.get!(id)
   end
 
@@ -61,17 +61,17 @@ defmodule Lotd.Accounts do
     |> Repo.update()
   end
 
-  def update_character_collect_item(%Character{} = character, item) do
+  def collect_item(character, item) do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
     |> Repo.update!()
   end
 
-  def update_character_remove_item(%Character{} = character, item_id) do
+  def remove_item(character, item) do
     character
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, fn i -> i.id == item_id end))
+    |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, fn i -> i.id == item.id end))
     |> Repo.update!()
   end
 

@@ -1,6 +1,8 @@
 defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
+  @base_class "list-group-item justify-content-between align-items-center p-1"
+
   def gallery_tab(active_room, room, title, class \\ "") do
     active = if active_room == room, do: " active", else: ""
     link_elm = live_link title,
@@ -11,26 +13,37 @@ defmodule LotdWeb.GalleryView do
   end
 
   def display_class(current_display, nil) do
-    base = "list-group-item list-group-item-action p-1 justify-content-between align-items-center"
+    base = ""
     cond do
-      is_nil(current_display) -> "#{base} d-flex active"
-      true -> "#{base} d-flex"
+      is_nil(current_display) ->
+        "#{@base_class} list-group-item-action d-flex list-group-item-secondary"
+      true ->
+        "#{@base_class} list-group-item-action d-flex"
     end
   end
 
   def display_class(current_display, display) do
-    base = "list-group-item list-group-item-action p-1 justify-content-between align-items-center"
     cond do
-      current_display == display.id -> "#{base} d-flex active"
-      display.count == 0 -> "#{base} d-none"
-      true -> "#{base} d-flex"
+      current_display == display.id ->
+        "#{@base_class} list-group-item-action d-flex list-group-item-secondary"
+      display.count == 0 ->
+        "#{@base_class} list-group-item-action d-none"
+      true ->
+        "#{@base_class} list-group-item-action d-flex"
     end
   end
 
-  def hidden?(item, display) do
+  def item_class(item, display) do
     cond do
-      not is_nil(display) && item.display_id != display -> "d-none"
-      true -> "d-flex"
+      not is_nil(display) && item.display_id != display ->
+        "#{@base_class} d-none"
+      true ->
+        "#{@base_class} d-flex"
     end
+  end
+
+  def collected?(item, user) do
+    item_ids = Enum.map(user.active_character.items, & &1.id)
+    if Enum.member?(item_ids, item.id), do: "icon-active", else: "icon-inactive"
   end
 end

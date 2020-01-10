@@ -40,4 +40,26 @@ defmodule LotdWeb.GalleryLive do
     {:noreply, assign(socket, display: id)}
   end
 
+  def handle_event("toggle-item", %{"id" => id}, socket) do
+    user = socket.assigns.user
+    character = user.active_character
+
+    case Enum.find(socket.assigns.items, & &1.id == String.to_integer(id)) do
+      nil ->
+        # TODO: Flash an error
+        {:noreply, socket}
+      item ->
+        item_ids = Enum.map(character.items, & &1.id)
+
+        if Enum.member?(item_ids, item.id) do
+          # add item to character
+          character = Accounts.remove_item(character, item)
+          {:noreply, assign(socket, :user, Map.put(user, :active_character, character))}
+        else
+          # remove item from character
+          character =  Accounts.collect_item(character, item)
+          {:noreply, assign(socket, :user, Map.put(user, :active_character, character))}
+        end
+    end
+  end
 end
