@@ -23,7 +23,10 @@ secret_key_base =
     """
 
 config :lotd, LotdWeb.Endpoint,
-  http: [port: String.to_integer(System.get_env("LOTD_PORT") || "4000")],
+  http: [
+    port: String.to_integer(System.get_env("LOTD_PORT") || "4000"),
+    compress: true
+  ],
   secret_key_base: secret_key_base
 
 # ## Using releases (Elixir v1.9+)

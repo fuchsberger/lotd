@@ -33,13 +33,13 @@ defmodule Lotd.Accounts do
 
   def list_characters(%User{} = user) do
     from(c in Character,
-      preload: [items: ^Repo.ids(Item), mods: ^Repo.ids(Mod)],
+      preload: [:items, :mods],
       where: c.user_id == ^user.id
     )
     |> Repo.all()
   end
 
-  def get_character(id), do: Repo.get(Character, id)
+  def get_character!(id), do: Repo.get!(Character, id)
 
   def activate_character(user, character) do
     user
@@ -90,5 +90,6 @@ defmodule Lotd.Accounts do
   end
 
   def delete_character(%Character{} = character), do: Repo.delete(character)
-  def change_character(%Character{} = character), do: Character.changeset(character, %{})
+  def change_character(%Character{} = character \\ %Character{}, params \\ %{}),
+    do: Character.changeset(character, %{})
 end

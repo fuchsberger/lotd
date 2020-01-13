@@ -14,9 +14,9 @@
       <%= nav_item @conn, "About", Routes.gallery_path(@conn, :about), "home" %>
       <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>
       <%= if authenticated?(@conn) do %>
-        <%= nav_item @conn, "Characters", Routes.live_path(@conn, LotdWeb.DisplayLive), "user" %>
+        <%= nav_item @conn, "Settings", Routes.live_path(@conn, LotdWeb.SettingsLive), "mods" %>
       <% end %>
-      <%= nav_item @conn, "Mods", Routes.live_path(@conn, LotdWeb.ModLive), "mods" %>
+
       <%# nav_item @conn, "Characters", Routes.live_path(@conn, LotdWeb.CharacterLive), "characters" %>
       <li class="nav-item">
         <%= if authenticated?(@conn) do %>

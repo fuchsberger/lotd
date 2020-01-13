@@ -19,13 +19,8 @@ defmodule LotdWeb.Router do
     get "/", GalleryController, :index
     get "/about", GalleryController, :about
 
-    # Gallery Pages
     live "/gallery", GalleryLive, @session
-
-    live "/characters", CharacterLive, @session
-    live "/displays", DisplayLive, @session
-
-    live "/mods", ModLive, @session
+    live "/settings", SettingsLive, @session
 
     resources "/session", SessionController, only: [:create, :delete]
     get "/:path", GalleryController, :not_found
