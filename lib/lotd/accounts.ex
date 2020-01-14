@@ -75,8 +75,9 @@ defmodule Lotd.Accounts do
   end
 
   def update_character_add_mod(%Character{} = character, mod) do
+    character = Repo.preload(character, :mods)
+
     character
-    |> Repo.preload(:mods)
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:mods, [ mod | character.mods ])
     |> Repo.update!()

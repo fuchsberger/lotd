@@ -48,13 +48,13 @@ defmodule Lotd.Gallery do
   end
 
   # ITEMS
-  def list_items(), do: Repo.all(from(i in Item, order_by: i.name, preload: :display))
+  def list_items(nil), do: Repo.all(from(i in Item, order_by: i.name, preload: :display))
 
-  def list_items(room) do
-    if is_nil(room),
-      do: Repo.all(from(i in Item, order_by: i.name, where: is_nil(i.room))),
-      else: Repo.all(from(i in Item, order_by: i.name, where: i.room == ^room))
-  end
+  def list_items(user), do: Repo.all(from(i in Item,
+    order_by: i.name,
+    preload: :display,
+    where: i.mod_id in ^user.active_character.mods
+  ))
 
   def get_item!(id), do: Repo.get!(Item, id)
 

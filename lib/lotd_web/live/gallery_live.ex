@@ -12,7 +12,7 @@ defmodule LotdWeb.GalleryLive do
     {:ok, assign(socket,
       display: nil,
       hide_collected: not is_nil(user),
-      items: Gallery.list_items(),
+      items: Gallery.list_items(user),
       search: "",
       user: user
     )}

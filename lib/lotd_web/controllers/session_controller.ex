@@ -33,14 +33,14 @@ defmodule LotdWeb.SessionController do
                 # also create a default character
                 {:ok, character} = Accounts.create_character(user, %{name: "Default"})
 
-                # activate character and enable lotd mod
+                # activate character and enable Legacy of the Dragonborn mod by default
                 Accounts.update_user(user, %{ active_character_id: character.id})
                 Accounts.update_character_add_mod(character, Gallery.get_mod(1))
 
-                # login and redirect to item page
+                # login and redirect to settings page
                 conn
                 |> Auth.login(user)
-                |> redirect(to: Routes.gallery_path(conn, :index))
+                |> redirect(to: Routes.live_path(conn, LotdWeb.SettingsLive))
 
               {:error, _changeset} ->
                 conn
