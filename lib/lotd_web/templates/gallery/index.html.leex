@@ -1,12 +1,12 @@
 <%# Gallery Menu %>
 <ul class="nav nav-tabs justify-content-center mb-2">
-  <%= gallery_tab(@room, 1, "Hall of Heroes") %>
-  <%= gallery_tab(@room, 2, "Armory") %>
-  <%= gallery_tab(@room, 3, "Library") %>
-  <%= gallery_tab(@room, 4, "East Exhibits") %>
-  <%= gallery_tab(@room, 5, "Dragonborn Hall") %>
-  <%= gallery_tab(@room, 6, "Natural Science") %>
-  <%= gallery_tab(@room, nil, "Other") %>
+  <%= gallery_tab(@room, @search, 1, "Hall of Heroes") %>
+  <%= gallery_tab(@room, @search, 2, "Armory") %>
+  <%= gallery_tab(@room, @search, 3, "Library") %>
+  <%= gallery_tab(@room, @search, 4, "East Exhibits") %>
+  <%= gallery_tab(@room, @search, 5, "Dragonborn Hall") %>
+  <%= gallery_tab(@room, @search, 6, "Natural Science") %>
+  <%= gallery_tab(@room, @search, nil, "Other") %>
 </ul>
 
 <div class='d-flex flex-grow-1 row h-100'>
@@ -18,7 +18,7 @@
           class: "form-control",
           placeholder: "Search...",
           phx_debounce: 300,
-          type: "search"
+          value: @search
         %>
       </div>
     </form>
@@ -27,10 +27,10 @@
 
       <button class="<%= display_class(@display, nil) %>" phx-click="show-display">
         <strong>All Displays</strong>
-        <span class="badge badge-secondary badge-pill"><%= Enum.count(@items) %></span>
+        <span class="badge badge-secondary badge-pill"><%= Enum.count(@visible_items) %></span>
       </button>
 
-      <%= for d <- @visible_displays do %>
+      <%= for d <- displays(@items, @room, @search) do %>
         <button
           class="<%= display_class(d, @display) %>"
           phx-click="show-display"
@@ -40,13 +40,14 @@
           <span class="badge badge-secondary badge-pill"><%= d.count %></span>
         </button>
       <% end %>
-      <%= if @authenticated? do %>
+
+      <%= unless is_nil(@user) do %>
         <div class='list-group-item form-group form-check'>
           <p class='mb-0'><a class='text-primary' phx-click='toggle-hide-collected'>
             <i class="<%= active?(@hide_collected) %>"></i>
             Hide collected items
             </a></p>
-          <small class='text-secondary'>
+          <small class='d-none text-secondary'>
             <span class="badge badge-secondary badge-pill">X</span>
             <%= hide_collected_legend(@hide_collected) %>
           </small>
@@ -57,11 +58,11 @@
   <div id='item-list' class="col col-md-7 mh-100 overflow-auto">
     <ul class="list-group list-group-flush">
       <%= for item <- @visible_items do %>
-        <li class="<%= item_class(item, @display, @user, @hide_collected) %>">
+        <li class="list-group-item d-flex justify-content-between align-items-center p-1">
           <%= item.name %>
-          <%= if @authenticated? do %>
+          <%= unless is_nil(@user) do %>
             <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
-              <i class='<%= collected?(item, @user) %>' ></i>
+              <i class='<%= active?(item.collected) %>' ></i>
             </a>
           <% end %>
         </li>
