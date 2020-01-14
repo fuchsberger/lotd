@@ -6,7 +6,7 @@ defmodule Lotd.Accounts do
 
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
-  alias Lotd.Gallery.{Item, Mod}
+  alias Lotd.Gallery.{Mod}
 
   # user
   def get_user(id), do: Repo.get(User, id)
@@ -92,5 +92,5 @@ defmodule Lotd.Accounts do
 
   def delete_character(%Character{} = character), do: Repo.delete(character)
   def change_character(%Character{} = character \\ %Character{}, params \\ %{}),
-    do: Character.changeset(character, %{})
+    do: Character.changeset(character, params)
 end
