@@ -24,7 +24,7 @@ defmodule LotdWeb.SessionController do
         id = response["user_id"]
         name = response["name"]
 
-        case Accounts.get_basic_user!(id) do
+        case Accounts.get_user(id) do
           # no record found --> create it and authenticate
           nil ->
             case Accounts.register_user(%{id: id, name: name}) do

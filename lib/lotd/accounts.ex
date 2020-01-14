@@ -9,7 +9,7 @@ defmodule Lotd.Accounts do
   alias Lotd.Gallery.{Item, Mod}
 
   # user
-  def get_basic_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
 
   def get_user!(id) do
     User
@@ -76,6 +76,7 @@ defmodule Lotd.Accounts do
 
   def update_character_add_mod(%Character{} = character, mod) do
     character
+    |> Repo.preload(:mods)
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:mods, [ mod | character.mods ])
     |> Repo.update!()

@@ -60,15 +60,12 @@ defmodule LotdWeb.GalleryLive do
       item ->
         item_ids = Enum.map(character.items, & &1.id)
 
-        if Enum.member?(item_ids, item.id) do
-          # add item to character
-          character = Accounts.remove_item(character, item)
-          {:noreply, assign(socket, :user, Map.put(user, :active_character, character))}
-        else
-          # remove item from character
-          character =  Accounts.collect_item(character, item)
-          {:noreply, assign(socket, :user, Map.put(user, :active_character, character))}
-        end
+        character = if Enum.member?(item_ids, item.id),
+          do: Accounts.remove_item(character, item),
+          else: Accounts.collect_item(character, item)
+
+        socket = assign(socket, :user, Map.put(user, :active_character, character))
+        {:noreply, assign(socket, :visible_items, get_visible_items(socket))}
     end
   end
 
@@ -88,7 +85,7 @@ defmodule LotdWeb.GalleryLive do
       else: items
 
     # if authenticated, attach collected (boolean) and remove collected (if enabled)
-    if Map.has_key?(socket.assigns, :user) do
+    unless is_nil(socket.assigns.user) do
       item_ids = Enum.map(socket.assigns.user.active_character.items, & &1.id)
       items = Enum.map(items, & Map.put(&1, :collected, Enum.member?(item_ids, &1.id)))
       if socket.assigns.hide_collected, do: Enum.reject(items, & &1.collected), else: items

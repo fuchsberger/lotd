@@ -13,7 +13,7 @@ defmodule LotdWeb.Auth do
     cond do
       user = conn.assigns[:current_user] ->
         put_current_user(conn, user)
-      user = user_id && Lotd.Accounts.get_basic_user!(user_id) ->
+      user = user_id && Lotd.Accounts.get_user(user_id) ->
         put_current_user(conn, user)
       true ->
         assign(conn, :current_user, nil)
@@ -30,12 +30,17 @@ defmodule LotdWeb.Auth do
 
   def login(conn, user) do
     # load user, active_character and it's items and mods
-    user = Lotd.Accounts.get_basic_user!(user.id)
+    user = Lotd.Accounts.get_user(user.id)
 
-    conn
-    |> assign(:current_user, user)
-    |> put_session(:user_id, user.id)
-    |> configure_session(renew: true)
+    case user do
+      nil ->
+        assign(conn, :current_user, nil)
+      user ->
+        conn
+        |> assign(:current_user, user)
+        |> put_session(:user_id, user.id)
+        |> configure_session(renew: true)
+    end
   end
 
   def logout(conn) do
