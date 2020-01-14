@@ -13,9 +13,9 @@ defmodule LotdWeb.SettingsLive do
 
     socket = assign socket,
       changeset_new: Accounts.change_character(),
+      changeset_rename: Accounts.change_character(user.active_character),
       characters: Accounts.list_characters(user),
       mods: Gallery.list_mods(),
-      name_new: "",
       selected_character: user.active_character_id,
       user: user
 
@@ -23,7 +23,11 @@ defmodule LotdWeb.SettingsLive do
   end
 
   def handle_event("show-character", %{"id" => id}, socket) do
-    {:noreply, assign(socket, selected_character: String.to_integer(id))}
+    character = Enum.find(socket.assigns.characters, & &1.id == String.to_integer(id))
+    {:noreply, assign(socket,
+      changeset_rename: Accounts.change_character(character),
+      selected_character: character.id
+    )}
   end
 
   def handle_event("activate", %{"id" => id}, socket) do
@@ -36,6 +40,23 @@ defmodule LotdWeb.SettingsLive do
         else
           {:noreply, socket}
         end
+    end
+  end
+
+  def handle_event("delete", _params, socket) do
+    id = socket.assigns.selected_character
+    if socket.assigns.user.active_character_id == id do
+      {:noreply, socket}
+    else
+      socket.assigns.characters
+      |> Enum.find(& &1.id == id)
+      |> Accounts.delete_character()
+
+      {:noreply, assign(socket,
+        selected_character: socket.assigns.user.active_character_id,
+        changeset_rename: Accounts.change_character(socket.assigns.user.active_character),
+        characters: Enum.reject(socket.assigns.characters, & &1.id == id)
+      )}
     end
   end
 
@@ -64,6 +85,15 @@ defmodule LotdWeb.SettingsLive do
     {:noreply, assign(socket, changeset_new: changeset)}
   end
 
+  def handle_event("validate_rename", %{"character" => params}, socket) do
+    changeset =
+      %Character{}
+      |> Accounts.change_character(params)
+      |> Map.put(:action, :update)
+
+    {:noreply, assign(socket, changeset_rename: changeset)}
+  end
+
   def handle_event("create", %{"character" => character_params}, socket) do
     case Accounts.create_character(socket.assigns.user, character_params) do
       {:ok, character} ->
@@ -74,6 +104,20 @@ defmodule LotdWeb.SettingsLive do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset_new: changeset)}
+    end
+  end
+
+  def handle_event("update", %{"character" => character_params}, socket) do
+    character = Enum.find(socket.assigns.characters, & &1.id == socket.assigns.selected_character)
+    case Accounts.update_character(character, character_params) do
+      {:ok, character} ->
+        {:noreply, assign(socket,
+          changeset_rename: Accounts.change_character(character),
+          characters: Accounts.list_characters(socket.assigns.user)
+        )}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset_rename: changeset)}
     end
   end
 end
