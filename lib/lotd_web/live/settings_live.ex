@@ -31,7 +31,7 @@ defmodule LotdWeb.SettingsLive do
       nil -> {:noreply, socket}
       character ->
         if character.user_id == socket.assigns.user.id do # <-- hacker safety measure
-          Accounts.activate_character(socket.assigns.user, character)
+          Accounts.activate_character(socket.assigns.user, character.id)
           {:noreply, assign(socket, user: Accounts.get_user!(socket.assigns.user.id))}
         else
           {:noreply, socket}

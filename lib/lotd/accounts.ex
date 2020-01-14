@@ -41,10 +41,9 @@ defmodule Lotd.Accounts do
 
   def get_character!(id), do: Repo.get!(Character, id)
 
-  def activate_character(user, character) do
+  def activate_character(user, character_id) do
     user
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:active_character, character)
+    |> Ecto.Changeset.change(%{ active_character_id: character_id})
     |> Repo.update!()
   end
 
