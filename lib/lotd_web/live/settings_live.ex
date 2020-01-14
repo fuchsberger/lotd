@@ -1,7 +1,7 @@
 defmodule LotdWeb.SettingsLive do
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
-  import LotdWeb.LiveHelpers
 
+  alias Lotd.Repo
   alias Lotd.{Accounts, Gallery}
   alias Lotd.Accounts.Character
 
@@ -99,7 +99,7 @@ defmodule LotdWeb.SettingsLive do
       {:ok, character} ->
         {:noreply, assign(socket,
           changeset_new: Accounts.change_character(),
-          characters: Accounts.list_characters(socket.assigns.user)
+          characters: [ Repo.preload(character, [:items, :mods]) | socket.assigns.characters]
         )}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -108,12 +108,16 @@ defmodule LotdWeb.SettingsLive do
   end
 
   def handle_event("update", %{"character" => character_params}, socket) do
-    character = Enum.find(socket.assigns.characters, & &1.id == socket.assigns.selected_character)
-    case Accounts.update_character(character, character_params) do
+    idx = Enum.find_index(socket.assigns.characters, & &1.id == socket.assigns.selected_character)
+
+    case Accounts.update_character(Enum.at(socket.assigns.characters, idx), character_params) do
       {:ok, character} ->
+
+        character = Repo.preload(character, [:items, :mods])
+
         {:noreply, assign(socket,
           changeset_rename: Accounts.change_character(character),
-          characters: Accounts.list_characters(socket.assigns.user)
+          characters: List.replace_at(socket.assigns.characters, idx,character)
         )}
 
       {:error, %Ecto.Changeset{} = changeset} ->

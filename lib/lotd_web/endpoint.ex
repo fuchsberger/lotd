@@ -18,7 +18,7 @@ defmodule LotdWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :lotd,
-    gzip: true,
+    gzip: System.get_env("MIX_ENV") == "prod",
     only: ~w(css fonts images js favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
