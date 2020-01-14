@@ -35,7 +35,7 @@ defmodule LotdWeb.SessionController do
 
                 # activate character and enable lotd mod
                 Accounts.update_user(user, %{ active_character_id: character.id})
-                Accounts.update_character_add_mod(character, Gallery.get_mod!(1))
+                Accounts.update_character_add_mod(character, Gallery.get_mod(1))
 
                 # login and redirect to item page
                 conn

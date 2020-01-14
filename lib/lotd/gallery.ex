@@ -68,7 +68,7 @@ defmodule Lotd.Gallery do
 
   def list_mods, do: Repo.all(from(m in Mod, order_by: m.name, preload: [items: ^Repo.ids(Item)]))
 
-  def get_mod!(id), do: Repo.get!(Mod, id)
+  def get_mod(id), do: Repo.get(Mod, id)
 
   def get_mod_id!(name), do: Repo.one!(from(m in Mod, select: m.id, where: m.name == ^name))
 
