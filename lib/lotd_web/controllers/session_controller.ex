@@ -40,7 +40,6 @@ defmodule LotdWeb.SessionController do
                 # login and redirect to item page
                 conn
                 |> Auth.login(user)
-                |> put_flash(:info, Phoenix.HTML.raw("Welcome to the museum inventory registrar!  If you wish to play with any optional mods than you will need to select them in <i class='icon-cog'></i> >> Mods. Auren and the LOTD team wish you a successful hunt!"))
                 |> redirect(to: Routes.gallery_path(conn, :index))
 
               {:error, _changeset} ->
