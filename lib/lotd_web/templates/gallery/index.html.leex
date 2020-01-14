@@ -11,10 +11,17 @@
 
 <div class='d-flex flex-grow-1 row h-100'>
   <div id='display-list' class="col col-md-5">
-    <div class='form-group'>
-      <input class="form-control" disabled placeholder='Search...'/>
-    </div>
-
+    <form phx-change='search'>
+      <div class='form-group'>
+        <%= text_input :search_field, :query,
+          autofocus: true,
+          class: "form-control",
+          placeholder: "Search...",
+          phx_debounce: 300,
+          type: "search"
+        %>
+      </div>
+    </form>
 
     <div class="list-group list-group-flush mh-100 overflow-auto">
 
@@ -49,7 +56,7 @@
   </div>
   <div id='item-list' class="col col-md-7 mh-100 overflow-auto">
     <ul class="list-group list-group-flush">
-      <%= for item <- @items do %>
+      <%= for item <- @visible_items do %>
         <li class="<%= item_class(item, @display, @user, @hide_collected) %>">
           <%= item.name %>
           <%= if @authenticated? do %>

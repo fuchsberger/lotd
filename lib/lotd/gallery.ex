@@ -48,6 +48,7 @@ defmodule Lotd.Gallery do
   end
 
   # ITEMS
+  def list_items(), do: Repo.all(from(i in Item, order_by: i.name))
 
   def list_items(room) do
     if is_nil(room),

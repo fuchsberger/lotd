@@ -3,9 +3,6 @@ defmodule LotdWeb.GalleryLive do
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
   alias Lotd.{Accounts, Gallery}
 
-  # import LotdWeb.LiveHelpers
-  # import LotdWeb.ViewHelpers, only: [ authenticated?: 1, admin?: 1, moderator?: 1 ]
-
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
   def mount(params, socket) do
@@ -15,7 +12,9 @@ defmodule LotdWeb.GalleryLive do
     {:ok, assign(socket,
       authenticated?: not is_nil(user),
       displays: Gallery.list_displays(),
+      filtered_items: nil,
       hide_collected: not is_nil(user),
+      items: Gallery.list_items(),
       user: user
     )}
   end
@@ -24,7 +23,11 @@ defmodule LotdWeb.GalleryLive do
     room = if room == "", do: nil, else: String.to_integer(room)
 
     # get all items for that room
-    socket = assign(socket, display: nil, items: Gallery.list_items(room), room: room )
+    visible_items =
+      socket.assigns.items
+      |> Enum.filter(& &1.room == room)
+
+    socket = assign(socket, display: nil, visible_items: visible_items, room: room )
 
     # set visible displays and return socket
     {:noreply, assign(socket, :visible_displays, calculate_visible_displays(socket))}
@@ -34,6 +37,22 @@ defmodule LotdWeb.GalleryLive do
     if Map.has_key?(socket.assigns, :room),
       do: {:noreply, socket},
       else: handle_params(%{"room" => "1"}, uri, socket)
+  end
+
+  def handle_event("search", %{"search_field" => %{"query" => query}}, socket) do
+    case query do
+      "" ->
+        {:noreply, assign(socket, filtered_items: nil)}
+      search_text ->
+        search = String.downcase(search_text)
+        # Produce a list of searchable items
+        filtered_items =
+          socket.assigns.items
+          |> Enum.filter(& String.contains?(String.downcase(&1.name), search))
+
+        IO.inspect filtered_items
+        {:noreply, assign(socket, filtered_items: filtered_items)}
+    end
   end
 
   def handle_event("show-display", params, socket) do
