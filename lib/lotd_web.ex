@@ -24,16 +24,8 @@ defmodule LotdWeb do
       import Plug.Conn
       import Phoenix.LiveView.Controller, only: [live_render: 3]
       import LotdWeb.Gettext
-      import LotdWeb.ViewHelpers, only: [
-        authenticated?: 1,
-        active_character_id: 1,
-        admin?: 1,
-        character: 1,
-        character_item_ids: 1,
-        character_mod_ids: 1,
-        moderator?: 1,
-        user: 1,
-      ]
+      import LotdWeb.ViewHelpers, only: [ authenticated?: 1 ]
+
       alias LotdWeb.Router.Helpers, as: Routes
     end
   end
