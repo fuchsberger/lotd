@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 const APPLICATION_SLUG = "lotd-inventory-manager"
 
 // Simple method to generate a standard UUID used as a request ID.
@@ -38,8 +36,8 @@ const login = () => {
       if (res.data.hasOwnProperty('api_key')){
 
         // Send API key to webserver that will then try to connect with it and authenticate
-        $('#session_api_key').val(res.data.api_key)
-        $('#login-form').submit()
+        document.getElementById("session_api_key").value = res.data.api_key
+        document.getElementById("login-form").submit()
 
         // close right away
         socket.close()

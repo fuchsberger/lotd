@@ -3,7 +3,7 @@ defmodule LotdWeb.GalleryController do
 
   def index(conn, _params) do
     if authenticated?(conn),
-      do: redirect(conn, to: Routes.live_path(LotdWeb.Endpoint, LotdWeb.GalleryLive)),
+      do: redirect(conn, to: Routes.live_path(conn, LotdWeb.GalleryLive)),
       else: redirect(conn, to: Routes.gallery_path(conn, :about))
   end
 

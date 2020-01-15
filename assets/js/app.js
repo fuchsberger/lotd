@@ -1,18 +1,13 @@
 import CSS from '../css/app.scss'
 
-import $ from 'jquery'
-import 'bootstrap'
 import "phoenix_html"
-import { Menu } from './utils'
+import { Nexus } from "./api"
 
 // Executed when page is loaded
-$( document ).ready(function() {
+document.addEventListener('DOMContentLoaded', () => {
 
-  // enable menu functionality
-  Menu.enable()
+  // enable login
+  const btn = document.getElementById("login-button")
+  if (btn) btn.addEventListener("click", () => Nexus.login())
 
-  // // set up and connect channels
-  // Channel.item()
-
-  // join_public_channel()
-})
+}, false)
