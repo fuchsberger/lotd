@@ -13,6 +13,8 @@ defmodule LotdWeb.GalleryLive do
       display: nil,
       hide_collected: not is_nil(user),
       items: Gallery.list_items(user),
+      moderate: false,
+      moderate_target: nil,
       search: "",
       user: user
     )}
@@ -92,5 +94,19 @@ defmodule LotdWeb.GalleryLive do
     else
       items
     end
+  end
+
+
+  # MODERATION
+  def handle_event("toggle-moderate", _params, socket) do
+    {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
+  end
+
+  def handle_event("cancel-edit", _params, socket) do
+    {:noreply, assign(socket, :moderate_target, nil)}
+  end
+
+  def handle_event("edit-item", %{"id" => id}, socket) do
+    {:noreply, assign(socket, :moderate_target, id)}
   end
 end

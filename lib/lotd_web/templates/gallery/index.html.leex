@@ -42,7 +42,7 @@
       <% end %>
 
       <%= unless is_nil(@user) do %>
-        <div class='list-group-item form-group form-check'>
+        <div class='list-group-item form-group form-check m-0 p-1'>
           <p class='mb-0'><a class='text-primary' phx-click='toggle-hide-collected'>
             <i class="<%= active?(@hide_collected) %>"></i>
             Hide collected items
@@ -52,17 +52,33 @@
             <%= hide_collected_legend(@hide_collected) %>
           </small>
         </div>
+
+        <%= if @user.moderator do %>
+          <div class='list-group-item form-group form-check  p-1 m-0'>
+            <p class='mb-0'><a class='text-primary' phx-click='toggle-moderate'>
+              <i class="<%= active?(@moderate) %>"></i>
+              Moderate Items
+              </a></p>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>
+
   <div id='item-list' class="col col-md-7 mh-100 overflow-auto">
     <ul class="list-group list-group-flush">
       <%= for item <- @visible_items do %>
         <li class="list-group-item d-flex justify-content-between align-items-center p-1">
           <%= item.name %>
-          <%= unless is_nil(@user) do %>
+
+          <%= unless is_nil(@user) || @moderate do %>
             <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
               <i class='<%= active?(item.collected) %>' ></i>
+            </a>
+          <% end %>
+          <%= if @moderate && @user.moderator do %>
+            <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
+              <i class='icon-edit'></i>
             </a>
           <% end %>
         </li>
@@ -70,3 +86,26 @@
     </ul>
   </div>
 </div>
+
+<div class="modal <%= if @moderate_target, do: " open" %>" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" phx-click='cancel-edit'>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<%= unless is_nil(@moderate_target) do %>
+  <div class="modal-backdrop fade show"></div>
+<% end %>

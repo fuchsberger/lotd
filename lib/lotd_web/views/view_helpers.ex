@@ -5,7 +5,7 @@ defmodule LotdWeb.ViewHelpers do
   use Phoenix.HTML
 
   # access control
-  def authenticated?(%Plug.Conn{} = conn), do: not is_nil(conn.assigns.current_user)
+  def authenticated?(conn), do: not is_nil(conn.assigns.current_user)
 
   # elements
   def icon(name, opts \\ [] ), do: content_tag(:i, "",

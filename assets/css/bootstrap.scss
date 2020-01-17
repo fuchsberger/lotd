@@ -33,12 +33,37 @@
 // @import "~bootstrap-scss/_progress";
 // @import "~bootstrap-scss/_media";
 @import "~bootstrap-scss/_list-group";
-// @import "~bootstrap-scss/_close";
+@import "~bootstrap-scss/_close";
 // @import "~bootstrap-scss/_toasts";
-// @import "~bootstrap-scss/_modal";
+@import "~bootstrap-scss/_modal";
 // @import "~bootstrap-scss/_tooltip";
 // @import "~bootstrap-scss/_popover";
 // @import "~bootstrap-scss/_carousel";
 // @import "~bootstrap-scss/_spinners";
 @import "~bootstrap-scss/_utilities";
 // @import "~bootstrap-scss/_print";
+
+
+
+.modal.open {
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 1072;
+}
+
+
+.modal .container {
+ display: table-cell;
+ text-align: center;
+ vertical-align: middle;
+ width: 200px;
+}
+
+.modal .body {
+  box-shadow: 5px 10px #888888;
+  display: inline-block;
+  background-color: white;
+  border: 1px solid black;
+  padding: 10px;
+}

@@ -17,7 +17,6 @@
         <%= nav_item @conn, "Settings", Routes.live_path(@conn, LotdWeb.SettingsLive), "mods" %>
       <% end %>
 
-      <%# nav_item @conn, "Characters", Routes.live_path(@conn, LotdWeb.CharacterLive), "characters" %>
       <li class="nav-item">
         <%= if authenticated?(@conn) do %>
           <%= logout_button(@conn) %>

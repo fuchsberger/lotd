@@ -29,10 +29,8 @@
     <div class='container text-center'>
       <h1>Oops!</h1>
       <h2>Error 500</h2>
-      <p class="lead">Sorry, this should not have happend!</p>
-      <p>It would be very kind if you could report this error to @Sekhmet13 on Nexus!</p>
+      <p class="lead">Sorry, this should not have happened!</p>
+      <p>It would be very kind of you to report this error to <strong>@Sekhmet13</strong> on Nexus!</p>
     </div>
-
-    <script type="text/javascript" src='/js/app.js'></script>
   </body>
 </html>
