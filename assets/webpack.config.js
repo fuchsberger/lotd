@@ -1,15 +1,16 @@
 const path = require('path')
 const glob = require('glob')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = (env, options) => ({
   stats: 'errors-warnings',
   optimization: {
+    // minimize: true,
     minimizer: [
-      new UglifyJsPlugin({ cache: true, parallel: true, sourceMap: false }),
+      new TerserPlugin({ test: /\.js(\?.*)?$/i, }),
       new OptimizeCSSAssetsPlugin({})
     ]
   },
@@ -30,17 +31,9 @@ module.exports = (env, options) => ({
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
-          {
-            loader: 'postcss-loader',
-            options: { plugins: function () { return [require('autoprefixer')] } }
-          },
           'sass-loader'
         ]
       },
-      // {
-      //   test: /\.css$/,
-      //   use: [ MiniCssExtractPlugin.loader, 'css-loader' ]
-      // },
       {
         test: /\.(png|woff|woff2|eot|ttf|svg)$/,
         loader: 'url-loader'
