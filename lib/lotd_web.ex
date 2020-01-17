@@ -60,17 +60,6 @@ defmodule LotdWeb do
     end
   end
 
-  def channel do
-    quote do
-      use Phoenix.Channel
-      import LotdWeb.Gettext
-      import LotdWeb.ErrorHelpers, only: [error_map: 1]
-      import LotdWeb.UserSocket, only: [character: 1, authenticated?: 1, moderator?: 1, admin?: 1]
-
-      alias LotdWeb.DataView
-    end
-  end
-
   @doc """
   When used, dispatch to the appropriate controller/view/etc.
   """

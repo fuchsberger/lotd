@@ -1,14 +1,13 @@
 defmodule LotdWeb.Router do
   use LotdWeb, :router
 
-  @session [session: [ :user_id ]]
+  @session [session: [ "user_id" ]]
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug LotdWeb.Auth
     plug :fetch_flash
-    # plug Phoenix.LiveView.Flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -23,6 +22,5 @@ defmodule LotdWeb.Router do
     live "/settings", SettingsLive, @session
 
     resources "/session", SessionController, only: [:create, :delete]
-    get "/:path", GalleryController, :not_found
   end
 end
