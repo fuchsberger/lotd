@@ -71,15 +71,16 @@
         <li class="list-group-item d-flex justify-content-between align-items-center p-1">
           <%= item.name %>
 
-          <%= unless is_nil(@user) || @moderate do %>
-            <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
-              <i class='<%= active?(item.collected) %>' ></i>
-            </a>
-          <% end %>
-          <%= if @moderate && @user.moderator do %>
-            <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
-              <i class='icon-edit'></i>
-            </a>
+          <%= unless is_nil(@user) do %>
+            <%= if @user.moderator && @moderate do %>
+              <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
+                <i class='icon-edit'></i>
+              </a>
+            <%= else %>
+              <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
+                <i class='<%= active?(item.collected) %>' ></i>
+              </a>
+            <% end %>
           <% end %>
         </li>
       <% end %>
@@ -87,25 +88,36 @@
   </div>
 </div>
 
-<div class="modal <%= if @moderate_target, do: " open" %>" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="close" phx-click='cancel-edit'>
-          <span aria-hidden="true">&times;</span>
-        </button>
+<%= if @user && @user.moderator do %>
+  <div class="modal <%= unless is_nil(@changeset), do: " open" %>" tabindex="-1" role="dialog">
+    <%= f = form_for @changeset, "#", [
+      class: "modal-dialog",
+      phx_change: :validate,
+      phx_submit: :save,
+      role: "document"
+    ] %>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Item</h5>
+          <button type="button" class="close" phx-click='cancel-edit'>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <div class='form-group'>
+            <%= label f, :name %>
+            <%= text_input f, :name, class: "form-control", placeholder: "Name" %>
+            <%# error_tag f, :name %>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <%= submit "Update Item", class: "btn btn-primary" %>
+        </div>
       </div>
-      <div class="modal-body">
-        <p>Modal body text goes here.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
+    </form>
   </div>
-</div>
-<%= unless is_nil(@moderate_target) do %>
-  <div class="modal-backdrop fade show"></div>
+  <%= unless is_nil(@changeset) do %>
+    <div class="modal-backdrop fade show"></div>
+  <% end %>
 <% end %>

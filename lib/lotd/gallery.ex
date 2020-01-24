@@ -56,13 +56,23 @@ defmodule Lotd.Gallery do
     where: i.mod_id in ^user.active_character.mods
   ))
 
+  # def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(character, params)
+
   def get_item!(id), do: Repo.get!(Item, id)
 
-  def create_item(attrs) do
+  def create_item(attrs \\ %{}) do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
   end
+
+  def update_item(%Item{} = item, %{} = attrs) do
+    item
+    |> Item.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def change_item(%Item{} = item, attrs), do: Item.changeset(item, attrs)
 
   # MODS
 

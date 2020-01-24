@@ -1,7 +1,7 @@
 defmodule LotdWeb.GalleryLive do
 
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Repo, Accounts, Gallery}
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
@@ -10,13 +10,14 @@ defmodule LotdWeb.GalleryLive do
     user = unless is_nil(user_id), do: Accounts.get_user!(user_id), else: nil
 
     {:ok, assign(socket,
+      changeset: nil,
       display: nil,
       hide_collected: not is_nil(user),
       items: Gallery.list_items(user),
-      moderate: false,
-      moderate_target: nil,
+      moderate: true,
       search: "",
-      user: user
+      user: user,
+      visible_items: []
     )}
   end
 
@@ -96,17 +97,40 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
-
   # MODERATION
   def handle_event("toggle-moderate", _params, socket) do
     {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
   end
 
   def handle_event("cancel-edit", _params, socket) do
-    {:noreply, assign(socket, :moderate_target, nil)}
+    {:noreply, assign(socket, :changeset, nil)}
   end
 
   def handle_event("edit-item", %{"id" => id}, socket) do
-    {:noreply, assign(socket, :moderate_target, id)}
+    changeset = Gallery.change_item(Gallery.get_item!(id), %{})
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("validate", %{"item" => params}, socket) do
+    changeset =
+      socket.assigns.changeset.data
+      |> Gallery.change_item(params)
+      |> Map.put(:action, :update)
+
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("save", %{"item" => item_params}, socket) do
+    case Gallery.update_item(socket.assigns.changeset.data, item_params) do
+      {:ok, item } ->
+        item = Repo.preload item, :display
+        index = Enum.find_index(socket.assigns.items, & &1.id == item.id)
+        socket = assign(socket, :items, List.replace_at(socket.assigns.items, index, item))
+
+        {:noreply, assign(socket, changeset: nil, visible_items: get_visible_items(socket))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
   end
 end
