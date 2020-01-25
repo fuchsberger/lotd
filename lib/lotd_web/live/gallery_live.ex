@@ -21,20 +21,7 @@ defmodule LotdWeb.GalleryLive do
     )}
   end
 
-  def handle_params(%{"room" => room}, _uri, socket) do
-    socket = assign socket,
-      display: nil,
-      search: "",
-      room: if room == "", do: nil, else: String.to_integer(room)
 
-    {:noreply, assign(socket, visible_items: get_visible_items(socket))}
-  end
-
-  def handle_params(_params, uri, socket) do
-    if Map.has_key?(socket.assigns, :room),
-      do: {:noreply, socket},
-      else: handle_params(%{"room" => "1"}, uri, socket)
-  end
 
   def handle_event("search", %{"search_field" => %{"query" => query}}, socket) do
     socket = assign socket, :search, query
@@ -72,6 +59,74 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
+
+  # MODERATION
+  def handle_event("toggle-moderate", _params, socket) do
+    {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
+  end
+
+  def handle_event("cancel-edit", _params, socket) do
+    {:noreply, assign(socket, :changeset, nil)}
+  end
+
+  def handle_event("edit-item", %{"id" => id}, socket) do
+    changeset = Gallery.change_item(Gallery.get_item!(id), %{})
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("delete-item", %{"id" => id}, socket) do
+    item = Enum.find(socket.assigns.items, & &1.id == String.to_integer(id))
+
+    case socket.assigns.user.moderator && Gallery.delete_item(item) do
+      {:ok, item} ->
+        # TODO: Also delete item from socket.user.items
+        index = Enum.find_index(socket.assigns.items, & &1.id == item.id)
+        socket = assign(socket, :items, List.delete_at(socket.assigns.items, index))
+        {:noreply, assign(socket, changeset: nil, visible_items: get_visible_items(socket))}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("save", %{"item" => item_params}, socket) do
+    case Gallery.update_item(socket.assigns.changeset.data, item_params) do
+      {:ok, item } ->
+        item = Repo.preload item, :display
+        index = Enum.find_index(socket.assigns.items, & &1.id == item.id)
+        socket = assign(socket, :items, List.replace_at(socket.assigns.items, index, item))
+
+        {:noreply, assign(socket, changeset: nil, visible_items: get_visible_items(socket))}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("validate", %{"item" => params}, socket) do
+    changeset =
+      socket.assigns.changeset.data
+      |> Gallery.change_item(params)
+      |> Map.put(:action, :update)
+
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_params(%{"room" => room}, _uri, socket) do
+    socket = assign socket,
+      display: nil,
+      search: "",
+      room: if room == "", do: nil, else: String.to_integer(room)
+
+    {:noreply, assign(socket, visible_items: get_visible_items(socket))}
+  end
+
+  def handle_params(_params, uri, socket) do
+    if Map.has_key?(socket.assigns, :room),
+      do: {:noreply, socket},
+      else: handle_params(%{"room" => "1"}, uri, socket)
+  end
+
   defp get_visible_items(socket) do
     # first get all items filtered based on either search or room
     items =
@@ -94,43 +149,6 @@ defmodule LotdWeb.GalleryLive do
       if socket.assigns.hide_collected, do: Enum.reject(items, & &1.collected), else: items
     else
       items
-    end
-  end
-
-  # MODERATION
-  def handle_event("toggle-moderate", _params, socket) do
-    {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
-  end
-
-  def handle_event("cancel-edit", _params, socket) do
-    {:noreply, assign(socket, :changeset, nil)}
-  end
-
-  def handle_event("edit-item", %{"id" => id}, socket) do
-    changeset = Gallery.change_item(Gallery.get_item!(id), %{})
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
-
-  def handle_event("validate", %{"item" => params}, socket) do
-    changeset =
-      socket.assigns.changeset.data
-      |> Gallery.change_item(params)
-      |> Map.put(:action, :update)
-
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
-
-  def handle_event("save", %{"item" => item_params}, socket) do
-    case Gallery.update_item(socket.assigns.changeset.data, item_params) do
-      {:ok, item } ->
-        item = Repo.preload item, :display
-        index = Enum.find_index(socket.assigns.items, & &1.id == item.id)
-        socket = assign(socket, :items, List.replace_at(socket.assigns.items, index, item))
-
-        {:noreply, assign(socket, changeset: nil, visible_items: get_visible_items(socket))}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
     end
   end
 end

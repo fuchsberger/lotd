@@ -66,6 +66,8 @@ defmodule Lotd.Gallery do
     |> Repo.insert()
   end
 
+  def delete_item(%Item{} = item), do: Repo.delete(item)
+
   def update_item(%Item{} = item, %{} = attrs) do
     item
     |> Item.changeset(attrs)

@@ -4,32 +4,37 @@
 
 
 alias Lotd.Gallery
-# alias Lotd.{Accounts, Gallery}
-# alias Lotd.Accounts.Character
+alias Lotd.{Accounts, Gallery}
 
 # require Logger and hide SQL Messages
 require Logger
 Logger.configure(level: :info, truncate: 4096)
 
-# # attempt to create admin user
-# case Accounts.register_user(%{ id: 811039, name: "Sekhmet13" }) do
-#   {:ok, user} ->
-#     {:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
-#     Accounts.update_user(user, %{ admin: true, moderator: true, active_character_id: id })
-#     Logger.info("Admin user created.")
-#   {:error, _changeset} ->
-#     Logger.info("Admin user has not been created as it already exists")
-# end
+# attempt to create admin user
+case Accounts.register_user(%{ id: 811039, name: "Sekhmet13" }) do
+  {:ok, user} ->
+    {:ok, character} = Accounts.create_character(user, %{name: "Default"})
+    Accounts.update_user(user, %{
+      admin: true,
+      moderator: true,
+      active_character_id: character.id
+    })
+    Logger.info("Admin user created.")
 
-# # attempt to create a test user (can never login)
-# case Accounts.register_user(%{ id: 0, name: "Test User" }) do
-#   {:ok, user} ->
-#     {:ok, %Character{id: id}} = Accounts.create_character(user, %{name: "Default"})
-#     Accounts.update_user(user, %{ active_character_id: id })
-#     Logger.info("Test user created.")
-#   {:error, _changeset} ->
-#     Logger.info("Test user has not been created as it already exists")
-# end
+  {:error, _changeset} ->
+    Logger.info("Admin user has not been created as it already exists")
+end
+
+# attempt to create a test user (can never login)
+case Accounts.register_user(%{ id: 0, name: "Test User" }) do
+  {:ok, user} ->
+    {:ok, character} = Accounts.create_character(user, %{name: "Default"})
+    Accounts.update_user(user, %{ active_character_id: character.id })
+    Logger.info("Test user created.")
+
+  {:error, _changeset} ->
+    Logger.info("Test user has not been created as it already exists")
+end
 
 # attempt to read json content
 case File.read("priv/repo/displays.json") do

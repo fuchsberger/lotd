@@ -9,7 +9,8 @@ defmodule LotdWeb.SettingsLive do
 
   def mount(session, socket) do
 
-    user = if session.user_id, do: Accounts.get_user!(session.user_id), else: nil
+    user = if Map.has_key?(session, "user_id"),
+      do: Accounts.get_user!(session["user_id"]), else: nil
 
     socket = assign socket,
       changeset_new: Accounts.change_character(),

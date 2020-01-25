@@ -76,7 +76,7 @@
               <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
                 <i class='icon-edit'></i>
               </a>
-            <%= else %>
+            <% else %>
               <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
                 <i class='<%= active?(item.collected) %>' ></i>
               </a>
@@ -88,13 +88,12 @@
   </div>
 </div>
 
-<%= if @user && @user.moderator do %>
-  <div class="modal <%= unless is_nil(@changeset), do: " open" %>" tabindex="-1" role="dialog">
+<%= unless is_nil(@changeset) do %>
+  <div class="modal open" tabindex="-1" role="dialog">
     <%= f = form_for @changeset, "#", [
       class: "modal-dialog",
       phx_change: :validate,
-      phx_submit: :save,
-      role: "document"
+      phx_submit: :save
     ] %>
       <div class="modal-content">
         <div class="modal-header">
@@ -112,12 +111,19 @@
           </div>
         </div>
         <div class="modal-footer">
+          <button
+            class="btn btn-danger"
+            data-confirm="Are you sure you want to delete? This is irreversible and affects all users who have collected the item already."
+            type='button'
+            phx-click="delete-item"
+            phx-value-id="<%= f.data.id %>"
+          >
+            Delete
+          </button>
           <%= submit "Update Item", class: "btn btn-primary" %>
         </div>
       </div>
     </form>
   </div>
-  <%= unless is_nil(@changeset) do %>
-    <div class="modal-backdrop fade show"></div>
-  <% end %>
+  <div class="modal-backdrop fade show"></div>
 <% end %>
