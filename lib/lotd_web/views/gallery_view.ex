@@ -57,4 +57,14 @@ defmodule LotdWeb.GalleryView do
   def hide_collected_legend(hide_collected) do
     if hide_collected, do: "number of items still to collect", else: "number of items in display"
   end
+
+  def room_options, do: [
+    "Other": 0,
+    "Hall of Heroes": 1,
+    "Armory": 2,
+    "Library": 3,
+    "East Exhibit Halls": 4,
+    "Dragonborn Hall": 5,
+    "Natural Science": 6
+  ]
 end
