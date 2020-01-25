@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class='h-100'>
   <head>
     <%= csrf_meta_tag() %>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -9,7 +9,7 @@
     <title>LOTD Inventory Manager</title>
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
   </head>
-  <body>
+  <body class='h-100'>
     <%= render "navbar.html", conn: @conn %>
     <%= render @view_module, @view_template, assigns %>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>

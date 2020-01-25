@@ -67,4 +67,12 @@ defmodule LotdWeb.GalleryView do
     "Dragonborn Hall": 5,
     "Natural Science": 6
   ]
+
+  def tab(name, content, current_tab) do
+    link = if name == current_tab,
+      do: content_tag(:a, content, class: "nav-link px-2 active disabled"),
+      else: content_tag(:a, content, class: "nav-link px-2", phx_click: "switch-tab", phx_value_tab: name)
+
+    content_tag :li, link, class: "nav-item"
+  end
 end

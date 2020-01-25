@@ -16,6 +16,7 @@ defmodule LotdWeb.GalleryLive do
       items: Gallery.list_items(user),
       moderate: true,
       search: "",
+      tab: "settings",
       user: user,
       visible_items: []
     )}
@@ -32,6 +33,10 @@ defmodule LotdWeb.GalleryLive do
     id = if Map.has_key?(params, "id"), do: String.to_integer(params["id"]), else: nil
     socket = assign(socket, :display, id)
     {:noreply, assign(socket, visible_items: get_visible_items(socket))}
+  end
+
+  def handle_event("switch-tab", %{"tab" => tab}, socket) do
+    {:noreply, assign(socket, tab: tab)}
   end
 
   def handle_event("toggle-hide-collected", _params, socket) do

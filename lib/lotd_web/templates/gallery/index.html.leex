@@ -1,5 +1,5 @@
 <%# Gallery Menu %>
-<ul class="nav nav-tabs justify-content-center mb-2">
+<ul class="d-none nav nav-tabs justify-content-center mb-2">
   <%= gallery_tab(@room, @search, 1, "Hall of Heroes") %>
   <%= gallery_tab(@room, @search, 2, "Armory") %>
   <%= gallery_tab(@room, @search, 3, "Library") %>
@@ -9,39 +9,43 @@
   <%= gallery_tab(@room, @search, nil, "Other") %>
 </ul>
 
-<div class='d-flex flex-grow-1 row h-100'>
-  <div id='display-list' class="col col-md-5">
-    <form phx-change='search'>
-      <div class='form-group'>
-        <%= text_input :search_field, :query,
-          autofocus: true,
-          class: "form-control",
-          placeholder: "Search...",
-          phx_debounce: 300,
-          value: @search
-        %>
-      </div>
-    </form>
 
-    <div class="list-group list-group-flush mh-100 overflow-auto">
 
-      <button class="<%= display_class(@display, nil) %>" phx-click="show-display">
-        <strong>All Displays</strong>
-        <span class="badge badge-secondary badge-pill"><%= Enum.count(@visible_items) %></span>
-      </button>
 
-      <%= for d <- displays(@items, @room, @search) do %>
-        <button
-          class="<%= display_class(d, @display) %>"
-          phx-click="show-display"
-          phx-value-id="<%= d.id %>"
-        >
-          <%= d.name %>
-          <span class="badge badge-secondary badge-pill"><%= d.count %></span>
+
+<div class='row h-100'>
+
+  <%# Left Panel %>
+  <div class="col col-md-4 row-cols-1 h-100">
+
+    <div class="card h-50">
+      <div class="card-header text-center p-1"><strong>Rooms</strong></div>
+    </div>
+
+    <div class="card h-50">
+      <div class="card-header text-center p-1"><strong>Displays</strong></div>
+      <div class="list-group list-group-flush mh-100 overflow-auto">
+
+        <button class="<%= display_class(@display, nil) %>" phx-click="show-display">
+          <strong>All Displays</strong>
+          <span class="badge badge-secondary badge-pill"><%= Enum.count(@visible_items) %></span>
         </button>
-      <% end %>
 
-      <%= unless is_nil(@user) do %>
+        <%= for d <- displays(@items, @room, @search) do %>
+          <button
+            class="<%= display_class(d, @display) %>"
+            phx-click="show-display"
+            phx-value-id="<%= d.id %>"
+          >
+            <%= d.name %>
+            <span class="badge badge-secondary badge-pill"><%= d.count %></span>
+          </button>
+        <% end %>
+      </div>
+    </div>
+
+    <%= if @tab == "settings" do %>
+      <div class="d-none list-group list-group-flush mh-100 overflow-auto">
         <div class='list-group-item form-group form-check m-0 p-1'>
           <p class='mb-0'><a class='text-primary' phx-click='toggle-hide-collected'>
             <i class="<%= active?(@hide_collected) %>"></i>
@@ -57,34 +61,61 @@
           <div class='list-group-item form-group form-check  p-1 m-0'>
             <p class='mb-0'><a class='text-primary' phx-click='toggle-moderate'>
               <i class="<%= active?(@moderate) %>"></i>
-              Moderate Items
+              Moderation Mode
               </a></p>
           </div>
         <% end %>
-      <% end %>
+      </div>
+    <% end %>
+  </div>
+
+
+  <div class="col col-md-4 h-100 px-0">
+    <div class="card h-100">
+      <div class="card-header text-center p-1"><strong>Items</strong></div>
+
+        <form phx-change='search'>
+          <div class='card-body form-group p-0'>
+            <%= text_input :search_field, :query,
+              autofocus: true,
+              class: "form-control",
+              placeholder: "Search...",
+              phx_debounce: 300,
+              value: @search
+            %>
+          </div>
+        </form>
+
+      <ul class="list-group list-group-flush mh-100 overflow-auto">
+        <%= for item <- @visible_items do %>
+          <li class="list-group-item d-flex justify-content-between align-items-center p-1">
+            <%= item.name %>
+
+            <%= unless is_nil(@user) do %>
+              <%= if @user.moderator && @moderate do %>
+                <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
+                  <i class='icon-edit'></i>
+                </a>
+              <% else %>
+                <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
+                  <i class='<%= active?(item.collected) %>' ></i>
+                </a>
+              <% end %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
     </div>
   </div>
 
-  <div id='item-list' class="col col-md-7 mh-100 overflow-auto">
-    <ul class="list-group list-group-flush">
-      <%= for item <- @visible_items do %>
-        <li class="list-group-item d-flex justify-content-between align-items-center p-1">
-          <%= item.name %>
-
-          <%= unless is_nil(@user) do %>
-            <%= if @user.moderator && @moderate do %>
-              <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
-                <i class='icon-edit'></i>
-              </a>
-            <% else %>
-              <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
-                <i class='<%= active?(item.collected) %>' ></i>
-              </a>
-            <% end %>
-          <% end %>
-        </li>
-      <% end %>
-    </ul>
+  <%# Right Panel %>
+  <div class="col col-md-4 row-cols-1 h-100">
+    <div class="card h-50">
+      <div class="card-header text-center p-1"><strong>Locations</strong></div>
+    </div>
+    <div class="card h-50">
+      <div class="card-header text-center p-1"><strong>Mods</strong></div>
+    </div>
   </div>
 </div>
 
