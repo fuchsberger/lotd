@@ -13,6 +13,8 @@ defmodule LotdWeb.GalleryLive do
     {:ok, assign(socket,
       changeset: nil,
       display: nil,
+      displays: Gallery.list_displays(),
+      display_filter: nil,
       hide_collected: not is_nil(user),
       items: Gallery.list_items(user),
       rooms: Gallery.list_rooms(),
@@ -67,13 +69,20 @@ defmodule LotdWeb.GalleryLive do
 
   # FILTERS
   def handle_event("clear-filter-room", _params, socket) do
-    {:noreply, assign(socket, room_filter: nil)}
+    {:noreply, assign(socket, room_filter: nil, display_filter: nil)}
   end
 
   def handle_event("filter-room", %{"id" => id}, socket) do
-    {:noreply, assign(socket, room_filter: String.to_integer(id))}
+    {:noreply, assign(socket, room_filter: String.to_integer(id), display_filter: nil)}
   end
 
+  def handle_event("clear-filter-display", _params, socket) do
+    {:noreply, assign(socket, display_filter: nil)}
+  end
+
+  def handle_event("filter-display", %{"id" => id}, socket) do
+    {:noreply, assign(socket, display_filter: String.to_integer(id))}
+  end
 
   # MODERATION
 
@@ -126,6 +135,47 @@ defmodule LotdWeb.GalleryLive do
     case Gallery.delete_room(Enum.find(socket.assigns.rooms, & &1.id == String.to_integer(id))) do
       {:ok, _room} ->
         {:noreply, assign(socket, changeset: nil, rooms: Gallery.list_rooms())}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("add-display", _params, socket) do
+    changeset = Gallery.change_display(%{}) |> Map.put(:action, :insert)
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("create_display", %{"display" => display_params}, socket) do
+    case Gallery.create_display(display_params) do
+      {:ok, _display } ->
+        {:noreply, assign(socket, changeset: nil, displays: Gallery.list_displays())}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("edit-display", %{"id" => id}, socket) do
+    changeset = Gallery.change_display(Gallery.get_display!(id), %{}) |> Map.put(:action, :update)
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("update_display", %{"display" => display_params}, socket) do
+    case Gallery.update_display(socket.assigns.changeset.data, display_params) do
+      {:ok, _display } ->
+        {:noreply, assign(socket, changeset: nil, displays: Gallery.list_displays())}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("delete-display", %{"id" => id}, socket) do
+    display = Enum.find(socket.assigns.displays, & &1.id == String.to_integer(id))
+    case Gallery.delete_display(display) do
+      {:ok, _display} ->
+        {:noreply, assign(socket, changeset: nil, displays: Gallery.list_displays())}
 
       {:error, _reason} ->
         {:noreply, socket}

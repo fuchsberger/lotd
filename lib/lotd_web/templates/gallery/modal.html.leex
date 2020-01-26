@@ -16,8 +16,8 @@
         </div>
         <%= if struct_name(@changeset.data) == "display" do %>
           <div class='form-group'>
-            <%= label f, :room %>
-            <%= select f, :room, room_options(), class: "form-control" %>
+            <%= label f, :room_id, "Room" %>
+            <%= select f, :room_id, select_options(@rooms), class: "form-control" %>
             <%# error_tag f, :name %>
           </div>
         <% end %>

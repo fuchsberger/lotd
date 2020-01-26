@@ -41,21 +41,6 @@ defmodule LotdWeb.GalleryView do
   defp count_items(items, display_id),
     do: Enum.filter(items, & &1.display_id == display_id) |> Enum.count()
 
-  def display_class(current_display, nil) do
-    cond do
-      is_nil(current_display) ->
-        "#{@base_class} list-group-item-action d-flex list-group-item-secondary"
-      true ->
-        "#{@base_class} list-group-item-action d-flex"
-    end
-  end
-
-  def display_class(display, current_display) do
-    if current_display == display.id,
-      do: "#{@base_class} list-group-item-action d-flex list-group-item-secondary",
-      else: "#{@base_class} list-group-item-action d-flex"
-  end
-
   def active?(boolean), do: if boolean, do: "icon-active", else: "icon-inactive"
 
   def hide_collected_legend(hide_collected) do
@@ -89,6 +74,14 @@ defmodule LotdWeb.GalleryView do
   def action_submit(changeset) do
     action = if changeset.action == :insert, do: "create", else: "update"
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
+  end
+
+  def select_options(collection) do
+    for option <- collection, do: {option.name, option.id}
+  end
+
+  def visible_displays(displays, room_filter) do
+    if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
   end
 
   defp struct_name(struct) do

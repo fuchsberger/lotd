@@ -35,17 +35,26 @@ defmodule Lotd.Gallery do
   end
 
   # DISPLAYS
-
   def list_displays, do: Repo.all from(d in Display, order_by: d.name)
 
-  def get_display_id!(name),
-    do: Repo.one!(from(d in Display, select: d.id, where: d.name == ^name))
+  def get_display!(id), do: Repo.get!(Display, id)
 
-  def create_display(attrs) do
+  def change_display(attrs), do: Display.changeset(%Display{}, attrs)
+  def change_display(%Display{} = display, attrs), do: Display.changeset(display, attrs)
+
+  def create_display(attrs \\ %{}) do
     %Display{}
     |> Display.changeset(attrs)
     |> Repo.insert()
   end
+
+  def update_display(%Display{} = display, attrs) do
+    display
+    |> Display.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # ITEMS
   def list_items, do: Repo.all(from(i in Item, order_by: i.name))
