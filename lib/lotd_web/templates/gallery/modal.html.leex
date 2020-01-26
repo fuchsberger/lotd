@@ -1,10 +1,6 @@
-<div class="modal open" tabindex="-1" role="dialog">
-  <%= f = form_for @changeset, "#", [
-    class: "modal-dialog",
-    phx_change: action_validate(@changeset.data),
-    phx_submit: action_submit(@changeset)
-  ] %>
-  <% IO.inspect @changeset %>
+<div class="modal" tabindex="-1" role="dialog">
+  <%= f = form_for @changeset, "#",
+    [ class: "modal-dialog", phx_change: :validate, phx_submit: action_submit(@changeset) ] %>
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title"><%= title(@changeset) %></h5>
@@ -13,7 +9,6 @@
         </button>
       </div>
       <div class="modal-body">
-
         <div class='form-group'>
           <%= label f, :name %>
           <%= text_input f, :name, class: "form-control", placeholder: "Name" %>
@@ -31,9 +26,9 @@
         <%= if @changeset.action == :update do %>
           <button
             class="btn btn-danger"
-            data-confirm="Are you sure you want to delete? This is irreversible and affects all users who have collected the item already."
+            data-confirm="Are you sure you want to delete? This is irreversible and can do serious damage to the database."
             type='button'
-            phx-click="delete-item"
+            phx-click="delete-<%= struct_name(@changeset.data) %>"
             phx-value-id="<%= f.data.id %>"
           >
             Delete

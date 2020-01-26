@@ -5,6 +5,8 @@ defmodule LotdWeb.GalleryView do
 
   @base_class "list-group-item justify-content-between align-items-center p-1"
 
+  def active(boolean), do: if boolean, do: " active"
+
   def gallery_tab(active_room, search, room, title, class \\ "") do
 
     active = cond do
@@ -83,8 +85,6 @@ defmodule LotdWeb.GalleryView do
     struct = String.capitalize(struct_name(changeset.data))
     "#{action} #{struct}"
   end
-
-  def action_validate(data), do: String.to_atom("validate_#{struct_name(data)}")
 
   def action_submit(changeset) do
     action = if changeset.action == :insert, do: "create", else: "update"

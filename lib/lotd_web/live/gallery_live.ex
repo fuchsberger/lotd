@@ -2,6 +2,7 @@ defmodule LotdWeb.GalleryLive do
 
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
   alias Lotd.{Repo, Accounts, Gallery}
+  alias Lotd.Gallery.{Display, Item, Mod, Room}
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
@@ -14,7 +15,8 @@ defmodule LotdWeb.GalleryLive do
       display: nil,
       hide_collected: not is_nil(user),
       items: Gallery.list_items(user),
-      moderate: true,
+      rooms: Gallery.list_rooms(),
+      room_filter: nil,
       search: "",
       tab: "settings",
       user: user,
@@ -63,29 +65,70 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
+  # FILTERS
+  def handle_event("clear-filter-room", _params, socket) do
+    {:noreply, assign(socket, room_filter: nil)}
+  end
+
+  def handle_event("filter-room", %{"id" => id}, socket) do
+    {:noreply, assign(socket, room_filter: String.to_integer(id))}
+  end
+
 
   # MODERATION
+
+  def handle_event("cancel", _params, socket), do:  {:noreply, assign(socket, :changeset, nil)}
+
+  def handle_event("validate", params, socket) do
+    changeset =
+      case socket.assigns.changeset.data do
+        %Display{} -> Gallery.change_display(socket.assigns.changeset.data, params["display"])
+        %Item{} -> Gallery.change_item(socket.assigns.changeset.data, params["item"])
+        %Mod{} -> Gallery.change_mod(socket.assigns.changeset.data, params["mod"])
+        %Room{} -> Gallery.change_room(socket.assigns.changeset.data, params["room"])
+      end
+      |> Map.put(:action, socket.assigns.changeset.action)
+
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
 
   def handle_event("add-room", _params, socket) do
     changeset = Gallery.change_room(%{}) |> Map.put(:action, :insert)
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("toggle-moderate", _params, socket) do
-    {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
-  end
-
-  def handle_event("cancel", _params, socket) do
-    {:noreply, assign(socket, :changeset, nil)}
-  end
-
-  def handle_event("create-room", %{"room" => room_params}, socket) do
+  def handle_event("create_room", %{"room" => room_params}, socket) do
     case Gallery.create_room(room_params) do
-      {:ok, room } ->
+      {:ok, _room } ->
         {:noreply, assign(socket, changeset: nil, rooms: Gallery.list_rooms())}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("edit-room", %{"id" => id}, socket) do
+    changeset = Gallery.change_room(Gallery.get_room!(id), %{}) |> Map.put(:action, :update)
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("update_room", %{"room" => room_params}, socket) do
+    case Gallery.update_room(socket.assigns.changeset.data, room_params) do
+      {:ok, _room } ->
+        {:noreply, assign(socket, changeset: nil, rooms: Gallery.list_rooms())}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("delete-room", %{"id" => id}, socket) do
+    case Gallery.delete_room(Enum.find(socket.assigns.rooms, & &1.id == String.to_integer(id))) do
+      {:ok, _room} ->
+        {:noreply, assign(socket, changeset: nil, rooms: Gallery.list_rooms())}
+
+      {:error, _reason} ->
+        {:noreply, socket}
     end
   end
 
@@ -123,19 +166,7 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
-  def handle_event("validate", %{"item" => params}, socket) do
-    changeset =
-      socket.assigns.changeset.data
-      |> Gallery.change_item(params)
-      |> Map.put(:action, :update)
 
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
-
-  def handle_event("validate_room", %{"room" => params}, socket) do
-    changeset = Gallery.change_room(socket.assigns.changeset.data, params)
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
 
   def handle_params(%{"room" => room}, _uri, socket) do
     socket = assign socket,

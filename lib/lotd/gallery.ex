@@ -94,9 +94,22 @@ defmodule Lotd.Gallery do
   # ROOMS
   def list_rooms, do: Repo.all from(r in Room, order_by: r.name)
 
+  def get_room!(id), do: Repo.get!(Room, id)
+
   def change_room(attrs), do: Room.changeset(%Room{}, attrs)
   def change_room(%Room{} = room, attrs), do: Room.changeset(room, attrs)
 
-  def create_room(name), do: Repo.insert!(%Room{name: name}, on_conflict: :nothing)
+  def create_room(attrs \\ %{}) do
+    %Room{}
+    |> Room.changeset(attrs)
+    |> Repo.insert()
+  end
 
+  def update_room(%Room{} = room, attrs) do
+    room
+    |> Room.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_room(%Room{} = room), do: Repo.delete(room)
 end

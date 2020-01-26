@@ -9,10 +9,6 @@
   <%= gallery_tab(@room, @search, nil, "Other") %>
 </ul>
 
-
-
-
-
 <div class='row h-100'>
 
   <%# Left Panel %>
@@ -22,9 +18,35 @@
     <div class="card h-50">
       <div class="card-header text-center p-1">
         <strong>Rooms</strong>
-        <button class="btn p-0 btn-link float-right" phx-click='add-room'>
-          <i class='float-right icon-add'></i>
+        <%= if @user && @user.moderator do %>
+          <button class="btn p-0 btn-link float-right" phx-click='add-room'>
+            <i class='float-right icon-add'></i>
+          </button>
+        <% end %>
+      </div>
+      <div class="list-group list-group-flush">
+        <button
+          class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@room_filter)) %>"
+          phx-click="clear-filter-room"
+        >
+          <strong>All Rooms</strong>
+          <span class="badge badge-secondary badge-pill"><%# d.count %></span>
         </button>
+      </div>
+      <div class="list-group list-group-flush mh-100 overflow-auto">
+        <%= for r <- @rooms do %>
+          <button
+            class="list-group-item list-group-item-action px-2 py-0 <%= active(r.id == @room_filter) %>"
+            phx-click="filter-room"
+            phx-value-id="<%= r.id %>"
+          >
+            <%= if @user && @user.moderator do %>
+              <i class='icon-edit text-primary' phx-click="edit-room" phx-value-id="<%= r.id %>"></i>
+            <% end %>
+            <%= r.name %>
+            <span class="badge badge-secondary badge-pill"><%# d.count %></span>
+          </button>
+        <% end %>
       </div>
     </div>
 
@@ -66,7 +88,7 @@
         <%= if @user.moderator do %>
           <div class='list-group-item form-group form-check  p-1 m-0'>
             <p class='mb-0'><a class='text-primary' phx-click='toggle-moderate'>
-              <i class="<%= active?(@moderate) %>"></i>
+              <i class="active"></i>
               Moderation Mode
               </a></p>
           </div>

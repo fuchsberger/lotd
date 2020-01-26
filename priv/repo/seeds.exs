@@ -1,7 +1,6 @@
 # Script for populating the database. You can run it as:
 # "mix run priv/repo/seeds.exs" or alternatively "mix ecto reset"
-# only run in dev environment!
-
+# only run in dev environment or fresh server!
 
 alias Lotd.Gallery
 alias Lotd.{Accounts, Gallery}
@@ -45,8 +44,10 @@ case File.read("priv/repo/displays.json") do
     rows
     |> Enum.map(& &1["roomName"])
     |> Enum.uniq()
-    |> Enum.each(& unless Gallery.create_room(&1),
-      do: Logger.error("Room \"#{&1}\" could not be created."))
+    |> Enum.each(& case Gallery.create_room(&1) do
+        {:ok, _room} -> :ok
+        {:error, _changeset} -> Logger.error("Room \"#{&1}\" could not be created.")
+      end
 
     rooms = Gallery.list_rooms()
     Logger.info("#{Enum.count(rooms)} rooms created.")
