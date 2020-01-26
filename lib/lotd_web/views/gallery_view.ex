@@ -7,20 +7,6 @@ defmodule LotdWeb.GalleryView do
 
   def active(boolean), do: if boolean, do: " active"
 
-  def gallery_tab(active_room, search, room, title, class \\ "") do
-
-    active = cond do
-      search != "" -> ""
-      active_room == room -> " active"
-      true -> ""
-    end
-
-    link_elm = live_link title,
-      to: Routes.live_path(LotdWeb.Endpoint, LotdWeb.GalleryLive, room: room),
-      class: "nav-link#{active}"
-
-    content_tag :li, link_elm, class: "nav-item #{class}"
-  end
 
   def displays(items, room, search) do
     items =

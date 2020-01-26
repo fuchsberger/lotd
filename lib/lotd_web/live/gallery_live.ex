@@ -17,15 +17,15 @@ defmodule LotdWeb.GalleryLive do
       display_filter: nil,
       hide_collected: not is_nil(user),
       items: Gallery.list_items(user),
+      mods: Gallery.list_mods(),
+      mod_filter: nil,
       rooms: Gallery.list_rooms(),
       room_filter: nil,
       search: "",
-      tab: "settings",
       user: user,
       visible_items: []
     )}
   end
-
 
   def handle_event("search", %{"search_field" => %{"query" => query}}, socket) do
     socket = assign socket, :search, query
@@ -36,10 +36,6 @@ defmodule LotdWeb.GalleryLive do
     id = if Map.has_key?(params, "id"), do: String.to_integer(params["id"]), else: nil
     socket = assign(socket, :display, id)
     {:noreply, assign(socket, visible_items: get_visible_items(socket))}
-  end
-
-  def handle_event("switch-tab", %{"tab" => tab}, socket) do
-    {:noreply, assign(socket, tab: tab)}
   end
 
   def handle_event("toggle-hide-collected", _params, socket) do
@@ -82,6 +78,14 @@ defmodule LotdWeb.GalleryLive do
 
   def handle_event("filter-display", %{"id" => id}, socket) do
     {:noreply, assign(socket, display_filter: String.to_integer(id))}
+  end
+
+  def handle_event("clear-filter-mod", _params, socket) do
+    {:noreply, assign(socket, mod_filter: nil)}
+  end
+
+  def handle_event("filter-mod", %{"id" => id}, socket) do
+    {:noreply, assign(socket, mod_filter: String.to_integer(id))}
   end
 
   # MODERATION
@@ -181,6 +185,48 @@ defmodule LotdWeb.GalleryLive do
         {:noreply, socket}
     end
   end
+
+  def handle_event("add-mod", _params, socket) do
+    changeset = Gallery.change_mod(%{}) |> Map.put(:action, :insert)
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("create_mod", %{"mod" => mod_params}, socket) do
+    case Gallery.create_mod(mod_params) do
+      {:ok, _mod } ->
+        {:noreply, assign(socket, changeset: nil, mods: Gallery.list_mods())}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("edit-mod", %{"id" => id}, socket) do
+    changeset = Gallery.change_mod(Gallery.get_mod!(id), %{}) |> Map.put(:action, :update)
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("update_mod", %{"mod" => mod_params}, socket) do
+    case Gallery.update_mod(socket.assigns.changeset.data, mod_params) do
+      {:ok, _mod } ->
+        {:noreply, assign(socket, changeset: nil, mods: Gallery.list_mods())}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("delete-mod", %{"id" => id}, socket) do
+    mod = Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
+    case Gallery.delete_mod(mod) do
+      {:ok, _mod} ->
+        {:noreply, assign(socket, changeset: nil, mods: Gallery.list_mods())}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
+  end
+
 
   def handle_event("edit-item", %{"id" => id}, socket) do
     changeset = Gallery.change_item(Gallery.get_item!(id), %{})

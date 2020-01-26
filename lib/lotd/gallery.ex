@@ -34,7 +34,7 @@ defmodule Lotd.Gallery do
     end
   end
 
-  # DISPLAYS
+  # DISPLAYS -------------------------------------------------------------------------------------
   def list_displays, do: Repo.all from(d in Display, order_by: d.name)
 
   def get_display!(id), do: Repo.get!(Display, id)
@@ -56,7 +56,7 @@ defmodule Lotd.Gallery do
 
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
-  # ITEMS
+  # ITEMS ----------------------------------------------------------------------------------------
   def list_items, do: Repo.all(from(i in Item, order_by: i.name))
   def list_items(nil), do: Repo.all(from(i in Item, order_by: i.name, preload: :display))
 
@@ -86,19 +86,27 @@ defmodule Lotd.Gallery do
 
   def change_item(%Item{} = item, attrs), do: Item.changeset(item, attrs)
 
-  # MODS
+  # MODS -----------------------------------------------------------------------------------------
+  def list_mods, do: Repo.all from(d in Mod, order_by: d.name)
 
-  def list_mods, do: Repo.all(from(m in Mod, order_by: m.name, preload: [items: ^Repo.ids(Item)]))
+  def get_mod!(id), do: Repo.get!(Mod, id)
 
-  def get_mod(id), do: Repo.get(Mod, id)
-
-  def get_mod_id!(name), do: Repo.one!(from(m in Mod, select: m.id, where: m.name == ^name))
+  def change_mod(attrs), do: Mod.changeset(%Mod{}, attrs)
+  def change_mod(%Mod{} = mod, attrs), do: Mod.changeset(mod, attrs)
 
   def create_mod(attrs \\ %{}) do
     %Mod{}
     |> Mod.changeset(attrs)
     |> Repo.insert()
   end
+
+  def update_mod(%Mod{} = mod, attrs) do
+    mod
+    |> Mod.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
 
   # ROOMS
   def list_rooms, do: Repo.all from(r in Room, order_by: r.name)
