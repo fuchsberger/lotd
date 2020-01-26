@@ -18,8 +18,14 @@
   <%# Left Panel %>
   <div class="col col-md-4 row-cols-1 h-100">
 
+    <%# Rooms %>
     <div class="card h-50">
-      <div class="card-header text-center p-1"><strong>Rooms</strong></div>
+      <div class="card-header text-center p-1">
+        <strong>Rooms</strong>
+        <button class="btn p-0 btn-link float-right" phx-click='add-room'>
+          <i class='float-right icon-add'></i>
+        </button>
+      </div>
     </div>
 
     <div class="card h-50">
@@ -119,48 +125,4 @@
   </div>
 </div>
 
-<%= unless is_nil(@changeset) do %>
-  <div class="modal open" tabindex="-1" role="dialog">
-    <%= f = form_for @changeset, "#", [
-      class: "modal-dialog",
-      phx_change: :validate,
-      phx_submit: :save
-    ] %>
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Item</h5>
-          <button type="button" class="close" phx-click='cancel-edit'>
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-
-          <div class='form-group'>
-            <%= label f, :name %>
-            <%= text_input f, :name, class: "form-control", placeholder: "Name" %>
-            <%# error_tag f, :name %>
-          </div>
-
-          <div class='form-group'>
-            <%= label f, :room %>
-            <%= select f, :room, room_options(), class: "form-control" %>
-            <%# error_tag f, :name %>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            class="btn btn-danger"
-            data-confirm="Are you sure you want to delete? This is irreversible and affects all users who have collected the item already."
-            type='button'
-            phx-click="delete-item"
-            phx-value-id="<%= f.data.id %>"
-          >
-            Delete
-          </button>
-          <%= submit "Update Item", class: "btn btn-primary" %>
-        </div>
-      </div>
-    </form>
-  </div>
-  <div class="modal-backdrop fade show"></div>
-<% end %>
+<%= unless is_nil(@changeset), do: render("modal.html", changeset: @changeset) %>

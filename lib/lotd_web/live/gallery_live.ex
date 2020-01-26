@@ -23,7 +23,6 @@ defmodule LotdWeb.GalleryLive do
   end
 
 
-
   def handle_event("search", %{"search_field" => %{"query" => query}}, socket) do
     socket = assign socket, :search, query
     {:noreply, assign(socket, visible_items: get_visible_items(socket))}
@@ -66,12 +65,28 @@ defmodule LotdWeb.GalleryLive do
 
 
   # MODERATION
+
+  def handle_event("add-room", _params, socket) do
+    changeset = Gallery.change_room(%{}) |> Map.put(:action, :insert)
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
   def handle_event("toggle-moderate", _params, socket) do
     {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
   end
 
-  def handle_event("cancel-edit", _params, socket) do
+  def handle_event("cancel", _params, socket) do
     {:noreply, assign(socket, :changeset, nil)}
+  end
+
+  def handle_event("create-room", %{"room" => room_params}, socket) do
+    case Gallery.create_room(room_params) do
+      {:ok, room } ->
+        {:noreply, assign(socket, changeset: nil, rooms: Gallery.list_rooms())}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
   end
 
   def handle_event("edit-item", %{"id" => id}, socket) do
@@ -114,6 +129,11 @@ defmodule LotdWeb.GalleryLive do
       |> Gallery.change_item(params)
       |> Map.put(:action, :update)
 
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("validate_room", %{"room" => params}, socket) do
+    changeset = Gallery.change_room(socket.assigns.changeset.data, params)
     {:noreply, assign(socket, :changeset, changeset)}
   end
 

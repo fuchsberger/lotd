@@ -1,6 +1,8 @@
 defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
+  alias Lotd.Gallery.{Display, Item, Mod, Room}
+
   @base_class "list-group-item justify-content-between align-items-center p-1"
 
   def gallery_tab(active_room, search, room, title, class \\ "") do
@@ -74,5 +76,27 @@ defmodule LotdWeb.GalleryView do
       else: content_tag(:a, content, class: "nav-link px-2", phx_click: "switch-tab", phx_value_tab: name)
 
     content_tag :li, link, class: "nav-item"
+  end
+
+  def title(changeset) do
+    action = if changeset.action == :insert, do: "Create", else: "Edit"
+    struct = String.capitalize(struct_name(changeset.data))
+    "#{action} #{struct}"
+  end
+
+  def action_validate(data), do: String.to_atom("validate_#{struct_name(data)}")
+
+  def action_submit(changeset) do
+    action = if changeset.action == :insert, do: "create", else: "update"
+    String.to_atom("#{action}_#{struct_name(changeset.data)}")
+  end
+
+  defp struct_name(struct) do
+    case struct do
+      %Display{} -> "display"
+      %Item{} -> "item"
+      %Mod{} -> "mod"
+      %Room{} -> "room"
+    end
   end
 end

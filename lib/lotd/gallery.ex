@@ -5,7 +5,7 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
-  alias Lotd.Gallery.{Display, Item, Mod}
+  alias Lotd.Gallery.{Display, Item, Mod, Room}
 
   # SORTING
 
@@ -48,6 +48,7 @@ defmodule Lotd.Gallery do
   end
 
   # ITEMS
+  def list_items, do: Repo.all(from(i in Item, order_by: i.name))
   def list_items(nil), do: Repo.all(from(i in Item, order_by: i.name, preload: :display))
 
   def list_items(user), do: Repo.all(from(i in Item,
@@ -89,4 +90,13 @@ defmodule Lotd.Gallery do
     |> Mod.changeset(attrs)
     |> Repo.insert()
   end
+
+  # ROOMS
+  def list_rooms, do: Repo.all from(r in Room, order_by: r.name)
+
+  def change_room(attrs), do: Room.changeset(%Room{}, attrs)
+  def change_room(%Room{} = room, attrs), do: Room.changeset(room, attrs)
+
+  def create_room(name), do: Repo.insert!(%Room{name: name}, on_conflict: :nothing)
+
 end

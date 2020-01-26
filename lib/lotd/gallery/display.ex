@@ -5,15 +5,17 @@ defmodule Lotd.Gallery.Display do
 
   schema "displays" do
     field :name, :string
+    belongs_to :room, Lotd.Gallery.Room
     has_many :items, Lotd.Gallery.Item
   end
 
   @doc false
   def changeset(display, attrs) do
     display
-    |> cast(attrs, [:name])
+    |> cast(attrs, [:name, :room_id])
     |> validate_required([:name])
-    |> validate_length(:name, min: 3, max: 80)
+    |> validate_length(:name, min: 3, max: 40)
+    |> assoc_constraint(:room)
     |> unique_constraint(:name)
   end
 end

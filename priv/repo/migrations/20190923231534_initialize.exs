@@ -6,8 +6,8 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     # create users
     create table(:users) do
       add :name, :string, null: false
-      add :admin, :boolean, default: false, null: false
-      add :moderator, :boolean, default: false, null: false
+      add :admin, :boolean, null: false
+      add :moderator, :boolean, null: false
       timestamps()
     end
 
@@ -23,25 +23,35 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     alter table(:users) do
       add :active_character_id, references(:characters, on_delete: :nilify_all)
     end
-    create index(:users, [:active_character_id])
+
+    # create rooms
+    create table(:rooms) do
+      add :name, :string, null: false
+    end
+    create unique_index(:rooms, [:name])
 
     # create displays
     create table(:displays) do
       add :name, :string, null: false
+      add :room_id, references(:rooms, on_delete: :nilify_all)
     end
-
-    # create items
-    create table(:items) do
-      add :name, :string, null: false
-      add :url, :string
-      add :room, :integer
-    end
+    create index(:displays, [:room_id])
 
     # create mods
     create table(:mods) do
       add :name, :string
     end
     create unique_index(:mods, [:name])
+
+    # create items
+    create table(:items) do
+      add :name, :string, null: false
+      add :url, :string
+      add :display_id, references(:displays, on_delete: :nilify_all), null: false
+      add :mod_id, references(:mods, on_delete: :delete_all), null: false
+    end
+    create index(:items, [:display_id])
+    create index(:items, [:mod_id])
 
     # link items and displays (n:m)
     create table(:character_items) do
@@ -57,15 +67,5 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
     end
 
     create unique_index(:character_mods, [:character_id, :mod_id])
-
-    # create foreign keys
-    alter table(:items) do
-      add :display_id, references(:displays, on_delete: :delete_all), null: false
-      add :mod_id, references(:mods, on_delete: :delete_all), null: false
-    end
-
-    # create foreign key constraints
-    create index(:items, [:display_id])
-    create index(:items, [:mod_id])
   end
 end
