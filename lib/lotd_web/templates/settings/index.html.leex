@@ -1,16 +1,8 @@
 <div class='row h-100'>
-  <div class="col col-md-5 h-100">
-    <%= f = form_for @changeset_new, "#", [phx_change: :validate_new, phx_submit: :create] %>
-      <div class="input-group">
-        <%= text_input f, :name, class: "form-control", placeholder: "New Character" %>
-        <div class="input-group-append">
-          <%= submit raw("<i class='icon-add'></i>Create"), class: "btn btn-outline-primary" %>
-        </div>
-      </div>
-    </form>
-
+  <%# Left column hidden on mobile devices %>
+  <div class="col col-md-5 d-none d-md-block h-100">
     <%= f = form_for :character, "#", [phx_change: :activate] %>
-      <div class="list-group list-group-flush mh-100 overflow-auto">
+      <div class="list-group list-group-flush h-list overflow-auto">
         <div class='list-group-item px-2 py-1'>
           <strong>Characters<span class='float-right'>Items</span></strong>
         </div>
@@ -21,10 +13,17 @@
               class: "d-none",
               checked: c.id == @user.active_character_id
             %>
-            <%= c.name %>
+            <%= if c.id == @user.active_character_id do %>
+              <strong><%= c.name %></strong>
+            <% else %>
+              <%= c.name %>
+              <i class='text-danger icon-remove' data-confirm="Are you sure you want to delete this character? This action is irreversible" phx-click='delete' phx-value-id='<%= c.id %>'>
+              </i>
+            <% end %>
+
             <span class="float-right">
               <%= collected_count(@user.active_character_id, @characters) %> /
-              <%= collectable_count(@user.active_character_id, @characters, @items) %>
+              <%= collectable_count(c.id, @characters, @items) %>
             </span>
           <% end %>
         <% end %>
@@ -32,19 +31,6 @@
     </form>
   </div>
   <div class="col col-md-7 h-100">
-    <%= f = form_for @changeset_rename, "#",
-      [phx_change: :validate_rename, phx_submit: :update] %>
-      <div class="input-group">
-        <%= text_input f, :name, class: "form-control", placeholder: "Edit Name" %>
-        <div class="input-group-append">
-          <%= submit raw("<i class='icon-edit'></i>Rename"), class: "btn btn-outline-primary" %>
-
-          <button class="btn btn-outline-danger" type="button" phx-click='delete'>
-            <i class='icon-remove'></i>Delete
-          </button>
-        </div>
-      </div>
-    </form>
     <ul class="list-group list-group-flush">
       <li class='list-group-item px-2 py-1''>
         <strong>Mods</strong>
@@ -55,7 +41,7 @@
         <strong class='float-right'>Items</strong>
       </li>
     </ul>
-    <ul class="list-group list-group-flush mh-100 overflow-auto">
+    <ul class="list-group list-group-flush h-list overflow-auto">
       <%= for m <- @mods do %>
         <li class="list-group-item px-2 py-0">
 
@@ -81,3 +67,4 @@
   items: @items
 %>
 
+<%= unless is_nil(@changeset), do: render("modal.html", changeset: @changeset) %>

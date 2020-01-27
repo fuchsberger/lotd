@@ -54,5 +54,8 @@ body { padding: 56px 0; }
   z-index: 1072;
 }
 
+// Scrollable Areas Height Fix
+.h-list { height: calc(100% - 35px)!important}
+
 // Listgroup  hidden radio button fix
 .list-group label { margin:0; }

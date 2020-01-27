@@ -31,7 +31,7 @@ defmodule LotdWeb.SessionController do
               {:ok, user} ->
 
                 # also create a default character
-                {:ok, character} = Accounts.create_character(user, %{name: "Default"})
+                {:ok, character} = Accounts.create_character(%{name: "Default", user_id: user.id})
 
                 # activate character and enable Legacy of the Dragonborn mod by default
                 Accounts.update_user(user, %{ active_character_id: character.id})

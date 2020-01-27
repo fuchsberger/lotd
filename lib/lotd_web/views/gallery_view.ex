@@ -1,8 +1,6 @@
 defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
-  alias Lotd.Gallery.{Display, Item, Mod, Room}
-
   def active(boolean), do: if boolean, do: " active"
 
   def displays(items, room, search) do
@@ -48,27 +46,7 @@ defmodule LotdWeb.GalleryView do
     content_tag :li, link, class: "nav-item"
   end
 
-  def title(changeset) do
-    action = if changeset.action == :insert, do: "Create", else: "Edit"
-    struct = String.capitalize(struct_name(changeset.data))
-    "#{action} #{struct}"
-  end
-
-  def action_submit(changeset) do
-    action = if changeset.action == :insert, do: "create", else: "update"
-    String.to_atom("#{action}_#{struct_name(changeset.data)}")
-  end
-
   def visible_displays(displays, room_filter) do
     if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
-  end
-
-  defp struct_name(struct) do
-    case struct do
-      %Display{} -> "display"
-      %Item{} -> "item"
-      %Mod{} -> "mod"
-      %Room{} -> "room"
-    end
   end
 end

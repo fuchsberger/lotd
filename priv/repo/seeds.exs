@@ -12,7 +12,7 @@ Logger.configure(level: :info, truncate: 4096)
 # attempt to create admin user
 case Accounts.register_user(%{ id: 811039, name: "Sekhmet13" }) do
   {:ok, user} ->
-    {:ok, character} = Accounts.create_character(user, %{name: "Default"})
+    {:ok, character} = Accounts.create_character(%{name: "Default", user_id: user.id })
     Accounts.update_user(user, %{
       admin: true,
       moderator: true,
@@ -27,7 +27,7 @@ end
 # attempt to create a test user (can never login)
 case Accounts.register_user(%{ id: 0, name: "Test User" }) do
   {:ok, user} ->
-    {:ok, character} = Accounts.create_character(user, %{name: "Default"})
+    {:ok, character} = Accounts.create_character(%{ name: "Default", user_id: user.id })
     Accounts.update_user(user, %{ active_character_id: character.id })
     Logger.info("Test user created.")
 

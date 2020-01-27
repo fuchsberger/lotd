@@ -2,7 +2,7 @@
 <%= f = form_for :character, "#", [class: "container", phx_change: :activate] %>
   <div class='input-group'>
     <div class="input-group-prepend">
-      <button class="btn btn-outline-primary" type="button" id="button-addon1">
+      <button class="btn btn-outline-primary" type="button" phx-click="add-character">
         <i class='icon-add'></i>
       </button>
     </div>
@@ -14,7 +14,7 @@
         <%= collected_count(@selected, @characters) %> /
         <%= collectable_count(@selected, @characters, @items) %>
       </span>
-      <button class="btn btn-outline-primary" type="button" id="button-addon1">
+      <button class="btn btn-outline-primary" type="button" phx-click="edit-character" phx-value-id="<%= @selected %>">
         <i class='icon-edit'></i>
       </button>
     </div>

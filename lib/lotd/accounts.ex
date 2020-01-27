@@ -29,17 +29,32 @@ defmodule Lotd.Accounts do
     |> Repo.update()
   end
 
-  # character
+  # CHARACTERS -----------------------------------------------------------------------------------
+
+  def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
 
   def list_characters(%User{} = user) do
-    from(c in Character,
-      preload: [:items, :mods],
-      where: c.user_id == ^user.id
-    )
+    from(c in Character, preload: [:items, :mods], where: c.user_id == ^user.id, order_by: c.name)
     |> Repo.all()
   end
 
+  def get_character(id), do: Repo.get(Character, id)
   def get_character!(id), do: Repo.get!(Character, id)
+
+  def change_character(attrs), do: Character.changeset(%Character{}, attrs)
+  def change_character(%Character{} = character, attrs), do: Character.changeset(character, attrs)
+
+  def create_character(attrs \\ %{}) do
+    %Character{}
+    |> Character.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_character(%Character{} = character, attrs) do
+    character
+    |> Character.changeset(attrs)
+    |> Repo.update()
+  end
 
   def activate_character(user, character_id) do
     user
@@ -47,18 +62,7 @@ defmodule Lotd.Accounts do
     |> Repo.update!()
   end
 
-  def create_character(%User{} = user, attrs \\ %{}) do
-    %Character{}
-    |> Character.changeset(attrs)
-    |> Ecto.Changeset.put_assoc(:user, user)
-    |> Repo.insert()
-  end
-
-  def update_character(%Character{} = character, %{} = attrs) do
-    character
-    |> Character.changeset(attrs)
-    |> Repo.update()
-  end
+  # MUSEUM FEATURES
 
   def collect_item(character, item) do
     character

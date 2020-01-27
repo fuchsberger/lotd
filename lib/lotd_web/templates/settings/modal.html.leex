@@ -1,0 +1,36 @@
+<%# Character Modal %>
+<div class="modal" tabindex="-1" role="dialog">
+  <%= f = form_for @changeset, "#",
+    [ class: "modal-dialog", phx_change: :validate, phx_submit: action_submit(@changeset) ] %>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><%= title(@changeset) %></h5>
+        <button type="button" class="close" phx-click='cancel'>
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class='form-group'>
+          <%= label f, :name %>
+          <%= text_input f, :name, class: "form-control", placeholder: "Name" %>
+          <%# error_tag f, :name %>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <%= if @changeset.action == :update do %>
+          <button
+            class="btn btn-danger"
+            data-confirm="Are you sure you want to delete? This is irreversible and can do serious damage to the database."
+            type='button'
+            phx-click="delete-<%= struct_name(@changeset.data) %>"
+            phx-value-id="<%= f.data.id %>"
+          >
+            Delete
+          </button>
+        <% end %>
+        <%= submit "Save", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </form>
+</div>
+<div class="modal-backdrop fade show"></div>
