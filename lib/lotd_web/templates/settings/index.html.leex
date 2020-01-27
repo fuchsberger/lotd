@@ -28,7 +28,7 @@
   <div class="col col-md-5">
     <ul class="list-group list-group-flush mh-100 overflow-auto">
       <li class='list-group-item p-1'>
-        <strong>Characters<span class='float-right'>Collected</span></strong>
+        <strong>Characters<span class='float-right'>Items</span></strong>
       </li>
 
       <%= for c <- @characters do %>
@@ -41,7 +41,10 @@
             <i class='<%= activated?(c, @user) %>'></i>
           </a>
           <%= c.name %>
-          <span class="float-right"><%= Enum.count(c.items) %></span>
+          <span class="float-right">
+            <%= collected_count(@selected_character, @characters) %> /
+            <%= collectable_count(@selected_character, @characters, @items) %>
+          </span>
         </li>
       <% end %>
     </ul>
@@ -49,7 +52,12 @@
   <div class="col col-md-7 mh-100 overflow-auto">
     <ul class="list-group list-group-flush">
       <li class='list-group-item p-1'>
-        <strong>Mods <span class='float-right'>Collected / Total</span></strong>
+        <strong>Mods</strong>
+        (
+          <%= Enum.count(mods(@characters, @selected_character)) %> /
+          <%= Enum.count(@mods) %>
+        )
+        <strong class='float-right'>Items</strong>
       </li>
       <%= for m <- @mods do %>
         <li class="list-group-item p-1">
@@ -61,8 +69,8 @@
           <% end %>
           <%= m.name %>
           <span class='float-right'>
-            <%= found(@characters, @selected_character, m) %> /
-            <%= Enum.count(m.items) %>
+            <%= collected_count(@selected_character, @characters, m) %> /
+            <%= mod_item_count(m, @items) %>
           </span>
         </li>
       <% end %>

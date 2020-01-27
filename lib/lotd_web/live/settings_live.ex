@@ -16,6 +16,7 @@ defmodule LotdWeb.SettingsLive do
       changeset_new: Accounts.change_character(),
       changeset_rename: Accounts.change_character(user.active_character),
       characters: Accounts.list_characters(user),
+      items: Gallery.list_items(),
       mods: Gallery.list_mods(),
       selected_character: user.active_character_id,
       user: user

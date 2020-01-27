@@ -11006,15 +11006,6 @@
 		"modSource": "Gray Cowl of Nocturnal"
 	},
 	{
-		"itemName": "Ruin's Edge (replica)",
-		"formId": "[Form < (XX023804)>]",
-		"replicaId": "None",
-		"displayRef": "[Form < (XX023800)>]",
-		"roomName": "Daedric Gallery",
-		"sectionName": "Ruin's Edge",
-		"modSource": "Ruin's Edge"
-	},
-	{
 		"itemName": "Ruin's Edge",
 		"formId": "[Form < (XX000D62)>]",
 		"replicaId": "None",

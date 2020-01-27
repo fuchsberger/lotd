@@ -3,10 +3,7 @@ defmodule LotdWeb.GalleryView do
 
   alias Lotd.Gallery.{Display, Item, Mod, Room}
 
-  @base_class "list-group-item justify-content-between align-items-center p-1"
-
   def active(boolean), do: if boolean, do: " active"
-
 
   def displays(items, room, search) do
     items =

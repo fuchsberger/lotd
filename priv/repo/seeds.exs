@@ -44,10 +44,10 @@ case File.read("priv/repo/displays.json") do
     rows
     |> Enum.map(& &1["roomName"])
     |> Enum.uniq()
-    |> Enum.each(& case Gallery.create_room(&1) do
+    |> Enum.each(& case Gallery.create_room(%{ name: &1}) do
         {:ok, _room} -> :ok
         {:error, _changeset} -> Logger.error("Room \"#{&1}\" could not be created.")
-      end
+      end)
 
     rooms = Gallery.list_rooms()
     Logger.info("#{Enum.count(rooms)} rooms created.")
