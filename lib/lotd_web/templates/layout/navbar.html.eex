@@ -4,12 +4,14 @@
   <span class="navbar-brand" title='Legacy of the Dragonborn - Inventory Manager'></span>
 
   <%# Mobile Menu Button %>
-  <button class="navbar-toggler" data-toggle="collapse" data-target="#menu-collapse">
+  <label class="navbar-toggler m-0" data-toggle="collapse" data-target="#menu-collapse" for='menu-toggle'>
     <span class="navbar-toggler-icon"></span>
-  </button>
+  </label>
+
+  <input type="checkbox" id="menu-toggle" class="d-none"/>
 
   <%# Menu %>
-  <div class="ml-2 collapse navbar-collapse" id="menu-collapse">
+  <div class="ml-2 navbar-collapse" id="menu-collapse">
     <ul id='menu' class="navbar-nav">
       <%= nav_item @conn, "About", Routes.gallery_path(@conn, :about), "home" %>
       <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>

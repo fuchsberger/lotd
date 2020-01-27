@@ -36,7 +36,14 @@
 @import "~bootstrap-scss/_utilities";
 // @import "~bootstrap-scss/_print";
 
+// Enable Navbars
+@media screen and (max-width: 768px) {
+  #menu-toggle:not(:checked) + .navbar-collapse {
+    display: none;
+  }
+}
 
+// Enable Modals
 .modal {
   display: block;
   overflow-x: hidden;

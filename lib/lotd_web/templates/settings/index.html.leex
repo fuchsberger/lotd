@@ -1,5 +1,5 @@
-<div class='row mb-1'>
-  <div class="col col-md-5">
+<div class='d-flex flex-grow-1 row h-100'>
+  <div class="col col-md-5 h-100">
     <%= f = form_for @changeset_new, "#", [phx_change: :validate_new, phx_submit: :create] %>
       <div class="input-group">
         <%= text_input f, :name, class: "form-control", placeholder: "New Character" %>
@@ -8,24 +8,6 @@
         </div>
       </div>
     </form>
-  </div>
-  <div class="col col-md-7">
-    <%= f = form_for @changeset_rename, "#", [phx_change: :validate_rename, phx_submit: :update] %>
-      <div class="input-group">
-        <%= text_input f, :name, class: "form-control", placeholder: "Edit Name" %>
-        <div class="input-group-append">
-          <%= submit raw("<i class='icon-edit'></i>Rename"), class: "btn btn-outline-primary" %>
-
-          <button class="btn btn-outline-danger" type="button" phx-click='delete'>
-            <i class='icon-remove'></i>Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
-</div>
-<div class='d-flex flex-grow-1 row h-100'>
-  <div class="col col-md-5">
     <ul class="list-group list-group-flush mh-100 overflow-auto">
       <li class='list-group-item p-1'>
         <strong>Characters<span class='float-right'>Items</span></strong>
@@ -33,7 +15,7 @@
 
       <%= for c <- @characters do %>
         <li
-          class="list-group-item p-1 <%= selected?(c, @selected_character) %>"
+          class="list-group-item px-2 py-0 <%= selected?(c, @selected_character) %>"
           phx-click="show-character"
           phx-value-id="<%= c.id %>"
         >
@@ -49,9 +31,22 @@
       <% end %>
     </ul>
   </div>
-  <div class="col col-md-7 mh-100 overflow-auto">
+  <div class="col col-md-7 h-100">
+    <%= f = form_for @changeset_rename, "#",
+      [phx_change: :validate_rename, phx_submit: :update] %>
+      <div class="input-group">
+        <%= text_input f, :name, class: "form-control", placeholder: "Edit Name" %>
+        <div class="input-group-append">
+          <%= submit raw("<i class='icon-edit'></i>Rename"), class: "btn btn-outline-primary" %>
+
+          <button class="btn btn-outline-danger" type="button" phx-click='delete'>
+            <i class='icon-remove'></i>Delete
+          </button>
+        </div>
+      </div>
+    </form>
     <ul class="list-group list-group-flush">
-      <li class='list-group-item p-1'>
+      <li class='list-group-item px-2 py-1''>
         <strong>Mods</strong>
         (
           <%= Enum.count(mods(@characters, @selected_character)) %> /
@@ -59,8 +54,10 @@
         )
         <strong class='float-right'>Items</strong>
       </li>
+    </ul>
+    <ul class="list-group list-group-flush mh-100 overflow-auto">
       <%= for m <- @mods do %>
-        <li class="list-group-item p-1">
+        <li class="list-group-item px-2 py-0">
 
           <%= if true do %>
             <a class='text-primary' phx-click='toggle' phx-value-id='<%= m.id %>'>
