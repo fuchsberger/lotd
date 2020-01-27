@@ -36,6 +36,9 @@
 @import "~bootstrap-scss/_utilities";
 // @import "~bootstrap-scss/_print";
 
+// Allow fixed Top and Bottom Bars
+body { padding: 56px 0; }
+
 // Enable Navbars
 @media screen and (max-width: 768px) {
   #menu-toggle:not(:checked) + .navbar-collapse {
@@ -51,3 +54,5 @@
   z-index: 1072;
 }
 
+// Listgroup  hidden radio button fix
+.list-group label { margin:0; }

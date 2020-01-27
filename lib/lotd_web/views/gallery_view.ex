@@ -59,10 +59,6 @@ defmodule LotdWeb.GalleryView do
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
   end
 
-  def select_options(collection) do
-    for option <- collection, do: {option.name, option.id}
-  end
-
   def visible_displays(displays, room_filter) do
     if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
   end

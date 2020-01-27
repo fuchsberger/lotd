@@ -1,0 +1,23 @@
+<nav class="navbar navbar-light bg-light fixed-bottom">
+<%= f = form_for :character, "#", [class: "container", phx_change: :activate] %>
+  <div class='input-group'>
+    <div class="input-group-prepend">
+      <button class="btn btn-outline-primary" type="button" id="button-addon1">
+        <i class='icon-add'></i>
+      </button>
+    </div>
+
+    <%= select f, :id, select_options(@characters), class: "form-control", selected: @selected %>
+
+    <div class="input-group-append">
+      <span class="input-group-text">
+        <%= collected_count(@selected, @characters) %> /
+        <%= collectable_count(@selected, @characters, @items) %>
+      </span>
+      <button class="btn btn-outline-primary" type="button" id="button-addon1">
+        <i class='icon-edit'></i>
+      </button>
+    </div>
+  </div>
+</form>
+</nav>

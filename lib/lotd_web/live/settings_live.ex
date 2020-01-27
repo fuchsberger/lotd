@@ -18,21 +18,12 @@ defmodule LotdWeb.SettingsLive do
       characters: Accounts.list_characters(user),
       items: Gallery.list_items(),
       mods: Gallery.list_mods(),
-      selected_character: user.active_character_id,
       user: user
 
     {:ok, socket}
   end
 
-  def handle_event("show-character", %{"id" => id}, socket) do
-    character = Enum.find(socket.assigns.characters, & &1.id == String.to_integer(id))
-    {:noreply, assign(socket,
-      changeset_rename: Accounts.change_character(character),
-      selected_character: character.id
-    )}
-  end
-
-  def handle_event("activate", %{"id" => id}, socket) do
+  def handle_event("activate", %{"character" => %{"id" => id}}, socket) do
     case Accounts.get_character!(id) do
       nil -> {:noreply, socket}
       character ->

@@ -1,4 +1,4 @@
-<div class='d-flex flex-grow-1 row h-100'>
+<div class='row h-100'>
   <div class="col col-md-5 h-100">
     <%= f = form_for @changeset_new, "#", [phx_change: :validate_new, phx_submit: :create] %>
       <div class="input-group">
@@ -8,28 +8,28 @@
         </div>
       </div>
     </form>
-    <ul class="list-group list-group-flush mh-100 overflow-auto">
-      <li class='list-group-item p-1'>
-        <strong>Characters<span class='float-right'>Items</span></strong>
-      </li>
 
-      <%= for c <- @characters do %>
-        <li
-          class="list-group-item px-2 py-0 <%= selected?(c, @selected_character) %>"
-          phx-click="show-character"
-          phx-value-id="<%= c.id %>"
-        >
-          <a class='text-primary' phx-click="activate" phx-value-id='<%= c.id %>'>
-            <i class='<%= activated?(c, @user) %>'></i>
-          </a>
-          <%= c.name %>
-          <span class="float-right">
-            <%= collected_count(@selected_character, @characters) %> /
-            <%= collectable_count(@selected_character, @characters, @items) %>
-          </span>
-        </li>
-      <% end %>
-    </ul>
+    <%= f = form_for :character, "#", [phx_change: :activate] %>
+      <div class="list-group list-group-flush mh-100 overflow-auto">
+        <div class='list-group-item px-2 py-1'>
+          <strong>Characters<span class='float-right'>Items</span></strong>
+        </div>
+
+        <%= for c <- @characters do %>
+          <%= label class: "list-group-item px-2 py-0 #{selected?(c, @user.active_character_id)}" do %>
+            <%= radio_button f, :id, c.id,
+              class: "d-none",
+              checked: c.id == @user.active_character_id
+            %>
+            <%= c.name %>
+            <span class="float-right">
+              <%= collected_count(@user.active_character_id, @characters) %> /
+              <%= collectable_count(@user.active_character_id, @characters, @items) %>
+            </span>
+          <% end %>
+        <% end %>
+      </div>
+    </form>
   </div>
   <div class="col col-md-7 h-100">
     <%= f = form_for @changeset_rename, "#",
@@ -49,7 +49,7 @@
       <li class='list-group-item px-2 py-1''>
         <strong>Mods</strong>
         (
-          <%= Enum.count(mods(@characters, @selected_character)) %> /
+          <%= Enum.count(mods(@characters, @user.active_character_id)) %> /
           <%= Enum.count(@mods) %>
         )
         <strong class='float-right'>Items</strong>
@@ -61,12 +61,12 @@
 
           <%= if true do %>
             <a class='text-primary' phx-click='toggle' phx-value-id='<%= m.id %>'>
-              <i class='<%= enabled?(@characters, @selected_character, m) %>' ></i>
+              <i class='<%= enabled?(@characters, @user.active_character_id, m) %>' ></i>
             </a>
           <% end %>
           <%= m.name %>
           <span class='float-right'>
-            <%= collected_count(@selected_character, @characters, m) %> /
+            <%= collected_count(@user.active_character_id, @characters, m) %> /
             <%= mod_item_count(m, @items) %>
           </span>
         </li>
@@ -74,3 +74,10 @@
     </ul>
   </div>
 </div>
+
+<%= render"bottom_bar.html",
+  characters: @characters,
+  selected: @user.active_character_id,
+  items: @items
+%>
+
