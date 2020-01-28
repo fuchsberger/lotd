@@ -1,6 +1,8 @@
 defmodule LotdWeb.ErrorView do
   use LotdWeb, :view
 
+  import Phoenix.Controller, only: [current_path: 2]
+
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.html" becomes
   # "Not Found".

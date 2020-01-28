@@ -19,8 +19,13 @@ defmodule LotdWeb.Router do
     get "/about", GalleryController, :about
 
     live "/gallery", GalleryLive, @session
-    live "/settings", SettingsLive, @session
 
     resources "/session", SessionController, only: [:create, :delete]
+  end
+
+  scope "/", LotdWeb do
+    pipe_through [:browser, :authenticate_user]
+
+    live "/settings", SettingsLive, @session
   end
 end

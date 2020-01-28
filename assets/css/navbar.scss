@@ -1,11 +1,9 @@
-#login-button {
+.icon-nexus {
   background: url('../static/images/nexusmods.svg');
-  background-size: 20px 20px;
+  background-size: 1.5rem 1.5rem;
   background-repeat: no-repeat;
-  background-position: left center;
-  padding-left: 23px;
-  margin-left: 10px;
-  cursor: pointer;
+  background-position: 0.5rem center;
+  padding-left: 2.5rem!important;
 }
 
 .navbar-toggler { padding: 0.25rem 0.35rem; }

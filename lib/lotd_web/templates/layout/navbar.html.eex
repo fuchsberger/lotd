@@ -23,7 +23,7 @@
         <%= if authenticated?(@conn) do %>
           <%= logout_button(@conn) %>
         <% else %>
-          <a id='login-button' class="nav-link font-weight-bold">Sign In</a>
+          <button id='login-button' class="btn btn-light font-weight-bold icon-nexus">Sign In</button>
           <%# Login Form (hidden) %>
           <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
             <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
