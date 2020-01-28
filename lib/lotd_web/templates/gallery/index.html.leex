@@ -80,31 +80,35 @@
     <div class="card h-100">
       <div class="card-header text-center p-1"><strong>Items</strong></div>
 
-      <ul class="list-group list-group-flush mh-100 overflow-auto">
-        <% items = visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter) %>
+      <div class="list-group list-group-flush mh-100 overflow-auto">
+        <%
+          items = visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search)
+          user_item_ids = Enum.map(@user.active_character.items, & &1.id)
+        %>
         <%= for item <- items do %>
-          <li class="list-group-item d-flex justify-content-between align-items-center px-2 py-0">
+          <button
+            class="list-group-item list-group-item-action px-2 py-0"
+            phx-click="<%= cond do
+                @moderate -> "edit-item"
+                is_nil(@user) -> nil
+                true -> "toggle-item"
+              end
+            %>"
+            phx-value-id='<%= item.id %>'
+          >
+            <%= if @moderate do %><i class='text-primary icon-edit'></i><% end %>
             <%= item.name %>
-
-            <%= unless is_nil(@user) do %>
-              <%= if @moderate do %>
-                <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
-                  <i class='icon-edit'></i>
-                </a>
-              <% else %>
-                <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
-                  <i class='' ></i>
-                </a>
-              <% end %>
+            <%= unless @moderate or is_nil(@user) do %>
+              <i class='text-primary float-right <%= active_class(user_item_ids, item.id) %>' ></i>
             <% end %>
-          </li>
+          </button>
         <% end %>
         <%= if Enum.count(items) == 200 do %>
           <li class="list-group-item px-2 py-0 text-secondary">
             Only 200 items listed for performance reasons. Use filters / search to find a specific item.
           </li>
         <% end %>
-      </ul>
+      </div>
     </div>
   </div>
 
@@ -112,6 +116,9 @@
   <div class="col col-md-4 row-cols-1 h-100">
     <div class="card h-50">
       <div class="card-header text-center p-1"><strong>Locations</strong></div>
+      <div class='card-body'>
+        <p>This feature will be coming soon!</p>
+      </div>
     </div>
     <div class="card h-50">
       <div class="card-header text-center p-1">

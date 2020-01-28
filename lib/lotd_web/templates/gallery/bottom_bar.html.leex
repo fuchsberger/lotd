@@ -9,17 +9,17 @@
       </div>
     <% end %>
 
-    <form phx-change='search'>
-      <div class='card-body p-0'>
-        <%= text_input :f, :search,
-          autofocus: true,
-          class: "form-control",
-          placeholder: "Search...",
-          phx_debounce: 300,
-          value: @search
-        %>
-      </div>
-    </form>
+
+    <div class='card-body p-0'>
+      <%= text_input f, :query,
+        autofocus: true,
+        class: "form-control",
+        placeholder: "Search...",
+        phx_debounce: 300,
+        value: @search
+      %>
+    </div>
+
     <%= if @user && @user.moderator do %>
       <div class="input-group-append">
         <span class="input-group-text">

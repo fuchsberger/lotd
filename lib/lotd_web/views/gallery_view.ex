@@ -20,11 +20,9 @@ defmodule LotdWeb.GalleryView do
   end
 
   def collected_count(user, items) do
-    item_ids = Enum.map(user.active_character.items, & &1.id)
-
-    items
+    IO.inspect user.active_character.items
+    user.active_character.items
     |> Enum.filter(& Enum.member?(user.active_character.mods, &1.mod_id))
-    |> Enum.filter(& Enum.member?(item_ids, &1.id))
     |> Enum.count()
   end
 
@@ -37,7 +35,8 @@ defmodule LotdWeb.GalleryView do
   defp count_items(items, display_id),
     do: Enum.filter(items, & &1.display_id == display_id) |> Enum.count()
 
-  def active?(boolean), do: if boolean, do: "icon-active", else: "icon-inactive"
+  def active_class(user_items, item_id), do: if Enum.member?(user_items, item_id),
+    do: "icon-active", else: "icon-inactive"
 
   def room_options, do: [
     "Other": 0,
@@ -61,7 +60,7 @@ defmodule LotdWeb.GalleryView do
     if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
   end
 
-  def visible_items(items, displays, display_filter, mods, mod_filter, room_filter) do
+  def visible_items(items, displays, display_filter, mods, mod_filter, room_filter, user, hide, search) do
     display_ids = cond do
       not is_nil(display_filter) ->
         [ display_filter ]
@@ -75,11 +74,28 @@ defmodule LotdWeb.GalleryView do
         Enum.map(displays, & &1.id)
     end
 
-    mod_ids = if is_nil(mod_filter), do: Enum.map(mods, & &1.id), else: [ mod_filter ]
+    mod_ids = cond do
+      not is_nil(mod_filter) -> [ mod_filter ]
+      not is_nil(user) -> user.active_character.mods
+      true -> Enum.map(mods, & &1.id)
+    end
 
-    items
-    |> Enum.filter(& Enum.member?(display_ids, &1.display_id))
-    |> Enum.filter(& Enum.member?(mod_ids, &1.mod_id))
-    |> Enum.take(200)
+    search = String.downcase(search)
+
+    items =
+      items
+      |> Enum.filter(& Enum.member?(display_ids, &1.display_id))
+      |> Enum.filter(& Enum.member?(mod_ids, &1.mod_id))
+      |> Enum.filter(& String.contains?(String.downcase(&1.name), search))
+
+    if hide do
+      user_item_ids = Enum.map(user.active_character.items, & &1.id)
+
+      items
+      |> Enum.filter(& not Enum.member?(user_item_ids, &1.id))
+      |> Enum.take(200)
+    else
+      Enum.take(items, 200)
+    end
   end
 end

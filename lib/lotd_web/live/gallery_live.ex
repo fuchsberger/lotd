@@ -27,7 +27,7 @@ defmodule LotdWeb.GalleryLive do
     )}
   end
 
-  def handle_event("search", %{"search_field" => %{"query" => query}}, socket) do
+  def handle_event("search", %{"search" => %{"query" => query}}, socket) do
     {:noreply, assign(socket, :search, query)}
   end
 
