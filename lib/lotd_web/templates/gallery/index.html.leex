@@ -1,7 +1,7 @@
 <div class='row h-100'>
 
   <%# Left Panel %>
-  <div class="col col-md-4 row-cols-1 h-100">
+  <div class="col col-md-4 row-cols-1 d-none d-md-block h-100">
 
     <%# Rooms %>
     <div class="card h-50">
@@ -83,7 +83,7 @@
       <div class="list-group list-group-flush mh-100 overflow-auto">
         <%
           items = visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search)
-          user_item_ids = Enum.map(@user.active_character.items, & &1.id)
+          user_item_ids = if @user, do: Enum.map(@user.active_character.items, & &1.id)
         %>
         <%= for item <- items do %>
           <button
@@ -113,7 +113,7 @@
   </div>
 
   <%# Right Panel %>
-  <div class="col col-md-4 row-cols-1 h-100">
+  <div class="col col-md-4 row-cols-1 d-none d-md-block h-100">
     <div class="card h-50">
       <div class="card-header text-center p-1"><strong>Locations</strong></div>
       <div class='card-body'>

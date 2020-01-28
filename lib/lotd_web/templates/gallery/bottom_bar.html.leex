@@ -21,7 +21,7 @@
     </div>
 
     <%= if @user && @user.moderator do %>
-      <div class="input-group-append">
+      <div class="input-group-append d-none d-md-block">
         <span class="input-group-text">
           <%= collected_count(@user, @items) %> /
           <%= collectable_count(@user, @items) %>
