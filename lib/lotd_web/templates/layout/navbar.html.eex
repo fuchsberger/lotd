@@ -15,20 +15,19 @@
     <ul id='menu' class="navbar-nav">
       <%= nav_item @conn, "About", Routes.gallery_path(@conn, :about), "home" %>
       <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>
-      <%= if authenticated?(@conn) do %>
-        <%= nav_item @conn, "Settings", Routes.live_path(@conn, LotdWeb.SettingsLive), "mods" %>
-      <% end %>
+      <%= unless is_nil(@conn.assigns.current_user),
+        do: nav_item(@conn, "Settings", Routes.live_path(@conn, LotdWeb.SettingsLive), "settings") %>
 
       <li class="nav-item">
-        <%= if authenticated?(@conn) do %>
-          <%= logout_button(@conn) %>
-        <% else %>
+        <%= if is_nil(@conn.assigns.current_user) do %>
           <button id='login-button' class="btn btn-light font-weight-bold icon-nexus">Sign In</button>
           <%# Login Form (hidden) %>
           <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
             <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
             <%= hidden_input(f, :api_key) %>
           </form>
+        <% else %>
+          <%= logout_button(@conn) %>
         <% end %>
       </li>
     </ul>

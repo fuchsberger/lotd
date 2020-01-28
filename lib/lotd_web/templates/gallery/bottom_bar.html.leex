@@ -1,0 +1,40 @@
+<nav class="navbar navbar-light bg-light fixed-bottom">
+<%= f = form_for :search, "#", [class: "container", phx_change: :search] %>
+  <div class='input-group'>
+    <%= unless is_nil(@user) do %>
+      <div class="input-group-prepend">
+        <button class="btn btn-outline-primary" type="button" title='Hide Selected' phx-click="toggle-hide">
+          <i class='icon-<%= if @hide, do: "hide", else: "show" %>'></i>
+        </button>
+      </div>
+    <% end %>
+
+    <form phx-change='search'>
+      <div class='card-body p-0'>
+        <%= text_input :f, :search,
+          autofocus: true,
+          class: "form-control",
+          placeholder: "Search...",
+          phx_debounce: 300,
+          value: @search
+        %>
+      </div>
+    </form>
+    <%= if @user && @user.moderator do %>
+      <div class="input-group-append">
+        <span class="input-group-text">
+          <%= collected_count(@user, @items) %> /
+          <%= collectable_count(@user, @items) %>
+        </span>
+        <button
+          class="btn btn-<%= if @moderate, do: "", else: "outline-" %>primary"
+          type="button"
+          phx-click="toggle-moderate"
+        >
+          <i class='icon-edit'></i>
+        </button>
+      </div>
+    <% end %>
+  </div>
+</form>
+</nav>

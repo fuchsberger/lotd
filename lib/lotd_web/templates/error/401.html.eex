@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <%= csrf_meta_tag() %>
+    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="author" content="Alexander Fuchsberger"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -37,12 +37,10 @@
         <code><%= current_path(@conn, %{})%></code>
       </p>
 
-      <button id='login-button' class="btn btn-light btn-lg icon-nexus">
-        Sign In
-      </button>
+      <button id='login-button' class="btn btn-light btn-lg icon-nexus">Sign In</button>
+
       <%# Login Form (hidden) %>
-      <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
-        <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
+      <%= f = form_for :session, "/session", id: "login-form" %>
         <%= hidden_input(f, :api_key) %>
       </form>
     </div>

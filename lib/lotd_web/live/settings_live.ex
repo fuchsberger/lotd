@@ -1,9 +1,7 @@
 defmodule LotdWeb.SettingsLive do
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
 
-  alias Lotd.Repo
   alias Lotd.{Accounts, Gallery}
-  alias Lotd.Accounts.Character
 
   def render(assigns), do: LotdWeb.SettingsView.render("index.html", assigns)
 
@@ -70,7 +68,7 @@ defmodule LotdWeb.SettingsLive do
   def handle_event("create_character", %{"character" => character_params}, socket) do
     character_params = Map.put(character_params, "user_id", socket.assigns.user.id)
     case Accounts.create_character(character_params) do
-      {:ok, character} ->
+      {:ok, _character} ->
         {:noreply, assign(socket,
           changeset: nil,
           characters: Accounts.list_characters(socket.assigns.user)
@@ -99,7 +97,7 @@ defmodule LotdWeb.SettingsLive do
 
   def handle_event("update_character", %{"character" => character_params}, socket) do
     case Accounts.update_character(socket.assigns.changeset.data, character_params) do
-      {:ok, character} ->
+      {:ok, _character} ->
         {:noreply, assign(socket,
           changeset: nil,
           characters: Accounts.list_characters(socket.assigns.user)

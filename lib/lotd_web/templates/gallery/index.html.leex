@@ -7,7 +7,7 @@
     <div class="card h-50">
       <div class="card-header text-center p-1">
         <strong>Rooms</strong>
-        <%= if @user && @user.moderator do %>
+        <%= if @moderate do %>
           <button class="btn p-0 btn-link float-right" phx-click='add-room'>
             <i class='float-right icon-add'></i>
           </button>
@@ -29,7 +29,7 @@
             phx-click="filter-room"
             phx-value-id="<%= r.id %>"
           >
-            <%= if @user && @user.moderator do %>
+            <%= if @moderate do %>
               <i class='icon-edit text-primary' phx-click="edit-room" phx-value-id="<%= r.id %>"></i>
             <% end %>
             <%= r.name %>
@@ -43,7 +43,7 @@
     <div class="card h-50">
       <div class="card-header text-center p-1">
         <strong>Displays</strong>
-        <%= if @user && @user.moderator do %>
+        <%= if @moderate do %>
           <button class="btn p-0 btn-link float-right" phx-click='add-display'>
             <i class='float-right icon-add'></i>
           </button>
@@ -65,7 +65,7 @@
             phx-click="filter-display"
             phx-value-id="<%= d.id %>"
           >
-            <%= if @user && @user.moderator do %>
+            <%= if @moderate do %>
               <i class='icon-edit text-primary' phx-click="edit-display" phx-value-id="<%= d.id %>"></i>
             <% end %>
             <%= d.name %>
@@ -74,65 +74,34 @@
         <% end %>
       </div>
     </div>
-
-    <%= if false do %>
-      <div class="d-none list-group list-group-flush mh-100 overflow-auto">
-        <div class='list-group-item form-group form-check m-0 p-1'>
-          <p class='mb-0'><a class='text-primary' phx-click='toggle-hide-collected'>
-            <i class="<%= active?(@hide_collected) %>"></i>
-            Hide collected items
-            </a></p>
-          <small class='d-none text-secondary'>
-            <span class="badge badge-secondary badge-pill">X</span>
-            <%= hide_collected_legend(@hide_collected) %>
-          </small>
-        </div>
-
-        <%= if @user.moderator do %>
-          <div class='list-group-item form-group form-check  p-1 m-0'>
-            <p class='mb-0'><a class='text-primary' phx-click='toggle-moderate'>
-              <i class="active"></i>
-              Moderation Mode
-              </a></p>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
   </div>
-
 
   <div class="col col-md-4 h-100 px-0">
     <div class="card h-100">
       <div class="card-header text-center p-1"><strong>Items</strong></div>
 
-        <form phx-change='search'>
-          <div class='card-body form-group p-0'>
-            <%= text_input :search_field, :query,
-              autofocus: true,
-              class: "form-control",
-              placeholder: "Search...",
-              phx_debounce: 300,
-              value: @search
-            %>
-          </div>
-        </form>
-
       <ul class="list-group list-group-flush mh-100 overflow-auto">
-        <%= for item <- @visible_items do %>
-          <li class="list-group-item d-flex justify-content-between align-items-center p-1">
+        <% items = visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter) %>
+        <%= for item <- items do %>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-2 py-0">
             <%= item.name %>
 
             <%= unless is_nil(@user) do %>
-              <%= if @user.moderator && @moderate do %>
+              <%= if @moderate do %>
                 <a class='text-primary' phx-click='edit-item' phx-value-id='<%= item.id %>'>
                   <i class='icon-edit'></i>
                 </a>
               <% else %>
                 <a class='text-primary' phx-click='toggle-item' phx-value-id='<%= item.id %>'>
-                  <i class='<%= active?(item.collected) %>' ></i>
+                  <i class='' ></i>
                 </a>
               <% end %>
             <% end %>
+          </li>
+        <% end %>
+        <%= if Enum.count(items) == 200 do %>
+          <li class="list-group-item px-2 py-0 text-secondary">
+            Only 200 items listed for performance reasons. Use filters / search to find a specific item.
           </li>
         <% end %>
       </ul>
@@ -147,7 +116,7 @@
     <div class="card h-50">
       <div class="card-header text-center p-1">
         <strong>Mods</strong>
-        <%= if @user && @user.moderator do %>
+        <%= if @moderate do %>
           <button class="btn p-0 btn-link float-right" phx-click='add-mod'>
             <i class='float-right icon-add'></i>
           </button>
@@ -169,7 +138,7 @@
             phx-click="filter-mod"
             phx-value-id="<%= m.id %>"
           >
-            <%= if @user && @user.moderator do %>
+            <%= if @moderate do %>
               <i class='icon-edit text-primary' phx-click="edit-mod" phx-value-id="<%= m.id %>"></i>
             <% end %>
             <%= m.name %>
@@ -181,4 +150,7 @@
   </div>
 </div>
 
-<%= unless is_nil(@changeset), do: render("modal.html", changeset: @changeset, rooms: @rooms) %>
+<%= render"bottom_bar.html", hide: @hide, items: @items, moderate: @moderate, search: @search, user: @user %>
+
+<%= if @moderate && not is_nil(@changeset),
+  do: render("modal.html", changeset: @changeset, rooms: @rooms) %>

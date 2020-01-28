@@ -31,7 +31,7 @@ defmodule Lotd.Accounts do
 
   # CHARACTERS -----------------------------------------------------------------------------------
 
-  def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
+
 
   def list_characters(%User{} = user) do
     from(c in Character, preload: [:items, :mods], where: c.user_id == ^user.id, order_by: c.name)
@@ -55,6 +55,8 @@ defmodule Lotd.Accounts do
     |> Character.changeset(attrs)
     |> Repo.update()
   end
+
+  def delete_character(%Character{} = character), do: Repo.delete(character)
 
   def activate_character(user, character_id) do
     user
@@ -93,8 +95,4 @@ defmodule Lotd.Accounts do
     |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, fn m -> m.id == mod_id end))
     |> Repo.update!()
   end
-
-  def delete_character(%Character{} = character), do: Repo.delete(character)
-  def change_character(%Character{} = character \\ %Character{}, params \\ %{}),
-    do: Character.changeset(character, params)
 end

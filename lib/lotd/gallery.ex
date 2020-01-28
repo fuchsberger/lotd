@@ -57,18 +57,11 @@ defmodule Lotd.Gallery do
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # ITEMS ----------------------------------------------------------------------------------------
-  def list_items, do: Repo.all(from(i in Item, order_by: i.name))
-  def list_items(nil), do: Repo.all(from(i in Item, order_by: i.name, preload: :display))
-
-  def list_items(user), do: Repo.all(from(i in Item,
-    order_by: i.name,
-    preload: :display,
-    where: i.mod_id in ^user.active_character.mods
-  ))
-
-  # def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(character, params)
+  def list_items, do: Repo.all from(i in Item, order_by: i.name)
 
   def get_item!(id), do: Repo.get!(Item, id)
+
+    # def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(character, params)
 
   def create_item(attrs \\ %{}) do
     %Item{}
@@ -108,7 +101,7 @@ defmodule Lotd.Gallery do
 
   def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
 
-  # ROOMS
+  # ROOMS ----------------------------------------------------------------------------------------
   def list_rooms, do: Repo.all from(r in Room, order_by: r.name)
 
   def get_room!(id), do: Repo.get!(Room, id)
