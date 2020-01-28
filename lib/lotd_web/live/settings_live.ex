@@ -84,8 +84,6 @@ defmodule LotdWeb.SettingsLive do
     character = Enum.find(socket.assigns.characters, & &1.id == socket.assigns.user.active_character_id)
     mod = Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
 
-    IO.inspect {Enum.map(character.mods, & &1.id), mod.id}
-
     if Enum.member?(Enum.map(character.mods, & &1.id), mod.id),
       do: Accounts.update_character_remove_mod(character, mod.id),
       else: Accounts.update_character_add_mod(character, mod)

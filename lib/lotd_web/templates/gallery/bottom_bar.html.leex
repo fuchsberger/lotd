@@ -21,13 +21,13 @@
     </div>
 
     <%= if @user && @user.moderator do %>
-      <div class="input-group-append d-none d-md-block">
-        <span class="input-group-text">
+      <div class="input-group-append">
+        <span class="input-group-text d-none d-md-inline-block">
           <%= collected_count(@user, @items) %> /
           <%= collectable_count(@user, @items) %>
         </span>
         <button
-          class="btn btn-<%= if @moderate, do: "", else: "outline-" %>primary"
+          class="btn  d-none d-md-inline-block btn-<%= if @moderate, do: "", else: "outline-" %>primary"
           type="button"
           phx-click="toggle-moderate"
         >

@@ -20,7 +20,6 @@ defmodule LotdWeb.GalleryView do
   end
 
   def collected_count(user, items) do
-    IO.inspect user.active_character.items
     user.active_character.items
     |> Enum.filter(& Enum.member?(user.active_character.mods, &1.mod_id))
     |> Enum.count()
