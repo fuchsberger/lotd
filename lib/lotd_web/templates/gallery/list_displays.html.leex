@@ -1,0 +1,34 @@
+<div class="card h-50">
+  <div class="card-header text-center p-1">
+    <strong>Displays</strong>
+    <%= if @moderate do %>
+      <button class="btn p-0 btn-link float-right" phx-click='add-display'>
+        <i class='float-right icon-add'></i>
+      </button>
+    <% end %>
+  </div>
+  <div class="list-group list-group-flush">
+    <button
+      class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@display_filter)) %>"
+      phx-click="clear-filter-display"
+    >
+      <strong>All Displays</strong>
+      <span class="badge badge-secondary badge-pill"><%# d.count %></span>
+    </button>
+  </div>
+  <div class="list-group list-group-flush mh-100 overflow-auto">
+    <%= for d <- visible_displays(@displays, @room_filter) do %>
+      <button
+        class="list-group-item list-group-item-action px-2 py-0 <%= active(d.id == @display_filter) %>"
+        phx-click="filter-display"
+        phx-value-id="<%= d.id %>"
+      >
+        <%= if @moderate do %>
+          <i class='icon-edit text-primary' phx-click="edit-display" phx-value-id="<%= d.id %>"></i>
+        <% end %>
+        <%= d.name %>
+        <span class="badge badge-secondary badge-pill"><%# d.count %></span>
+      </button>
+    <% end %>
+  </div>
+</div>

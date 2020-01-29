@@ -3,157 +3,37 @@
   <%# Left Panel %>
   <div class="col col-md-4 row-cols-1 d-none d-md-block h-100">
 
-    <%# Rooms %>
-    <div class="card h-50">
-      <div class="card-header text-center p-1">
-        <strong>Rooms</strong>
-        <%= if @moderate do %>
-          <button class="btn p-0 btn-link float-right" phx-click='add-room'>
-            <i class='float-right icon-add'></i>
-          </button>
-        <% end %>
-      </div>
-      <div class="list-group list-group-flush">
-        <button
-          class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@room_filter)) %>"
-          phx-click="clear-filter-room"
-        >
-          <strong>All Rooms</strong>
-          <span class="badge badge-secondary badge-pill"><%# d.count %></span>
-        </button>
-      </div>
-      <div class="list-group list-group-flush mh-100 overflow-auto">
-        <%= for r <- @rooms do %>
-          <button
-            class="list-group-item list-group-item-action px-2 py-0 <%= active(r.id == @room_filter) %>"
-            phx-click="filter-room"
-            phx-value-id="<%= r.id %>"
-          >
-            <%= if @moderate do %>
-              <i class='icon-edit text-primary' phx-click="edit-room" phx-value-id="<%= r.id %>"></i>
-            <% end %>
-            <%= r.name %>
-            <span class="badge badge-secondary badge-pill"><%# d.count %></span>
-          </button>
-        <% end %>
-      </div>
-    </div>
+    <%= render "list_rooms.html",
+      rooms: @rooms,
+      room_filter: @room_filter,
+      moderate: @moderate
+    %>
 
-    <%# Displays %>
-    <div class="card h-50">
-      <div class="card-header text-center p-1">
-        <strong>Displays</strong>
-        <%= if @moderate do %>
-          <button class="btn p-0 btn-link float-right" phx-click='add-display'>
-            <i class='float-right icon-add'></i>
-          </button>
-        <% end %>
-      </div>
-      <div class="list-group list-group-flush">
-        <button
-          class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@display_filter)) %>"
-          phx-click="clear-filter-display"
-        >
-          <strong>All Displays</strong>
-          <span class="badge badge-secondary badge-pill"><%# d.count %></span>
-        </button>
-      </div>
-      <div class="list-group list-group-flush mh-100 overflow-auto">
-        <%= for d <- visible_displays(@displays, @room_filter) do %>
-          <button
-            class="list-group-item list-group-item-action px-2 py-0 <%= active(d.id == @display_filter) %>"
-            phx-click="filter-display"
-            phx-value-id="<%= d.id %>"
-          >
-            <%= if @moderate do %>
-              <i class='icon-edit text-primary' phx-click="edit-display" phx-value-id="<%= d.id %>"></i>
-            <% end %>
-            <%= d.name %>
-            <span class="badge badge-secondary badge-pill"><%# d.count %></span>
-          </button>
-        <% end %>
-      </div>
-    </div>
+    <%= render "list_displays.html",
+      displays: @displays,
+      display_filter: @display_filter,
+      moderate: @moderate,
+      room_filter: @room_filter
+    %>
   </div>
 
+  <%# Item Panel (always visible) %>
   <div class="col col-md-4 h-100 px-0">
-    <div class="card h-100">
-      <div class="card-header text-center p-1"><strong>Items</strong></div>
-
-      <div class="list-group list-group-flush mh-100 overflow-auto">
-        <%
-          items = visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search)
-          user_item_ids = if @user, do: Enum.map(@user.active_character.items, & &1.id)
-        %>
-        <%= for item <- items do %>
-          <button
-            class="list-group-item list-group-item-action px-2 py-0"
-            phx-click="<%= cond do
-                @moderate -> "edit-item"
-                is_nil(@user) -> nil
-                true -> "toggle-item"
-              end
-            %>"
-            phx-value-id='<%= item.id %>'
-          >
-            <%= if @moderate do %><i class='text-primary icon-edit'></i><% end %>
-            <%= item.name %>
-            <%= unless @moderate or is_nil(@user) do %>
-              <i class='text-primary float-right <%= active_class(user_item_ids, item.id) %>' ></i>
-            <% end %>
-          </button>
-        <% end %>
-        <%= if Enum.count(items) == 200 do %>
-          <li class="list-group-item px-2 py-0 text-secondary">
-            Only 200 items listed for performance reasons. Use filters / search to find a specific item.
-          </li>
-        <% end %>
-      </div>
-    </div>
+    <%= render "list_items.html",
+      items: visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search),
+      moderate: @moderate,
+      user_item_ids: if @user, do: Enum.map(@user.active_character.items, & &1.id), else: nil
+    %>
   </div>
 
-  <%# Right Panel %>
+  <%# Right Panel (hidden on mobile) %>
   <div class="col col-md-4 row-cols-1 d-none d-md-block h-100">
-    <div class="card h-50">
-      <div class="card-header text-center p-1"><strong>Locations</strong></div>
-      <div class='card-body'>
-        <p>This feature will be coming soon!</p>
-      </div>
-    </div>
-    <div class="card h-50">
-      <div class="card-header text-center p-1">
-        <strong>Mods</strong>
-        <%= if @moderate do %>
-          <button class="btn p-0 btn-link float-right" phx-click='add-mod'>
-            <i class='float-right icon-add'></i>
-          </button>
-        <% end %>
-      </div>
-      <div class="list-group list-group-flush">
-        <button
-          class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@mod_filter)) %>"
-          phx-click="clear-filter-mod"
-        >
-          <strong>All Mods</strong>
-          <span class="badge badge-secondary badge-pill"><%# d.count %></span>
-        </button>
-      </div>
-      <div class="list-group list-group-flush mh-100 overflow-auto">
-        <%= for m <- @mods do %>
-          <button
-            class="list-group-item list-group-item-action px-2 py-0 <%= active(m.id == @mod_filter) %>"
-            phx-click="filter-mod"
-            phx-value-id="<%= m.id %>"
-          >
-            <%= if @moderate do %>
-              <i class='icon-edit text-primary' phx-click="edit-mod" phx-value-id="<%= m.id %>"></i>
-            <% end %>
-            <%= m.name %>
-            <span class="badge badge-secondary badge-pill"><%# d.count %></span>
-          </button>
-        <% end %>
-      </div>
-    </div>
+    <%= render "list_locations.html" %>
+    <%= render "list_mods.html",
+      mods: @mods,
+      mod_filter: @mod_filter,
+      moderate: @moderate
+    %>
   </div>
 </div>
 
