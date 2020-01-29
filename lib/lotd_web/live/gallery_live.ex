@@ -29,6 +29,22 @@ defmodule LotdWeb.GalleryLive do
     )}
   end
 
+  def handle_event("add", %{"type" => type }, socket) do
+    changeset = case type do
+      "display" -> Gallery.change_display(%{})
+      "item" ->
+        Gallery.change_item(%{})
+        |> Ecto.Changeset.put_change(:display_id, socket.assigns.display_filter)
+        |> Ecto.Changeset.put_change(:location_id, socket.assigns.location_filter)
+        |> Ecto.Changeset.put_change(:mod_id, socket.assigns.mod_filter)
+        |> Map.put(:action, :insert)
+      "location" -> Gallery.change_location(%{})
+      "mod" -> Gallery.change_mod(%{})
+      "room" -> Gallery.change_room(%{})
+    end
+    {:noreply, assign(socket, :changeset, Map.put(changeset, :action, :insert))}
+  end
+
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
     {:noreply, assign(socket, :search, query)}
   end
@@ -88,11 +104,6 @@ defmodule LotdWeb.GalleryLive do
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("add-room", _params, socket) do
-    changeset = Gallery.change_room(%{}) |> Map.put(:action, :insert)
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
-
   def handle_event("create_room", %{"room" => room_params}, socket) do
     case Gallery.create_room(room_params) do
       {:ok, _room } ->
@@ -126,11 +137,6 @@ defmodule LotdWeb.GalleryLive do
       {:error, _reason} ->
         {:noreply, socket}
     end
-  end
-
-  def handle_event("add-display", _params, socket) do
-    changeset = Gallery.change_display(%{}) |> Map.put(:action, :insert)
-    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   def handle_event("create_display", %{"display" => display_params}, socket) do
@@ -169,11 +175,6 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
-  def handle_event("add-mod", _params, socket) do
-    changeset = Gallery.change_mod(%{}) |> Map.put(:action, :insert)
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
-
   def handle_event("create_mod", %{"mod" => mod_params}, socket) do
     case Gallery.create_mod(mod_params) do
       {:ok, _mod } ->
@@ -208,15 +209,6 @@ defmodule LotdWeb.GalleryLive do
       {:error, _reason} ->
         {:noreply, socket}
     end
-  end
-
-  def handle_event("add-item", _params, socket) do
-    changeset =
-      Gallery.change_item(%{})
-      |> Ecto.Changeset.put_change(:mod_id, 1)
-      |> Map.put(:action, :insert)
-
-    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   def handle_event("create_item", %{"item" => item_params}, socket) do

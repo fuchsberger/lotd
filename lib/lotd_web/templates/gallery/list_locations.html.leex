@@ -2,7 +2,7 @@
   <div class="card-header text-center p-1">
     <strong>Locations</strong>
     <%= if @moderate do %>
-      <button class="btn p-0 btn-link float-right" phx-click='add-location'>
+      <button class="btn p-0 btn-link float-right" phx-click='add' phx-value-type='location'>
         <i class='float-right icon-add'></i>
       </button>
     <% end %>
