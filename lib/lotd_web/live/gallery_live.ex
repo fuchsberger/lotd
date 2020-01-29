@@ -9,7 +9,6 @@ defmodule LotdWeb.GalleryLive do
   def mount(params, socket) do
     user_id = Map.get(params, "user_id")
     user = unless is_nil(user_id), do: Accounts.get_user!(user_id), else: nil
-
     mods = if is_nil(user), do: Gallery.list_mods(), else: user.active_character.mods
 
     {:ok, assign(socket,
@@ -17,8 +16,8 @@ defmodule LotdWeb.GalleryLive do
       displays: Gallery.list_displays(),
       display_filter: nil,
       hide: false,
-      items: Gallery.list_items(),
-      moderate: true,
+      items: Gallery.list_items(Enum.map(mods, & &1.id)),
+      moderate: false,
       mods: mods,
       mod_filter: nil,
       rooms: Gallery.list_rooms(),
@@ -39,7 +38,8 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("toggle-moderate", _params, socket) do
     moderate = !socket.assigns.moderate
     mods = if moderate, do: Gallery.list_mods(), else: socket.assigns.user.active_character.mods
-    {:noreply, assign(socket, moderate: moderate, mod_filter: nil, mods: mods)}
+    items = Gallery.list_items(Enum.map(mods, & &1.id))
+    {:noreply, assign(socket, items: items, moderate: moderate, mod_filter: nil, mods: mods)}
   end
 
   def handle_event("toggle-item", %{"id" => id}, socket) do

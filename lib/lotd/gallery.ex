@@ -58,6 +58,8 @@ defmodule Lotd.Gallery do
 
   # ITEMS ----------------------------------------------------------------------------------------
   def list_items, do: Repo.all from(i in Item, order_by: i.name)
+  def list_items(mod_ids),
+    do: Repo.all from(i in Item, order_by: i.name, where: i.mod_id in ^mod_ids)
 
   def get_item!(id), do: Repo.get!(Item, id)
 

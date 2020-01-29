@@ -84,11 +84,7 @@ defmodule LotdWeb.GalleryView do
         Enum.map(displays, & &1.id)
     end
 
-    mod_ids = cond do
-      not is_nil(mod_filter) -> [ mod_filter ]
-      not is_nil(user) -> Enum.map(user.active_character.mods, & &1.id)
-      true -> Enum.map(mods, & &1.id)
-    end
+    mod_ids = if is_nil(mod_filter), do: Enum.map(mods, & &1.id), else: [ mod_filter ]
 
     search = String.downcase(search)
 
