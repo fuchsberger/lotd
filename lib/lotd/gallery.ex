@@ -61,7 +61,8 @@ defmodule Lotd.Gallery do
 
   def get_item!(id), do: Repo.get!(Item, id)
 
-    # def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(character, params)
+  def change_item(attrs), do: Item.changeset(%Item{}, attrs)
+  def change_item(%Item{} = item, attrs), do: Item.changeset(item, attrs)
 
   def create_item(attrs \\ %{}) do
     %Item{}
@@ -77,10 +78,9 @@ defmodule Lotd.Gallery do
     |> Repo.update()
   end
 
-  def change_item(%Item{} = item, attrs), do: Item.changeset(item, attrs)
-
   # MODS -----------------------------------------------------------------------------------------
   def list_mods, do: Repo.all from(d in Mod, order_by: d.name)
+  def list_mods(ids), do: Repo.all from(d in Mod, order_by: d.name, where: d.id in ^ids)
 
   def get_mod!(id), do: Repo.get!(Mod, id)
 

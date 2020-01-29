@@ -13,7 +13,7 @@
   <%# Menu %>
   <div class="ml-2 navbar-collapse" id="menu-collapse">
     <ul id='menu' class="navbar-nav">
-      <%= nav_item @conn, "About", Routes.gallery_path(@conn, :about), "home" %>
+      <%= nav_item @conn, "About", Routes.page_path(@conn, :about), "home" %>
       <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>
       <%= unless is_nil(@conn.assigns.current_user),
         do: nav_item(@conn, "Settings", Routes.live_path(@conn, LotdWeb.SettingsLive), "settings") %>

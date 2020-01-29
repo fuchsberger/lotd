@@ -1,6 +1,8 @@
 defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
+  import Ecto.Changeset, only: [ get_change: 2 ]
+
   def active(boolean), do: if boolean, do: " active"
 
   def displays(items, room, search) do
@@ -33,6 +35,15 @@ defmodule LotdWeb.GalleryView do
 
   defp count_items(items, display_id),
     do: Enum.filter(items, & &1.display_id == display_id) |> Enum.count()
+
+  def display_options(changeset, displays) do
+    room_id = get_change(changeset, :room_id)
+    displays = if room_id,
+      do: Enum.filter(displays, & &1.room_id == room_id),
+      else: displays
+
+    [{"Please select...", nil} | Enum.map(displays, &{&1.name, &1.id})]
+  end
 
   def active_class(user_items, item_id), do: if Enum.member?(user_items, item_id),
     do: "icon-active", else: "icon-inactive"
@@ -75,7 +86,7 @@ defmodule LotdWeb.GalleryView do
 
     mod_ids = cond do
       not is_nil(mod_filter) -> [ mod_filter ]
-      not is_nil(user) -> user.active_character.mods
+      not is_nil(user) -> Enum.map(user.active_character.mods, & &1.id)
       true -> Enum.map(mods, & &1.id)
     end
 

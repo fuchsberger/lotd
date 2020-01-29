@@ -1,9 +1,9 @@
-defmodule LotdWeb.GalleryController do
+defmodule LotdWeb.PageController do
   use LotdWeb, :controller
 
   def index(conn, _params) do
     if is_nil(conn.assigns.current_user),
-      do: redirect(conn, to: Routes.gallery_path(conn, :about)),
+      do: redirect(conn, to: Routes.page_path(conn, :about)),
       else: redirect(conn, to: Routes.live_path(conn, LotdWeb.GalleryLive))
   end
 

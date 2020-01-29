@@ -15,7 +15,8 @@ defmodule LotdWeb.ViewHelpers do
   def icon(name, opts \\ [] ), do: content_tag(:i, "",
     [{:class, "icon-#{name} #{Keyword.get(opts, :class, "")}"} | Keyword.delete(opts, :class)])
 
-  def select_options(collection), do: Enum.map(collection, &{&1.name, &1.id})
+  def select_options(collection),
+    do: [{"Please select...", nil} | Enum.map(collection, &{&1.name, &1.id})]
 
   def struct_name(struct) do
     case struct do

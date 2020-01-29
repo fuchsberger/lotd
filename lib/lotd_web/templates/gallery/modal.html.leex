@@ -14,10 +14,22 @@
           <%= text_input f, :name, class: "form-control", placeholder: "Name" %>
           <%# error_tag f, :name %>
         </div>
-        <%= if struct_name(@changeset.data) == "display" do %>
+        <%= if Enum.member?(["display", "item"], struct_name(@changeset.data)) do %>
           <div class='form-group'>
             <%= label f, :room_id, "Room" %>
             <%= select f, :room_id, select_options(@rooms), class: "form-control" %>
+            <%# error_tag f, :name %>
+          </div>
+        <% end %>
+        <%= if struct_name(@changeset.data) == "item" do %>
+          <div class='form-group'>
+            <%= label f, :display_id, "Display" %>
+            <%= select f, :display_id, display_options(@changeset, @displays), class: "form-control" %>
+            <%# error_tag f, :name %>
+          </div>
+          <div class='form-group'>
+            <%= label f, :mod_id, "Mod" %>
+            <%= select f, :mod_id, select_options(@mods), class: "form-control" %>
             <%# error_tag f, :name %>
           </div>
         <% end %>

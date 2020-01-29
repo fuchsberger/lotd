@@ -15,8 +15,8 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", GalleryController, :index
-    get "/about", GalleryController, :about
+    get "/", PageController, :index
+    get "/about", PageController, :about
 
     live "/gallery", GalleryLive, @session
 

@@ -29,15 +29,15 @@
   <%# Right Panel (hidden on mobile) %>
   <div class="col col-md-4 row-cols-1 d-none d-md-block h-100">
     <%= render "list_locations.html" %>
-    <%= render "list_mods.html",
-      mods: visible_mods(@mods, @user, @moderate),
-      mod_filter: @mod_filter,
-      moderate: @moderate
-    %>
+    <%= render "list_mods.html", mods: @mods, mod_filter: @mod_filter, moderate: @moderate %>
   </div>
 </div>
 
 <%= render"bottom_bar.html", hide: @hide, items: @items, moderate: @moderate, search: @search, user: @user %>
 
-<%= if @moderate && not is_nil(@changeset),
-  do: render("modal.html", changeset: @changeset, rooms: @rooms) %>
+<%= if @moderate && not is_nil(@changeset), do: render("modal.html",
+  changeset: @changeset,
+  displays: @displays,
+  mods: @mods,
+  rooms: @rooms)
+%>
