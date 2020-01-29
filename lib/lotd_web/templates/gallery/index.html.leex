@@ -1,24 +1,29 @@
 <div class='row h-100'>
 
   <%# Left Panel (hidden on mobile) %>
-  <div class="col col-md-4 row-cols-1 d-none d-md-block h-100">
+  <div class="col col-md-6 col-lg-4 row-cols-1 d-none d-md-block h-100">
 
     <%= render "list_rooms.html",
+      displays: @displays,
+      items: @items,
       rooms: @rooms,
       room_filter: @room_filter,
-      moderate: @moderate
+      moderate: @moderate,
+      user: @user
     %>
 
     <%= render "list_displays.html",
       displays: @displays,
       display_filter: @display_filter,
+      items: @items,
       moderate: @moderate,
-      room_filter: @room_filter
+      room_filter: @room_filter,
+      user: @user
     %>
   </div>
 
   <%# Item Panel (always visible) %>
-  <div class="col col-md-4 h-100 px-0">
+  <div class="col col-md-6 col-lg-4 h-100 px-0">
     <%= render "list_items.html",
       items: visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search),
       moderate: @moderate,
@@ -26,10 +31,16 @@
     %>
   </div>
 
-  <%# Right Panel (hidden on mobile) %>
-  <div class="col col-md-4 row-cols-1 d-none d-md-block h-100">
+  <%# Right Panel (only visible on large devices) %>
+  <div class="col col-lg-4 row-cols-1 d-none d-lg-block h-100">
     <%= render "list_locations.html" %>
-    <%= render "list_mods.html", mods: @mods, mod_filter: @mod_filter, moderate: @moderate %>
+    <%= render "list_mods.html",
+      items: @items,
+      mods: @mods,
+      mod_filter: @mod_filter,
+      moderate: @moderate,
+      user: @user
+    %>
   </div>
 </div>
 

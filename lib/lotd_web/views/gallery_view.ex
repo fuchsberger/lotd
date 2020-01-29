@@ -3,7 +3,7 @@ defmodule LotdWeb.GalleryView do
 
   import Ecto.Changeset, only: [ get_change: 2 ]
 
-  def active(boolean), do: if boolean, do: " active"
+  def active(boolean), do: if boolean, do: " list-group-item-info"
 
   def displays(items, room, search) do
     items =
@@ -43,6 +43,13 @@ defmodule LotdWeb.GalleryView do
       else: displays
 
     [{"Please select...", nil} | Enum.map(displays, &{&1.name, &1.id})]
+  end
+
+  def display_items(items, display_id), do: Enum.filter(items, & &1.display_id == display_id)
+  def mod_items(items, mod_id), do: Enum.filter(items, & &1.mod_id == mod_id)
+  def room_items(items, displays, room_id) do
+    display_ids = displays |> Enum.filter(& &1.room_id == room_id) |> Enum.map(& &1.id)
+    Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
   end
 
   def active_class(user_items, item_id), do: if Enum.member?(user_items, item_id),

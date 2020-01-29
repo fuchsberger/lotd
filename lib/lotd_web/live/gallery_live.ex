@@ -51,14 +51,11 @@ defmodule LotdWeb.GalleryLive do
         # TODO: Flash an error
         {:noreply, socket}
       item ->
-        item_ids = Enum.map(character.items, & &1.id)
-
-        character = if Enum.member?(item_ids, item.id),
+        if Enum.member?(Enum.map(character.items, & &1.id), item.id),
           do: Accounts.remove_item(character, item),
           else: Accounts.collect_item(character, item)
 
-        socket = assign(socket, :user, Map.put(user, :active_character, character))
-        {:noreply, assign(socket, :items, Gallery.list_items())}
+        {:noreply, assign(socket, user: Accounts.get_user!(user.id))}
     end
   end
 

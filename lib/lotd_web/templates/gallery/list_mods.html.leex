@@ -27,6 +27,16 @@
           <i class='icon-edit text-primary' phx-click="edit-mod" phx-value-id="<%= m.id %>"></i>
         <% end %>
         <%= m.name %>
+        <small class='float-right'>
+          <%= if @user do %>
+            <%= mod_items(@items, m.id)
+              |> Enum.filter(fn i ->
+                Enum.member?(Enum.map(@user.active_character.items, & &1.id), i.id) end)
+              |> Enum.count()
+            %> /
+          <% end %>
+          <%= mod_items(@items, m.id) |> Enum.count() %>
+        </small>
       </button>
     <% end %>
   </div>
