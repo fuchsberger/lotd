@@ -10,7 +10,9 @@
   <div class="list-group list-group-flush">
     <button
       class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@room_filter)) %>"
-      phx-click="clear-filter-room"
+      phx-click="filter"
+      phx-value-type="room"
+      phx-value-id=""
     >
       <strong>All Rooms</strong>
       <span class="badge badge-secondary badge-pill"><%# d.count %></span>
@@ -22,7 +24,8 @@
       <%= if Enum.count(items) > 0 || @moderate do %>
         <button
           class="list-group-item list-group-item-action px-2 py-0 <%= active(r.id == @room_filter) %>"
-          phx-click="filter-room"
+          phx-click="filter"
+          phx-value-type="room"
           phx-value-id="<%= r.id %>"
         >
           <%= if @moderate do %>

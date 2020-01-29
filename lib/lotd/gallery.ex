@@ -5,7 +5,7 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
-  alias Lotd.Gallery.{Display, Item, Mod, Room}
+  alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
 
   # SORTING
 
@@ -79,6 +79,28 @@ defmodule Lotd.Gallery do
     |> Item.changeset(attrs)
     |> Repo.update()
   end
+
+  # LOCATIONS ------------------------------------------------------------------------------------
+  def list_locations, do: Repo.all from(r in Location, order_by: r.name)
+
+  def get_location!(id), do: Repo.get!(Location, id)
+
+  def change_location(attrs), do: Location.changeset(%Location{}, attrs)
+  def change_location(%Location{} = location, attrs), do: Location.changeset(location, attrs)
+
+  def create_location(attrs \\ %{}) do
+    %Location{}
+    |> Location.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_location(%Location{} = location, attrs) do
+    location
+    |> Location.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_location(%Location{} = location), do: Repo.delete(location)
 
   # MODS -----------------------------------------------------------------------------------------
   def list_mods, do: Repo.all from(d in Mod, order_by: d.name)

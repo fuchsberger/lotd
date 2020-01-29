@@ -17,6 +17,8 @@ defmodule LotdWeb.GalleryLive do
       display_filter: nil,
       hide: false,
       items: Gallery.list_items(Enum.map(mods, & &1.id)),
+      locations: Gallery.list_locations(),
+      location_filter: nil,
       moderate: false,
       mods: mods,
       mod_filter: nil,
@@ -59,29 +61,14 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
-  # FILTERS
-  def handle_event("clear-filter-room", _params, socket) do
-    {:noreply, assign(socket, room_filter: nil, display_filter: nil)}
-  end
-
-  def handle_event("filter-room", %{"id" => id}, socket) do
-    {:noreply, assign(socket, room_filter: String.to_integer(id), display_filter: nil)}
-  end
-
-  def handle_event("clear-filter-display", _params, socket) do
-    {:noreply, assign(socket, display_filter: nil)}
-  end
-
-  def handle_event("filter-display", %{"id" => id}, socket) do
-    {:noreply, assign(socket, display_filter: String.to_integer(id))}
-  end
-
-  def handle_event("clear-filter-mod", _params, socket) do
-    {:noreply, assign(socket, mod_filter: nil)}
-  end
-
-  def handle_event("filter-mod", %{"id" => id}, socket) do
-    {:noreply, assign(socket, mod_filter: String.to_integer(id))}
+  def handle_event("filter", %{"type" => type, "id" => id}, socket) do
+    id = if id == "", do: nil, else: String.to_integer(id)
+    case type do
+      "display" -> {:noreply, assign(socket, display_filter: id)}
+      "location" -> {:noreply, assign(socket, location_filter: id)}
+      "mod" -> {:noreply, assign(socket, mod_filter: id)}
+      "room" -> {:noreply, assign(socket, room_filter: id, display_filter: nil)}
+    end
   end
 
   # MODERATION

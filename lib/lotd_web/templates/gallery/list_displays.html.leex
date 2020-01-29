@@ -10,7 +10,9 @@
   <div class="list-group list-group-flush">
     <button
       class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@display_filter)) %>"
-      phx-click="clear-filter-display"
+      phx-click="filter"
+      phx-value-type="display"
+      phx-value-id=""
     >
       <strong>All Displays</strong>
       <span class="badge badge-secondary badge-pill"><%# d.count %></span>
@@ -22,7 +24,8 @@
       <%= if Enum.count(items) > 0 || @moderate do %>
         <button
           class="list-group-item list-group-item-action px-2 py-0 <%= active(d.id == @display_filter) %>"
-          phx-click="filter-display"
+          phx-click="filter"
+          phx-value-type="display"
           phx-value-id="<%= d.id %>"
         >
           <%= if @moderate do %>

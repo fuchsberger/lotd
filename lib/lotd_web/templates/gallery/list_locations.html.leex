@@ -1,6 +1,45 @@
 <div class="card h-50">
-  <div class="card-header text-center p-1"><strong>Locations</strong></div>
-  <div class='card-body'>
-    <p>This feature will be coming soon!</p>
+  <div class="card-header text-center p-1">
+    <strong>Locations</strong>
+    <%= if @moderate do %>
+      <button class="btn p-0 btn-link float-right" phx-click='add-location'>
+        <i class='float-right icon-add'></i>
+      </button>
+    <% end %>
+  </div>
+  <div class="list-group list-group-flush">
+    <button
+      class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@location_filter)) %>"
+      phx-click="filter"
+      phx-value-type="location"
+      phx-value-id=""
+    >
+      <strong>All Locations</strong>
+      <span class="badge badge-secondary badge-pill"><%# d.count %></span>
+    </button>
+  </div>
+  <div class="list-group list-group-flush mh-100 overflow-auto">
+    <%= for l <- @locations do %>
+      <button
+        class="list-group-item list-group-item-action px-2 py-0 <%= active(l.id == @location_filter) %>"
+        phx-click="filter-location"
+        phx-value-id="<%= l.id %>"
+      >
+        <%= if @moderate do %>
+          <i class='icon-edit text-primary' phx-click="edit-location" phx-value-id="<%= l.id %>"></i>
+        <% end %>
+        <%= l.name %>
+        <small class='float-right'>
+          <%= if @user do %>
+            <%= location_items(@items, l.id)
+              |> Enum.filter(fn i ->
+                Enum.member?(Enum.map(@user.active_character.items, & &1.id), i.id) end)
+              |> Enum.count()
+            %> /
+          <% end %>
+          <%= location_items(@items, l.id) |> Enum.count() %>
+        </small>
+      </button>
+    <% end %>
   </div>
 </div>

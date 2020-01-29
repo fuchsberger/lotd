@@ -9,6 +9,7 @@ defmodule Lotd.Gallery.Item do
     field :room_id, :integer, virtual: true
 
     belongs_to :display, Lotd.Gallery.Display
+    belongs_to :location, Lotd.Gallery.Location
     belongs_to :mod, Lotd.Gallery.Mod
 
     many_to_many :characters, Lotd.Accounts.Character, join_through: "character_items"
@@ -17,10 +18,11 @@ defmodule Lotd.Gallery.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, ~w(name url room_id display_id mod_id)a)
+    |> cast(attrs, ~w(name url room_id display_id location_id mod_id)a)
     |> validate_required([:name])
     |> validate_length(:name, max: 200)
     |> assoc_constraint(:display)
+    |> assoc_constraint(:location)
     |> assoc_constraint(:mod)
   end
 end

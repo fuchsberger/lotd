@@ -10,7 +10,9 @@
   <div class="list-group list-group-flush">
     <button
       class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@mod_filter)) %>"
-      phx-click="clear-filter-mod"
+      phx-click="filter"
+      phx-value-type="mod"
+      phx-value-id=""
     >
       <strong>All Mods</strong>
       <span class="badge badge-secondary badge-pill"><%# d.count %></span>
@@ -20,7 +22,8 @@
     <%= for m <- @mods do %>
       <button
         class="list-group-item list-group-item-action px-2 py-0 <%= active(m.id == @mod_filter) %>"
-        phx-click="filter-mod"
+        phx-click="filter"
+        phx-value-type="mod"
         phx-value-id="<%= m.id %>"
       >
         <%= if @moderate do %>

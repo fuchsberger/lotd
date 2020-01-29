@@ -21,7 +21,7 @@ defmodule LotdWeb.GalleryView do
     |> Enum.sort(& &1.name <= &2.name)
   end
 
-  def collected_count(user, items) do
+  def collected_count(user, _items) do
     user.active_character.items
     |> Enum.filter(& Enum.member?(user.active_character.mods, &1.mod_id))
     |> Enum.count()
@@ -46,6 +46,7 @@ defmodule LotdWeb.GalleryView do
   end
 
   def display_items(items, display_id), do: Enum.filter(items, & &1.display_id == display_id)
+  def location_items(items, location_id), do: Enum.filter(items, & &1.location_id == location_id)
   def mod_items(items, mod_id), do: Enum.filter(items, & &1.mod_id == mod_id)
   def room_items(items, displays, room_id) do
     display_ids = displays |> Enum.filter(& &1.room_id == room_id) |> Enum.map(& &1.id)
