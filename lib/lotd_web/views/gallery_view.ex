@@ -97,4 +97,10 @@ defmodule LotdWeb.GalleryView do
       Enum.take(items, 200)
     end
   end
+
+  def visible_mods(mods, user, moderate) do
+    if is_nil(user) or moderate,
+      do: mods,
+      else: Enum.filter(mods, & Enum.member?(user.active_character.mods, &1.id))
+  end
 end
