@@ -72,7 +72,7 @@ defmodule LotdWeb.GalleryView do
     if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
   end
 
-  def visible_items(items, displays, display_filter, mods, mod_filter, room_filter, user, hide, search) do
+  def visible_items(items, displays, display_filter, locations, location_filter, mods, mod_filter, room_filter, user, hide, search) do
     display_ids = cond do
       not is_nil(display_filter) ->
         [ display_filter ]
@@ -86,7 +86,8 @@ defmodule LotdWeb.GalleryView do
         Enum.map(displays, & &1.id)
     end
 
-    mod_ids = if is_nil(mod_filter), do: Enum.map(mods, & &1.id), else: [ mod_filter ]
+    mod_ids = if is_nil(mod_filter),
+      do: Enum.map(mods, & &1.id), else: [ mod_filter ]
 
     search = String.downcase(search)
 
@@ -95,6 +96,10 @@ defmodule LotdWeb.GalleryView do
       |> Enum.filter(& Enum.member?(display_ids, &1.display_id))
       |> Enum.filter(& Enum.member?(mod_ids, &1.mod_id))
       |> Enum.filter(& String.contains?(String.downcase(&1.name), search))
+
+    items = if location_filter,
+      do: Enum.filter(items, & &1.location_id == location_filter),
+      else: items
 
     if hide do
       user_item_ids = Enum.map(user.active_character.items, & &1.id)

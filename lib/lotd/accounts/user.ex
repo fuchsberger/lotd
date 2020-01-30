@@ -11,16 +11,10 @@ defmodule Lotd.Accounts.User do
     timestamps()
   end
 
-  @doc false
-  def register_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:id, :name])
-    |> validate_required([:id, :name])
-  end
-
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:admin, :moderator, :active_character_id])
+    |> cast(attrs, [:id, :admin, :name, :moderator, :active_character_id])
+    |> validate_required([:name])
     |> assoc_constraint(:active_character)
   end
 end

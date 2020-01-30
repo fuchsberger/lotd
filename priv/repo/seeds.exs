@@ -2,22 +2,26 @@
 # "mix run priv/repo/seeds.exs" or alternatively "mix ecto reset"
 # only run in dev environment or fresh server!
 
+import Ecto.Changeset, only: [change: 2]
+import Lotd.Repo, only: [insert: 1, update: 1]
+
 alias Lotd.Gallery
-alias Lotd.{Accounts, Gallery}
+alias Lotd.Gallery.{Room, Display, Item, Mod}
+alias Lotd.Accounts.{Character, User}
 
 # require Logger and hide SQL Messages
 require Logger
 Logger.configure(level: :info, truncate: 4096)
 
 # attempt to create admin user
-case Accounts.register_user(%{ id: 811039, name: "Sekhmet13" }) do
+case insert(%User{ id: 811039, name: "Sekhmet13", admin: true, moderator: true }) do
   {:ok, user} ->
-    {:ok, character} = Accounts.create_character(%{name: "Default", user_id: user.id })
-    Accounts.update_user(user, %{
-      admin: true,
-      moderator: true,
-      active_character_id: character.id
-    })
+    {:ok, character} = insert(%Character{name: "Default", user_id: user.id })
+
+    user
+    |> change(active_character_id: character.id)
+    |> update()
+
     Logger.info("Admin user created.")
 
   {:error, _changeset} ->
@@ -25,10 +29,14 @@ case Accounts.register_user(%{ id: 811039, name: "Sekhmet13" }) do
 end
 
 # attempt to create a test user (can never login)
-case Accounts.register_user(%{ id: 0, name: "Test User" }) do
+case insert(%User{ id: 0, name: "Test User" }) do
   {:ok, user} ->
-    {:ok, character} = Accounts.create_character(%{ name: "Default", user_id: user.id })
-    Accounts.update_user(user, %{ active_character_id: character.id })
+    {:ok, character} = insert(%Character{ name: "Default", user_id: user.id })
+
+    user
+    |> change(active_character_id: character.id)
+    |> update()
+
     Logger.info("Test user created.")
 
   {:error, _changeset} ->
@@ -44,7 +52,7 @@ case File.read("priv/repo/displays.json") do
     rows
     |> Enum.map(& &1["roomName"])
     |> Enum.uniq()
-    |> Enum.each(& case Gallery.create_room(%{ name: &1}) do
+    |> Enum.each(& case insert(%Room{ name: &1}) do
         {:ok, _room} -> :ok
         {:error, _changeset} -> Logger.error("Room \"#{&1}\" could not be created.")
       end)
@@ -58,7 +66,7 @@ case File.read("priv/repo/displays.json") do
     |> Enum.uniq()
     |> Enum.each(fn {room_name, display_name} ->
       room_id = Enum.find(rooms, & &1.name == room_name).id
-      case Gallery.create_display(%{ name: display_name, room_id: room_id }) do
+      case insert(%Display{ name: display_name, room_id: room_id }) do
         {:ok, _display} -> :ok
         {:error, _changeset} ->
           Logger.warn("Display \"#{room_name} - #{display_name}\" already exists.")
@@ -73,7 +81,7 @@ case File.read("priv/repo/displays.json") do
     |> Enum.map(& &1["modSource"])
     |> Enum.uniq()
     |> Enum.each(fn mod ->
-      case Gallery.create_mod(%{ name: mod }) do
+      case insert(%Mod{ name: mod }) do
         {:ok, _mod} -> :ok
         {:error, _changeset} ->
           Logger.error("Mod \"#{mod.name}\" could not be created.")
@@ -85,12 +93,12 @@ case File.read("priv/repo/displays.json") do
 
     # create items
     Enum.each(rows, fn r ->
-      item = %{
+      item = %Item{
         name: r["itemName"],
         display_id: Enum.find(displays, & &1.name == r["sectionName"]).id,
         mod_id: Enum.find(mods, & &1.name == r["modSource"]).id
       }
-      case Gallery.create_item(item) do
+      case insert(item) do
         {:ok, _item} -> :ok
         {:error, _changeset} ->
           Logger.error("Item \"#{r["itemName"]}\" could not be created.")

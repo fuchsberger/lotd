@@ -22,7 +22,8 @@
     <%= for l <- @locations do %>
       <button
         class="list-group-item list-group-item-action px-2 py-0 <%= active(l.id == @location_filter) %>"
-        phx-click="filter-location"
+        phx-click="filter"
+        phx-value-type='location'
         phx-value-id="<%= l.id %>"
       >
         <%= if @moderate do %>

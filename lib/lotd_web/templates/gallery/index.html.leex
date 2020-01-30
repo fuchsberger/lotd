@@ -25,7 +25,7 @@
   <%# Item Panel (always visible) %>
   <div class="col col-md-6 col-lg-4 h-100 px-0">
     <%= render "list_items.html",
-      items: visible_items(@items, @displays, @display_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search),
+      items: visible_items(@items, @displays, @display_filter, @locations, @location_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search),
       moderate: @moderate,
       user_item_ids: if @user, do: Enum.map(@user.active_character.items, & &1.id), else: nil
     %>
@@ -55,6 +55,7 @@
 <%= if @moderate && not is_nil(@changeset), do: render("modal.html",
   changeset: @changeset,
   displays: @displays,
+  locations: @locations,
   mods: @mods,
   rooms: @rooms)
 %>

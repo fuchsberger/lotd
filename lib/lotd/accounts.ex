@@ -20,7 +20,7 @@ defmodule Lotd.Accounts do
 
   def register_user(attrs \\ %{}) do
     %User{}
-    |> User.register_changeset(attrs)
+    |> User.changeset(attrs)
     |> Repo.insert()
   end
 
