@@ -27,7 +27,11 @@
         phx-value-id="<%= m.id %>"
       >
         <%= if @moderate do %>
-          <i class='icon-edit text-primary' phx-click="edit-mod" phx-value-id="<%= m.id %>"></i>
+          <i class='icon-edit text-primary'
+            phx-click="edit"
+            phx-value-type="mod"
+            phx-value-id="<%= m.id %>"
+          ></i>
         <% end %>
         <%= m.name %>
         <small class='float-right'>

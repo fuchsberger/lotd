@@ -5,22 +5,6 @@ defmodule LotdWeb.GalleryView do
 
   def active(boolean), do: if boolean, do: " list-group-item-info"
 
-  def displays(items, room, search) do
-    items =
-      if search == "" do
-        Enum.filter(items, & &1.room == room)
-      else
-        search = String.downcase(search)
-        Enum.filter(items, & String.contains?(String.downcase(&1.name), search))
-      end
-
-    items
-    |> Enum.map(& &1.display)
-    |> Enum.uniq()
-    |> Enum.map(& Map.put(&1, :count, count_items(items, &1.id)))
-    |> Enum.sort(& &1.name <= &2.name)
-  end
-
   def collected_count(user, _items) do
     user.active_character.items
     |> Enum.filter(& Enum.member?(user.active_character.mods, &1.mod_id))
@@ -53,8 +37,18 @@ defmodule LotdWeb.GalleryView do
     Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
   end
 
-  def active_class(user_items, item_id), do: if Enum.member?(user_items, item_id),
-    do: "icon-active", else: "icon-inactive"
+  def item_icon(id, user_items, moderate) do
+    cond do
+      moderate ->
+        icon("edit", class: "text-primary")
+
+      is_list(user_items) ->
+        active_class = if Enum.member?(user_items, id), do: "active", else: "inactive"
+        icon("edit", class: "text-primary mr-1 icon-#{active_class}")
+
+      true ->
+    end
+  end
 
   def room_options, do: [
     "Other": 0,

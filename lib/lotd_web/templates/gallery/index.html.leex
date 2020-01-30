@@ -34,9 +34,11 @@
   <%# Right Panel (only visible on large devices) %>
   <div class="col col-lg-4 row-cols-1 d-none d-lg-block h-100">
     <%= render "list_locations.html",
+      items: @items,
       locations: @locations,
       location_filter: @location_filter,
-      moderate: @moderate
+      moderate: @moderate,
+      user: @user
     %>
     <%= render "list_mods.html",
       items: @items,
