@@ -12,6 +12,7 @@ defmodule Lotd.Gallery.Location do
     mod
     |> cast(attrs, [:name])
     |> validate_required([:name])
+    |> validate_length(:name, max: 80)
     |> unique_constraint(:name)
   end
 end

@@ -1,8 +1,6 @@
 defmodule LotdWeb.Router do
   use LotdWeb, :router
 
-  @session [session: [ "user_id" ]]
-
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -18,7 +16,7 @@ defmodule LotdWeb.Router do
     get "/", PageController, :index
     get "/about", PageController, :about
 
-    live "/gallery", GalleryLive, @session
+    live "/gallery", GalleryLive
 
     resources "/session", SessionController, only: [:create, :delete]
   end
@@ -26,6 +24,6 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through [:browser, :authenticate_user]
 
-    live "/settings", SettingsLive, @session
+    live "/settings", SettingsLive
   end
 end

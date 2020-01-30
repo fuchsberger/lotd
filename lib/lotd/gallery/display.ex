@@ -13,7 +13,7 @@ defmodule Lotd.Gallery.Display do
   def changeset(display, attrs) do
     display
     |> cast(attrs, [:name, :room_id])
-    |> validate_required([:name])
+    |> validate_required([:name, :room_id])
     |> validate_length(:name, min: 3, max: 40)
     |> assoc_constraint(:room)
     |> unique_constraint(:name)

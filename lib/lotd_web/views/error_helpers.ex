@@ -23,7 +23,7 @@ defmodule LotdWeb.ErrorHelpers do
   """
   def error_tag(form, field) do
     Enum.map(Keyword.get_values(form.source.errors, field), fn error ->
-      content_tag(:small, translate_error(error), class: "form-text text-muted")
+      content_tag(:small, translate_error(error), class: "invalid-feedback")
     end)
   end
 

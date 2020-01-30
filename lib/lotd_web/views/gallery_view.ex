@@ -66,6 +66,8 @@ defmodule LotdWeb.GalleryView do
     content_tag :li, link, class: "nav-item"
   end
 
+  def title(struct), do: struct_to_string(struct) |> String.capitalize()
+
   def visible_displays(displays, room_filter) do
     if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
   end

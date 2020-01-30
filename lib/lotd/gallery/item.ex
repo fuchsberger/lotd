@@ -19,8 +19,8 @@ defmodule Lotd.Gallery.Item do
   def changeset(item, attrs) do
     item
     |> cast(attrs, ~w(name url room_id display_id location_id mod_id)a)
-    |> validate_required([:name])
-    |> validate_length(:name, max: 200)
+    |> validate_required([:name, :display_id, :mod_id])
+    |> validate_length(:name, max: 250)
     |> assoc_constraint(:display)
     |> assoc_constraint(:location)
     |> assoc_constraint(:mod)

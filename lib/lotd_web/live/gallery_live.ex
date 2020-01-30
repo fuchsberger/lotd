@@ -7,7 +7,6 @@ defmodule LotdWeb.GalleryLive do
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
   def mount(params, session, socket) do
-    IO.inspect {params, session}
     user = if Map.has_key?(session, "user_id"),
       do: Accounts.get_user!(session["user_id"]), else: nil
     mods = if is_nil(user), do: Gallery.list_mods(), else: user.active_character.mods
@@ -32,31 +31,31 @@ defmodule LotdWeb.GalleryLive do
 
   def handle_event("add", %{"type" => type }, socket) do
     changeset = case type do
-      "display" -> Gallery.change_display(%{})
+      "display" -> Gallery.change_display(%Display{})
       "item" ->
-        Gallery.change_item(%{})
+        Gallery.change_item(%Item{})
         |> Ecto.Changeset.put_change(:display_id, socket.assigns.display_filter)
         |> Ecto.Changeset.put_change(:location_id, socket.assigns.location_filter)
         |> Ecto.Changeset.put_change(:mod_id, socket.assigns.mod_filter)
-        |> Map.put(:action, :insert)
-      "location" -> Gallery.change_location(%{})
-      "mod" -> Gallery.change_mod(%{})
-      "room" -> Gallery.change_room(%{})
+      "location" -> Gallery.change_location(%Location{})
+      "mod" -> Gallery.change_mod(%Mod{})
+      "room" -> Gallery.change_room(%Room{})
     end
-    {:noreply, assign(socket, :changeset, Map.put(changeset, :action, :insert))}
+
+    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   def handle_event("cancel", _params, socket), do:  {:noreply, assign(socket, :changeset, nil)}
 
   def handle_event("edit", %{"id" => id, "type" => type}, socket) do
     changeset = case type do
-      "display" -> Gallery.change_display(Gallery.get_display!(id), %{})
-      "item" -> Gallery.change_item(Gallery.get_item!(id), %{})
-      "location" -> Gallery.change_location(Gallery.get_location!(id), %{})
-      "mod" -> Gallery.change_mod(Gallery.get_mod!(id), %{})
-      "room" -> Gallery.change_room(Gallery.get_room!(id), %{})
+      "display" -> Gallery.change_display(Gallery.get_display!(id))
+      "item" -> Gallery.change_item(Gallery.get_item!(id))
+      "location" -> Gallery.change_location(Gallery.get_location!(id))
+      "mod" -> Gallery.change_mod(Gallery.get_mod!(id))
+      "room" -> Gallery.change_room(Gallery.get_room!(id))
     end
-    {:noreply, assign(socket, :changeset, Map.put(changeset, :action, :update))}
+    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
@@ -105,13 +104,12 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("validate", params, socket) do
     changeset =
       case socket.assigns.changeset.data do
-        %Display{} -> Gallery.change_display(socket.assigns.changeset.data, params["display"])
-        %Item{} -> Gallery.change_item(socket.assigns.changeset.data, params["item"])
-        %Location{} -> Gallery.change_location(socket.assigns.changeset.data, params["location"])
-        %Mod{} -> Gallery.change_mod(socket.assigns.changeset.data, params["mod"])
-        %Room{} -> Gallery.change_room(socket.assigns.changeset.data, params["room"])
+        %Display{} -> Display.changeset(socket.assigns.changeset.data, params["display"])
+        %Item{} -> Item.changeset(socket.assigns.changeset.data, params["item"])
+        %Location{} -> Location.changeset(socket.assigns.changeset.data, params["location"])
+        %Mod{} -> Mod.changeset(socket.assigns.changeset.data, params["mod"])
+        %Room{} -> Room.changeset(socket.assigns.changeset.data, params["room"])
       end
-      |> Map.put(:action, socket.assigns.changeset.action)
 
     {:noreply, assign(socket, :changeset, changeset)}
   end
@@ -122,9 +120,6 @@ defmodule LotdWeb.GalleryLive do
         socket = assign(socket, :changeset, nil)
 
         # try to find object in appropriate list and update list
-
-        IO.inspect struct_to_atom(object)
-
         case object do
           %Display{} ->
 
@@ -231,9 +226,4 @@ defmodule LotdWeb.GalleryLive do
         end
     end
   end
-
-  defp struct_to_string(s), do: Module.split(s.__struct__) |> List.last() |> String.downcase()
-
-  defp struct_to_atom(s), do: struct_to_string(s) |> String.to_atom()
-
 end

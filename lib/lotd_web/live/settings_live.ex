@@ -2,6 +2,7 @@ defmodule LotdWeb.SettingsLive do
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
 
   alias Lotd.{Accounts, Gallery}
+  alias Lotd.Accounts.Character
 
   def render(assigns), do: LotdWeb.SettingsView.render("index.html", assigns)
 
@@ -33,8 +34,8 @@ defmodule LotdWeb.SettingsLive do
     end
   end
 
-  def handle_event("add-character", _params, socket) do
-    changeset = Accounts.change_character(%{}) |> Map.put(:action, :insert)
+  def handle_event("add", _params, socket) do
+    changeset = Accounts.change_character(%Character{})
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
@@ -58,25 +59,10 @@ defmodule LotdWeb.SettingsLive do
     end
   end
 
-  def handle_event("edit-character", %{"id" => id}, socket) do
+  def handle_event("edit", %{"id" => id}, socket) do
     character = Enum.find(socket.assigns.characters, & &1.id == String.to_integer(id))
-    changeset = Accounts.change_character(character, %{}) |> Map.put(:action, :update)
+    changeset = Accounts.change_character(character)
     {:noreply, assign(socket, :changeset, changeset)}
-  end
-
-
-  def handle_event("create_character", %{"character" => character_params}, socket) do
-    character_params = Map.put(character_params, "user_id", socket.assigns.user.id)
-    case Accounts.create_character(character_params) do
-      {:ok, _character} ->
-        {:noreply, assign(socket,
-          changeset: nil,
-          characters: Accounts.list_characters(socket.assigns.user)
-        )}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
-    end
   end
 
   def handle_event("toggle", %{"id" => id}, socket) do
@@ -93,13 +79,17 @@ defmodule LotdWeb.SettingsLive do
     {:noreply, assign(socket, characters: Accounts.list_characters(user), user: user)}
   end
 
-  def handle_event("update_character", %{"character" => character_params}, socket) do
-    case Accounts.update_character(socket.assigns.changeset.data, character_params) do
-      {:ok, _character} ->
-        {:noreply, assign(socket,
-          changeset: nil,
-          characters: Accounts.list_characters(socket.assigns.user)
-        )}
+  def handle_event("save", _params, socket) do
+    case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
+      {:ok, character} ->
+        character = Lotd.Repo.preload(character, [:mods, :items])
+
+        characters =
+          socket.assigns.characters
+          |> Enum.reject(& &1.id == character.id)
+          |> List.insert_at(0, character)
+          |> Enum.sort_by(&(&1.name))
+        {:noreply, assign(socket, changeset: nil, characters: characters)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
@@ -109,9 +99,8 @@ defmodule LotdWeb.SettingsLive do
   def handle_event("validate", %{"character" => params}, socket) do
     changeset =
       socket.assigns.changeset.data
-      |> Accounts.change_character(params)
-      |> Map.put(:action, socket.assigns.changeset.action)
-
+      |> Character.changeset(params)
+      |> Ecto.Changeset.put_assoc(:user, socket.assigns.user)
     {:noreply, assign(socket, :changeset, changeset)}
   end
 end

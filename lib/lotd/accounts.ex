@@ -40,12 +40,12 @@ defmodule Lotd.Accounts do
   def get_character(id), do: Repo.get(Character, id)
   def get_character!(id), do: Repo.get!(Character, id)
 
-  def change_character(attrs), do: Character.changeset(%Character{}, attrs)
-  def change_character(%Character{} = character, attrs), do: Character.changeset(character, attrs)
+  def change_character(%Character{} = character), do: Character.changeset(character, %{})
 
-  def create_character(attrs \\ %{}) do
+  def create_character(%User{} = user, attrs \\ %{}) do
     %Character{}
     |> Character.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:user, user)
     |> Repo.insert()
   end
 

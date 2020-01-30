@@ -7,40 +7,12 @@ defmodule Lotd.Gallery do
   alias Lotd.Repo
   alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
 
-  # SORTING
-
-  def get_form_id(id_string) do
-    if id_string == "None" do
-      nil
-    else
-      [_head, tail ] = String.split(id_string, "(")
-      [id, _tail ] = String.split(tail, ")")
-      id
-    end
-  end
-
-  # ROOMS
-  def get_room_id!(name) do
-    case name do
-      "Hall of Heroes" -> 1
-      "Armory" -> 2
-      "Gallery Library" -> 3
-      "Daedric Gallery" -> 4
-      "Hall of Lost Empires" -> 4
-      "Hall of Oddities" -> 4
-      "Dragonborn Hall" -> 5
-      "Natural Science" -> 6
-      _ -> nil
-    end
-  end
-
   # DISPLAYS -------------------------------------------------------------------------------------
   def list_displays, do: Repo.all from(d in Display, order_by: d.name)
 
   def get_display!(id), do: Repo.get!(Display, id)
 
-  def change_display(attrs), do: Display.changeset(%Display{}, attrs)
-  def change_display(%Display{} = display, attrs), do: Display.changeset(display, attrs)
+  def change_display(%Display{} = display), do: Display.changeset(display, %{})
 
   def create_display(attrs \\ %{}) do
     %Display{}
@@ -63,8 +35,7 @@ defmodule Lotd.Gallery do
 
   def get_item!(id), do: Repo.get!(Item, id)
 
-  def change_item(attrs), do: Item.changeset(%Item{}, attrs)
-  def change_item(%Item{} = item, attrs), do: Item.changeset(item, attrs)
+  def change_item(%Item{} = item), do: Item.changeset(item, %{})
 
   def create_item(attrs \\ %{}) do
     %Item{}
@@ -85,8 +56,7 @@ defmodule Lotd.Gallery do
 
   def get_location!(id), do: Repo.get!(Location, id)
 
-  def change_location(attrs), do: Location.changeset(%Location{}, attrs)
-  def change_location(%Location{} = location, attrs), do: Location.changeset(location, attrs)
+  def change_location(%Location{} = location), do: Location.changeset(location, %{})
 
   def create_location(attrs \\ %{}) do
     %Location{}
@@ -108,8 +78,7 @@ defmodule Lotd.Gallery do
 
   def get_mod!(id), do: Repo.get!(Mod, id)
 
-  def change_mod(attrs), do: Mod.changeset(%Mod{}, attrs)
-  def change_mod(%Mod{} = mod, attrs), do: Mod.changeset(mod, attrs)
+  def change_mod(%Mod{} = mod), do: Mod.changeset(mod, %{})
 
   def create_mod(attrs \\ %{}) do
     %Mod{}
@@ -130,8 +99,7 @@ defmodule Lotd.Gallery do
 
   def get_room!(id), do: Repo.get!(Room, id)
 
-  def change_room(attrs), do: Room.changeset(%Room{}, attrs)
-  def change_room(%Room{} = room, attrs), do: Room.changeset(room, attrs)
+  def change_room(%Room{} = room), do: Room.changeset(room, %{})
 
   def create_room(attrs \\ %{}) do
     %Room{}
