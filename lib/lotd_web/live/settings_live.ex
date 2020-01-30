@@ -5,7 +5,7 @@ defmodule LotdWeb.SettingsLive do
 
   def render(assigns), do: LotdWeb.SettingsView.render("index.html", assigns)
 
-  def mount(session, socket) do
+  def mount(_params, session, socket) do
 
     user = if Map.has_key?(session, "user_id"),
       do: Accounts.get_user!(session["user_id"]), else: nil

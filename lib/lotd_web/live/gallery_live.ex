@@ -6,9 +6,10 @@ defmodule LotdWeb.GalleryLive do
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
-  def mount(params, socket) do
-    user_id = Map.get(params, "user_id")
-    user = unless is_nil(user_id), do: Accounts.get_user!(user_id), else: nil
+  def mount(params, session, socket) do
+    IO.inspect {params, session}
+    user = if Map.has_key?(session, "user_id"),
+      do: Accounts.get_user!(session["user_id"]), else: nil
     mods = if is_nil(user), do: Gallery.list_mods(), else: user.active_character.mods
 
     {:ok, assign(socket,
@@ -121,6 +122,9 @@ defmodule LotdWeb.GalleryLive do
         socket = assign(socket, :changeset, nil)
 
         # try to find object in appropriate list and update list
+
+        IO.inspect struct_to_atom(object)
+
         case object do
           %Display{} ->
 
@@ -227,4 +231,9 @@ defmodule LotdWeb.GalleryLive do
         end
     end
   end
+
+  defp struct_to_string(s), do: Module.split(s.__struct__) |> List.last() |> String.downcase()
+
+  defp struct_to_atom(s), do: struct_to_string(s) |> String.to_atom()
+
 end

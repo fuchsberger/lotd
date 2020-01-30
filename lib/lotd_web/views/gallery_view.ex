@@ -17,9 +17,6 @@ defmodule LotdWeb.GalleryView do
     |> Enum.count()
   end
 
-  defp count_items(items, display_id),
-    do: Enum.filter(items, & &1.display_id == display_id) |> Enum.count()
-
   def display_options(changeset, displays) do
     room_id = get_change(changeset, :room_id)
     displays = if room_id,
@@ -47,6 +44,7 @@ defmodule LotdWeb.GalleryView do
         icon("edit", class: "text-primary mr-1 icon-#{active_class}")
 
       true ->
+        :ok
     end
   end
 
