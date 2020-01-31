@@ -2,27 +2,37 @@
 
 This is a utility app for the mod "Legacy of the Dragonborn" and it allows to keep track of items collected for the museum. The following features are implemented:
 
-* Lists to display available Items, Displays, Quests, Locations, Mods and Characters
-* All lists feature a smart search and options to sort the tables by columns
-* you can easily filter items by location, quest, or museum location (display)
-* All locations, Quests and items can have links to wiki or nexus pages for quick search
-* Display, Quest, Location, and Mod lists show you how many items are available and how many you have already collected.
+* You can search for items that can be displayed in the museum and filter them by display, room, location and/or mod
+* Counts of how many items can be found in a certain location / display / mod / room.
+* Items, Locations, Mods, and Displays may link to external wiki pages to quickly look up further information
 * mobile friendly interface
 
-### On signing in you get access to the following features:
-* create, rename, and delete characters that can collect items
-* toggle mods you want to use for the current playthrough with this character. The item, quest and location lists will hide all items associated to mods not activated on the current character. You can never disable required mods (Skyrim, Dawnguard, Hearthfires, Dragonborn, Legacy of the Dragonborn)
-* Toggle whether you collected items
-* when signing in a default character is automatically created for you
-* you can never delete your active character
+### On signing in you get access to the following additional features:
+* create, rename, and delete characters that can collect items. When you sign in for the first time a default character is automatically created for you.
+* You can select one of your characters to be the active one that is on the hunt. You may never delete your active character.
+* Shows you statistics of not only how many items are available but also how many you have already collected.
+* you can toggle mods you want to use for the current playthrough with this character. Mods not used in the playthrough and all their associated items / displays will be hidden from the gallery.
 
 ### Moderators can
-* create / edit / delete Items, Displays, Locations
-* required mods (Skyrim, Dawnguard, Hearthfires, Dragonborn, Legacy of the Dragonborn) can never be edited or deleted
-* deleting a display deletes all items associated to it
-* deleting a mod deletes all quests, locations and items associated to it.
+* create / edit / delete Items, Displays, Locations, Rooms, Mods
+* deleting a display, location, or room does not delete associated items
+* deleting a mod *does* delete associated items
 
 ### Admins can
-* promote / demote users to admins and moderators
-* create / edit / delete Mods
+* promote / demote users to moderators
 * view a list of all nexus users (and links to their profiles) and when they first logged in
+
+## Deployment Notes
+This is a suggestion on how to get the server running in a linux (Ubuntu/Debian) environment in a production environment. Make sure to bump the version number in *mix.exs* before each update.
+
+| Command                                     | When to execute                       |
+| ------------------------------------------- | ------------------------------------- |
+| `$ mix deps.get --only prod`                | only if deps have changed             |
+| `$ MIX_ENV=prod mix compile`                | always                                |
+| `$ cd assets && npm install`                | only if npm modules changed           |
+| `$ npm run deploy --prefix ./assets`        | only if assets or npm modules changed |
+| `$ mix phx.digest`                          | only if assets or npm modules changed |
+| `$ MIX_ENV=prod mix release`                | always                                |
+| `$ MIX_ENV=prod mix ecto.migrate`           | only when database changed            |
+| `$ sudo systemctl daemon-reload`            | always                                |
+| `$ sudo systemctl restart app_lotd.service` | always                                |
