@@ -5,6 +5,7 @@ defmodule Lotd.Gallery.Display do
 
   schema "displays" do
     field :name, :string
+    field :url, :string
     belongs_to :room, Lotd.Gallery.Room
     has_many :items, Lotd.Gallery.Item
   end
@@ -12,7 +13,7 @@ defmodule Lotd.Gallery.Display do
   @doc false
   def changeset(display, attrs) do
     display
-    |> cast(attrs, [:name, :room_id])
+    |> cast(attrs, [:name, :room_id, :url])
     |> validate_required([:name, :room_id])
     |> validate_length(:name, min: 3, max: 40)
     |> assoc_constraint(:room)

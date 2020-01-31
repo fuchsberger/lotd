@@ -36,15 +36,22 @@
             ></i>
           <% end %>
           <%= r.name %>
-          <small class='float-right'>
-            <%= if @user do %>
-              <%= Enum.filter(items, fn i ->
-                  Enum.member?(Enum.map(@user.active_character.items, & &1.id), i.id) end)
-                |> Enum.count()
-              %> /
+          <div class='float-right'>
+            <small>
+              <%= if @user do %>
+                <%= Enum.filter(items, fn i ->
+                    Enum.member?(Enum.map(@user.active_character.items, & &1.id), i.id) end)
+                  |> Enum.count()
+                %> /
+              <% end %>
+              <%= Enum.count(items) %>
+            </small>
+            <%= if r.url do %>
+              <a href='<%= r.url %>' target='_blank' onClick="event.stopPropagation()">
+                <i class='icon-link'></i>
+              </a>
             <% end %>
-            <%= Enum.count(items) %>
-          </small>
+          </div>
         </button>
       <% end %>
     <% end %>

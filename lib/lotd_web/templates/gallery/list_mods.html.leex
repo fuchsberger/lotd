@@ -33,17 +33,26 @@
             phx-value-id="<%= m.id %>"
           ></i>
         <% end %>
+
         <%= m.name %>
-        <small class='float-right'>
-          <%= if @user do %>
-            <%= mod_items(@items, m.id)
-              |> Enum.filter(fn i ->
-                Enum.member?(Enum.map(@user.active_character.items, & &1.id), i.id) end)
-              |> Enum.count()
-            %> /
+
+        <div class='float-right'>
+          <small>
+            <%= if @user do %>
+              <%= mod_items(@items, m.id)
+                |> Enum.filter(fn i ->
+                  Enum.member?(Enum.map(@user.active_character.items, & &1.id), i.id) end)
+                |> Enum.count()
+              %> /
+            <% end %>
+            <%= mod_items(@items, m.id) |> Enum.count() %>
+          </small>
+          <%= if m.url do %>
+            <a href='<%= m.url %>' target='_blank' onClick="event.stopPropagation()">
+              <i class='icon-link'></i>
+            </a>
           <% end %>
-          <%= mod_items(@items, m.id) |> Enum.count() %>
-        </small>
+        </div>
       </button>
     <% end %>
   </div>

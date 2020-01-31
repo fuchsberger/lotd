@@ -23,6 +23,11 @@
           <%= text_input f, :name, class: control_class(f, :name), placeholder: "Name" %>
           <%= error_tag f, :name %>
         </div>
+        <div class='form-group'>
+          <%= label f, :url %>
+          <%= url_input f, :url, class: control_class(f, :name), placeholder: "Url" %>
+          <%= error_tag f, :url %>
+        </div>
         <%= if Enum.member?(["display", "item"], struct_name(@changeset.data)) do %>
           <div class='form-group'>
             <%= label f, :room_id, "Room" %>

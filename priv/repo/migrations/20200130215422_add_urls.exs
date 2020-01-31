@@ -2,8 +2,20 @@ defmodule Lotd.Repo.Migrations.AddUrls do
   use Ecto.Migration
 
   def change do
-    # alter table(:displays) do
-    #   modify :room_id, references(:rooms, on_delete: :nilify_all), null: false
-    # end
+    alter table(:displays) do
+      add :url, :string
+    end
+
+    alter table(:locations) do
+      add :url, :string
+    end
+
+    alter table(:mods) do
+      add :url, :string
+    end
+
+    alter table(:rooms) do
+      add :url, :string
+    end
   end
 end

@@ -64,6 +64,7 @@
 .icon-remove:before { content: '\e806'; } /* 'î †' */
 .icon-edit:before { content: '\e807'; } /* 'î ‡' */
 .icon-hide:before { content: '\e808'; } /* 'î ˆ' */
+.icon-link:before { content: '\f08e'; } /* '' */
 .icon-active:before { content: '\f14a'; } /* 'ï…Š' */
 .icon-inactive:before { content: '\f196'; } /* 'ï†–' */
 .icon-displays:before { content: '\f286'; } /* 'ïŠ†' */

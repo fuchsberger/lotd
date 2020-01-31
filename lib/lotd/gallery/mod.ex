@@ -4,6 +4,7 @@ defmodule Lotd.Gallery.Mod do
 
   schema "mods" do
     field :name, :string
+    field :url, :string
     has_many :items, Lotd.Gallery.Item
     many_to_many :characters, Lotd.Accounts.Character, join_through: "character_mods"
   end
@@ -11,8 +12,9 @@ defmodule Lotd.Gallery.Mod do
   @doc false
   def changeset(mod, attrs) do
     mod
-    |> cast(attrs, [:name])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :url])
+    |> validate_required([:name, :url])
     |> unique_constraint(:name)
+    |> unique_constraint(:url)
   end
 end

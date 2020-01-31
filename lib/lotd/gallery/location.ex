@@ -4,13 +4,14 @@ defmodule Lotd.Gallery.Location do
 
   schema "locations" do
     field :name, :string
+    field :url, :string
     has_many :items, Lotd.Gallery.Item
   end
 
   @doc false
   def changeset(mod, attrs) do
     mod
-    |> cast(attrs, [:name])
+    |> cast(attrs, [:name, :url])
     |> validate_required([:name])
     |> validate_length(:name, max: 80)
     |> unique_constraint(:name)

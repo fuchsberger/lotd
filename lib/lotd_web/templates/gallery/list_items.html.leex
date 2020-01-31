@@ -23,6 +23,9 @@
       >
         <%= item_icon(item.id, @user_item_ids, @moderate) %>
         <%= item.name %>
+        <%= if item.url do %>
+          <a class='pl-1 float-right' href='<%= item.url %>' target='_blank' onClick="event.stopPropagation()"><i class='icon-link'></i></a>
+        <% end %>
       </button>
     <% end %>
     <%= if Enum.count(@items) == 200 do %>
