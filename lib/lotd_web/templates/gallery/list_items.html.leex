@@ -8,10 +8,10 @@
     <% end %>
   </div>
 
-  <div class="list-group list-group-flush mh-100 overflow-auto">
+  <ul class="list-group list-group-flush mh-100 overflow-auto">
     <%= for item <- @items do %>
-      <button
-        class="list-group-item list-group-item-action px-2 py-0"
+      <li
+        class="list-group-item list-group-item-action px-2 py-1"
         phx-click="<%= cond do
             @moderate -> "edit"
             is_nil(@user_item_ids) -> nil
@@ -26,12 +26,12 @@
         <%= if item.url do %>
           <a class='pl-1 float-right' href='<%= item.url %>' target='_blank' onClick="event.stopPropagation()"><i class='icon-link'></i></a>
         <% end %>
-      </button>
+      </li>
     <% end %>
     <%= if Enum.count(@items) == 200 do %>
       <li class="list-group-item px-2 py-0 text-secondary">
         Only 200 items listed for performance reasons. Use filters / search to find a specific item.
       </li>
     <% end %>
-  </div>
+  </ul>
 </div>

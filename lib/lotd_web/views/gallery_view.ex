@@ -43,8 +43,7 @@ defmodule LotdWeb.GalleryView do
         active_class = if Enum.member?(user_items, id), do: "active", else: "inactive"
         icon("edit", class: "text-primary mr-1 icon-#{active_class}")
 
-      true ->
-        :ok
+      true -> nil
     end
   end
 

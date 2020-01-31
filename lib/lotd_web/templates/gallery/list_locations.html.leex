@@ -18,9 +18,9 @@
       <span class="badge badge-secondary badge-pill"><%# d.count %></span>
     </button>
   </div>
-  <div class="list-group list-group-flush mh-100 overflow-auto">
+  <ul class="list-group list-group-flush mh-100 overflow-auto">
     <%= for l <- @locations do %>
-      <button
+      <li
         class="list-group-item list-group-item-action px-2 py-0 <%= active(l.id == @location_filter) %>"
         phx-click="filter"
         phx-value-type='location'
@@ -53,7 +53,7 @@
             </a>
           <% end %>
         </div>
-      </button>
+      </li>
     <% end %>
-  </div>
+  </ul>
 </div>
