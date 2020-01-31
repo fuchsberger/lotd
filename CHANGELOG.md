@@ -4,6 +4,9 @@
   - admins and moderators can view a list of users and their admin/moderation status
   - admins can promote / demote users to admin / moderator
 
+### Bug Fixes
+  - Fixed a critical bug that prevented new users from registration
+
 ## 0.5.3
 
 ### Enhancments

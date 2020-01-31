@@ -2,46 +2,14 @@
 # "mix run priv/repo/seeds.exs" or alternatively "mix ecto reset"
 # only run in dev environment or fresh server!
 
-import Ecto.Changeset, only: [change: 2]
-import Lotd.Repo, only: [insert: 1, update: 1]
+import Lotd.Repo, only: [insert: 1]
 
 alias Lotd.Gallery
 alias Lotd.Gallery.{Room, Display, Item, Mod}
-alias Lotd.Accounts.{Character, User}
 
 # require Logger and hide SQL Messages
 require Logger
 Logger.configure(level: :info, truncate: 4096)
-
-# attempt to create admin user
-case insert(%User{ id: 811039, name: "Sekhmet13", admin: true, moderator: true }) do
-  {:ok, user} ->
-    {:ok, character} = insert(%Character{name: "Default", user_id: user.id })
-
-    user
-    |> change(active_character_id: character.id)
-    |> update()
-
-    Logger.info("Admin user created.")
-
-  {:error, _changeset} ->
-    Logger.info("Admin user has not been created as it already exists")
-end
-
-# attempt to create a test user (can never login)
-case insert(%User{ id: 0, name: "Test User" }) do
-  {:ok, user} ->
-    {:ok, character} = insert(%Character{ name: "Default", user_id: user.id })
-
-    user
-    |> change(active_character_id: character.id)
-    |> update()
-
-    Logger.info("Test user created.")
-
-  {:error, _changeset} ->
-    Logger.info("Test user has not been created as it already exists")
-end
 
 # attempt to read json content
 case File.read("priv/repo/displays.json") do
