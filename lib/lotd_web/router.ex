@@ -26,4 +26,10 @@ defmodule LotdWeb.Router do
 
     live "/settings", SettingsLive
   end
+
+  scope "/", LotdWeb do
+    pipe_through [:browser, :authenticate_user, :authenticate_moderator_or_admin]
+
+    live "/users", UserLive
+  end
 end

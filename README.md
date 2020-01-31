@@ -15,15 +15,15 @@ This is a utility app for the mod "Legacy of the Dragonborn" and it allows to ke
 
 ### Moderators can
 * create / edit / delete Items, Displays, Locations, Rooms, Mods
+* view list of users and their admin / moderation status
 * deleting a display, location, or room does not delete associated items
 * deleting a mod *does* delete associated items
 
 ### Admins can
-* promote / demote users to moderators
-* view a list of all nexus users (and links to their profiles) and when they first logged in
+* promote / demote users to moderators and admins
 
 ## Deployment Notes
-This is a suggestion on how to get the server running in a linux (Ubuntu/Debian) environment in a production environment. Make sure to bump the version number in *mix.exs* before each update.
+This is a suggestion on how to get the server running in a linux (Ubuntu/Debian) production environment. Make sure to bump the version number in *mix.exs* before each update.
 
 | Command                                     | When to execute                       |
 | ------------------------------------------- | ------------------------------------- |

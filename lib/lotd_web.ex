@@ -58,7 +58,7 @@ defmodule LotdWeb do
 
       import Plug.Conn
       import Phoenix.Controller
-      import LotdWeb.Auth, only: [authenticate_user: 2]
+      import LotdWeb.Auth, only: [authenticate_user: 2, authenticate_moderator_or_admin: 2]
     end
   end
 

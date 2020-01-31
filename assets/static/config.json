@@ -83,6 +83,12 @@
       "css": "link",
       "code": 61582,
       "src": "fontawesome"
+    },
+    {
+      "uid": "31972e4e9d080eaa796290349ae6c1fd",
+      "css": "users",
+      "code": 59401,
+      "src": "fontawesome"
     }
   ]
 }

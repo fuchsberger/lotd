@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="author" content="Alexander Fuchsberger"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>LOTD Inventory Manager</title>
+    <link rel="stylesheet" href='/css/app.css'>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+      <div class='container'>
+        <%# Logo %>
+        <span class="navbar-brand" title='Legacy of the Dragonborn - Inventory Manager'></span>
+
+        <%# Menu %>
+        <div class="ml-2 collapse navbar-collapse" id="menu-collapse">
+          <ul id='menu' class="navbar-nav">
+            <li class="nav-item">
+              <a class='nav-link' href='/about'><i class='icon-home'></i>About</a>
+            </li>
+            <li class="nav-item">
+              <a class='nav-link' href='/gallery'><i class='icon-displays'></i>Gallery</a>
+            </li>
+            <li class="nav-item">
+              <%= if is_nil(@conn.assigns.current_user) do %>
+                <button id='login-button' class="btn btn-light font-weight-bold icon-nexus">Sign In</button>
+                <%# Login Form (hidden) %>
+                <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
+                  <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
+                  <%= hidden_input(f, :api_key) %>
+                </form>
+              <% else %>
+                <%= LotdWeb.LayoutView.logout_button(@conn) %>
+              <% end %>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class='container text-center'>
+      <h1>Oops!</h1>
+      <h2>Error 403</h2>
+      <p class="lead">
+        You seem to lack the appropriate rights to access <code><%= current_path(@conn, %{})%></code>. If you think this is a mistake please let us know!
+      </p>
+    </div>
+    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
+  </body>
+</html>

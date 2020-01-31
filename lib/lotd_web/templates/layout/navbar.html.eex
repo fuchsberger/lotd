@@ -17,7 +17,9 @@
       <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>
       <%= unless is_nil(@conn.assigns.current_user),
         do: nav_item(@conn, "Settings", Routes.live_path(@conn, LotdWeb.SettingsLive), "settings") %>
-
+      <%= if @conn.assigns.current_user && @conn.assigns.current_user.admin, do:
+        nav_item(@conn, "Users", Routes.live_path(@conn, LotdWeb.UserLive), "users")
+      %>
       <li class="nav-item">
         <%= if is_nil(@conn.assigns.current_user) do %>
           <button id='login-button' class="btn btn-light font-weight-bold icon-nexus">Sign In</button>

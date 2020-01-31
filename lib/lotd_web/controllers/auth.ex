@@ -57,4 +57,16 @@ defmodule LotdWeb.Auth do
       |> halt()
     end
   end
+
+  def authenticate_moderator_or_admin(conn, _opts) do
+    if conn.assigns.current_user.admin || conn.assigns.current_user.moderator do
+      conn
+    else
+      conn
+      |> put_status(403)
+      |> put_view(LotdWeb.ErrorView)
+      |> render("403.html")
+      |> halt()
+    end
+  end
 end
