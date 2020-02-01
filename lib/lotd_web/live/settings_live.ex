@@ -85,6 +85,12 @@ defmodule LotdWeb.SettingsLive do
   def handle_event("save", _params, socket) do
     case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
       {:ok, character} ->
+
+        # if character has just been created, auto activate legacy of the dragonborn
+        if is_nil(socket.assigns.changeset.data.id) do
+          Accounts.update_character_add_mod(character, Gallery.get_mod!(1))
+        end
+
         character = Lotd.Repo.preload(character, [:mods, :items])
 
         characters =

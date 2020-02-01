@@ -1,3 +1,8 @@
+## 0.5.5
+
+### Enhancements
+  - on creating new characters, Legacy of the Dragonborn Mod will be auto-activated
+
 ## 0.5.4
 
 ### New Features
