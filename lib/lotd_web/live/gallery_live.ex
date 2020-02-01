@@ -4,29 +4,58 @@ defmodule LotdWeb.GalleryLive do
   alias Lotd.{Accounts, Gallery}
   alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
 
+  @defaults [
+    changeset: nil,
+    display_filter: nil,
+    hide: false,
+    location_filter: nil,
+    moderate: false,
+    mod_filter: nil,
+    room_filter: nil,
+    search: "",
+    user: nil
+  ]
+
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
-  def mount(_params, session, socket) do
-    user = if Map.has_key?(session, "user_id"),
-      do: Accounts.get_user!(session["user_id"]), else: nil
-    mods = if is_nil(user), do: Gallery.list_mods(), else: user.active_character.mods
+  def mount(_params, %{"user_id" => user_id }, socket) do
+    user = Accounts.get_user!(user_id)
+    mods = user.active_character.mods
 
-    {:ok, assign(socket,
-      changeset: nil,
+    assigns = [
       displays: Gallery.list_displays(),
-      display_filter: nil,
-      hide: false,
       items: Gallery.list_items(Enum.map(mods, & &1.id)),
       locations: Gallery.list_locations(),
-      location_filter: nil,
-      moderate: false,
       mods: mods,
-      mod_filter: nil,
       rooms: Gallery.list_rooms(),
-      room_filter: nil,
-      search: "",
       user: user
-    )}
+    ]
+
+    {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
+  end
+
+  def mount(_params, _session, socket) do
+
+    items = Gallery.list_items()
+    displays = list_assoc(items, :display)
+
+    assigns = [
+      displays: displays,
+      items: items,
+      locations: list_assoc(items, :location),
+      mods: list_assoc(items, :mod),
+      rooms: list_assoc(displays, :room)
+    ]
+
+    {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
+  end
+
+  defp list_assoc(collection, assoc) do
+    collection
+    |> Enum.map(& Map.get(&1, assoc))
+    |> Enum.reject(& &1 == nil)
+    |> Enum.uniq()
+    |> Enum.sort_by(& &1.name, :asc)
   end
 
   def handle_event("add", %{"type" => type }, socket) do
