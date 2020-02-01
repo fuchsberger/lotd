@@ -1,7 +1,7 @@
 defmodule LotdWeb.SettingsLive do
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
 
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Accounts, Gallery, Repo}
   alias Lotd.Accounts.Character
 
   def render(assigns), do: LotdWeb.SettingsView.render("index.html", assigns)
@@ -26,8 +26,11 @@ defmodule LotdWeb.SettingsLive do
       nil -> {:noreply, socket}
       character ->
         if character.user_id == socket.assigns.user.id do # <-- hacker safety measure
-          Accounts.activate_character(socket.assigns.user, character.id)
-          {:noreply, assign(socket, user: Accounts.get_user!(socket.assigns.user.id))}
+          case Accounts.update_user(socket.assigns.user, %{active_character_id: character.id}) do
+            {:ok, user} ->
+              user = Repo.preload(user, active_character: [:items, :mods])
+              {:noreply, assign(socket, user: user)}
+          end
         else
           {:noreply, socket}
         end

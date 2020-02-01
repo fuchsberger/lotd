@@ -1,5 +1,5 @@
-# defmodule Lotd.SkyrimTest do
-#   use Lotd.DataCase
+defmodule Lotd.SkyrimTest do
+  use Lotd.DataCase
 
 #   alias Lotd.Skyrim
 

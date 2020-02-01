@@ -9,18 +9,23 @@ defmodule Lotd.AccountsTest do
     assert [%User{id: ^id}] = Accounts.list_users()
   end
 
-  test "get_basic_user!/1 returns the user with the given id" do
+  test "get_user/1 returns the user with the given id" do
     %User{id: id} = user_fixture()
-    assert %User{id: ^id, active_character: nil} = Accounts.get_basic_user!(id)
+    assert {:ok, %User{id: ^id}} = Accounts.get_user(id)
   end
 
-  describe "register_user/1 registers a new user" do
+  test "get_user!/1 returns the user with the given id" do
+    %User{id: id} = user_fixture()
+    assert %User{id: ^id} = Accounts.get_user!(id)
+  end
+
+  describe "create_user/1 registers a new user" do
 
     @valid_attrs %{id: 42, name: "some_name"}
     @invalid_attrs %{}
 
     test "with valid data inserts user" do
-      assert {:ok, %User{id: id} = user} = Accounts.register_user(@valid_attrs)
+      assert {:ok, %User{id: id} = user} = Accounts.create_user(@valid_attrs)
       assert user.id == 42
       assert user.name == "some_name"
       assert user.active_character_id == nil
@@ -30,13 +35,13 @@ defmodule Lotd.AccountsTest do
     end
 
     test "with invalid data does not insert user" do
-      assert {:error, _changeset} = Accounts.register_user(@invalid_attrs)
+      assert {:error, _changeset} = Accounts.create_user(@invalid_attrs)
       assert Accounts.list_users() == []
     end
 
     test "enforces unique id" do
-      assert {:ok, %User{id: id}} = Accounts.register_user(@valid_attrs)
-      assert {:error, changeset} = Accounts.register_user(@valid_attrs)
+      assert {:ok, %User{id: id}} = Accounts.create_user(@valid_attrs)
+      assert {:error, changeset} = Accounts.create_user(@valid_attrs)
       assert %{id: ["has already been taken"]} = errors_on(changeset)
       assert [%User{id: ^id}] = Accounts.list_users()
     end
@@ -86,41 +91,42 @@ defmodule Lotd.AccountsTest do
   describe "characters" do
     alias Lotd.Accounts.Character
 
-    @valid_attrs %{name: "some name"}
-    @update_attrs %{name: "some updated name"}
-    @invalid_attrs %{name: nil}
+    @valid_attrs %{name: "name_new", user_id: 10000}
+    @update_attrs %{name: "name_updated"}
+    @invalid_attrs %{name: "name_invalid", user_id: 0}
 
     setup do
       {:ok, user: user_fixture()}
     end
 
-    test "list_user_characters/1 returns the users characters with items", %{user: user} do
-      %Character{id: id} = character_fixture(user)
-      assert [%Character{id: ^id, items: []}] = Accounts.list_user_characters(user)
+    test "list_characters/1 returns the user's characters with items", %{user: user} do
+      %Character{id: id} = character_fixture(@valid_attrs)
+      assert [%Character{id: ^id, items: []}] = Accounts.list_characters(user)
     end
 
-    test "get_character!/1 returns the character with given id", %{user: user} do
-      %Character{id: id} = character_fixture(user)
+    test "get_character!/1 returns the character with given id" do
+      %Character{id: id} = character_fixture(@valid_attrs)
       assert %Character{id: ^id} = Accounts.get_character!(id)
     end
 
     test "create_character/1 with valid data creates a character", %{user: user} do
-      assert {:ok, %Character{name: name}} = Accounts.create_character(user, @valid_attrs)
-      assert name == "some name"
+      assert {:ok, %Character{name: n, user_id: i}} = Accounts.create_character(@valid_attrs)
+      assert n == "name_new"
+      assert i == user.id
     end
 
-    test "create_character/1 with invalid data returns error changeset", %{user: user} do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_character(user, @invalid_attrs)
+    test "create_character/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_character(@invalid_attrs)
     end
 
-    test "update_character/2 with valid data updates the character", %{user: user} do
-      character = character_fixture(user, @valid_attrs)
+    test "update_character/2 with valid data updates the character" do
+      character = character_fixture(@valid_attrs)
       assert {:ok, %Character{name: name}} = Accounts.update_character(character, @update_attrs)
-      assert name == "some updated name"
+      assert name == "name_updated"
     end
 
-    test "update_character/2 with invalid data returns error changeset", %{user: user} do
-      character = character_fixture(user)
+    test "update_character/2 with invalid data returns error changeset" do
+      character = character_fixture(@valid_attrs)
       assert {:error, %Ecto.Changeset{}} = Accounts.update_character(character, @invalid_attrs)
     end
 

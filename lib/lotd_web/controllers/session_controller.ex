@@ -27,7 +27,7 @@ defmodule LotdWeb.SessionController do
         case Accounts.get_user(id) do
           # no record found --> create it and authenticate
           nil ->
-            case Accounts.register_user(%{id: id, name: name}) do
+            case Accounts.create_user(%{id: id, name: name}) do
               {:ok, user} ->
 
                 # also create a default character

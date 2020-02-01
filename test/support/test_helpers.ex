@@ -1,22 +1,16 @@
 defmodule Lotd.TestHelpers do
 
-  alias Lotd.{Accounts}
+  alias Lotd.Accounts
 
   def user_fixture(attrs \\ %{}) do
-    id = System.unique_integer([:positive])
-    {:ok, user} =
-      attrs
-      |> Enum.into(%{
-        id: id,
-        name: "user#{id}"
-      })
-      |> Accounts.register_user()
+    attrs = Enum.into(attrs, %{ id: 10000, name: "test_user" })
+    {:ok, user} = Accounts.create_user(attrs)
     user
   end
 
-  def character_fixture(%Accounts.User{} = user, attrs \\ %{}) do
-    attrs = Enum.into(attrs, %{ name: "Dovakiin" })
-    {:ok, character} = Accounts.create_character(user, attrs)
+  def character_fixture(attrs \\ %{}) do
+    attrs = Enum.into(attrs, %{ name: "test_character", user_id: 10000 })
+    {:ok, character} = Accounts.create_character(attrs)
     character
   end
 end

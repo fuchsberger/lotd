@@ -71,7 +71,7 @@ defmodule LotdWeb.GalleryView do
     if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
   end
 
-  def visible_items(items, displays, display_filter, locations, location_filter, mods, mod_filter, room_filter, user, hide, search) do
+  def visible_items(items, displays, display_filter, _locations, location_filter, mods, mod_filter, room_filter, user, hide, search) do
     display_ids = cond do
       not is_nil(display_filter) ->
         [ display_filter ]

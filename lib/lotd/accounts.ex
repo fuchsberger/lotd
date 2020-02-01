@@ -20,7 +20,7 @@ defmodule Lotd.Accounts do
     |> Repo.get!(id)
   end
 
-  def register_user(attrs \\ %{}) do
+  def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()
@@ -57,12 +57,6 @@ defmodule Lotd.Accounts do
   end
 
   def delete_character(%Character{} = character), do: Repo.delete(character)
-
-  def activate_character(user, character_id) do
-    user
-    |> Ecto.Changeset.change(%{ active_character_id: character_id})
-    |> Repo.update!()
-  end
 
   # MUSEUM FEATURES
 
