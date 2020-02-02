@@ -8,6 +8,7 @@
 ### Bug Fixes
   - Fixed a critical bug that prevented new users from registration
   - Item count display in bottom bar was always showing 0/0
+  - removed Nexus Logo and replaced with icon (couldn't get it to display with new static assets procedure, may eventually come back)
 
 ## 0.5.4
 
