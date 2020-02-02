@@ -39,9 +39,6 @@ defmodule LotdWeb.GalleryView do
     [{"Please select...", nil} | Enum.map(displays, &{&1.name, &1.id})]
   end
 
-  def display_items(items, display_id), do: Enum.filter(items, & &1.display_id == display_id)
-  def location_items(items, location_id), do: Enum.filter(items, & &1.location_id == location_id)
-  def mod_items(items, mod_id), do: Enum.filter(items, & &1.mod_id == mod_id)
   def room_items(items, displays, room_id) do
     display_ids = displays |> Enum.filter(& &1.room_id == room_id) |> Enum.map(& &1.id)
     Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
