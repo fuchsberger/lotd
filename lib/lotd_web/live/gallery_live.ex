@@ -27,7 +27,14 @@ defmodule LotdWeb.GalleryLive do
     items = if user.moderator,
       do: Gallery.list_items(),
       else: Gallery.list_items(user.active_character.mods)
-    displays = list_assoc(items, :display)
+
+    mods = if user.moderator,
+      do: Gallery.list_mods(),
+      else: list_assoc(items, :mod)
+
+    displays = if user.moderator,
+      do: Gallery.list_displays(),
+      else: list_assoc(items, :display)
 
     assigns = [
       character_id: user.active_character.id,
@@ -36,7 +43,7 @@ defmodule LotdWeb.GalleryLive do
       items: items,
       locations: list_assoc(items, :location),
       moderator: user.moderator,
-      mods: list_assoc(items, :mod),
+      mods: mods,
       rooms: list_assoc(displays, :room)
     ]
 
@@ -128,23 +135,13 @@ defmodule LotdWeb.GalleryLive do
 
     case Enum.find(character.items, & &1.id == id) do
       nil ->
-        case Accounts.collect_item(character, item) do
-          {:ok, character} ->
-            {:noreply, assign(socket, character_items: [id | socket.assigns.character_items])}
-
-          {:error, reason} ->
-            {:noreply, socket}
-        end
+        Accounts.collect_item(character, item)
+        {:noreply, assign(socket, character_items: [id | socket.assigns.character_items])}
 
       item ->
-        case Accounts.remove_item(character, item) do
-          {:ok, _character} ->
-            items = List.delete(socket.assigns.character_items, id)
-            {:noreply, assign(socket, character_items: items)}
-
-          {:error, reason} ->
-            {:noreply, socket}
-        end
+        Accounts.remove_item(character, item)
+        items = List.delete(socket.assigns.character_items, id)
+        {:noreply, assign(socket, character_items: items)}
     end
   end
 

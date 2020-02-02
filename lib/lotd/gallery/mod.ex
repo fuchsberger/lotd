@@ -2,6 +2,8 @@ defmodule Lotd.Gallery.Mod do
   use Ecto.Schema
   import Ecto.Changeset
 
+  import Lotd.Repo, only: [validate_url: 2]
+
   schema "mods" do
     field :name, :string
     field :url, :string
@@ -14,6 +16,7 @@ defmodule Lotd.Gallery.Mod do
     mod
     |> cast(attrs, [:name, :url])
     |> validate_required([:name, :url])
+    |> validate_url(:url)
     |> unique_constraint(:name)
     |> unique_constraint(:url)
   end

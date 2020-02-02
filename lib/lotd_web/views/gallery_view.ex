@@ -5,6 +5,19 @@ defmodule LotdWeb.GalleryView do
 
   def active(boolean), do: if boolean, do: " list-group-item-info"
 
+  def count(field, id, items) do
+    items
+    |> Enum.filter(& Map.get(&1, field) == id)
+    |> Enum.count()
+  end
+
+  def count(field, id, items, character_items) do
+    items
+    |> Enum.filter(& Map.get(&1, field) == id)
+    |> Enum.filter(& Enum.member?(character_items, &1.id))
+    |> Enum.count()
+  end
+
   def collected_count(user, _items) do
     user.active_character.items
     |> Enum.filter(& Enum.member?(user.active_character.mods, &1.mod_id))
@@ -68,7 +81,9 @@ defmodule LotdWeb.GalleryView do
   def title(struct), do: struct_to_string(struct) |> String.capitalize()
 
   def visible_displays(displays, room_filter) do
-    if is_nil(room_filter), do: displays, else: Enum.filter(displays, & &1.room_id == room_filter)
+    if is_nil(room_filter),
+      do: displays,
+      else: Enum.filter(displays, & &1.room_id == room_filter)
   end
 
   def visible_items(items, character_items, displays, display_filter, location_filter, mod_filter, room_filter, hide, search) do
@@ -105,11 +120,5 @@ defmodule LotdWeb.GalleryView do
       else: items
 
     Enum.take(items, 200)
-  end
-
-  def visible_mods(mods, user, moderate) do
-    if is_nil(user) or moderate,
-      do: mods,
-      else: Enum.filter(mods, & Enum.member?(user.active_character.mods, &1.id))
   end
 end

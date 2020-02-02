@@ -1,3 +1,11 @@
+## 0.5.6
+
+### Enhancments
+  - when hide mode is on it will now hide completed displays, mods and locations as well.
+
+### Bug Fixes
+  - Fixed missing validation for required url field when adding/updating mods
+
 ## 0.5.5
 
 ### Enhancements

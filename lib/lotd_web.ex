@@ -42,7 +42,7 @@ defmodule LotdWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import Phoenix.HTML.Form, except: [select: 4, text_input: 3]
+      import Phoenix.HTML.Form, except: [select: 4, text_input: 3, url_input: 3]
 
       import LotdWeb.ViewHelpers
       import LotdWeb.ErrorHelpers

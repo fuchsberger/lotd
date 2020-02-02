@@ -66,14 +66,14 @@ defmodule Lotd.Accounts do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   def remove_item(character, item) do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, & &1.id == item.id))
-    |> Repo.update()
+    |> Repo.update!()
   end
 
   def update_character_add_mod(%Character{} = character, mod) do

@@ -8,7 +8,7 @@ defmodule Lotd.Gallery do
   alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
 
   # DISPLAYS -------------------------------------------------------------------------------------
-  def list_displays, do: Repo.all from(d in Display, order_by: d.name)
+  def list_displays, do: Repo.all from(d in Display, preload: :room, order_by: d.name)
 
   def get_display!(id), do: Repo.get!(Display, id)
 

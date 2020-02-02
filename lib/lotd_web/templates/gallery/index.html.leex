@@ -16,6 +16,7 @@
       character_items: @character_items,
       displays: @displays,
       display_filter: @display_filter,
+      hide: @hide,
       items: @items,
       moderate: @moderate,
       room_filter: @room_filter
@@ -35,6 +36,7 @@
   <div class="col col-lg-4 row-cols-1 d-none d-lg-block h-100">
     <%= render "list_locations.html",
       character_items: @character_items,
+      hide: @hide,
       items: @items,
       locations: @locations,
       location_filter: @location_filter,
@@ -42,6 +44,7 @@
     %>
     <%= render "list_mods.html",
       character_items: @character_items,
+      hide: @hide,
       items: @items,
       mods: @mods,
       mod_filter: @mod_filter,

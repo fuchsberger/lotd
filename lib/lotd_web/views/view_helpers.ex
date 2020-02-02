@@ -18,6 +18,10 @@ defmodule LotdWeb.ViewHelpers do
     Form.text_input(form, field, opts ++ Form.input_validations(form, field))
   end
 
+  def url_input(form, field, opts \\ []) do
+    Form.url_input(form, field, opts ++ Form.input_validations(form, field))
+  end
+
   def select(form, field, options, opts \\ []) do
     Form.select(form, field, options, opts ++ Form.input_validations(form, field))
   end
