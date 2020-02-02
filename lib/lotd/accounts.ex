@@ -6,7 +6,7 @@ defmodule Lotd.Accounts do
 
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
-  alias Lotd.Gallery.{Mod}
+  alias Lotd.Gallery.{Item, Mod}
 
   # user
   def list_users, do: Repo.all from(u in User, order_by: u.name)
@@ -14,9 +14,11 @@ defmodule Lotd.Accounts do
   def get_user(id), do: Repo.get(User, id)
 
   def get_user!(id) do
-    mod_query = from m in Mod, order_by: m.name
     User
-    |> preload(active_character: [:items, mods: ^mod_query])
+    |> preload(active_character: [
+        items: ^from(i in Item, select: i.id),
+        mods: ^from(m in Mod, select: m.id)
+      ])
     |> Repo.get!(id)
   end
 
@@ -40,7 +42,7 @@ defmodule Lotd.Accounts do
   end
 
   def get_character(id), do: Repo.get(Character, id)
-  def get_character!(id), do: Repo.get!(Character, id)
+  def get_character!(id), do: from(c in Character, preload: :items) |> Repo.get!(id)
 
   def change_character(%Character{} = character), do: Character.changeset(character, %{})
 
@@ -64,14 +66,14 @@ defmodule Lotd.Accounts do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   def remove_item(character, item) do
     character
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, fn i -> i.id == item.id end))
-    |> Repo.update!()
+    |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, & &1.id == item.id))
+    |> Repo.update()
   end
 
   def update_character_add_mod(%Character{} = character, mod) do
@@ -86,7 +88,7 @@ defmodule Lotd.Accounts do
   def update_character_remove_mod(%Character{} = character, mod_id) do
     character
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, fn m -> m.id == mod_id end))
+    |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, & &1.id == mod_id))
     |> Repo.update!()
   end
 end

@@ -5,11 +5,14 @@ defmodule LotdWeb.GalleryLive do
   alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
 
   @defaults [
+    character_id: nil,
+    character_items: nil,
     changeset: nil,
     display_filter: nil,
     hide: false,
     location_filter: nil,
     moderate: false,
+    moderator: false,
     mod_filter: nil,
     room_filter: nil,
     search: "",
@@ -20,15 +23,21 @@ defmodule LotdWeb.GalleryLive do
 
   def mount(_params, %{"user_id" => user_id }, socket) do
     user = Accounts.get_user!(user_id)
-    mods = user.active_character.mods
+
+    items = if user.moderator,
+      do: Gallery.list_items(),
+      else: Gallery.list_items(user.active_character.mods)
+    displays = list_assoc(items, :display)
 
     assigns = [
-      displays: Gallery.list_displays(),
-      items: Gallery.list_items(Enum.map(mods, & &1.id)),
-      locations: Gallery.list_locations(),
-      mods: mods,
-      rooms: Gallery.list_rooms(),
-      user: user
+      character_id: user.active_character.id,
+      character_items: user.active_character.items,
+      displays: displays,
+      items: items,
+      locations: list_assoc(items, :location),
+      moderator: user.moderator,
+      mods: list_assoc(items, :mod),
+      rooms: list_assoc(displays, :room)
     ]
 
     {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
@@ -106,29 +115,38 @@ defmodule LotdWeb.GalleryLive do
   end
 
   def handle_event("toggle-moderate", _params, socket) do
-    moderate = !socket.assigns.moderate
-    mods = if moderate, do: Gallery.list_mods(), else: socket.assigns.user.active_character.mods
-    items = Gallery.list_items(Enum.map(mods, & &1.id))
-    {:noreply, assign(socket, items: items, moderate: moderate, mod_filter: nil, mods: mods)}
+    {:noreply, assign(socket,
+      hide: false,
+      moderate: !socket.assigns.moderate
+    )}
   end
 
   def handle_event("toggle-item", %{"id" => id}, socket) do
-    user = socket.assigns.user
-    character = user.active_character
+    id = String.to_integer(id)
+    character = Accounts.get_character!(socket.assigns.character_id)
+    item = Enum.find(socket.assigns.items, & &1.id == id)
 
-    case Enum.find(socket.assigns.items, & &1.id == String.to_integer(id)) do
+    case Enum.find(character.items, & &1.id == id) do
       nil ->
-        # TODO: Flash an error
-        {:noreply, socket}
-      item ->
-        if Enum.member?(Enum.map(character.items, & &1.id), item.id),
-          do: Accounts.remove_item(character, item),
-          else: Accounts.collect_item(character, item)
+        case Accounts.collect_item(character, item) do
+          {:ok, character} ->
+            {:noreply, assign(socket, character_items: [id | socket.assigns.character_items])}
 
-        {:noreply, assign(socket, user: Accounts.get_user!(user.id))}
+          {:error, reason} ->
+            {:noreply, socket}
+        end
+
+      item ->
+        case Accounts.remove_item(character, item) do
+          {:ok, _character} ->
+            items = List.delete(socket.assigns.character_items, id)
+            {:noreply, assign(socket, character_items: items)}
+
+          {:error, reason} ->
+            {:noreply, socket}
+        end
     end
   end
-
 
   def handle_event("validate", params, socket) do
     changeset =

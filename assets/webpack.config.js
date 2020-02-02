@@ -6,7 +6,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = (env, options) => ({
-  stats: 'errors-warnings',
+  // stats: 'errors-warnings',
   optimization: {
     minimize: true,
     minimizer: [
@@ -23,11 +23,11 @@ module.exports = (env, options) => ({
     rules: [
       {
         test: /\.js$/,
-        exclude: /node_modules/,
+        exclude: /node_modules/i,
         use: { loader: 'babel-loader' }
       },
       {
-        test: /\.(s?)css$/,
+        test: /\.(s?)css$/i,
         use: [
           MiniCssExtractPlugin.loader,
           'css-loader',
@@ -35,7 +35,7 @@ module.exports = (env, options) => ({
         ]
       },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/i,
         loader: 'url-loader',
         options: { limit: 8192 }
       }

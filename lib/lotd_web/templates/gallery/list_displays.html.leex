@@ -38,9 +38,9 @@
           <%= d.name %>
           <div class='float-right'>
             <small>
-              <%= if @user do %>
-                <%= Enum.filter(items, fn i ->
-                    Enum.member?(Enum.map(@user.active_character.items, & &1.id), i.id) end)
+              <%= if @character_items do %>
+                <%= items
+                  |> Enum.filter(fn i -> Enum.member?(@character_items, i.id) end)
                   |> Enum.count()
                 %> /
               <% end %>

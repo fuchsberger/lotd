@@ -17,11 +17,18 @@ defmodule Lotd.Gallery do
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # ITEMS ----------------------------------------------------------------------------------------
-  def list_items,
-    do: Repo.all from(i in Item, order_by: i.name, preload: [:location, :mod, display: [:room]])
+  def list_items, do:
+    Repo.all from(i in Item,
+      order_by: i.name,
+      preload: [:location, :mod, display: [:room]]
+    )
 
-  def list_items(mod_ids),
-    do: Repo.all from(i in Item, order_by: i.name, where: i.mod_id in ^mod_ids)
+  def list_items(mod_ids), do:
+    Repo.all from(i in Item,
+      order_by: i.name,
+      preload: [:location, :mod, display: [:room]],
+      where: i.mod_id in ^mod_ids
+    )
 
   def get_item!(id), do: Repo.get!(Item, id)
 

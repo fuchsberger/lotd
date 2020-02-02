@@ -1,8 +1,10 @@
 {
+  "author": "Alexander Fuchsberger",
   "description": "LOTD Inventory Manager",
   "repository": {},
   "license": "MIT",
   "scripts": {
+    "dev": "webpack --mode development",
     "deploy": "webpack --mode production",
     "watch": "webpack --mode development --watch"
   },

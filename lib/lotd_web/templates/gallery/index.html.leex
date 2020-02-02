@@ -4,53 +4,60 @@
   <div class="col col-md-6 col-lg-4 row-cols-1 d-none d-md-block h-100">
 
     <%= render "list_rooms.html",
+      character_items: @character_items,
       displays: @displays,
       items: @items,
       rooms: @rooms,
       room_filter: @room_filter,
-      moderate: @moderate,
-      user: @user
+      moderate: @moderate
     %>
 
     <%= render "list_displays.html",
+      character_items: @character_items,
       displays: @displays,
       display_filter: @display_filter,
       items: @items,
       moderate: @moderate,
-      room_filter: @room_filter,
-      user: @user
+      room_filter: @room_filter
     %>
   </div>
 
   <%# Item Panel (always visible) %>
   <div class="col col-md-6 col-lg-4 h-100 px-0">
     <%= render "list_items.html",
-      items: visible_items(@items, @displays, @display_filter, @locations, @location_filter, @mods, @mod_filter, @room_filter, @user, @hide, @search),
-      moderate: @moderate,
-      user_item_ids: if @user, do: Enum.map(@user.active_character.items, & &1.id), else: nil
+      character_items: @character_items,
+      items: visible_items(@items, @character_items, @displays, @display_filter, @location_filter, @mod_filter, @room_filter, @hide, @search),
+      moderate: @moderate
     %>
   </div>
 
   <%# Right Panel (only visible on large devices) %>
   <div class="col col-lg-4 row-cols-1 d-none d-lg-block h-100">
     <%= render "list_locations.html",
+      character_items: @character_items,
       items: @items,
       locations: @locations,
       location_filter: @location_filter,
-      moderate: @moderate,
-      user: @user
+      moderate: @moderate
     %>
     <%= render "list_mods.html",
+      character_items: @character_items,
       items: @items,
       mods: @mods,
       mod_filter: @mod_filter,
-      moderate: @moderate,
-      user: @user
+      moderate: @moderate
     %>
   </div>
 </div>
 
-<%= render"bottom_bar.html", hide: @hide, items: @items, moderate: @moderate, search: @search, user: @user %>
+<%= render"bottom_bar.html",
+  character_items: @character_items,
+  hide: @hide,
+  items: @items,
+  moderate: @moderate,
+  moderator: @moderator,
+  search: @search
+ %>
 
 <%= if @moderate && not is_nil(@changeset), do: render("modal.html",
   changeset: @changeset,

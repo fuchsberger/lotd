@@ -14,14 +14,14 @@
         class="list-group-item list-group-item-action px-2 py-1"
         phx-click="<%= cond do
             @moderate -> "edit"
-            is_nil(@user_item_ids) -> nil
+            is_nil(@character_items) -> nil
             true -> "toggle-item"
           end
         %>"
         phx-value-type="item"
         phx-value-id='<%= item.id %>'
       >
-        <%= item_icon(item.id, @user_item_ids, @moderate) %>
+        <%= item_icon(item.id, @character_items, @moderate) %>
         <%= item.name %>
         <%= if item.url do %>
           <a class='pl-1 float-right' href='<%= item.url %>' target='_blank' onClick="event.stopPropagation()"><i class='icon-link'></i></a>

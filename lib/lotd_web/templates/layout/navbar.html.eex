@@ -22,7 +22,10 @@
       %>
       <li class="nav-item">
         <%= if is_nil(@conn.assigns.current_user) do %>
-          <button id='login-button' class="btn btn-light font-weight-bold icon-nexus">Sign In</button>
+          <a id='login-button' class="nav-link" href='#'>
+            <i class='icon-logout'></i>
+            Sign In
+          </a>
           <%# Login Form (hidden) %>
           <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
             <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
