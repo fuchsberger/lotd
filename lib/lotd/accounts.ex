@@ -9,7 +9,9 @@ defmodule Lotd.Accounts do
   alias Lotd.Gallery.{Item, Mod}
 
   # user
-  def list_users, do: Repo.all from(u in User, order_by: u.name)
+  def list_users do
+    Repo.all from(u in User, preload: [characters: [:items]], order_by: u.name)
+  end
 
   def get_user(id), do: Repo.get(User, id)
 

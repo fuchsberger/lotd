@@ -2,6 +2,7 @@
   <thead>
     <tr>
       <th>Username</th>
+      <th>Characters</th>
       <th class='text-center'>Admin</th>
       <th class='text-center'>Moderator</th>
     </tr>
@@ -11,6 +12,11 @@
       <tr>
         <td>
           <%= link u.name, to: "https://www.nexusmods.com/users/#{u.id}", target: "_blank" %>
+        </td>
+        <td>
+          <%= for c <- u.characters do %>
+            <%= if @admin, do: c.name %> [<%= Enum.count(c.items) %>],
+          <% end %>
         </td>
         <td class='text-center'>
           <%= if @admin || u.admin do %>

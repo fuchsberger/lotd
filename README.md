@@ -1,5 +1,7 @@
 # Lotd
 
+**Changelog: https://github.com/fuchsberger/lotd/blob/master/CHANGELOG.md**
+
 This is a utility app for the mod "Legacy of the Dragonborn" and it allows to keep track of items collected for the museum. The following features are implemented:
 
 * You can search for items that can be displayed in the museum and filter them by display, room, location and/or mod

@@ -1,21 +1,32 @@
 <div class="container pt-2">
-  <h4>About</h4>
-  <p class="lead">This tool allows you to easily keep track of the items you have collected for the Legacy of the Dragonborn Gallery. Simply sign in via Nexus and start collecting items</p>
+  <h3>Introduction</h3>
+  <p class="lead">This tool allows you to easily keep track of the items you have collected for the <a href='https://www.nexusmods.com/skyrimspecialedition/mods/11802' target='_blank'>Legacy of the Dragonborn Gallery</a>. Simply sign in via Nexus and start collecting items.</p>
   <p>I make no guarantees for the availability of the plattform and cannot be accounted for data loss.</p>
+
+  <h4>Recommendations for use</h4>
+  <ul>
+    <li>Play in windowed mode. This allows you to quickly tab in and out of the game to update your counts.</li>
+    <li>If using SkyUI set the tab key to something other than ALT. Otherwise if you have a container opened and then ALT-TAB out of the game the container will toggle between the character inventory and the container inventory.</li>
+    <li>Save often, especially after collecting items. If you need to reload and delete the items you have already collected since you saved last you may not remember them all</li>
+  </ul>
+
+  <p>
+    Here is a link to the current
+    <strong>
+      <a href='https://github.com/fuchsberger/lotd/blob/master/CHANGELOG.md' target='_blank'>
+        Changelog
+      </a>
+    </strong>
+  </p>
 
   <p>Currently this tool allow you to:</p>
   <ul>
     <li>Select the mods (that add displays) you want to use</li>
     <li>Mark items as collected.</li>
-    <li>Search for and sort items, displays and mods.</li>
+    <li>Search for and sort items via rooms, displays, mods and locations</li>
     <li>Support for multiple Characters</li>
-  </ul>
-
-  <p>Many more features are planned or already implemented (but need further testing):</p>
-  <ul>
-    <li>Ability to moderate content</li>
-    <li>Support for filtering items based on Locations and/or Quests</li>
-    <li>Support for external weblinks to quickly look up content.</li>
+    <li>Support for external weblinks to quickly look up content</li>
+    <li>Ability to moderate content (for moderators)</li>
   </ul>
 
   <h4>Data Usage</h4>
