@@ -1,6 +1,10 @@
 import CSS from '../css/app.scss'
 
+import 'bootstrap'
+import 'datatables.net'
+import 'datatables.net-dt'
 import "phoenix_html"
+
 import { connect, Nexus } from "./api"
 
 function focus_search(){

@@ -17,6 +17,7 @@ defmodule LotdWeb.Router do
     get "/about", PageController, :about
 
     live "/gallery", GalleryLive
+    live "/items", ItemsLive
 
     resources "/session", SessionController, only: [:create, :delete]
   end

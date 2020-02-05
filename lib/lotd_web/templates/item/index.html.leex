@@ -1,0 +1,13 @@
+<h1>Items</h1>
+<table id='item-table' phx-hook='ItemTable'>
+  <thead>
+    <tr>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for item <- @items do %>
+      <tr><td><%= item.name %></td></tr>
+    <% end %>
+  </tbody>
+</table>

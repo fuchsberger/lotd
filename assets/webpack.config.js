@@ -6,7 +6,7 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = (env, options) => ({
-  // stats: 'errors-warnings',
+  stats: 'errors-warnings',
   optimization: {
     minimize: true,
     minimizer: [
