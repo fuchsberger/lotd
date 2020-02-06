@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+<nav class="navbar navbar-expand-md navbar-light bg-light">
   <div class='container'>
   <%# Logo %>
   <span class="navbar-brand" title='Legacy of the Dragonborn - Inventory Manager'></span>
