@@ -1,8 +1,10 @@
 import CSS from '../css/app.scss'
 
+import $ from 'jquery'
 import 'bootstrap'
 import 'datatables.net'
-import 'datatables.net-dt'
+import 'datatables.net-bs4'
+import 'datatables.net-scroller'
 import "phoenix_html"
 
 import { connect, Nexus } from "./api"

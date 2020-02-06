@@ -11,9 +11,9 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "datatables.net": "^1.10.20",
-    "datatables.net-buttons": "^1.6.1",
-    "datatables.net-buttons-dt": "^1.6.1",
-    "datatables.net-dt": "^1.10.20",
+    "datatables.net-bs4": "^1.10.20",
+    "datatables.net-scroller": "^2.0.1",
+    "datatables.net-scroller-bs4": "^2.0.1",
     "jquery": "^3.4.1",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",

@@ -1,7 +1,9 @@
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 @import "./bootstrap";
 
-@import "../node_modules/datatables.net-dt/css/jquery.dataTables.css";
+@import "../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css";
+@import "../node_modules/datatables.net-scroller-bs4/css/scroller.bootstrap4.css";
 @import "./icons.css";
+@import "./loader.css";
 @import "./navbar";
 
