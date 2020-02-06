@@ -1,6 +1,9 @@
+// core
 @import "bootstrap/scss/_functions";
 @import "bootstrap/scss/_variables";
 @import "bootstrap/scss/_mixins";
+
+// modules
 @import "bootstrap/scss/_root";
 @import "bootstrap/scss/_reboot";
 @import "bootstrap/scss/_type";
@@ -35,19 +38,3 @@
 // @import "bootstrap/scss/_spinners";
 @import "bootstrap/scss/_utilities";
 // @import "bootstrap/scss/_print";
-
-// Enable Modals
-.modal {
-  display: block;
-  overflow-x: hidden;
-  overflow-y: auto;
-  z-index: 1072;
-}
-
-// Scrollable Areas Height Fix
-.h-list { height: calc(100% - 35px)!important}
-
-// Listgroup  hidden radio button fix
-.list-group label { margin:0; }
-
-.list-group-item-action { cursor: pointer; }
