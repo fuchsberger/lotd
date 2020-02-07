@@ -1,13 +1,14 @@
 @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 
-@import "./theme/variables";
-@import "./theme/bootstrap";
-@import "./theme/bootswatch";
-@import "./theme/scrollbars";
+@import "./bootstrap";
+
+// @import  "../node_modules/@forevolve/bootstrap-dark/scss/bootstrap-dark.scss";
+// @import  "../node_modules/@forevolve/bootstrap-dark/scss/toggle-bootstrap.scss";
+// @import  "../node_modules/@forevolve/bootstrap-dark/scss/toggle-bootstrap-dark.scss";
 
 @import "../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css";
 @import "../node_modules/datatables.net-scroller-bs4/css/scroller.bootstrap4.css";
 @import "./icons.css";
-@import "./loader.css";
+@import "./loader";
 @import "./navbar";
 

@@ -14,7 +14,31 @@ function focus_search(){
 }
 
 // Executed when page is loaded
-document.addEventListener('DOMContentLoaded', () => {
+$(document).ready(() => {
+
+  // initialize Datatable
+  $('#item-table').DataTable({
+    ajax: '/api/items',
+    columns: [
+      { name: "id", visible: false },
+      { name: "name", title:  "Name" },
+      { name: "url", orderable: false },
+    ],
+    dom:
+      "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
+      "<'row'<'col-sm-12'tr>>" +
+      "<'d-flex justify-content-center'i>",
+    deferRender: true,
+    initComplete: () => $('#loader-wrapper').hide(),
+    order: [[1, 'asc']],
+    rowId: 0,
+    scrollY: 'calc(100vh - 185px)',
+    scrollCollapse: true,
+    scroller: true,
+    stateSave: true
+  })
+
+
 
   // if we do have a crsf token (all pages except error pages)
   // then connect live socket and enable various functionalities
@@ -34,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!document.hidden) focus_search()
     })
   }
+
 
   // enable login
   const btn = document.getElementById("login-button")

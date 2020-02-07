@@ -3,6 +3,8 @@ defmodule Lotd.Gallery.Item do
 
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:id, :name, :url]}
+
   schema "items" do
     field :name, :string
     field :url, :string

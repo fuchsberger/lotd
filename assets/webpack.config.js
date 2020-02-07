@@ -8,7 +8,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = (env, options) => ({
   stats: 'errors-warnings',
   optimization: {
-    minimize: true,
     minimizer: [
       new TerserPlugin({ test: /\.js(\?.*)?$/i, }),
       new OptimizeCSSAssetsPlugin({})

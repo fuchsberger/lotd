@@ -1,20 +1,5 @@
-<table id='item-table' class="table table-sm nowrap w-100" phx-hook='ItemTable'>
-  <thead>
-    <tr>
-      <th><%= check_item(@moderator) %></th>
-      <th>Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= for item <- @items do %>
-      <tr>
-        <td><%= item.id %></td>
-        <td><%= item.name %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div id="loader-wrapper"><div id="loader"></div></div>
 
-<div id="loader-wrapper">
-  <div id="loader"></div>
+<div class='container'>
+  <table id='item-table' class="table table-sm nowrap w-100"></table>
 </div>

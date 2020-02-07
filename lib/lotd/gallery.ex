@@ -5,6 +5,7 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
+  alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
 
   # DISPLAYS -------------------------------------------------------------------------------------
@@ -17,17 +18,14 @@ defmodule Lotd.Gallery do
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # ITEMS ----------------------------------------------------------------------------------------
-  def list_items, do:
-    Repo.all from(i in Item,
-      order_by: i.name,
-      preload: [:location, :mod, display: [:room]]
-    )
+  def list_items,
+    do: Repo.all from(i in Item, preload: [:location, :mod, display: [:room]],order_by: i.name)
 
-  def list_items(mod_ids), do:
+  def list_items(character), do:
     Repo.all from(i in Item,
       order_by: i.name,
-      preload: [:location, :mod, display: [:room]],
-      where: i.mod_id in ^mod_ids
+      preload: [ :location, :mod, display: [:room]],
+      where: i.mod_id in ^character.mods
     )
 
   def get_item!(id), do: Repo.get!(Item, id)

@@ -4,8 +4,8 @@ defmodule LotdWeb.ItemsLive do
   alias Lotd.{Accounts, Gallery}
 
   @defaults [
-    # character_id: nil,
-    # character_items: nil,
+    character_id: nil,
+    character_items: nil,
     # changeset: nil,
     # display_filter: nil,
     # hide: false,
@@ -23,16 +23,16 @@ defmodule LotdWeb.ItemsLive do
   def mount(_params, %{"user_id" => user_id }, socket) do
     user = Accounts.get_user!(user_id)
 
-    items = if user.moderator,
-      do: Gallery.list_items(),
-      else: Gallery.list_items(user.active_character.mods)
+    items = Gallery.list_items(user.active_character)
 
-      assigns = [
-        items: items,
-        moderator: user.moderator
-      ]
+    assigns = [
+      character_id: user.active_character.id,
+      character_items: user.active_character.items,
+      items: items,
+      moderator: user.moderator
+    ]
 
-      {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
+    {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
   end
 
   def mount(_params, _session, socket) do
@@ -48,5 +48,22 @@ defmodule LotdWeb.ItemsLive do
   def handle_event("toggle", %{"field" => field}, socket) do
     field = String.to_atom(field)
     {:noreply, assign(socket, field, !Map.get(socket.assigns, field))}
+  end
+
+  def handle_event("toggle", %{"item" => id}, socket) do
+    id = String.to_integer(id)
+    character = Accounts.get_character!(socket.assigns.character_id)
+    item = Enum.find(socket.assigns.items, & &1.id == id)
+
+    case Enum.find(character.items, & &1.id == id) do
+      nil ->
+        Accounts.collect_item(character, item)
+        {:noreply, assign(socket, character_items: [id | socket.assigns.character_items])}
+
+      item ->
+        Accounts.remove_item(character, item)
+        items = List.delete(socket.assigns.character_items, id)
+        {:noreply, assign(socket, character_items: items)}
+    end
   end
 end

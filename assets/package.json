@@ -9,6 +9,7 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
+    "@forevolve/bootstrap-dark": "^1.0.0-alpha.899",
     "bootstrap": "^4.4.1",
     "datatables.net": "^1.10.20",
     "datatables.net-bs4": "^1.10.20",
