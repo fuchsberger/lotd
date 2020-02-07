@@ -22,7 +22,11 @@ defmodule LotdWeb.Router do
     resources "/items", ItemController, only: [:show, :index]
   end
 
+  scope "/api", LotdWeb.Api, as: :api do
+    pipe_through [:api, :authenticate_user]
 
+    post "/items/toggle/:id", ItemController, :toggle
+  end
 
   scope "/", LotdWeb do
     pipe_through :browser

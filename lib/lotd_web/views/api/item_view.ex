@@ -13,8 +13,10 @@ defmodule LotdWeb.Api.ItemView do
     ]
 
     # load collected status for authenticated users
-    if Ecto.assoc_loaded?(i.characters),
-      do: item ++ [Enum.count(i.characters) == 1],
-      else: item
+    if Ecto.assoc_loaded?(i.characters) do
+      [ Enum.count(i.characters) == 1 | item ]
+    else
+      item
+    end
   end
 end

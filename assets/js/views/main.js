@@ -19,7 +19,7 @@ export default class MainView {
       // see: https://www.chromestatus.com/feature/6699045456183296
 
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) focus_search()
+        // if (!document.hidden) focus_search()
       })
     }
   }
