@@ -24,7 +24,12 @@ defmodule Lotd.Gallery do
   def list_items(character), do:
     Repo.all from(i in Item,
       order_by: i.name,
-      preload: [ :location, :mod, display: [:room]],
+      preload: [
+        :location,
+        :mod,
+        characters: ^from(c in Character, select: c.id, where: c.id == ^character.id),
+        display: [:room]
+      ],
       where: i.mod_id in ^character.mods
     )
 

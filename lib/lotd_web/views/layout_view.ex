@@ -18,4 +18,10 @@ defmodule LotdWeb.LayoutView do
     link = link [icon(icon), name], to: to, class: "nav-link"
     content_tag :li, link, class: "nav-item #{active}"
   end
+
+  def view_name(view_module, view_template) do
+    view = Phoenix.Naming.resource_name(view_module, "View")
+    [action, "html"] =  String.split(view_template, ".")
+    "#{view}/#{action}"
+  end
 end
