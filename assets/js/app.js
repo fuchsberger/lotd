@@ -1,6 +1,7 @@
 import CSS from '../css/app.scss'
 
 import $ from 'jquery'
+import 'popper.js'
 import 'bootstrap'
 import 'datatables.net'
 import 'datatables.net-bs4'
