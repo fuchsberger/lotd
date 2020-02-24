@@ -1,6 +1,6 @@
 defmodule LotdWeb.GalleryLive do
 
-  use Phoenix.LiveView, container: {:div, class: "container h-100"}
+  use Phoenix.LiveView, container: {:div, class: "container"}
   alias Lotd.{Accounts, Gallery}
   alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
 

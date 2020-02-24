@@ -2,38 +2,12 @@
 <%= f = form_for :search, "#", [class: "container", phx_change: :search] %>
   <div class='input-group'>
     <%= unless is_nil(@character_items) do %>
-      <div class="input-group-prepend">
-        <button class="btn btn-outline-primary" type="button" title='Hide Selected' phx-click="toggle-hide">
-          <i class='icon-<%= if @hide, do: "hide", else: "show" %>'></i>
-        </button>
-      </div>
-    <% end %>
-
-    <div class='card-body p-0'>
-      <%= text_input f, :query,
-        autofocus: true,
-        class: "form-control",
-        placeholder: "Search...",
-        phx_debounce: 300,
-        value: @search
-      %>
-    </div>
-
-    <%= unless is_nil(@character_items) do %>
       <div class="input-group-append">
         <span class="input-group-text d-none d-md-inline-block">
           <%= Enum.count(@character_items) %> /
           <%= Enum.count(@items) %>
         </span>
-        <%= if @moderator do %>
-          <button
-            class="btn  d-none d-md-inline-block btn-<%= if @moderate, do: "", else: "outline-" %>primary"
-            type="button"
-            phx-click="toggle-moderate"
-          >
-            <i class='icon-edit'></i>
-          </button>
-        <% end %>
+
       </div>
     <% end %>
   </div>

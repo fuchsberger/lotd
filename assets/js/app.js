@@ -3,21 +3,41 @@ import CSS from '../css/app.scss'
 import $ from 'jquery'
 import 'popper.js'
 import 'bootstrap'
-import 'datatables.net'
-import 'datatables.net-bs4'
-import 'datatables.net-scroller'
-import "phoenix_html"
+import { Socket } from "phoenix"
+import LiveSocket from "phoenix_live_view"
+import connect from './nexus'
 
-import loadView from './views/loader'
+// enable login
+$('#login-button').click(() => connect())
 
-// Executed when page is loaded
-$(document).ready(() => {
-  const viewName = $('body').data('view')
-  const view = loadView(viewName)
-  view.mount()
-  window.currentView = view
-})
+// enable initial tooltips
+$('[data-toggle="tooltip"]').tooltip()
 
-$(window).on('unload', () => {
-  window.currentView.unmount();
-})
+let Hooks = {}
+
+// enable tooltips in live views
+Hooks.tooltip = {
+  mounted() {
+    $(this.el).tooltip({ html: true })
+  },
+  beforeUpdate() {
+    $(this.el).tooltip('dispose')
+  },
+  updated() {
+    $(this.el).tooltip({ html: true })
+  },
+  destroyed() {
+    $(this.el).tooltip('dispose')
+  }
+}
+
+// if we do have a crsf token (all pages except error pages)
+// then connect live socket and enable various functionalities
+const csrf_elm = document.querySelector("meta[name='csrf-token']")
+if(csrf_elm){
+  const _csrf_token = csrf_elm.getAttribute("content")
+  let liveSocket = new LiveSocket("/live", Socket, { hooks: Hooks, params: { _csrf_token } })
+  liveSocket.socket.onError(() => $('#loader-wrapper').show())
+  liveSocket.connect()
+}
+

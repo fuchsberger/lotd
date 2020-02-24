@@ -1,0 +1,74 @@
+<div class="btn-group" role="group" aria-label="Room Filter">
+  <button
+    class="btn px-1 <%= filter_class(@room_filter) %>"
+    type="button"
+    phx-click="filter"
+    phx-value-type="room"
+    phx-value-id=""
+    phx-hook='tooltip'
+    title="Clear Filter"
+  >
+    <i class='icon-remove'></i>
+  </button>
+  <div class="btn-group" role="group">
+    <button
+      id="dropdown-room"
+      class="btn dropdown-toggle <%= filter_class(@room_filter) %>"
+      type="button"
+      data-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+      phx-hook='tooltip'
+      title="<%= filter_title(@rooms, @room_filter)%>"
+    >
+      Room
+      <span class="caret"></span>
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdown-room">
+      <button
+        class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@room_filter)) %>"
+        phx-click="filter"
+        phx-value-type="room"
+        phx-value-id=""
+      >
+        <strong>All Rooms</strong>
+        <span class="badge badge-secondary badge-pill"><%# d.count %></span>
+      </button>
+      <%= for r <- @rooms do %>
+        <% items = room_items(@items, @displays, r.id) %>
+        <button
+          class="dropdown-item px-2 py-0 <%= active(r.id == @room_filter) %>"
+          type="button"
+          phx-click="filter"
+          phx-value-type="room"
+          phx-value-id="<%= r.id %>"
+        >
+          <%= if @moderate do %>
+            <i class='icon-edit text-primary'
+              phx-click="edit"
+              phx-value-type="room"
+              phx-value-id="<%= r.id %>"
+            ></i>
+          <% end %>
+          <%= r.name %>
+          <div class='float-right pl-2'>
+            <small>
+              <%= if @character_items do %>
+                <%= items
+                  |> Enum.filter(fn i ->Enum.member?(@character_items, i.id) end)
+                  |> Enum.count()
+                %> /
+              <% end %>
+              <%= Enum.count(items) %>
+            </small>
+            <%= if r.url do %>
+              <a href='<%= r.url %>' target='_blank' onClick="event.stopPropagation()">
+                <i class='icon-link'></i>
+              </a>
+            <% end %>
+          </div>
+        </button>
+      <% end %>
+    </div>
+  </div>
+</div>

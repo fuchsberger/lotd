@@ -1,18 +1,109 @@
-<div id='gallery_page' class='row h-100'>
+<% filtered_items = visible_items(@items, @character_items, @displays, @display_filter, @location_filter, @mod_filter, @room_filter, @hide, @search) %>
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <%= unless is_nil(@character_items) do %>
+        <th class='px-0' scope='col'>
+          <button
+            class="btn btn-link px-0"
+            type="button"
+            title='Hide Selected'
+            phx-click="toggle-hide"
+            phx-hook='tooltip'
+          >
+            <i class='text-primary icon-<%= if @hide, do: "hide", else: "show" %>' ></i>
+          </button>
+        </th>
+      <% end %>
+
+      <th scope="col">
+        <div class='input-group'>
+          <%= if @moderator do %>
+            <button
+              class="btn btn-link px-0"
+              type="button"
+              title='Toggle Edit Mode'
+              phx-click="toggle-moderate"
+              phx-hook='tooltip'
+            >
+              <i class='icon-edit'></i>
+            </button>
+          <% end %>
+          <%= if @moderate do %>
+            <button
+              class="btn p-0 btn-link float-right"
+              phx-click='add'
+              phx-value-type='item'
+              phx-hook='tooltip'
+              title='Add Item'
+            >
+              <i class='icon-add'></i>
+            </button>
+          <% end %>
+
+
+          <%= f = form_for :search, "#", [phx_change: :search] %>
+            <%= text_input f, :query,
+              autofocus: true,
+              class: "form-control border-0",
+              placeholder: "Search Items...",
+              phx_debounce: 300,
+              value: @search
+            %>
+          </form>
+        </div>
+      </th>
+      <th scope="col">
+        <%= render "filter_room.html",
+          character_items: @character_items,
+          displays: @displays,
+          items: @items,
+          rooms: @rooms,
+          room_filter: @room_filter,
+          moderate: @moderate
+        %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for item <- filtered_items do %>
+      <tr>
+        <%= unless is_nil(@character_items) do %>
+          <td class='px-0'>
+            <%= item_icon(item.id, @character_items, @moderate) %>
+          </td>
+        <% end %>
+        <th scope="row">
+          <%= if item.url,
+            do: link(item.name, to: item.url, class: "text-dark", target: "_blank"),
+            else: content_tag :span, item.name, class: "text-secondary"
+          %>
+        </th>
+        <td>
+          <%= if item.display.url,
+            do: link(item.display.name, to: item.display.url, class: "text-dark", target: "_blank"),
+            else: content_tag :span, item.display.name, class: "text-muted"
+          %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= if Enum.count(filtered_items) == 200 do %>
+  <p class="text-center"><small>
+    Only 200 items listed for performance reasons. Use filters / search to find a specific item.
+  </p></small>
+<% end %>
+
+
+<div id='gallery_page' class='d-none row h-100'>
 
   <%# Left Panel (hidden on mobile) %>
   <div class="col col-md-6 col-lg-4 row-cols-1 d-none d-md-block h-100">
 
-    <%= render "list_rooms.html",
-      character_items: @character_items,
-      displays: @displays,
-      items: @items,
-      rooms: @rooms,
-      room_filter: @room_filter,
-      moderate: @moderate
-    %>
 
-    <%= render "list_displays.html",
+
+    <%# render "list_displays.html",
       character_items: @character_items,
       displays: @displays,
       display_filter: @display_filter,
@@ -23,18 +114,9 @@
     %>
   </div>
 
-  <%# Item Panel (always visible) %>
-  <div class="col col-md-6 col-lg-4 h-100 px-0">
-    <%= render "list_items.html",
-      character_items: @character_items,
-      items: visible_items(@items, @character_items, @displays, @display_filter, @location_filter, @mod_filter, @room_filter, @hide, @search),
-      moderate: @moderate
-    %>
-  </div>
-
   <%# Right Panel (only visible on large devices) %>
   <div class="col col-lg-4 row-cols-1 d-none d-lg-block h-100">
-    <%= render "list_locations.html",
+    <%# render "list_locations.html",
       character_items: @character_items,
       hide: @hide,
       items: @items,
@@ -42,7 +124,7 @@
       location_filter: @location_filter,
       moderate: @moderate
     %>
-    <%= render "list_mods.html",
+    <%# render "list_mods.html",
       character_items: @character_items,
       hide: @hide,
       items: @items,
@@ -52,15 +134,6 @@
     %>
   </div>
 </div>
-
-<%= render"bottom_bar.html",
-  character_items: @character_items,
-  hide: @hide,
-  items: @items,
-  moderate: @moderate,
-  moderator: @moderator,
-  search: @search
- %>
 
 <%= if @moderate && not is_nil(@changeset), do: render("modal.html",
   changeset: @changeset,

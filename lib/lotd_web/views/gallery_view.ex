@@ -39,6 +39,25 @@ defmodule LotdWeb.GalleryView do
     [{"Please select...", nil} | Enum.map(displays, &{&1.name, &1.id})]
   end
 
+  def filter_class(id) do
+    if is_nil(id), do: "btn-outline-secondary", else: "btn-secondary"
+  end
+
+  def filter_text_class(id) do
+    unless is_nil(id), do: "text-primary"
+  end
+
+  def filter_title(collection, id) do
+    if is_nil(id) do
+      "Filter: <span class='font-italic text-info'>none selected</span>"
+    else
+      case Enum.find(collection, & &1.id == id) do
+        nil -> "Filter: <span class='font-italic text-danger'>invalid</span>"
+        entry -> "Filter: <span class='font-italic text-warning'>#{entry.name}</span>"
+      end
+    end
+  end
+
   def room_items(items, displays, room_id) do
     display_ids = displays |> Enum.filter(& &1.room_id == room_id) |> Enum.map(& &1.id)
     Enum.filter(items, & Enum.member?(display_ids, &1.display_id))

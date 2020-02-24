@@ -1,34 +1,14 @@
 import $ from 'jquery'
 
-export default class MainView {
-  constructor() {
-    this.application_slug = "lotd-inventory-manager"
-  }
+// Simple method to generate a standard UUID used as a request ID.
+const uuidv4 = () => (
+  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16)
+  })
+)
 
-  mount() {
-
-    // enable login
-    $('#login-button').click(() => login())
-
-
-    // When page gains visibility. Cases:
-    // 1. when going from another tab to this tab
-    // 2. when another window fully covered this tab (only chrome >=73 for now)
-    // see: https://www.chromestatus.com/feature/6699045456183296
-
-    document.addEventListener('visibilitychange', () => {
-      // if (!document.hidden) focus_search()
-    })
-
-  }
-
-  unmount() {
-
-  }
-}
-
-// Temporarily connects to nexus api to retrieve api-key token
-const login = () => {
+export default () => {
 
   const socket = new WebSocket("wss://sso.nexusmods.com")
 
@@ -47,7 +27,7 @@ const login = () => {
   socket.onmessage = e => {
 
     // pass all messages back to the client by using the format type:value
-    var res = JSON.parse(e.data)
+    const res = JSON.parse(e.data)
 
     if (res && res.success){
 
@@ -55,8 +35,8 @@ const login = () => {
       if (res.data.hasOwnProperty('api_key')){
 
         // Send API key to webserver that will then try to connect with it and authenticate
-        document.getElementById("session_api_key").value = res.data.api_key
-        document.getElementById("login-form").submit()
+        $("#session_api_key").value = res.data.api_key
+        $("#login-form").submit()
 
         // close right away
         socket.close()
@@ -66,11 +46,3 @@ const login = () => {
     else console.error("Nexus Error: " + res.error)
   }
 }
-
-// Simple method to generate a standard UUID used as a request ID.
-const uuidv4 = () => (
-  'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16)
-  })
-)

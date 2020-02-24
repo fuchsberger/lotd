@@ -10,7 +10,8 @@ defmodule LotdWeb.LayoutView do
       method: "delete",
       id: "logout-button",
       class: "nav-link font-weight-bold",
-      title: "Logout"
+      data_toggle: "tooltip",
+      title: "Logout #{conn.assigns.current_user.name}"
   end
 
   def nav_item(conn, name, to, icon) do
