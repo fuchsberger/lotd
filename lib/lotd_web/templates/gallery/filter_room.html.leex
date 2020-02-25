@@ -24,9 +24,9 @@
       Room
       <span class="caret"></span>
     </button>
-    <div class="dropdown-menu" aria-labelledby="dropdown-room">
+    <div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-room">
       <button
-        class="list-group-item list-group-item-action px-2 py-0 <%= active(is_nil(@room_filter)) %>"
+        class="dropdown-item px-2 py-0 <%= active(is_nil(@room_filter)) %>"
         phx-click="filter"
         phx-value-type="room"
         phx-value-id=""
@@ -34,6 +34,7 @@
         <strong>All Rooms</strong>
         <span class="badge badge-secondary badge-pill"><%# d.count %></span>
       </button>
+      <div class="dropdown-divider"></div>
       <%= for r <- @rooms do %>
         <% items = room_items(@items, @displays, r.id) %>
         <button
