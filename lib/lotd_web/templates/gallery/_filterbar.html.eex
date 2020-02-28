@@ -1,0 +1,53 @@
+<ul class="nav justify-content-end nav-tabs pt-2">
+  <li class="nav-item flex-grow-1">
+    <%= f = form_for :search, "#", [phx_change: :search] %>
+      <div class='input-group'>
+        <%= if @moderator do %>
+          <div class="input-group-prepend">
+            <button class="btn btn-light border dropdown-toggle px-1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title='Add' phx-hook='tooltip'><i class='icon-add'></i></button>
+            <div class="dropdown-menu">
+              <%= add_link("item") %>
+              <div class="dropdown-divider"></div>
+              <%= add_link("room") %>
+              <%= add_link("display") %>
+              <div class="dropdown-divider"></div>
+              <%= add_link("region") %>
+              <%= add_link("location") %>
+              <div class="dropdown-divider"></div>
+              <%= add_link("mod") %>
+            </div>
+          </div>
+        <% end %>
+
+        <%= text_input f, :query,
+          autofocus: true,
+          class: "form-control",
+          placeholder: "Search...",
+          phx_debounce: 300,
+          value: @search
+        %>
+
+        <div class="input-group-append">
+          <button
+            class="btn btn-light border px-1"
+            type="button"
+            phx-click="clear-search"
+            phx-hook='tooltip'
+            title="Clear Search"
+          >
+            <i class='icon-remove'></i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </li>
+  <li class="nav-item d-none d-md-block ml-5">
+    <a  href="#" class='nav-link <%= if @tab == "location", do: " active" %>' phx-click='switch-tab' phx-value-tab='location'>Find</a>
+  </li>
+  <li class="nav-item dropdown d-none d-md-block">
+    <a  href="#" class='nav-link <%= if @tab == "gallery", do: " active" %>' phx-click='switch-tab' phx-value-tab='gallery'>Sort</a>
+  </li>
+  <li class="nav-item d-none d-md-block">
+    <a  href="#" class='nav-link <%= if @tab == "mod", do: " active" %>' phx-click='switch-tab' phx-value-tab='mod'>Mod</a>
+  </li>
+</ul>

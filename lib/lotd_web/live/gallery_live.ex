@@ -2,7 +2,7 @@ defmodule LotdWeb.GalleryLive do
 
   use Phoenix.LiveView, container: {:div, class: "container"}
   alias Lotd.{Accounts, Gallery}
-  alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
+  alias Lotd.Gallery.{Display, Item, Location, Mod, Region, Room}
 
   @defaults [
     character_id: nil,
@@ -13,7 +13,8 @@ defmodule LotdWeb.GalleryLive do
     hide: false,
     moderate: false,
     moderator: false,
-    search: ""
+    search: "",
+    tab: "location"
   ]
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
@@ -85,6 +86,7 @@ defmodule LotdWeb.GalleryLive do
         end
       "location" -> Gallery.change_location(%Location{})
       "mod" -> Gallery.change_mod(%Mod{})
+      "region" -> Gallery.change_region(%Region{})
       "room" -> Gallery.change_room(%Room{})
     end
 
@@ -99,6 +101,7 @@ defmodule LotdWeb.GalleryLive do
       "item" -> Gallery.change_item(Gallery.get_item!(id))
       "location" -> Gallery.change_location(Gallery.get_location!(id))
       "mod" -> Gallery.change_mod(Gallery.get_mod!(id))
+      "region" -> Gallery.change_region(Gallery.get_region!(id))
       "room" -> Gallery.change_room(Gallery.get_room!(id))
     end
     {:noreply, assign(socket, :changeset, changeset)}
@@ -111,6 +114,10 @@ defmodule LotdWeb.GalleryLive do
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
     {:noreply, assign(socket, :search, query)}
+  end
+
+  def handle_event("clear-search", _params, socket) do
+    {:noreply, assign(socket, :search, "")}
   end
 
   def handle_event("toggle-hide", _params, socket) do
@@ -139,6 +146,10 @@ defmodule LotdWeb.GalleryLive do
         items = List.delete(socket.assigns.character_items, id)
         {:noreply, assign(socket, character_items: items)}
     end
+  end
+
+  def handle_event("switch-tab", %{"tab" => tab}, socket) do
+    {:noreply, assign(socket, tab: tab, filter_type: nil, filter_val: nil)}
   end
 
   def handle_event("validate", params, socket) do

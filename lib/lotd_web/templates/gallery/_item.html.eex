@@ -21,17 +21,31 @@
       <% end %>
     </td>
   <% end %>
-  <td scope="row">
+  <td class='text-truncate' scope="row">
     <%= if @item.url,
       do: link(@item.name, to: @item.url, class: "text-dark", target: "_blank"),
       else: content_tag :span, @item.name, class: "text-secondary"
     %>
   </th>
-  <%= if @filter_type == "room" do %>
-    <td class='d-none d-md-block'>
+  <%= if @tab == "gallery" do %>
+    <td class='d-none d-lg-table-cell'>
+      <%= if @item.display.room.url,
+        do: link(@item.display.room.name, to: @item.display.room.url, class: "text-dark", target: "_blank"),
+        else: content_tag :span, @item.display.room.name, class: "text-muted"
+      %>
+    </td>
+    <td class='d-none d-md-table-cell'>
       <%= if @item.display.url,
         do: link(@item.display.name, to: @item.display.url, class: "text-dark", target: "_blank"),
         else: content_tag :span, @item.display.name, class: "text-muted"
+      %>
+    </td>
+  <% end %>
+  <%= if @tab == "mod" do %>
+    <td class='d-none d-md-table-cell'>
+      <%= if @item.mod.url,
+        do: link(@item.mod.name, to: @item.mod.url, class: "text-dark", target: "_blank"),
+        else: content_tag :span, @item.mod.name, class: "text-muted"
       %>
     </td>
   <% end %>

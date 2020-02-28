@@ -6,16 +6,7 @@ defmodule Lotd.Gallery do
 
   alias Lotd.Repo
   alias Lotd.Accounts.Character
-  alias Lotd.Gallery.{Display, Item, Location, Mod, Room}
-
-  # DISPLAYS -------------------------------------------------------------------------------------
-  def list_displays, do: Repo.all from(d in Display, preload: :room, order_by: d.name)
-
-  def get_display!(id), do: Repo.get!(Display, id)
-
-  def change_display(%Display{} = display), do: Display.changeset(display, %{})
-
-  def delete_display(%Display{} = display), do: Repo.delete(display)
+  alias Lotd.Gallery.{Item, Room, Region, Display, Location, Mod}
 
   # ITEMS ----------------------------------------------------------------------------------------
   def list_items,
@@ -39,6 +30,33 @@ defmodule Lotd.Gallery do
 
   def delete_item(%Item{} = item), do: Repo.delete(item)
 
+  # ROOMS ----------------------------------------------------------------------------------------
+  def list_rooms, do: Repo.all from(r in Room, order_by: r.name)
+
+  def get_room!(id), do: Repo.get!(Room, id)
+
+  def change_room(%Room{} = room), do: Room.changeset(room, %{})
+
+  def delete_room(%Room{} = room), do: Repo.delete(room)
+
+  # DISPLAYS -------------------------------------------------------------------------------------
+  def list_displays, do: Repo.all from(d in Display, preload: :room, order_by: d.name)
+
+  def get_display!(id), do: Repo.get!(Display, id)
+
+  def change_display(%Display{} = display), do: Display.changeset(display, %{})
+
+  def delete_display(%Display{} = display), do: Repo.delete(display)
+
+  # REGIONS --------------------------------------------------------------------------------------
+  def list_regions, do: Repo.all from(r in Region, order_by: r.name)
+
+  def get_region!(id), do: Repo.get!(Region, id)
+
+  def change_region(%Region{} = region), do: Region.changeset(region, %{})
+
+  def delete_region(%Region{} = region), do: Repo.delete(region)
+
   # LOCATIONS ------------------------------------------------------------------------------------
   def list_locations, do: Repo.all from(r in Location, order_by: r.name)
 
@@ -58,13 +76,4 @@ defmodule Lotd.Gallery do
   def change_mod(%Mod{} = mod), do: Mod.changeset(mod, %{})
 
   def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
-
-  # ROOMS ----------------------------------------------------------------------------------------
-  def list_rooms, do: Repo.all from(r in Room, order_by: r.name)
-
-  def get_room!(id), do: Repo.get!(Room, id)
-
-  def change_room(%Room{} = room), do: Room.changeset(room, %{})
-
-  def delete_room(%Room{} = room), do: Repo.delete(room)
 end

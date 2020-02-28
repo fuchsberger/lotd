@@ -1,16 +1,16 @@
 <button
-  id="dropdown-room"
+  id="dropdown-display"
   class="btn font-weight-bold dropdown-toggle p-0"
   type="button"
   data-toggle="dropdown"
   aria-haspopup="true"
   aria-expanded="false"
 >
-  <%= display_header_text(@rooms, @displays, @filter_type, @filter_val) %>
+  <%= header_display(@displays, @filter_type, @filter_val) %>
   <span class="caret"></span>
 </button>
 
-<div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-room">
+<div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-display">
   <button
     class="dropdown-item px-2 py-0 <%= active(@filter_type == "display" && is_nil(@filter_val)) %>"
     phx-click="filter"

@@ -7,6 +7,7 @@ defmodule Lotd.Gallery.Location do
   schema "locations" do
     field :name, :string
     field :url, :string
+    belongs_to :region, Lotd.Gallery.Region
     has_many :items, Lotd.Gallery.Item
   end
 
@@ -16,6 +17,7 @@ defmodule Lotd.Gallery.Location do
     |> cast(attrs, [:name, :url])
     |> validate_required([:name])
     |> validate_length(:name, max: 80)
+    |> assoc_constraint(:region)
     |> unique_constraint(:name)
   end
 end

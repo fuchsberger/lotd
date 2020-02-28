@@ -5,6 +5,9 @@ defmodule LotdWeb.GalleryView do
 
   def active(boolean), do: if boolean, do: " list-group-item-info"
 
+  def add_link(type), do: content_tag(:button, "Add #{String.capitalize(type)}",
+    class: "dropdown-item", type: "button", phx_click: "add", phx_value_type: type)
+
   def count(field, id, items) do
     items
     |> Enum.filter(& Map.get(&1, field) == id)
@@ -43,13 +46,23 @@ defmodule LotdWeb.GalleryView do
     if is_nil(id), do: "btn-outline-secondary", else: "btn-secondary"
   end
 
-  def display_header_text(rooms, displays, type, id) do
-    case {type, id} do
-      { _, nil } -> "Display"
+  def header_room(rooms, displays, filter, id) do
+    case {filter, id} do
+      {_, nil} -> "Room"
       {"room", id} -> Enum.find(rooms, & &1.id == id) |> Map.get(:name)
-      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:name)
+      {"display", id} -> Enum.find(displays, & &1.id == id).room.name
+      {_, _} -> "Room"
     end
   end
+
+  def header_display(displays, filter, id) do
+    case {filter, id} do
+      {_, nil} -> "Display"
+      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:name)
+      {_, _} -> "Display"
+    end
+  end
+
 
   def filter_text_class(id) do
     unless is_nil(id), do: "text-primary"

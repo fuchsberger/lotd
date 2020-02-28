@@ -1,80 +1,6 @@
 <% filtered_items = visible_items(@items, @character_items, @displays, @filter_type, @filter_val, @hide, @search) %>
 
-<ul class="nav justify-content-end nav-tabs pt-2">
-  <li class="nav-item flex-grow-1">
-    <%= f = form_for :search, "#", [phx_change: :search] %>
-      <div class='input-group'>
-
-        <%= if @moderate do %>
-          <button
-            class="btn p-0 btn-link float-right"
-            phx-click='add'
-            phx-value-type='item'
-            phx-hook='tooltip'
-            title='Add Item'
-          >
-            <i class='icon-add'></i>
-          </button>
-        <% end %>
-
-
-        <%= text_input f, :query,
-          autofocus: true,
-          class: "form-control",
-          placeholder: "Search Items...",
-          phx_debounce: 300,
-          value: @search
-        %>
-
-        <div class="input-group-append">
-          <%= if @moderator do %>
-            <button
-              class="btn btn-light border px-1"
-              type="button"
-              phx-click="toggle-moderate"
-            >
-              <i class='icon-edit'></i>
-            </button>
-          <% end %>
-          <button
-            class="btn btn-light border px-1"
-            type="button"
-            phx-click="filter"
-            phx-value-type="room"
-            phx-value-id=""
-            phx-hook='tooltip'
-            title="Clear Search and Filters"
-          >
-            <i class='icon-remove'></i>
-          </button>
-        </div>
-      </div>
-    </form>
-  </li>
-  <li class="nav-item dropdown d-none d-md-block ml-5">
-    <%= render "filter_room.html",
-      character_items: @character_items,
-      displays: @displays,
-      items: @items,
-      rooms: @rooms,
-      filter_type: @filter_type,
-      filter_val: @filter_val
-    %>
-  </li>
-  <%# <li class="nav-item d-none d-md-block">
-    <a class="nav-link disabled" href="#">Region</a>
-  </li> %>
-  <li class="nav-item d-none d-md-block">
-    <%= render "filter_mod.html",
-      character_items: @character_items,
-      hide: @hide,
-      items: @items,
-      mods: @mods,
-      filter_type: @filter_type,
-      filter_val: @filter_val
-    %>
-  </li>
-</ul>
+<%= render "_filterbar.html", moderator: @moderator, search: @search, tab: @tab %>
 
 <table class="table table-sm">
   <thead>
@@ -93,14 +19,37 @@
         </th>
       <% end %>
       <th class='border-top-0' scope='col'>Item</th>
-      <%= if @filter_type == "room" || @filter_type == "display" do %>
-        <th scope="col" class='d-none d-md-block border-top-0'>
+      <%= if @tab == "gallery" do %>
+        <th scope="col" class='d-none d-lg-table-cell border-top-0'>
+          <%= render "filter_room.html",
+            character_items: @character_items,
+            displays: @displays,
+            items: @items,
+            rooms: @rooms,
+            filter_type: @filter_type,
+            filter_val: @filter_val
+          %>
+        </th>
+        <th scope="col" class='d-none d-md-table-cell border-top-0'>
           <%= render "filter_display.html",
             character_items: @character_items,
             displays: @displays,
             hide: @hide,
             items: @items,
             rooms: @rooms,
+            filter_type: @filter_type,
+            filter_val: @filter_val
+          %>
+        </th>
+      <% end %>
+
+      <%= if @tab == "mod" do %>
+        <th scope="col" class='d-none d-md-table-cell border-top-0'>
+          <%= render "filter_mod.html",
+            character_items: @character_items,
+            hide: @hide,
+            items: @items,
+            mods: @mods,
             filter_type: @filter_type,
             filter_val: @filter_val
           %>
@@ -114,7 +63,7 @@
       authenticated?: not is_nil(@character_id),
       character_items: @character_items,
       moderate: @moderate,
-      filter_type: @filter_type
+      tab: @tab
     %>
   </tbody>
 </table>

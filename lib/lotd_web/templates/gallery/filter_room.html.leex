@@ -1,13 +1,13 @@
 <a
   id="dropdown-room"
-  class="nav-link dropdown-toggle<%= if @filter_type == "room" || @filter_type == "display", do: " active" %>"
+  class="btn font-weight-bold dropdown-toggle p-0"
   type="button"
   href='#'
   data-toggle="dropdown"
   aria-haspopup="true"
   aria-expanded="false"
 >
-  Room
+  <%= header_room(@rooms, @displays, @filter_type, @filter_val) %>
   <span class="caret"></span>
 </a>
 
