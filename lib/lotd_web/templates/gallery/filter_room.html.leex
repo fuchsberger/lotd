@@ -2,18 +2,18 @@
   id="dropdown-room"
   class="btn font-weight-bold dropdown-toggle p-0"
   type="button"
-  href='#'
+  href="#",
   data-toggle="dropdown"
   aria-haspopup="true"
   aria-expanded="false"
 >
-  <%= header_room(@rooms, @displays, @filter_type, @filter_val) %>
+  Room
   <span class="caret"></span>
 </a>
 
 <div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-room">
   <button
-    class="dropdown-item px-2 py-0 <%= active(@filter_type == "room" && is_nil(@filter_val)) %>"
+    class="dropdown-item px-2 py-0 <%= if active("room", @filter, @filter_val, nil), do: "list-group-item-info" %>"
     phx-click="filter"
     phx-value-type="room"
     phx-value-id=""
@@ -24,7 +24,7 @@
   <%= for r <- @rooms do %>
     <% items = room_items(@items, @displays, r.id) %>
     <button
-      class="dropdown-item px-2 py-0 <%= active(@filter_type == "room" && r.id == @filter_val) %>"
+      class="dropdown-item px-2 py-0 <%= if active("room", @filter, @filter_val, r.id), do: "list-group-item-info" %>"
       type="button"
       phx-click="filter"
       phx-value-type="room"

@@ -9,16 +9,20 @@ defmodule Lotd.Gallery do
   alias Lotd.Gallery.{Item, Room, Region, Display, Location, Mod}
 
   # ITEMS ----------------------------------------------------------------------------------------
-  def list_items,
-    do: Repo.all from(i in Item, preload: [:location, :mod, display: [:room]],order_by: i.name)
+  def list_items do
+    Repo.all from(i in Item,
+      preload: [:mod, display: [:room], location: [:region]],
+      order_by: i.name
+    )
+  end
 
   def list_items(character), do:
     Repo.all from(i in Item,
       order_by: i.name,
       preload: [
-        :location,
         :mod,
         characters: ^from(c in Character, select: c.id, where: c.id == ^character.id),
+        location: [:region],
         display: [:room]
       ],
       where: i.mod_id in ^character.mods
@@ -58,7 +62,7 @@ defmodule Lotd.Gallery do
   def delete_region(%Region{} = region), do: Repo.delete(region)
 
   # LOCATIONS ------------------------------------------------------------------------------------
-  def list_locations, do: Repo.all from(r in Location, order_by: r.name)
+  def list_locations, do: Repo.all from(r in Location, preload: :region, order_by: r.name)
 
   def get_location!(id), do: Repo.get!(Location, id)
 

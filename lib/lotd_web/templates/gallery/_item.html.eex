@@ -21,27 +21,36 @@
       <% end %>
     </td>
   <% end %>
-  <td class='text-truncate' scope="row">
+  <th class='text-truncate' scope="row">
     <%= if @item.url,
       do: link(@item.name, to: @item.url, class: "text-dark", target: "_blank"),
       else: content_tag :span, @item.name, class: "text-secondary"
     %>
   </th>
-  <%= if @tab == "gallery" do %>
-    <td class='d-none d-lg-table-cell'>
+  <%= if Map.get(@columns, :room) do %>
+    <td class='d-none d-lg-table-cell small'>
       <%= if @item.display.room.url,
         do: link(@item.display.room.name, to: @item.display.room.url, class: "text-dark", target: "_blank"),
         else: content_tag :span, @item.display.room.name, class: "text-muted"
       %>
     </td>
-    <td class='d-none d-md-table-cell'>
+  <% end %>
+  <%= if Map.get(@columns, :display) do %>
+    <td class='d-none d-md-table-cell small'>
       <%= if @item.display.url,
         do: link(@item.display.name, to: @item.display.url, class: "text-dark", target: "_blank"),
         else: content_tag :span, @item.display.name, class: "text-muted"
       %>
     </td>
   <% end %>
-  <%= if @tab == "mod" do %>
+  <%= if Map.get(@columns, :region) do %>
+    <td class='d-none d-md-table-cell small'>Region</th>
+  <% end %>
+
+  <%= if Map.get(@columns, :location) do %>
+    <td scope="col" class='d-none d-md-table-cell small'>Location</th>
+  <% end %>
+  <%= if Map.get(@columns, :mod) do %>
     <td class='d-none d-md-table-cell'>
       <%= if @item.mod.url,
         do: link(@item.mod.name, to: @item.mod.url, class: "text-dark", target: "_blank"),

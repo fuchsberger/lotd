@@ -5,6 +5,10 @@ defmodule LotdWeb.GalleryView do
 
   def active(boolean), do: if boolean, do: " list-group-item-info"
 
+  def active(col, filter, id, check) do
+    if filter == col, do: id == check, else: false
+  end
+
   def add_link(type), do: content_tag(:button, "Add #{String.capitalize(type)}",
     class: "dropdown-item", type: "button", phx_click: "add", phx_value_type: type)
 
@@ -46,15 +50,6 @@ defmodule LotdWeb.GalleryView do
     if is_nil(id), do: "btn-outline-secondary", else: "btn-secondary"
   end
 
-  def header_room(rooms, displays, filter, id) do
-    case {filter, id} do
-      {_, nil} -> "Room"
-      {"room", id} -> Enum.find(rooms, & &1.id == id) |> Map.get(:name)
-      {"display", id} -> Enum.find(displays, & &1.id == id).room.name
-      {_, _} -> "Room"
-    end
-  end
-
   def header_display(displays, filter, id) do
     case {filter, id} do
       {_, nil} -> "Display"
@@ -63,6 +58,38 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
+  defp crumb_link(title, filter, id) do
+    link title, to: "#", phx_click: "filter", phx_value_type: filter, phx_value_id: id
+  end
+
+  defp crumb(content, active \\ false) do
+    if active do
+      content_tag(:li, content, class: "breadcrumb-item active", aria_current: "page")
+    else
+      content_tag(:li, content, class: "breadcrumb-item")
+    end
+  end
+
+  def filter_text(filter, id, rooms, displays, regions, locations, mods) do
+    case {filter, id} do
+      {_, nil} -> nil
+      {"room", id} -> Enum.find(rooms, & &1.id == id) |> Map.get(:name)
+      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:name)
+      {"region", id} -> Enum.find(regions, & &1.id == id) |> Map.get(:name)
+      {"location", id} -> Enum.find(locations, & &1.id == id) |> Map.get(:name)
+      {"mod", id} -> Enum.find(mods, & &1.id == id) |> Map.get(:name)
+      _ -> nil
+    end
+  end
+
+  def filter_parent(filter, id, rooms, displays, regions, locations) do
+    case {filter, id} do
+      {_, nil} -> nil
+      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:room)
+      {"location", id} -> Enum.find(locations, & &1.id == id) |> Map.get(:region)
+      _ -> nil
+    end
+  end
 
   def filter_text_class(id) do
     unless is_nil(id), do: "text-primary"
@@ -108,11 +135,11 @@ defmodule LotdWeb.GalleryView do
     case {filter, id} do
       {_, nil} -> displays
       {"room", id} -> Enum.filter(displays, & &1.room_id == id)
-      {_, id} -> displays
+      _ -> displays
     end
   end
 
-  def visible_items(items, character_items, displays, filter_type, filter_val, hide, search) do
+  def visible_items(items, character_items, displays, locations, filter, filter_val, hide, search) do
     items =
       cond do
         search != "" ->
@@ -122,7 +149,7 @@ defmodule LotdWeb.GalleryView do
         is_nil(filter_val) ->
           items
 
-        filter_type == "room" ->
+        filter == "room" ->
           display_ids =
             displays
             |> Enum.filter(& &1.room_id == filter_val)
@@ -130,13 +157,21 @@ defmodule LotdWeb.GalleryView do
 
           Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
 
-        filter_type == "display" ->
+        filter == "display" ->
           Enum.filter(items, & &1.display_id == filter_val)
 
-        filter_type == "location" ->
+        filter == "region" ->
+          location_ids =
+            locations
+            |> Enum.filter(& &1.region_id == filter_val)
+            |> Enum.map(& &1.id)
+
+          Enum.filter(items, & Enum.member?(location_ids, &1.location_id))
+
+        filter == "location" ->
           Enum.filter(items, & &1.location_id == filter_val)
 
-        filter_type == "mod" ->
+        filter == "mod" ->
           Enum.filter(items, & &1.mod_id == filter_val)
       end
 

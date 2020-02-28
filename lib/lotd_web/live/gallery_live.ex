@@ -8,13 +8,19 @@ defmodule LotdWeb.GalleryLive do
     character_id: nil,
     character_items: nil,
     changeset: nil,
-    filter_type: "room",
+    columns: %{
+      room: true,
+      display: true,
+      region: true,
+      location: true,
+      mod: false
+    },
+    filter: nil,
     filter_val: nil,
     hide: false,
     moderate: false,
     moderator: false,
-    search: "",
-    tab: "location"
+    search: ""
   ]
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
@@ -34,14 +40,19 @@ defmodule LotdWeb.GalleryLive do
       do: Gallery.list_displays(),
       else: list_assoc(items, :display)
 
+    locations = if user.moderator,
+      do: Gallery.list_locations(),
+      else: list_assoc(items, :location)
+
     assigns = [
       character_id: user.active_character.id,
       character_items: user.active_character.items,
       displays: displays,
       items: items,
-      locations: list_assoc(items, :location),
+      locations: locations,
       moderator: user.moderator,
       mods: mods,
+      regions: list_assoc(locations, :region),
       rooms: list_assoc(displays, :room)
     ]
 
@@ -79,7 +90,7 @@ defmodule LotdWeb.GalleryLive do
         if is_nil(socket.assigns.filter_val) do
           Gallery.change_item(%Item{})
         else
-          field = String.to_atom("#{socket.assigns.filter_type}_id")
+          field = String.to_atom("#{socket.assigns.filter}_id")
           %Item{}
           |> Gallery.change_item()
           |> Ecto.Changeset.put_change(field, socket.assigns.filter_val)
@@ -108,8 +119,11 @@ defmodule LotdWeb.GalleryLive do
   end
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
-    id = if id == "", do: nil, else: String.to_integer(id)
-    {:noreply, assign(socket, filter_type: type, filter_val: id)}
+    case {type, id} do
+      {"", ""} -> {:noreply, assign(socket, filter: nil,  filter_val: nil)}
+      {type, ""} -> {:noreply, assign(socket, filter: type, filter_val: nil)}
+      {type, id} -> {:noreply, assign(socket, filter: type, filter_val: String.to_integer(id))}
+    end
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
@@ -149,7 +163,7 @@ defmodule LotdWeb.GalleryLive do
   end
 
   def handle_event("switch-tab", %{"tab" => tab}, socket) do
-    {:noreply, assign(socket, tab: tab, filter_type: nil, filter_val: nil)}
+    {:noreply, assign(socket, tab: tab, filter: nil, filter_val: nil)}
   end
 
   def handle_event("validate", params, socket) do
