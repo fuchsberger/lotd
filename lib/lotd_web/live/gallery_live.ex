@@ -8,15 +8,12 @@ defmodule LotdWeb.GalleryLive do
     character_id: nil,
     character_items: nil,
     changeset: nil,
-    display_filter: nil,
+    filter_type: "room",
+    filter_val: nil,
     hide: false,
-    location_filter: nil,
     moderate: false,
     moderator: false,
-    mod_filter: nil,
-    room_filter: nil,
-    search: "",
-    user: nil
+    search: ""
   ]
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
@@ -78,10 +75,14 @@ defmodule LotdWeb.GalleryLive do
     changeset = case type do
       "display" -> Gallery.change_display(%Display{})
       "item" ->
-        Gallery.change_item(%Item{})
-        |> Ecto.Changeset.put_change(:display_id, socket.assigns.display_filter)
-        |> Ecto.Changeset.put_change(:location_id, socket.assigns.location_filter)
-        |> Ecto.Changeset.put_change(:mod_id, socket.assigns.mod_filter)
+        if is_nil(socket.assigns.filter_val) do
+          Gallery.change_item(%Item{})
+        else
+          field = String.to_atom("#{socket.assigns.filter_type}_id")
+          %Item{}
+          |> Gallery.change_item()
+          |> Ecto.Changeset.put_change(field, socket.assigns.filter_val)
+        end
       "location" -> Gallery.change_location(%Location{})
       "mod" -> Gallery.change_mod(%Mod{})
       "room" -> Gallery.change_room(%Room{})
@@ -105,12 +106,7 @@ defmodule LotdWeb.GalleryLive do
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
     id = if id == "", do: nil, else: String.to_integer(id)
-    case type do
-      "display" -> {:noreply, assign(socket, display_filter: id)}
-      "location" -> {:noreply, assign(socket, location_filter: id)}
-      "mod" -> {:noreply, assign(socket, mod_filter: id)}
-      "room" -> {:noreply, assign(socket, room_filter: id, display_filter: nil)}
-    end
+    {:noreply, assign(socket, filter_type: type, filter_val: id)}
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do

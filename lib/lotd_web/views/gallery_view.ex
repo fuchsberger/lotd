@@ -43,6 +43,14 @@ defmodule LotdWeb.GalleryView do
     if is_nil(id), do: "btn-outline-secondary", else: "btn-secondary"
   end
 
+  def display_header_text(rooms, displays, type, id) do
+    case {type, id} do
+      { _, nil } -> "Display"
+      {"room", id} -> Enum.find(rooms, & &1.id == id) |> Map.get(:name)
+      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:name)
+    end
+  end
+
   def filter_text_class(id) do
     unless is_nil(id), do: "text-primary"
   end
@@ -61,19 +69,6 @@ defmodule LotdWeb.GalleryView do
   def room_items(items, displays, room_id) do
     display_ids = displays |> Enum.filter(& &1.room_id == room_id) |> Enum.map(& &1.id)
     Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
-  end
-
-  def item_icon(id, user_items, moderate) do
-    cond do
-      moderate ->
-        icon("edit", class: "text-primary")
-
-      is_list(user_items) ->
-        active_class = if Enum.member?(user_items, id), do: "active", else: "inactive"
-        icon("edit", class: "text-primary mr-1 icon-#{active_class}")
-
-      true -> nil
-    end
   end
 
   def room_options, do: [
@@ -96,45 +91,48 @@ defmodule LotdWeb.GalleryView do
 
   def title(struct), do: struct_to_string(struct) |> String.capitalize()
 
-  def visible_displays(displays, room_filter) do
-    if is_nil(room_filter),
-      do: displays,
-      else: Enum.filter(displays, & &1.room_id == room_filter)
+  def visible_displays(displays, filter, id) do
+    case {filter, id} do
+      {_, nil} -> displays
+      {"room", id} -> Enum.filter(displays, & &1.room_id == id)
+      {_, id} -> displays
+    end
   end
 
-  def visible_items(items, character_items, displays, display_filter, location_filter, mod_filter, room_filter, hide, search) do
-    display_ids = cond do
-      not is_nil(display_filter) ->
-        [ display_filter ]
-
-      not is_nil(room_filter) ->
-        displays
-        |> Enum.filter(& &1.room_id == room_filter)
-        |> Enum.map(& &1.id)
-
-      true ->
-        Enum.map(displays, & &1.id)
-    end
-
-    search = String.downcase(search)
-
+  def visible_items(items, character_items, displays, filter_type, filter_val, hide, search) do
     items =
-      items
-      |> Enum.filter(& Enum.member?(display_ids, &1.display_id))
-      |> Enum.filter(& String.contains?(String.downcase(&1.name), search))
+      cond do
+        search != "" ->
+          search = String.downcase(search)
+          Enum.filter(items, & String.contains?(String.downcase(&1.name), search))
 
-    items = if location_filter,
-      do: Enum.filter(items, & &1.location_id == location_filter),
-      else: items
+        is_nil(filter_val) ->
+          items
 
-    items = if mod_filter,
-      do: Enum.filter(items, & &1.mod_id == mod_filter),
-      else: items
+        filter_type == "room" ->
+          display_ids =
+            displays
+            |> Enum.filter(& &1.room_id == filter_val)
+            |> Enum.map(& &1.id)
 
+          Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
+
+        filter_type == "display" ->
+          Enum.filter(items, & &1.display_id == filter_val)
+
+        filter_type == "location" ->
+          Enum.filter(items, & &1.location_id == filter_val)
+
+        filter_type == "mod" ->
+          Enum.filter(items, & &1.mod_id == filter_val)
+      end
+
+    # if hide is on, remove collected items first
     items = if hide,
       do: Enum.reject(items, & Enum.member?(character_items, &1.id)),
       else: items
 
+    # only show 200 items for performance reasons
     Enum.take(items, 200)
   end
 end

@@ -1,0 +1,53 @@
+<a
+  id="dropdown-mod"
+  class="nav-link dropdown-toggle<%= if @filter_type == "mod", do: " active" %>"
+  type="button"
+  href='#'
+  data-toggle="dropdown"
+  aria-haspopup="true"
+  aria-expanded="false"
+>
+  Mod
+  <span class="caret"></span>
+</a>
+
+<div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-mod">
+  <button
+    class="dropdown-item px-2 py-0 <%= active(@filter_type == "mod" && is_nil(@filter_val)) %>"
+    phx-click="filter"
+    phx-value-type="mod"
+    phx-value-id=""
+  >
+    <strong>All Mods</strong>
+  </button>
+  <div class="dropdown-divider"></div>
+  <%= for m <- @mods do %>
+    <% found = if @character_items,
+      do: count(:mod_id, m.id, @items, @character_items),
+      else: 0
+    %>
+    <% count = count(:mod_id, m.id, @items) %>
+    <button
+      class="dropdown-item px-2 py-0 <%= active(@filter_type == "mod" && m.id == @filter_val) %>"
+      type="button"
+      phx-click="filter"
+      phx-value-type="mod"
+      phx-value-id="<%= m.id %>"
+    >
+      <%= m.name %>
+      <div class='float-right pl-2'>
+        <small>
+          <%= if @character_items do %>
+            <%= found %> /
+          <% end %>
+          <%= count %>
+        </small>
+        <%= if m.url do %>
+          <a href='<%= m.url %>' target='_blank' onClick="event.stopPropagation()">
+            <i class='icon-link'></i>
+          </a>
+        <% end %>
+      </div>
+    </button>
+  <% end %>
+</div>

@@ -9,7 +9,7 @@
     <title>LOTD Inventory Manager</title>
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
   </head>
-  <body data-view='<%= view_name(@view_module, @view_template) %>'>
+  <body>
     <%= render "navbar.html", conn: @conn %>
     <%= render @view_module, @view_template, assigns %>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>

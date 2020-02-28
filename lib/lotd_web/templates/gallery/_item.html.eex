@@ -1,0 +1,38 @@
+<tr>
+  <%= if @authenticated? do %>
+    <td class='p-0'>
+      <%= if @moderate do %>
+        <button
+          class='btn btn-link p-0'
+          phx-click='edit'
+          phx-value-id='<%= @item.id %>'
+          phx-value-type="item"
+        >
+          <i class='icon-edit'></i>
+        </button>
+      <% else %>
+        <button
+          class='btn btn-link p-0'
+          phx-click='toggle-item'
+          phx-value-id='<%= @item.id %>'
+        >
+          <i class='icon-<%= if Enum.member?(@character_items, @item.id), do: "active", else: "inactive" %>'></i>
+        </button>
+      <% end %>
+    </td>
+  <% end %>
+  <td scope="row">
+    <%= if @item.url,
+      do: link(@item.name, to: @item.url, class: "text-dark", target: "_blank"),
+      else: content_tag :span, @item.name, class: "text-secondary"
+    %>
+  </th>
+  <%= if @filter_type == "room" do %>
+    <td class='d-none d-md-block'>
+      <%= if @item.display.url,
+        do: link(@item.display.name, to: @item.display.url, class: "text-dark", target: "_blank"),
+        else: content_tag :span, @item.display.name, class: "text-muted"
+      %>
+    </td>
+  <% end %>
+</tr>
