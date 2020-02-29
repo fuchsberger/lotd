@@ -173,6 +173,7 @@ defmodule LotdWeb.GalleryLive do
         %Item{} -> Item.changeset(socket.assigns.changeset.data, params["item"])
         %Location{} -> Location.changeset(socket.assigns.changeset.data, params["location"])
         %Mod{} -> Mod.changeset(socket.assigns.changeset.data, params["mod"])
+        %Region{} -> Room.changeset(socket.assigns.changeset.data, params["region"])
         %Room{} -> Room.changeset(socket.assigns.changeset.data, params["room"])
       end
 

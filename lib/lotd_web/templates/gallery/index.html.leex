@@ -50,7 +50,7 @@
       </th>
       <th scope="col" class='d-none d-md-table-cell border-top-0'>Region</th>
       <th scope="col" class='d-none d-md-table-cell border-top-0'>Location</th>
-      <th scope="col" class='d-none d-md-table-cell border-top-0'>
+      <th scope="col" class='d-none d-md-table-cell border-top-0 px-0'>
         <%= render "filter_mod.html",
           character_items: @character_items,
           hide: @hide,
@@ -61,7 +61,7 @@
         %>
       </th>
       <%= if @moderator do %>
-        <th class='d-none d-md-table-cell border-top-0 p-0' scope='col'>
+        <th class='d-none d-md-table-cell border-top-0 px-0' scope='col'>
           <i class='icon-edit'></i>
         </th>
       <% end %>
