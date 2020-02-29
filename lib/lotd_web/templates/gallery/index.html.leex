@@ -8,16 +8,6 @@
   filter: @filter
 %>
 
-<div class="collapse" id="collapseExample">
-  <div class="card border-top-0 rounded-bottom">
-    <div class='row'>
-      <div class="col">Test</div>
-      <div class="col">Test</div>
-      <div class="col">Test</div>
-    </div>
-  </div>
-</div>
-
 <table class="table table-sm">
   <thead>
     <tr>
@@ -47,37 +37,32 @@
           %>
         </th>
       <% end %>
-      <%= if Map.get(@columns, :display) do %>
-        <th scope="col" class='d-none d-md-table-cell border-top-0'>
-          <%= render "filter_display.html",
-            character_items: @character_items,
-            displays: @displays,
-            hide: @hide,
-            items: @items,
-            rooms: @rooms,
-            filter: @filter,
-            filter_val: @filter_val
-          %>
-        </th>
-      <% end %>
-      <%= if Map.get(@columns, :region) do %>
-        <th scope="col" class='d-none d-md-table-cell border-top-0'>Region</th>
-      <% end %>
-
-      <%= if Map.get(@columns, :location) do %>
-        <th scope="col" class='d-none d-md-table-cell border-top-0'>Location</th>
-      <% end %>
-
-      <%= if Map.get(@columns, :mod) do %>
-        <th scope="col" class='d-none d-md-table-cell border-top-0'>
-          <%= render "filter_mod.html",
-            character_items: @character_items,
-            hide: @hide,
-            items: @items,
-            mods: @mods,
-            filter: @filter,
-            filter_val: @filter_val
-          %>
+      <th scope="col" class='d-none d-md-table-cell border-top-0'>
+        <%= render "filter_display.html",
+          character_items: @character_items,
+          displays: @displays,
+          hide: @hide,
+          items: @items,
+          rooms: @rooms,
+          filter: @filter,
+          filter_val: @filter_val
+        %>
+      </th>
+      <th scope="col" class='d-none d-md-table-cell border-top-0'>Region</th>
+      <th scope="col" class='d-none d-md-table-cell border-top-0'>Location</th>
+      <th scope="col" class='d-none d-md-table-cell border-top-0'>
+        <%= render "filter_mod.html",
+          character_items: @character_items,
+          hide: @hide,
+          items: @items,
+          mods: @mods,
+          filter: @filter,
+          filter_val: @filter_val
+        %>
+      </th>
+      <%= if @moderator do %>
+        <th class='d-none d-md-table-cell border-top-0 p-0' scope='col'>
+          <i class='icon-edit'></i>
         </th>
       <% end %>
     </tr>
@@ -87,8 +72,7 @@
       as: :item,
       authenticated?: not is_nil(@character_id),
       character_items: @character_items,
-      columns: @columns,
-      moderate: @moderate,
+      moderator: @moderator,
       filter: @filter
     %>
   </tbody>

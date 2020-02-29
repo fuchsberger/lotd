@@ -106,6 +106,18 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
+  def details_cell(nil), do: content_tag(:td, "", class: "d-none d-md-table-cell small")
+
+  def details_cell(object) do
+    class = "d-none d-md-table-cell small"
+
+    if object.url do
+      content_tag(:td, link(object.name, to: object.url, class: "text-dark", target: "_blank"), class: class)
+    else
+      content_tag(:td, content_tag(:span, object.name, class: "text-muted"), class: class)
+    end
+  end
+
   def room_items(items, displays, room_id) do
     display_ids = displays |> Enum.filter(& &1.room_id == room_id) |> Enum.map(& &1.id)
     Enum.filter(items, & Enum.member?(display_ids, &1.display_id))

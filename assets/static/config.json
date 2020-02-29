@@ -79,15 +79,21 @@
       "src": "fontawesome"
     },
     {
-      "uid": "e15f0d620a7897e2035c18c80142f6d9",
-      "css": "link",
-      "code": 61582,
-      "src": "fontawesome"
-    },
-    {
       "uid": "31972e4e9d080eaa796290349ae6c1fd",
       "css": "users",
       "code": 59401,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "5f0f183e241d15cbe486bff88b188dff",
+      "css": "mod",
+      "code": 61742,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "dec0ce0476433f7e49e096526cf89465",
+      "css": "replica",
+      "code": 59402,
       "src": "fontawesome"
     }
   ]
