@@ -10,7 +10,11 @@ defmodule LotdWeb.GalleryView do
   end
 
   def add_link(type), do: content_tag(:button, "Add #{String.capitalize(type)}",
-    class: "dropdown-item", type: "button", phx_click: "add", phx_value_type: type)
+    class: "dropdown-item",
+    type: "button",
+    phx_click: "add",
+    phx_value_type: type
+  )
 
   def count(field, id, items) do
     items
@@ -82,7 +86,7 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def filter_parent(filter, id, rooms, displays, regions, locations) do
+  def filter_parent(filter, id, displays, locations) do
     case {filter, id} do
       {_, nil} -> nil
       {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:room)

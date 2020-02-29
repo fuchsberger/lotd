@@ -8,6 +8,29 @@ defmodule Lotd.Gallery do
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Room, Region, Display, Location, Mod}
 
+  # GENERAL --------------------------------------------------------------------------------------
+  def changeset(type) do
+    case type do
+      "item" -> change_item(%Item{})
+      "room" -> change_room(%Room{})
+      "display" -> change_display(%Display{})
+      "region" -> change_region(%Region{})
+      "location" -> change_location(%Location{})
+      "mod" -> change_mod(%Mod{})
+    end
+  end
+
+  def changeset(type, id) do
+    case type do
+      "item" -> Gallery.change_item(get_item!(id))
+      "room" -> Gallery.change_room(get_room!(id))
+      "display" -> Gallery.change_display(get_display!(id))
+      "region" -> Gallery.change_region(get_region!(id))
+      "location" -> Gallery.change_location(get_location!(id))
+      "mod" -> Gallery.change_mod(get_mod!(id))
+    end
+  end
+
   # ITEMS ----------------------------------------------------------------------------------------
   def list_items do
     Repo.all from(i in Item,

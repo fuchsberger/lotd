@@ -2,19 +2,12 @@ defmodule LotdWeb.GalleryLive do
 
   use Phoenix.LiveView, container: {:div, class: "container"}
   alias Lotd.{Accounts, Gallery}
+  alias LotdWeb.ModalComponent
   alias Lotd.Gallery.{Display, Item, Location, Mod, Region, Room}
 
   @defaults [
     character_id: nil,
     character_items: nil,
-    changeset: nil,
-    columns: %{
-      room: true,
-      display: true,
-      region: true,
-      location: true,
-      mod: false
-    },
     filter: nil,
     filter_val: nil,
     hide: false,
@@ -83,39 +76,14 @@ defmodule LotdWeb.GalleryLive do
     |> Enum.sort_by(& &1.name, :asc)
   end
 
-  def handle_event("add", %{"type" => type }, socket) do
-    changeset = case type do
-      "display" -> Gallery.change_display(%Display{})
-      "item" ->
-        if is_nil(socket.assigns.filter_val) do
-          Gallery.change_item(%Item{})
-        else
-          field = String.to_atom("#{socket.assigns.filter}_id")
-          %Item{}
-          |> Gallery.change_item()
-          |> Ecto.Changeset.put_change(field, socket.assigns.filter_val)
-        end
-      "location" -> Gallery.change_location(%Location{})
-      "mod" -> Gallery.change_mod(%Mod{})
-      "region" -> Gallery.change_region(%Region{})
-      "room" -> Gallery.change_room(%Room{})
-    end
-
-    {:noreply, assign(socket, :changeset, changeset)}
+  def handle_event("add", %{"type" => type}, socket) do
+    send_update(ModalComponent, id: :modal, changeset: Gallery.changeset(type))
+    {:noreply, socket}
   end
 
-  def handle_event("cancel", _params, socket), do:  {:noreply, assign(socket, :changeset, nil)}
-
   def handle_event("edit", %{"id" => id, "type" => type}, socket) do
-    changeset = case type do
-      "display" -> Gallery.change_display(Gallery.get_display!(id))
-      "item" -> Gallery.change_item(Gallery.get_item!(id))
-      "location" -> Gallery.change_location(Gallery.get_location!(id))
-      "mod" -> Gallery.change_mod(Gallery.get_mod!(id))
-      "region" -> Gallery.change_region(Gallery.get_region!(id))
-      "room" -> Gallery.change_room(Gallery.get_room!(id))
-    end
-    {:noreply, assign(socket, :changeset, changeset)}
+    send_update(ModalComponent, id: :modal, changeset: Gallery.changeset(type, id))
+    {:noreply, socket}
   end
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
@@ -166,130 +134,62 @@ defmodule LotdWeb.GalleryLive do
     {:noreply, assign(socket, tab: tab, filter: nil, filter_val: nil)}
   end
 
-  def handle_event("validate", params, socket) do
-    changeset =
-      case socket.assigns.changeset.data do
-        %Display{} -> Display.changeset(socket.assigns.changeset.data, params["display"])
-        %Item{} -> Item.changeset(socket.assigns.changeset.data, params["item"])
-        %Location{} -> Location.changeset(socket.assigns.changeset.data, params["location"])
-        %Mod{} -> Mod.changeset(socket.assigns.changeset.data, params["mod"])
-        %Region{} -> Room.changeset(socket.assigns.changeset.data, params["region"])
-        %Room{} -> Room.changeset(socket.assigns.changeset.data, params["room"])
-      end
-
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
-
-  def handle_event("save", _params, socket) do
-    case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
-      {:ok, object } ->
-        socket = assign(socket, :changeset, nil)
-
-        # try to find object in appropriate list and update list
-        case object do
-          %Display{} ->
-
-            displays =
-              socket.assigns.displays
-              |> Enum.reject(& &1.id == object.id)
-              |> List.insert_at(0, object)
-              |> Enum.sort_by(&(&1.name))
-            {:noreply, assign(socket, displays: displays)}
-
-          %Item{} ->
-            items =
-              socket.assigns.items
-              |> Enum.reject(& &1.id == object.id)
-              |> List.insert_at(0, object)
-              |> Enum.sort_by(&(&1.name))
-
-            {:noreply, assign(socket, items: items)}
-
-          %Location{} ->
-            locations =
-              socket.assigns.locations
-              |> Enum.reject(& &1.id == object.id)
-              |> List.insert_at(0, object)
-              |> Enum.sort_by(&(&1.name))
-
-            {:noreply, assign(socket, locations: locations)}
-
-          %Mod{} ->
-            mods =
-              socket.assigns.mods
-              |> Enum.reject(& &1.id == object.id)
-              |> List.insert_at(0, object)
-              |> Enum.sort_by(&(&1.name))
-
-            {:noreply, assign(socket, mods: mods)}
-
-          %Room{} ->
-            rooms =
-              socket.assigns.rooms
-              |> Enum.reject(& &1.id == object.id)
-              |> List.insert_at(0, object)
-              |> Enum.sort_by(&(&1.name))
-
-            {:noreply, assign(socket, rooms: rooms)}
-        end
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
-    end
-  end
-
-  def handle_event("delete", _params, socket) do
-    id =  socket.assigns.changeset.data.id
-    case socket.assigns.changeset.data do
-      %Display{} ->
-        display = Enum.find(socket.assigns.displays, & &1.id == id)
-        case Gallery.delete_display(display) do
-          {:ok, _display} ->
-            {:noreply, assign(socket, changeset: nil, displays: Gallery.list_displays())}
-
-          {:error, _reason} ->
-            {:noreply, socket}
-        end
-
+  def handle_info({:update_data, object}, socket) do
+    case object do
       %Item{} ->
-        item = Enum.find(socket.assigns.items, & &1.id == id)
-        case Gallery.delete_item(item) do
-          {:ok, _item} ->
-            {:noreply, assign(socket, changeset: nil, items: Gallery.list_items())}
+        item = Lotd.Repo.preload(object, [:mod, location: [:region], display: [:room]])
+        items =
+          socket.assigns.items
+          |> Enum.reject(& &1.id == item.id)
+          |> List.insert_at(0, item)
+          |> Enum.sort_by(&(&1.name))
+        {:noreply, assign(socket, items: items)}
 
-          {:error, _reason} ->
-            {:noreply, socket}
-        end
-
-      %Location{} ->
-        location = Enum.find(socket.assigns.locations, & &1.id == id)
-        case Gallery.delete_location(location) do
-          {:ok, _location} ->
-            {:noreply, assign(socket, changeset: nil, locations: Gallery.list_locations())}
-
-          {:error, _reason} ->
-            {:noreply, socket}
-        end
-
-      %Mod{} ->
-        mod = Enum.find(socket.assigns.mods, & &1.id == id)
-        case Gallery.delete_mod(mod) do
-          {:ok, _mod} ->
-            {:noreply, assign(socket, changeset: nil, mods: Gallery.list_mods())}
-
-          {:error, _reason} ->
-            {:noreply, socket}
-        end
-
-      %Room{} ->
-        room = Enum.find(socket.assigns.rooms, & &1.id == id)
-        case Gallery.delete_room(room) do
-          {:ok, _room} ->
-            {:noreply, assign(socket, changeset: nil, rooms: Gallery.list_rooms())}
-
-          {:error, _reason} ->
-            {:noreply, socket}
-        end
     end
   end
 end
+
+        # try to find object in appropriate list and update list
+        # case object do
+        #   %Display{} ->
+
+        #     displays =
+        #       socket.assigns.displays
+        #       |> Enum.reject(& &1.id == object.id)
+        #       |> List.insert_at(0, object)
+        #       |> Enum.sort_by(&(&1.name))
+        #     {:noreply, assign(socket, displays: displays)}
+
+        #   %Item{} ->
+
+
+        #     # socket.assigns.card | title: title}}
+
+        #   %Location{} ->
+        #     locations =
+        #       socket.assigns.locations
+        #       |> Enum.reject(& &1.id == object.id)
+        #       |> List.insert_at(0, object)
+        #       |> Enum.sort_by(&(&1.name))
+
+        #     {:noreply, assign(socket, locations: locations)}
+
+        #   %Mod{} ->
+        #     mods =
+        #       socket.assigns.mods
+        #       |> Enum.reject(& &1.id == object.id)
+        #       |> List.insert_at(0, object)
+        #       |> Enum.sort_by(&(&1.name))
+
+        #     {:noreply, assign(socket, mods: mods)}
+
+        #   %Room{} -> "room"
+        #     rooms =
+        #       socket.assigns.rooms
+        #       |> Enum.reject(& &1.id == object.id)
+        #       |> List.insert_at(0, object)
+        #       |> Enum.sort_by(&(&1.name))
+
+        #     {:noreply, assign(socket, rooms: rooms)}
+        # end
+

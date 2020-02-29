@@ -31,15 +31,6 @@ Hooks.tooltip = {
   }
 }
 
-Hooks.modal = {
-  mounted() {
-    $(this.el).modal('show')
-  },
-  beforeDestroy() {
-    $(this.el).modal('hide')
-  }
-}
-
 // if we do have a crsf token (all pages except error pages)
 // then connect live socket and enable various functionalities
 const csrf_elm = document.querySelector("meta[name='csrf-token']")

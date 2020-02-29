@@ -3,7 +3,7 @@
 <%= render "_filterbar.html",
   moderator: @moderator,
   search: @search,
-  parent: filter_parent(@filter, @filter_val, @rooms, @displays, @regions, @locations),
+  parent: filter_parent(@filter, @filter_val, @displays, @locations),
   child: filter_text(@filter, @filter_val, @rooms, @displays, @regions, @locations, @mods),
   filter: @filter
 %>
@@ -25,18 +25,18 @@
         </th>
       <% end %>
       <th class='border-top-0' scope='col'>Item</th>
-      <%= if Map.get(@columns, :room) do %>
-        <th scope="col" class='d-none d-lg-table-cell border-top-0'>
-          <%= render "filter_room.html",
-            character_items: @character_items,
-            displays: @displays,
-            items: @items,
-            rooms: @rooms,
-            filter: @filter,
-            filter_val: @filter_val
-          %>
-        </th>
-      <% end %>
+
+      <th scope="col" class='d-none d-lg-table-cell border-top-0'>
+        <%= render "filter_room.html",
+          character_items: @character_items,
+          displays: @displays,
+          items: @items,
+          rooms: @rooms,
+          filter: @filter,
+          filter_val: @filter_val
+        %>
+      </th>
+
       <th scope="col" class='d-none d-md-table-cell border-top-0'>
         <%= render "filter_display.html",
           character_items: @character_items,
@@ -83,26 +83,11 @@
   </p></small>
 <% end %>
 
-
-<div id='gallery_page' class='d-none row h-100'>
-  <%# Right Panel (only visible on large devices) %>
-  <div class="col col-lg-4 row-cols-1 d-none d-lg-block h-100">
-    <%# render "list_locations.html",
-      character_items: @character_items,
-      hide: @hide,
-      items: @items,
-      locations: @locations,
-      location_filter: @location_filter,
-      moderate: @moderate
-    %>
-  </div>
-</div>
-
-<%= unless is_nil(@changeset), do: render "_modal.html",
-  changeset: @changeset,
+<%= if @moderator, do: live_component @socket, LotdWeb.ModalComponent,
+  id: :modal,
+  rooms: @rooms,
   displays: @displays,
-  locations: @locations,
-  mods: @mods,
   regions: @regions,
-  rooms: @rooms
+  locations: @locations,
+  mods: @mods
 %>
