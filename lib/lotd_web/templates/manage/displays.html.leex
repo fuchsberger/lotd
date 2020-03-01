@@ -13,9 +13,17 @@
     <%= text_input f, :url, class: "#{control_class(f, :url)}", placeholder: "Url" %>
   </div>
 
+  <div class='ml-2'>
+    <%= select f, :room_id, @room_options,
+      class: "#{control_class(f, :room_id)}",
+      selected: @changeset.data.room_id,
+      prompt: "Select Room"
+    %>
+  </div>
+
   <div class="btn-group ml-2" role="group" aria-label="Manage">
     <%= save_button(@changeset) %>
-    <%= if not is_nil(@changeset.data.id) && Enum.count(@changeset.data.displays) == 0 do %>
+    <%= if not is_nil(@changeset.data.id) do %>
       <button
         type='button'
         class='btn btn-light'
@@ -31,14 +39,16 @@
 <table class="table table-sm">
   <thead>
     <tr>
-      <th scope="col">Room</th>
+      <th scope="col">Display</th>
       <th scope="col">Url</th>
-      <th scope="col">Displays</th>
+      <th scope="col">Room</th>
+      <th scope="col">Items</th>
     </tr>
   </thead>
   <tbody>
-    <%= render_many @rooms, LotdWeb.ManageView, "_room.html",
-      as: :room,
+    <%= render_many @displays, LotdWeb.ManageView, "_display.html",
+      as: :display,
+      filter: Ecto.Changeset.get_change(@changeset, :region_id),
       edit_id: @changeset.data.id
     %>
   </tbody>

@@ -60,6 +60,9 @@ defmodule Lotd.Gallery do
   # ROOMS ----------------------------------------------------------------------------------------
   def list_rooms, do: Repo.all from(r in Room, preload: :displays, order_by: r.name)
 
+  def list_room_options,
+    do: Repo.all from(r in Room, select: {r.name, r.id}, order_by: r.name)
+
   def get_room!(id), do: Repo.get!(Room, id)
 
   def change_room(%Room{} = room), do: Room.changeset(room, %{})
@@ -67,7 +70,7 @@ defmodule Lotd.Gallery do
   def delete_room(%Room{} = room), do: Repo.delete(room)
 
   # DISPLAYS -------------------------------------------------------------------------------------
-  def list_displays, do: Repo.all from(d in Display, preload: :room, order_by: d.name)
+  def list_displays, do: Repo.all from(d in Display, preload: [:room, :items], order_by: d.name)
 
   def get_display!(id), do: Repo.get!(Display, id)
 
