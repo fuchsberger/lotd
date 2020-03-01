@@ -78,6 +78,9 @@ defmodule Lotd.Gallery do
   # REGIONS --------------------------------------------------------------------------------------
   def list_regions, do: Repo.all from(r in Region, preload: :locations, order_by: r.name)
 
+  def list_region_options,
+    do: Repo.all from(r in Region, select: {r.name, r.id}, order_by: r.name)
+
   def get_region!(id), do: Repo.get!(Region, id)
 
   def change_region(%Region{} = region), do: Region.changeset(region, %{})
@@ -85,7 +88,7 @@ defmodule Lotd.Gallery do
   def delete_region(%Region{} = region), do: Repo.delete(region)
 
   # LOCATIONS ------------------------------------------------------------------------------------
-  def list_locations, do: Repo.all from(r in Location, preload: :region, order_by: r.name)
+  def list_locations, do: Repo.all from(r in Location, preload: [:region, :items], order_by: r.name)
 
   def get_location!(id), do: Repo.get!(Location, id)
 

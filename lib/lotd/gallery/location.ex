@@ -14,8 +14,8 @@ defmodule Lotd.Gallery.Location do
   @doc false
   def changeset(mod, attrs) do
     mod
-    |> cast(attrs, [:name, :url])
-    |> validate_required([:name])
+    |> cast(attrs, [:name, :url, :region_id])
+    |> validate_required([:name, :region_id])
     |> validate_length(:name, max: 80)
     |> assoc_constraint(:region)
     |> unique_constraint(:name)

@@ -31,6 +31,7 @@ defmodule LotdWeb.Router do
     pipe_through [:browser, :user, :moderator]
 
     live "/regions", RegionsLive
+    live "/locations", LocationsLive
   end
 
   scope "/", LotdWeb do

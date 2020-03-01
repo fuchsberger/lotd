@@ -34,6 +34,7 @@
 
             <%= if @moderator do %>
               <%= link "Regions", to: Routes.live_path(@conn, LotdWeb.RegionsLive), class: "dropdown-item" %>
+              <%= link "Locations", to: Routes.live_path(@conn, LotdWeb.LocationsLive), class: "dropdown-item" %>
             <% end %>
             <%= if @admin do %>
               <%= link "Users", to: Routes.live_path(@conn, LotdWeb.UserLive), class: "dropdown-item" %>
