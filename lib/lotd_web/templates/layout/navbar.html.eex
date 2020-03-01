@@ -22,21 +22,24 @@
       <%= nav_item @conn, "About", Routes.page_path(@conn, :about), "home" %>
       <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>
 
-      <%= if @authenticated?,
-        do: nav_item(@conn, "Characters", Routes.live_path(@conn, LotdWeb.CharactersLive), "users") %>
-
-      <%= if @moderator || @admin do %>
+      <%= if @authenticated? do %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <i class='icon-settings'></i> Manage
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-
+            <h6 class="dropdown-header"><%= @conn.assigns.current_user.name %></h6>
+            <%= link "Characters", to: Routes.live_path(@conn, LotdWeb.CharactersLive), class: "dropdown-item" %>
             <%= if @moderator do %>
+              <div class="dropdown-divider"></div>
+              <%= link "Rooms", to: Routes.live_path(@conn, LotdWeb.RoomsLive), class: "dropdown-item" %>
+              <%= link "Displays", to: Routes.live_path(@conn, LotdWeb.DisplaysLive), class: "dropdown-item" %>
               <%= link "Regions", to: Routes.live_path(@conn, LotdWeb.RegionsLive), class: "dropdown-item" %>
               <%= link "Locations", to: Routes.live_path(@conn, LotdWeb.LocationsLive), class: "dropdown-item" %>
+              <%= link "Mods", to: Routes.live_path(@conn, LotdWeb.ModsLive), class: "dropdown-item" %>
             <% end %>
             <%= if @admin do %>
+              <div class="dropdown-divider"></div>
               <%= link "Users", to: Routes.live_path(@conn, LotdWeb.UserLive), class: "dropdown-item" %>
             <% end %>
           </div>

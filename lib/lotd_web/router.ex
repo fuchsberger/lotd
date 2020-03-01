@@ -24,14 +24,17 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through [:browser, :user]
 
-    live "/settings", CharactersLive
+    live "/characters", CharactersLive
   end
 
   scope "/", LotdWeb do
     pipe_through [:browser, :user, :moderator]
 
+    live "/rooms", RoomsLive
+    live "/displays", DisplaysLive
     live "/regions", RegionsLive
     live "/locations", LocationsLive
+    live "/mods", ModsLive
   end
 
   scope "/", LotdWeb do
