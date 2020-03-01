@@ -58,7 +58,7 @@ defmodule Lotd.Gallery do
   def delete_item(%Item{} = item), do: Repo.delete(item)
 
   # ROOMS ----------------------------------------------------------------------------------------
-  def list_rooms, do: Repo.all from(r in Room, order_by: r.name)
+  def list_rooms, do: Repo.all from(r in Room, preload: :displays, order_by: r.name)
 
   def get_room!(id), do: Repo.get!(Room, id)
 

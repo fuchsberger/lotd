@@ -1,0 +1,9 @@
+<tr
+  class='<%= if @room.id == @edit_id, do: "table-active" %>'
+  phx-click='edit'
+  phx-value-id='<%= @room.id %>'
+>
+  <td><%= @room.name %></td>
+  <td class='small'><%= if @room.url, do: link @room.url, to: @room.url, target: "_blank" %></td>
+  <td><%= Enum.count @room.displays %></td>
+<tr>
