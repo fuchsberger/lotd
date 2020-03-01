@@ -35,7 +35,7 @@ export default () => {
       if (res.data.hasOwnProperty('api_key')){
 
         // Send API key to webserver that will then try to connect with it and authenticate
-        $("#session_api_key").value = res.data.api_key
+        $("#session_api_key").val(res.data.api_key)
         $("#login-form").submit()
 
         // close right away

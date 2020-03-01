@@ -56,13 +56,15 @@ defmodule LotdWeb.GalleryLive do
 
     items = Gallery.list_items()
     displays = list_assoc(items, :display)
+    locations = list_assoc(items, :location)
 
     assigns = [
-      displays: displays,
       items: items,
-      locations: list_assoc(items, :location),
-      mods: list_assoc(items, :mod),
-      rooms: list_assoc(displays, :room)
+      rooms: list_assoc(displays, :room),
+      displays: displays,
+      regions: list_assoc(locations, :region),
+      locations: locations,
+      mods: list_assoc(items, :mod)
     ]
 
     {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
@@ -138,58 +140,31 @@ defmodule LotdWeb.GalleryLive do
     case object do
       %Item{} ->
         item = Lotd.Repo.preload(object, [:mod, location: [:region], display: [:room]])
-        items =
-          socket.assigns.items
-          |> Enum.reject(& &1.id == item.id)
-          |> List.insert_at(0, item)
-          |> Enum.sort_by(&(&1.name))
-        {:noreply, assign(socket, items: items)}
+        {:noreply, assign(socket, items: update_entry(socket.assigns.items, item))}
 
+      %Room{} ->
+        {:noreply, assign(socket, rooms: update_entry(socket.assigns.rooms, object))}
+
+      %Display{} ->
+        display = Lotd.Repo.preload(object, [:room])
+        {:noreply, assign(socket, displays: update_entry(socket.assigns.displays, display))}
+
+      %Region{} ->
+        {:noreply, assign(socket, regions: update_entry(socket.assigns.regions, object))}
+
+      %Location{} ->
+        location = Lotd.Repo.preload(object, [:region])
+        {:noreply, assign(socket, locations: update_entry(socket.assigns.locations, location))}
+
+      %Mod{} ->
+        {:noreply, assign(socket, mods: update_entry(socket.assigns.mods, object))}
     end
   end
+
+  defp update_entry(collection, object) do
+    collection
+    |> Enum.reject(& &1.id == object.id)
+    |> List.insert_at(0, object)
+    |> Enum.sort_by(&(&1.name))
+  end
 end
-
-        # try to find object in appropriate list and update list
-        # case object do
-        #   %Display{} ->
-
-        #     displays =
-        #       socket.assigns.displays
-        #       |> Enum.reject(& &1.id == object.id)
-        #       |> List.insert_at(0, object)
-        #       |> Enum.sort_by(&(&1.name))
-        #     {:noreply, assign(socket, displays: displays)}
-
-        #   %Item{} ->
-
-
-        #     # socket.assigns.card | title: title}}
-
-        #   %Location{} ->
-        #     locations =
-        #       socket.assigns.locations
-        #       |> Enum.reject(& &1.id == object.id)
-        #       |> List.insert_at(0, object)
-        #       |> Enum.sort_by(&(&1.name))
-
-        #     {:noreply, assign(socket, locations: locations)}
-
-        #   %Mod{} ->
-        #     mods =
-        #       socket.assigns.mods
-        #       |> Enum.reject(& &1.id == object.id)
-        #       |> List.insert_at(0, object)
-        #       |> Enum.sort_by(&(&1.name))
-
-        #     {:noreply, assign(socket, mods: mods)}
-
-        #   %Room{} -> "room"
-        #     rooms =
-        #       socket.assigns.rooms
-        #       |> Enum.reject(& &1.id == object.id)
-        #       |> List.insert_at(0, object)
-        #       |> Enum.sort_by(&(&1.name))
-
-        #     {:noreply, assign(socket, rooms: rooms)}
-        # end
-

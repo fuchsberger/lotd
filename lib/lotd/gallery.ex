@@ -22,12 +22,12 @@ defmodule Lotd.Gallery do
 
   def changeset(type, id) do
     case type do
-      "item" -> Gallery.change_item(get_item!(id))
-      "room" -> Gallery.change_room(get_room!(id))
-      "display" -> Gallery.change_display(get_display!(id))
-      "region" -> Gallery.change_region(get_region!(id))
-      "location" -> Gallery.change_location(get_location!(id))
-      "mod" -> Gallery.change_mod(get_mod!(id))
+      "item" -> change_item(get_item!(id))
+      "room" -> change_room(get_room!(id))
+      "display" -> change_display(get_display!(id))
+      "region" -> change_region(get_region!(id))
+      "location" -> change_location(get_location!(id))
+      "mod" -> change_mod(get_mod!(id))
     end
   end
 

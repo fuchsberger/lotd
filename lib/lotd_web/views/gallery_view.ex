@@ -137,6 +137,11 @@ defmodule LotdWeb.GalleryView do
     "Natural Science": 6
   ]
 
+  def region_items(items, locations, region_id) do
+    location_ids = locations |> Enum.filter(& &1.region_id == region_id) |> Enum.map(& &1.id)
+    Enum.filter(items, & Enum.member?(location_ids, &1.location_id))
+  end
+
   def tab(name, content, current_tab) do
     link = if name == current_tab,
       do: content_tag(:a, content, class: "nav-link px-2 active disabled"),
