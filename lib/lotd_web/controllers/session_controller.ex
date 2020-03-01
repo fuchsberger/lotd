@@ -44,7 +44,7 @@ defmodule LotdWeb.SessionController do
                 # login and redirect to settings page
                 conn
                 |> Auth.login(user)
-                |> redirect(to: Routes.live_path(conn, LotdWeb.SettingsLive))
+                |> redirect(to: Routes.live_path(conn, LotdWeb.CharactersLive))
 
               {:error, _changeset} ->
                 conn

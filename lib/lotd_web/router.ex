@@ -22,13 +22,19 @@ defmodule LotdWeb.Router do
   end
 
   scope "/", LotdWeb do
-    pipe_through [:browser, :authenticate_user]
+    pipe_through [:browser, :user]
 
-    live "/settings", SettingsLive
+    live "/settings", CharactersLive
   end
 
   scope "/", LotdWeb do
-    pipe_through [:browser, :authenticate_user, :authenticate_moderator_or_admin]
+    pipe_through [:browser, :user, :moderator]
+
+    live "/regions", RegionsLive
+  end
+
+  scope "/", LotdWeb do
+    pipe_through [:browser, :user, :admin]
 
     live "/users", UserLive
   end

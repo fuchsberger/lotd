@@ -10,7 +10,12 @@
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
   </head>
   <body>
-    <%= render "navbar.html", conn: @conn %>
+    <%= render "navbar.html",
+      conn: @conn,
+      authenticated?: not is_nil(@conn.assigns.current_user),
+      admin:  @conn.assigns.current_user && @conn.assigns.current_user.admin,
+      moderator:  @conn.assigns.current_user && @conn.assigns.current_user.moderator
+    %>
     <%= render @view_module, @view_template, assigns %>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
   </body>

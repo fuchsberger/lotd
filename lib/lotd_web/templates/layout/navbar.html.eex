@@ -21,13 +21,29 @@
     <ul id='menu' class="navbar-nav mr-auto">
       <%= nav_item @conn, "About", Routes.page_path(@conn, :about), "home" %>
       <%= nav_item @conn, "Gallery", Routes.live_path(@conn, LotdWeb.GalleryLive), "displays" %>
-      <%= unless is_nil(@conn.assigns.current_user),
-        do: nav_item(@conn, "Settings", Routes.live_path(@conn, LotdWeb.SettingsLive), "settings") %>
-      <%= if @conn.assigns.current_user && @conn.assigns.current_user.admin, do:
-        nav_item(@conn, "Users", Routes.live_path(@conn, LotdWeb.UserLive), "users")
-      %>
+
+      <%= if @authenticated?,
+        do: nav_item(@conn, "Characters", Routes.live_path(@conn, LotdWeb.CharactersLive), "users") %>
+
+      <%= if @moderator || @admin do %>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class='icon-settings'></i> Manage
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+            <%= if @moderator do %>
+              <%= link "Regions", to: Routes.live_path(@conn, LotdWeb.RegionsLive), class: "dropdown-item" %>
+            <% end %>
+            <%= if @admin do %>
+              <%= link "Users", to: Routes.live_path(@conn, LotdWeb.UserLive), class: "dropdown-item" %>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+
       <li class="nav-item">
-        <%= if is_nil(@conn.assigns.current_user) do %>
+        <%= unless @authenticated? do %>
           <a id='login-button' class="nav-link" href='#'>
             <i class='icon-logout'></i>
             Sign In

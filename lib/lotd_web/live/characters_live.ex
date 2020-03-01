@@ -1,4 +1,4 @@
-defmodule LotdWeb.SettingsLive do
+defmodule LotdWeb.CharactersLive do
   use Phoenix.LiveView, container: {:div, class: "container h-100"}
 
   alias Lotd.{Accounts, Gallery, Repo}

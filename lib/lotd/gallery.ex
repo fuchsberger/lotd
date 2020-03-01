@@ -76,7 +76,7 @@ defmodule Lotd.Gallery do
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # REGIONS --------------------------------------------------------------------------------------
-  def list_regions, do: Repo.all from(r in Region, order_by: r.name)
+  def list_regions, do: Repo.all from(r in Region, preload: :locations, order_by: r.name)
 
   def get_region!(id), do: Repo.get!(Region, id)
 
