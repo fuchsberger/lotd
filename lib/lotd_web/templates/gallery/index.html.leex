@@ -1,11 +1,4 @@
-<% filtered_items = visible_items(@items, @character_items, @displays, @locations, @filter, @filter_val, @hide, @search) %>
-
-<%= render "_filterbar.html",
-  search: @search,
-  parent: filter_parent(@filter, @filter_val, @displays, @locations),
-  child: filter_text(@filter, @filter_val, @rooms, @displays, @regions, @locations, @mods),
-  filter: @filter
-%>
+<%= render "_filterbar.html", search: @search, filters: filters(@filter, @filter_val, @items) %>
 
 <table class="table table-sm">
   <thead>
@@ -26,60 +19,143 @@
       <th class='border-top-0' scope='col'>Item</th>
 
       <th scope="col" class='d-none d-xl-table-cell border-top-0'>
-        <%= render "filter_room.html",
-          character_items: @character_items,
-          displays: @displays,
-          items: @items,
-          rooms: @rooms,
-          filter: @filter,
-          filter_val: @filter_val
-        %>
+        <a
+          id="dropdown-room"
+          class="btn font-weight-bold dropdown-toggle p-0"
+          type="button"
+          href="#",
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Room
+          <span class="caret"></span>
+        </a>
+
+        <div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-room">
+          <%= render_many room_options(@items, @character_items),
+            LotdWeb.GalleryView, "_filter_option.html",
+            as: :object,
+            authenticated?: not is_nil(@character_items),
+            type: "room",
+            filter: @filter,
+            filter_val: @filter_val
+          %>
+        </div>
       </th>
 
       <th scope="col" class='d-none d-md-table-cell border-top-0'>
-        <%= render "filter_display.html",
-          character_items: @character_items,
-          displays: @displays,
-          hide: @hide,
-          items: @items,
-          rooms: @rooms,
-          filter: @filter,
-          filter_val: @filter_val
-        %>
+        <a
+          id="dropdown-display"
+          class="btn font-weight-bold dropdown-toggle p-0"
+          type="button"
+          href="#",
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Display
+          <span class="caret"></span>
+        </a>
+
+        <div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-display">
+          <%= render_many display_options(@items, @filter, @filter_val, @character_items),
+            LotdWeb.GalleryView, "_filter_option.html",
+            as: :object,
+            authenticated?: not is_nil(@character_items),
+            type: "display",
+            filter: @filter,
+            filter_val: @filter_val
+          %>
+        </div>
       </th>
       <th scope="col" class='d-none d-xl-table-cell border-top-0'>
-        <%= render "filter_region.html",
-          character_items: @character_items,
-          regions: @regions,
-          locations: @locations,
-          items: @items,
-          filter: @filter,
-          filter_val: @filter_val
-        %>
+        <a
+          id="dropdown-region"
+          class="btn font-weight-bold dropdown-toggle p-0"
+          type="button"
+          href="#",
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Region
+          <span class="caret"></span>
+        </a>
+
+        <div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-region">
+          <%= render_many region_options(@items, @character_items),
+            LotdWeb.GalleryView, "_filter_option.html",
+            as: :object,
+            authenticated?: not is_nil(@character_items),
+            type: "region",
+            filter: @filter,
+            filter_val: @filter_val
+          %>
+        </div>
       </th>
-      <th scope="col" class='d-none d-lg-table-cell border-top-0'>Location</th>
-      <th scope="col" class='d-none d-sm-table-cell border-top-0 px-0'>
-        <%= render "filter_mod.html",
-          character_items: @character_items,
-          hide: @hide,
-          items: @items,
-          mods: @mods,
-          filter: @filter,
-          filter_val: @filter_val
-        %>
+      <th scope="col" class='d-none d-lg-table-cell border-top-0'>
+        <a
+          id="dropdown-location"
+          class="btn font-weight-bold dropdown-toggle p-0"
+          type="button"
+          href="#",
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Location
+          <span class="caret"></span>
+        </a>
+
+        <div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-location">
+          <%= render_many location_options(@items, @filter, @filter_val, @character_items),
+            LotdWeb.GalleryView, "_filter_option.html",
+            as: :object,
+            authenticated?: not is_nil(@character_items),
+            type: "location",
+            filter: @filter,
+            filter_val: @filter_val
+          %>
+        </div>
+      </th>
+      <th scope="col" class='d-none d-xl-table-cell border-top-0 px-0'>
+        <a
+          id="dropdown-mod"
+          class="btn font-weight-bold dropdown-toggle p-0"
+          type="button"
+          href="#",
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Mod
+          <span class="caret"></span>
+        </a>
+
+        <div class="dropdown-menu dropdown-filter dropdown-menu-right" aria-labelledby="dropdown-mod">
+          <%= render_many mod_options(@items, @character_items),
+            LotdWeb.GalleryView, "_filter_option.html",
+            as: :object,
+            authenticated?: not is_nil(@character_items),
+            type: "mod",
+            filter: @filter,
+            filter_val: @filter_val
+          %>
+        </div>
       </th>
     </tr>
   </thead>
   <tbody>
-    <%= render_many filtered_items, LotdWeb.GalleryView, "_item.html",
+    <% items = visible_items(@items, @character_items, @filter, @filter_val, @hide, @search) %>
+    <%= render_many items, LotdWeb.GalleryView, "_item.html",
       as: :item,
-      authenticated?: not is_nil(@character_id),
       character_items: @character_items,
       filter: @filter
     %>
   </tbody>
 </table>
-<%= if Enum.count(filtered_items) == 200 do %>
+<%= if Enum.count(items) == 200 do %>
   <p class="text-center"><small>
     Only 200 items listed for performance reasons. Use filters / search to find a specific item.
   </p></small>

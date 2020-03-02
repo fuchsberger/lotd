@@ -1,6 +1,11 @@
 defmodule LotdWeb.ManageView do
   use LotdWeb, :view
 
+  def mod_enabled_class(character, mod) do
+    if Enum.member?(character.mods, & &1.id == mod.id),
+      do: "icon-active", else: "icon-inactive"
+  end
+
   def save_button(changeset) do
     ico = if is_nil(changeset.data.id), do: "add", else: "edit"
     submit icon(ico, class: "text-primary"), class: "btn btn-light"

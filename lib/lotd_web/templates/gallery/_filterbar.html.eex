@@ -1,5 +1,4 @@
 <div class="d-flex pt-2">
-
   <%= f = form_for :search, "#", [class: "flex-grow-1", phx_change: :search, phx_submit: :search] %>
     <div class='input-group'>
       <%= text_input f, :query,
@@ -23,16 +22,26 @@
       </div>
     </div>
   </form>
-  <nav aria-label="breadcrumb" class='pl-2'>
+  <nav aria-label="breadcrumb" class='pl-2 d-none d-md-block'>
     <ol class="breadcrumb mb-0 py-2 bg-light">
-      <%# Top Level %>
-      <%= if is_nil(@filter), do: crumb("All", true), else: crumb(crumb_link("All", "", "")) %>
-      <%# Middle Level %>
-      <%= unless is_nil(@parent), do:
-        crumb(crumb_link(@parent.name, (if @filter == "display", do: "room", else: "region"), @parent.id))
+      <%= case @filters do
+          [{filter1, obj1}, obj2] ->
+            [
+              crumb(crumb_link("All", "", "")),
+              crumb(crumb_link(obj1.name, filter1, obj1.id)),
+              crumb(obj2.name, true)
+            ]
+
+          [obj] ->
+            [
+              crumb(crumb_link("All", "", "")),
+              crumb(obj.name, true)
+            ]
+
+          [] ->
+            crumb("All", true)
+        end
       %>
-      <%# Bottom Level %>
-      <%= unless is_nil(@child), do: crumb(@child, true) %>
     </ol>
   </nav>
 </div>

@@ -1,3 +1,16 @@
+## 0.6.1
+
+### New Features
+  - Locations now belong to a region
+  - Improved Gallery view (table format) that displays further information about items.
+  - Columns are filterable and hide automatically according to screen size
+
+### Enhancments
+  - Separated management from Gallery view
+
+### Bug Fixes
+  - When hitting ENTER in a search field it would redirect to a 404 page
+
 ## 0.5.7
 
 ### New Features

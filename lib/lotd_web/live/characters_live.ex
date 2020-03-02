@@ -1,18 +1,18 @@
 defmodule LotdWeb.CharactersLive do
-  use Phoenix.LiveView, container: {:div, class: "container h-100"}
+  use Phoenix.LiveView, container: {:div, class: "container"}
 
+  import LotdWeb.LiveHelpers
   alias Lotd.{Accounts, Gallery, Repo}
   alias Lotd.Accounts.Character
 
-  def render(assigns), do: LotdWeb.SettingsView.render("index.html", assigns)
+  def render(assigns), do: LotdWeb.ManageView.render("characters.html", assigns)
 
-  def mount(_params, session, socket) do
+  def mount(_params, %{"user_id" => user_id}, socket) do
 
-    user = if Map.has_key?(session, "user_id"),
-      do: Accounts.get_user!(session["user_id"]), else: nil
+    user = Accounts.get_user!(user_id)
 
     socket = assign socket,
-      changeset: nil,
+      changeset: Accounts.change_character(%Character{}),
       characters: Accounts.list_characters(user),
       items: Gallery.list_items(),
       mods: Gallery.list_mods(),
@@ -21,51 +21,63 @@ defmodule LotdWeb.CharactersLive do
     {:ok, socket}
   end
 
-  def handle_event("activate", %{"character" => %{"id" => id}}, socket) do
-    case Accounts.get_character(id) do
-      nil -> {:noreply, socket}
-      character ->
-        if character.user_id == socket.assigns.user.id do # <-- hacker safety measure
-          case Accounts.update_user(socket.assigns.user, %{active_character_id: character.id}) do
-            {:ok, user} ->
-              user = Repo.preload(user, active_character: [:items, :mods])
-              {:noreply, assign(socket, user: user)}
-          end
-        else
-          {:noreply, socket}
-        end
-    end
-  end
-
-  def handle_event("add", _params, socket) do
-    changeset = Accounts.change_character(%Character{})
-    {:noreply, assign(socket, :changeset, changeset)}
-  end
-
-  def handle_event("cancel", _params, socket), do:  {:noreply, assign(socket, :changeset, nil)}
-
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("select", %{"id" => id}, socket) do
     id = String.to_integer(id)
-
-    if socket.assigns.user.active_character_id == id ||
-      not Enum.member?(Enum.map( socket.assigns.characters, & &1.id), id) do
-      {:noreply, socket}
+    if socket.assigns.changeset.data.id == id do
+      {:noreply, assign(socket, changeset: Accounts.change_character(%Character{}))}
     else
-      socket.assigns.characters
-      |> Enum.find(& &1.id == id)
-      |> Accounts.delete_character()
-
-      {:noreply, assign(socket,
-        changeset: nil,
-        characters: Accounts.list_characters(socket.assigns.user)
-      )}
+      character = Enum.find(socket.assigns.characters, & &1.id == id)
+      {:noreply, assign(socket, changeset: Accounts.change_character(character))}
     end
   end
 
-  def handle_event("edit", %{"id" => id}, socket) do
-    character = Enum.find(socket.assigns.characters, & &1.id == String.to_integer(id))
-    changeset = Accounts.change_character(character)
-    {:noreply, assign(socket, :changeset, changeset)}
+  def handle_event("activate", _params, socket) do
+    character = Enum.find(socket.assigns.characters, & &1.id == socket.assigns.changeset.data.id)
+
+    if character.user_id == socket.assigns.user.id do # <-- hacker safety measure
+      case Accounts.update_user(socket.assigns.user, %{active_character_id: character.id}) do
+        {:ok, user} ->
+          {:noreply, assign(socket,
+            changeset: Accounts.change_character(%Character{}),
+            user: Repo.preload(user, active_character: [:items, :mods])
+          )}
+      end
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("validate", %{"character" => params}, socket) do
+    {:noreply, assign(socket,
+      changeset: Character.changeset(socket.assigns.changeset.data, params))}
+  end
+
+  def handle_event("save", _params, socket) do
+    case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
+      {:ok, character } ->
+        character = Repo.preload(character, [:items, :mods])
+        {:noreply, assign(socket,
+          changeset: Accounts.change_character(%Character{}),
+          characters: update_collection(socket.assigns.characters, character)
+        )}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, changeset: changeset)}
+    end
+  end
+
+  def handle_event("delete", _params, socket) do
+    character = Enum.find(socket.assigns.characters, & &1.id == socket.assigns.changeset.data.id)
+    case Accounts.delete_character(character) do
+      {:ok, character} ->
+        {:noreply, assign(socket,
+          changeset: Accounts.change_character(%Character{}),
+          characters: Enum.reject(socket.assigns.characters, & &1.id == character.id)
+        )}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
   end
 
   def handle_event("toggle", %{"id" => id}, socket) do
@@ -80,36 +92,5 @@ defmodule LotdWeb.CharactersLive do
     user = Accounts.get_user!(socket.assigns.user.id)
 
     {:noreply, assign(socket, characters: Accounts.list_characters(user), user: user)}
-  end
-
-  def handle_event("save", _params, socket) do
-    case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
-      {:ok, character} ->
-
-        # if character has just been created, auto activate legacy of the dragonborn
-        if is_nil(socket.assigns.changeset.data.id) do
-          Accounts.update_character_add_mod(character, Gallery.get_mod!(1))
-        end
-
-        character = Lotd.Repo.preload(character, [:mods, :items])
-
-        characters =
-          socket.assigns.characters
-          |> Enum.reject(& &1.id == character.id)
-          |> List.insert_at(0, character)
-          |> Enum.sort_by(&(&1.name))
-        {:noreply, assign(socket, changeset: nil, characters: characters)}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
-    end
-  end
-
-  def handle_event("validate", %{"character" => params}, socket) do
-    changeset =
-      socket.assigns.changeset.data
-      |> Character.changeset(params)
-      |> Ecto.Changeset.put_assoc(:user, socket.assigns.user)
-    {:noreply, assign(socket, :changeset, changeset)}
   end
 end

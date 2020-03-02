@@ -1,0 +1,98 @@
+<div class='row'>
+  <div class="col col-md-5">
+    <%# Legend %>
+    <p><i class='icon-add text-primary'></i> Create a new character and activate it.<br />
+    <i class='icon-edit text-primary'></i>Rename the selected character.<br />
+    <i class='icon-show text-primary'></i>Activate the selected character.<br />
+    <i class='icon-remove text-danger'></i>Deletes the selected character and all collected items. This is irreversible. You cannot delete your active character.</p>
+    <p>To select / deselect a character simply click its entry in the table below.</p>
+
+    <%= f = form_for @changeset, "#", [
+      class: "#{unless is_nil(@changeset.action), do: "was-validated"}",
+      novalidate: true,
+      phx_change: :validate,
+      phx_submit: :save
+    ] %>
+
+      <div class='input-group py-2'>
+        <%= text_input f, :name, class: control_class(f, :name), placeholder: "Character Name" %>
+
+        <div class="input-group-append">
+          <%= unless is_nil(@changeset.data.id) do %>
+            <button class='btn btn-light border'>
+              <i class='icon-edit text-primary'></i>
+            </button>
+          <% else %>
+            <button class='btn btn-light border'>
+              <i class='icon-add text-primary'></i>
+            </button>
+          <% end %>
+
+          <%= if @changeset.data.id && @changeset.data.id != @user.active_character_id do %>
+            <button
+              class="btn btn-light border"
+              type='button'
+              phx-click="activate"
+            >
+              <i class='icon-show text-primary'></i>
+            </button>
+            <button
+              class="btn btn-light border"
+              data-confirm="Are you sure you want to delete? You will loose all items this character has collected!"
+              type='button'
+              phx-click="delete"
+            >
+              <i class='icon-remove text-danger'></i>
+            </button>
+          <% end %>
+        </div>
+        <%= error_tag f, :name %>
+      </div>
+    </form>
+
+    <table class='table table-sm'>
+      <thead>
+        <tr>
+          <th scope='col' colspan="2" class='pl-4'>Character</th>
+          <th scope='col' class='text-right'>Items</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render_many @characters, LotdWeb.ManageView, "_character.html",
+          as: :character,
+          edit_id: @changeset.data.id,
+          active_id: @user.active_character_id
+        %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col col-md-7">
+    <ul class="list-group list-group-flush">
+      <li class='list-group-item px-2 py-1''>
+        <strong>Mods</strong>
+        (
+          <%= Enum.count(@user.active_character.mods) %> /
+          <%= Enum.count(@mods) %>
+        )
+        <strong class='float-right'>Items</strong>
+      </li>
+    </ul>
+    <ul class="list-group list-group-flush h-list overflow-auto">
+      <%= for m <- @mods do %>
+        <li class="list-group-item px-2 py-0">
+          <%= if true do %>
+            <a class='text-primary' phx-click='toggle' phx-value-id='<%= m.id %>'>
+              <i class='<%= mod_enabled_class(@user.active_character, m) %>'></i>
+            </a>
+          <% end %>
+          <%= m.name %>
+          <span class='float-right'>
+            <%= Enum.count(m.items, & Enum.member?(@user.active_character.mods, &1)) %> /
+            <%= Enum.count(m.items) %>
+          </span>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

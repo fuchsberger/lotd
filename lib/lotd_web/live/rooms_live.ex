@@ -55,6 +55,5 @@ defmodule LotdWeb.RoomsLive do
       {:error, _reason} ->
         {:noreply, socket}
     end
-
   end
 end

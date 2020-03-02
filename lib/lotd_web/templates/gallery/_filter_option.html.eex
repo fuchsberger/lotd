@@ -1,0 +1,17 @@
+
+<button
+  class="dropdown-item px-2 py-0 <%= if @filter == @type && @filter_val == @object.id, do: "list-group-item-info" %>"
+  type="button"
+  phx-click="filter"
+  phx-value-type="<%= @type %>"
+  phx-value-id="<%= @object.id %>"
+>
+  <%= @object.name %>
+  <div class='float-right pl-4'>
+    <small>
+      <%= if @authenticated?, do: "#{@object.found} / " %>
+      <%= @object.count %>
+    </small>
+  </div>
+</button>
+

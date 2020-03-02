@@ -1,21 +1,6 @@
 defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
-  import Ecto.Changeset, only: [ get_change: 2 ]
-
-  def active(boolean), do: if boolean, do: " list-group-item-info"
-
-  def active(col, filter, id, check) do
-    if filter == col, do: id == check, else: false
-  end
-
-  def add_link(type), do: content_tag(:button, "Add #{String.capitalize(type)}",
-    class: "dropdown-item",
-    type: "button",
-    phx_click: "add",
-    phx_value_type: type
-  )
-
   def count(field, id, items) do
     items
     |> Enum.filter(& Map.get(&1, field) == id)
@@ -41,23 +26,6 @@ defmodule LotdWeb.GalleryView do
     |> Enum.count()
   end
 
-  def display_options(changeset, displays) do
-    room_id = get_change(changeset, :room_id)
-    displays = if room_id,
-      do: Enum.filter(displays, & &1.room_id == room_id),
-      else: displays
-
-    [{"Please select...", nil} | Enum.map(displays, &{&1.name, &1.id})]
-  end
-
-  def header_display(displays, filter, id) do
-    case {filter, id} do
-      {_, nil} -> "Display"
-      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:name)
-      {_, _} -> "Display"
-    end
-  end
-
   defp crumb_link(title, filter, id) do
     link title, to: "#", phx_click: "filter", phx_value_type: filter, phx_value_id: id
   end
@@ -70,24 +38,35 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def filter_text(filter, id, rooms, displays, regions, locations, mods) do
+  def filters(filter, id, items) do
     case {filter, id} do
-      {_, nil} -> nil
-      {"room", id} -> Enum.find(rooms, & &1.id == id) |> Map.get(:name)
-      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:name)
-      {"region", id} -> Enum.find(regions, & &1.id == id) |> Map.get(:name)
-      {"location", id} -> Enum.find(locations, & &1.id == id) |> Map.get(:name)
-      {"mod", id} -> Enum.find(mods, & &1.id == id) |> Map.get(:name)
-      _ -> nil
-    end
-  end
+      {_, nil} ->
+        []
 
-  def filter_parent(filter, id, displays, locations) do
-    case {filter, id} do
-      {_, nil} -> nil
-      {"display", id} -> Enum.find(displays, & &1.id == id) |> Map.get(:room)
-      {"location", id} -> Enum.find(locations, & &1.id == id) |> Map.get(:region)
-      _ -> nil
+      {"room", id} ->
+        displays = list_assoc(items, :display)
+        room = Enum.find(list_assoc(displays, :room), & &1.id == id)
+        [room]
+
+      {"display", id} ->
+        display = Enum.find(list_assoc(items, :display), & &1.id == id)
+        [{"room", display.room}, display]
+
+      {"region", id} ->
+        locations = list_assoc(items, :location)
+        region = Enum.find(list_assoc(locations, :region), & &1.id == id)
+        [region]
+
+      {"location", id} ->
+        location = Enum.find(list_assoc(items, :location), & &1.id == id)
+        [{"region", location.region}, location]
+
+      {"mod", id} ->
+        mod = Enum.find(list_assoc(items, :mod), & &1.id == id)
+        [mod]
+
+      _ ->
+        []
     end
   end
 
@@ -104,22 +83,157 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def room_items(items, displays, room_id) do
-    display_ids = displays |> Enum.filter(& &1.room_id == room_id) |> Enum.map(& &1.id)
-    Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
+  def room_options(items, nil) do
+    displays = list_assoc(items, :display)
+    rooms = list_assoc(displays, :room)
+
+    Enum.map(rooms, fn room ->
+      room_displays = Enum.filter(displays, & &1.room_id == room.id) |> Enum.map(& &1.id)
+      %{
+        id: room.id,
+        name: room.name,
+        count: Enum.count(items, & Enum.member?(room_displays, &1.display_id))
+      }
+    end)
   end
 
-  def region_items(items, locations, region_id) do
-    location_ids = locations |> Enum.filter(& &1.region_id == region_id) |> Enum.map(& &1.id)
-    Enum.filter(items, & Enum.member?(location_ids, &1.location_id))
+  def room_options(items, character_items) do
+    displays = list_assoc(items, :display)
+    rooms = list_assoc(displays, :room)
+    character_items = Enum.filter(items, & Enum.member?(character_items, &1.id))
+
+    Enum.map(rooms, fn room ->
+      room_displays = Enum.filter(displays, & &1.room_id == room.id) |> Enum.map(& &1.id)
+      %{
+        id: room.id,
+        name: room.name,
+        found: Enum.count(character_items, & Enum.member?(room_displays, &1.display_id)),
+        count: Enum.count(items, & Enum.member?(room_displays, &1.display_id))
+      }
+    end)
   end
 
-  def tab(name, content, current_tab) do
-    link = if name == current_tab,
-      do: content_tag(:a, content, class: "nav-link px-2 active disabled"),
-      else: content_tag(:a, content, class: "nav-link px-2", phx_click: "switch-tab", phx_value_tab: name)
+  def display_options(items, filter, id, nil) do
+    displays = case {filter, id} do
+      {_, nil} -> list_assoc(items, :display)
+      {"room", id} -> list_assoc(items, :display) |> Enum.filter(& &1.room_id == id)
+      _ -> list_assoc(items, :display)
+    end
 
-    content_tag :li, link, class: "nav-item"
+    Enum.map(displays, fn display ->
+      %{
+        id: display.id,
+        name: display.name,
+        count: Enum.count(items, & &1.display_id == display.id)
+      }
+    end)
+  end
+
+  def display_options(items, filter, id, character_items) do
+    displays = case {filter, id} do
+      {_, nil} -> list_assoc(items, :display)
+      {"room", id} -> list_assoc(items, :display) |> Enum.filter(& &1.room_id == id)
+      _ -> list_assoc(items, :display)
+    end
+    character_items = Enum.filter(items, & Enum.member?(character_items, &1.id))
+
+    Enum.map(displays, fn display ->
+      %{
+        id: display.id,
+        name: display.name,
+        found: Enum.count(character_items, & &1.display_id == display.id),
+        count: Enum.count(items, & &1.display_id == display.id)
+      }
+    end)
+  end
+
+  def region_options(items, nil) do
+    locations = list_assoc(items, :location)
+    regions = list_assoc(locations, :region)
+
+    Enum.map(regions, fn region ->
+      region_locations = Enum.filter(locations, & &1.region_id == region.id) |> Enum.map(& &1.id)
+      %{
+        id: region.id,
+        name: region.name,
+        count: Enum.count(items, & Enum.member?(region_locations, &1.location_id))
+      }
+    end)
+  end
+
+  def region_options(items, character_items) do
+    locations = list_assoc(items, :location)
+    regions = list_assoc(locations, :region)
+    character_items = Enum.filter(items, & Enum.member?(character_items, &1.id))
+
+    Enum.map(regions, fn region ->
+      region_locations = Enum.filter(locations, & &1.region_id == region.id) |> Enum.map(& &1.id)
+      %{
+        id: region.id,
+        name: region.name,
+        found: Enum.count(character_items, & Enum.member?(region_locations, &1.location_id)),
+        count: Enum.count(items, & Enum.member?(region_locations, &1.location_id))
+      }
+    end)
+  end
+
+  def location_options(items, filter, id, nil) do
+    locations = case {filter, id} do
+      {_, nil} -> list_assoc(items, :location)
+      {"region", id} -> list_assoc(items, :location) |> Enum.filter(& &1.region_id == id)
+      _ -> list_assoc(items, :location)
+    end
+
+    Enum.map(locations, fn location ->
+      %{
+        id: location.id,
+        name: location.name,
+        count: Enum.count(items, & &1.location_id == location.id)
+      }
+    end)
+  end
+
+  def location_options(items, filter, id, character_items) do
+    locations = case {filter, id} do
+      {_, nil} -> list_assoc(items, :location)
+      {"region", id} -> list_assoc(items, :location) |> Enum.filter(& &1.region_id == id)
+      _ -> list_assoc(items, :location)
+    end
+    character_items = Enum.filter(items, & Enum.member?(character_items, &1.id))
+
+    Enum.map(locations, fn location ->
+      %{
+        id: location.id,
+        name: location.name,
+        found: Enum.count(character_items, & &1.location_id == location.id),
+        count: Enum.count(items, & &1.location_id == location.id)
+      }
+    end)
+  end
+
+  def mod_options(items, nil) do
+    mods = list_assoc(items, :mod)
+    Enum.map(mods, fn mod ->
+      %{
+        id: mod.id,
+        name: mod.name,
+        count: Enum.count(items, & &1.mod_id == mod.id)
+      }
+    end)
+  end
+
+  def mod_options(items, character_items) do
+    mods = list_assoc(items, :mod)
+    character_items = Enum.filter(items, & Enum.member?(character_items, &1.id))
+
+    Enum.map(mods, fn mod ->
+      %{
+        id: mod.id,
+        name: mod.name,
+        found: Enum.count(character_items, & &1.mod_id == mod.id),
+        count: Enum.count(items, & &1.mod_id == mod.id)
+      }
+    end)
   end
 
   def visible_displays(displays, filter, id) do
@@ -130,7 +244,10 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def visible_items(items, character_items, displays, locations, filter, filter_val, hide, search) do
+  def visible_items(items, character_items, filter, filter_val, hide, search) do
+    displays = list_assoc(items, :display)
+    locations = list_assoc(items, :locations)
+
     items =
       cond do
         search != "" ->
@@ -173,5 +290,13 @@ defmodule LotdWeb.GalleryView do
 
     # only show 200 items for performance reasons
     Enum.take(items, 200)
+  end
+
+  defp list_assoc(collection, assoc) do
+    collection
+    |> Enum.map(& Map.get(&1, assoc))
+    |> Enum.reject(& &1 == nil)
+    |> Enum.uniq()
+    |> Enum.sort_by(& &1.name, :asc)
   end
 end

@@ -1,6 +1,6 @@
 defmodule LotdWeb.GalleryLive do
 
-  use Phoenix.LiveView, container: {:div, class: "container"}
+  use Phoenix.LiveView, container: {:div, class: "container-fluid"}
   # use LotdWeb, :live
 
   alias Lotd.{Accounts, Gallery}
@@ -19,40 +19,17 @@ defmodule LotdWeb.GalleryLive do
   def mount(_params, %{"user_id" => user_id }, socket) do
     user = Accounts.get_user!(user_id)
 
-    items = Gallery.list_items(user.active_character)
-    mods = list_assoc(items, :mod)
-    displays = list_assoc(items, :display)
-    locations = list_assoc(items, :location)
-
     assigns = [
       character_id: user.active_character.id,
       character_items: user.active_character.items,
-      displays: displays,
-      items: items,
-      locations: locations,
-      mods: mods,
-      regions: list_assoc(locations, :region),
-      rooms: list_assoc(displays, :room)
+      items: Gallery.list_items(user.active_character),
     ]
 
     {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
   end
 
   def mount(_params, _session, socket) do
-
-    items = Gallery.list_items()
-    displays = list_assoc(items, :display)
-    locations = list_assoc(items, :location)
-
-    assigns = [
-      items: items,
-      rooms: list_assoc(displays, :room),
-      displays: displays,
-      regions: list_assoc(locations, :region),
-      locations: locations,
-      mods: list_assoc(items, :mod)
-    ]
-
+    assigns = [ items: Gallery.list_items() ]
     {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
   end
 
