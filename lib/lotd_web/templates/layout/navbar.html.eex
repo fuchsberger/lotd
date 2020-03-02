@@ -32,6 +32,7 @@
             <%= link "Characters", to: Routes.live_path(@conn, LotdWeb.CharactersLive), class: "dropdown-item" %>
             <%= if @moderator do %>
               <div class="dropdown-divider"></div>
+              <%= link "Items", to: Routes.live_path(@conn, LotdWeb.ItemsLive), class: "dropdown-item" %>
               <%= link "Rooms", to: Routes.live_path(@conn, LotdWeb.RoomsLive), class: "dropdown-item" %>
               <%= link "Displays", to: Routes.live_path(@conn, LotdWeb.DisplaysLive), class: "dropdown-item" %>
               <%= link "Regions", to: Routes.live_path(@conn, LotdWeb.RegionsLive), class: "dropdown-item" %>

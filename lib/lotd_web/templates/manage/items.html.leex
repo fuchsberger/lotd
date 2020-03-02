@@ -1,0 +1,84 @@
+<%= f = form_for :search, "#", [
+  as: :search,
+  class: "mt-2",
+  novalidate: true,
+  phx_change: :search,
+  phx_submit: :search
+] %>
+  <%= text_input f, :term, class: "form-control", value: @search, placeholder: "Search..." %>
+</form>
+
+<%= f = form_for @changeset, "#", [
+  class: "d-flex my-2 #{unless is_nil(@changeset.action), do: "was-validated"}",
+  novalidate: true,
+  phx_change: :validate,
+  phx_submit: :save
+] %>
+
+  <div class='mr-2 w-25'>
+    <%= text_input f, :name, class: "#{control_class(f, :name)}", placeholder: "Name" %>
+  </div>
+
+  <div class='flex-grow-1'>
+    <%= text_input f, :url, class: "#{control_class(f, :url)}", placeholder: "Url" %>
+  </div>
+
+  <div class='ml-2'>
+    <%= select f, :display_id, @display_options,
+      class: "#{control_class(f, :display_id)}",
+      selected: @changeset.data.display_id,
+      prompt: "Select Display"
+    %>
+  </div>
+
+  <div class='ml-2'>
+    <%= select f, :location_id, @location_options,
+      class: "#{control_class(f, :location_id)}",
+      selected: @changeset.data.location_id,
+      prompt: "Select Location"
+    %>
+  </div>
+
+  <div class='ml-2'>
+    <%= select f, :mod_id, @mod_options,
+      class: "#{control_class(f, :mod_id)}",
+      selected: @changeset.data.mod_id,
+      prompt: "Select Mod"
+    %>
+  </div>
+
+  <div class="btn-group ml-2" role="group" aria-label="Manage">
+    <%= save_button(@changeset) %>
+    <%= if not is_nil(@changeset.data.id) do %>
+      <button
+        type='button'
+        class='btn btn-light'
+        phx-click='delete'
+        phx-value-id='<%= @changeset.data.id %>'
+      >
+        <i class='icon-remove text-danger'></i>
+      </button>
+    <% end %>
+  </div>
+</form>
+
+<table class="table table-sm">
+  <thead>
+    <tr>
+      <th scope="col" class='px-0'><i class='icon-show'></i></th>
+      <th scope="col">Item</th>
+      <th scope="col">Display</th>
+      <th scope="col">Location</th>
+      <th scope="col">Mod</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render_many visible_items(@items, @search), LotdWeb.ManageView, "_item.html",
+      as: :item,
+      display_filter: Ecto.Changeset.get_change(@changeset, :display_id),
+      location_filter: Ecto.Changeset.get_change(@changeset, :location_id),
+      mod_filter: Ecto.Changeset.get_change(@changeset, :mod_id),
+      edit_id: @changeset.data.id
+    %>
+  </tbody>
+</table>

@@ -72,6 +72,9 @@ defmodule Lotd.Gallery do
   # DISPLAYS -------------------------------------------------------------------------------------
   def list_displays, do: Repo.all from(d in Display, preload: [:room, :items], order_by: d.name)
 
+  def list_display_options,
+    do: Repo.all from(d in Display, select: {d.name, d.id}, order_by: d.name)
+
   def get_display!(id), do: Repo.get!(Display, id)
 
   def change_display(%Display{} = display), do: Display.changeset(display, %{})
@@ -93,6 +96,9 @@ defmodule Lotd.Gallery do
   # LOCATIONS ------------------------------------------------------------------------------------
   def list_locations, do: Repo.all from(r in Location, preload: [:region, :items], order_by: r.name)
 
+  def list_location_options,
+    do: Repo.all from(l in Location, select: {l.name, l.id}, order_by: l.name)
+
   def get_location!(id), do: Repo.get!(Location, id)
 
   def change_location(%Location{} = location), do: Location.changeset(location, %{})
@@ -101,6 +107,9 @@ defmodule Lotd.Gallery do
 
   # MODS -----------------------------------------------------------------------------------------
   def list_mods, do: Repo.all from(d in Mod, preload: :items, order_by: d.name)
+
+  def list_mod_options,
+    do: Repo.all from(m in Mod, select: {m.name, m.id}, order_by: m.name)
 
   def list_mods(ids), do: Repo.all from(d in Mod, order_by: d.name, where: d.id in ^ids)
 
