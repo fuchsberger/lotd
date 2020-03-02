@@ -28,17 +28,4 @@
       <i class='icon-mod' data-placement='left' title='<%= @item.mod.name %>' phx-hook='tooltip'></i>
     </a>
   </td>
-
-  <%= if @moderator do %>
-    <td class='px-0'>
-      <button
-        class='btn btn-link p-0'
-        phx-click='edit'
-        phx-value-id='<%= @item.id %>'
-        phx-value-type="item"
-      >
-        <i class='icon-edit'></i>
-      </button>
-    </td>
-  <% end %>
 </tr>

@@ -1,7 +1,6 @@
 <% filtered_items = visible_items(@items, @character_items, @displays, @locations, @filter, @filter_val, @hide, @search) %>
 
 <%= render "_filterbar.html",
-  moderator: @moderator,
   search: @search,
   parent: filter_parent(@filter, @filter_val, @displays, @locations),
   child: filter_text(@filter, @filter_val, @rooms, @displays, @regions, @locations, @mods),
@@ -48,7 +47,16 @@
           filter_val: @filter_val
         %>
       </th>
-      <th scope="col" class='d-none d-md-table-cell border-top-0'>Region</th>
+      <th scope="col" class='d-none d-md-table-cell border-top-0'>
+        <%= render "filter_region.html",
+          character_items: @character_items,
+          regions: @regions,
+          locations: @locations,
+          items: @items,
+          filter: @filter,
+          filter_val: @filter_val
+        %>
+      </th>
       <th scope="col" class='d-none d-md-table-cell border-top-0'>Location</th>
       <th scope="col" class='d-none d-md-table-cell border-top-0 px-0'>
         <%= render "filter_mod.html",
@@ -60,11 +68,6 @@
           filter_val: @filter_val
         %>
       </th>
-      <%= if @moderator do %>
-        <th class='d-none d-md-table-cell border-top-0 px-0' scope='col'>
-          <i class='icon-edit'></i>
-        </th>
-      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -72,7 +75,6 @@
       as: :item,
       authenticated?: not is_nil(@character_id),
       character_items: @character_items,
-      moderator: @moderator,
       filter: @filter
     %>
   </tbody>
@@ -82,12 +84,3 @@
     Only 200 items listed for performance reasons. Use filters / search to find a specific item.
   </p></small>
 <% end %>
-
-<%= if @moderator, do: live_component @socket, LotdWeb.ModalComponent,
-  id: :modal,
-  rooms: @rooms,
-  displays: @displays,
-  regions: @regions,
-  locations: @locations,
-  mods: @mods
-%>

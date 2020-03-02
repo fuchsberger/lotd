@@ -50,10 +50,6 @@ defmodule LotdWeb.GalleryView do
     [{"Please select...", nil} | Enum.map(displays, &{&1.name, &1.id})]
   end
 
-  def filter_class(id) do
-    if is_nil(id), do: "btn-outline-secondary", else: "btn-secondary"
-  end
-
   def header_display(displays, filter, id) do
     case {filter, id} do
       {_, nil} -> "Display"
@@ -95,21 +91,6 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def filter_text_class(id) do
-    unless is_nil(id), do: "text-primary"
-  end
-
-  def filter_title(collection, id) do
-    if is_nil(id) do
-      "Filter: <span class='font-italic text-info'>none selected</span>"
-    else
-      case Enum.find(collection, & &1.id == id) do
-        nil -> "Filter: <span class='font-italic text-danger'>invalid</span>"
-        entry -> "Filter: <span class='font-italic text-warning'>#{entry.name}</span>"
-      end
-    end
-  end
-
   def details_cell(nil), do: content_tag(:td, "", class: "d-none d-md-table-cell small")
 
   def details_cell(object) do
@@ -127,16 +108,6 @@ defmodule LotdWeb.GalleryView do
     Enum.filter(items, & Enum.member?(display_ids, &1.display_id))
   end
 
-  def room_options, do: [
-    "Other": 0,
-    "Hall of Heroes": 1,
-    "Armory": 2,
-    "Library": 3,
-    "East Exhibit Halls": 4,
-    "Dragonborn Hall": 5,
-    "Natural Science": 6
-  ]
-
   def region_items(items, locations, region_id) do
     location_ids = locations |> Enum.filter(& &1.region_id == region_id) |> Enum.map(& &1.id)
     Enum.filter(items, & Enum.member?(location_ids, &1.location_id))
@@ -149,8 +120,6 @@ defmodule LotdWeb.GalleryView do
 
     content_tag :li, link, class: "nav-item"
   end
-
-  def title(struct), do: struct_to_string(struct) |> String.capitalize()
 
   def visible_displays(displays, filter, id) do
     case {filter, id} do

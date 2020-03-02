@@ -82,3 +82,9 @@
     %>
   </tbody>
 </table>
+<%= if Enum.count(@items) == 200 do %>
+  <p class="text-center"><small>
+    Only 200 items listed for performance reasons. Use search to find a specific item.
+  </p></small>
+<% end %>
+

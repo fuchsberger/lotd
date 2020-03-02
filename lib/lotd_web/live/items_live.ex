@@ -28,7 +28,7 @@ defmodule LotdWeb.ItemsLive do
       changeset: Item.changeset(socket.assigns.changeset.data, params))}
   end
 
-  def handle_event("save", %{"item" => params}, socket) do
+  def handle_event("save", %{"item" => _params}, socket) do
     case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
       {:ok, item } ->
         item = Lotd.Repo.preload(item, [:display, :location, :mod], force: true)

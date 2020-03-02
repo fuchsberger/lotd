@@ -2,23 +2,6 @@
 
   <%= f = form_for :search, "#", [class: "flex-grow-1", phx_change: :search, phx_submit: :search] %>
     <div class='input-group'>
-      <%= if @moderator do %>
-        <div class="input-group-prepend">
-          <button class="btn btn-light border dropdown-toggle px-1" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title='Add' phx-hook='tooltip'><i class='icon-add'></i></button>
-          <div class="dropdown-menu">
-            <%= add_link("item") %>
-            <div class="dropdown-divider"></div>
-            <%= add_link("room") %>
-            <%= add_link("display") %>
-            <div class="dropdown-divider"></div>
-            <%= add_link("region") %>
-            <%= add_link("location") %>
-            <div class="dropdown-divider"></div>
-            <%= add_link("mod") %>
-          </div>
-        </div>
-      <% end %>
-
       <%= text_input f, :query,
         autofocus: true,
         class: "form-control",
