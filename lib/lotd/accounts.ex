@@ -43,8 +43,6 @@ defmodule Lotd.Accounts do
     |> Repo.all()
   end
 
-
-
   def get_character(id), do: Repo.get(Character, id)
   def get_character!(id), do: from(c in Character, preload: :items) |> Repo.get!(id)
 

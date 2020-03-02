@@ -81,16 +81,20 @@ defmodule LotdWeb.CharactersLive do
   end
 
   def handle_event("toggle", %{"id" => id}, socket) do
-
-    character = Enum.find(socket.assigns.characters, & &1.id == socket.assigns.user.active_character_id)
+    character = socket.assigns.changeset.data
     mod = Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
 
-    if Enum.member?(Enum.map(character.mods, & &1.id), mod.id),
+    character = if Enum.member?(Enum.map(character.mods, & &1.id), mod.id),
       do: Accounts.update_character_remove_mod(character, mod.id),
       else: Accounts.update_character_add_mod(character, mod)
 
+    character = Repo.preload(character, [:mods, :items], force: true)
     user = Accounts.get_user!(socket.assigns.user.id)
 
-    {:noreply, assign(socket, characters: Accounts.list_characters(user), user: user)}
+    {:noreply, assign(socket,
+      changeset: Accounts.change_character(character),
+      characters: update_collection(socket.assigns.characters, character),
+      user: user
+    )}
   end
 end

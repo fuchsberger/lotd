@@ -68,31 +68,22 @@
   </div>
 
   <div class="col col-md-7">
-    <ul class="list-group list-group-flush">
-      <li class='list-group-item px-2 py-1''>
-        <strong>Mods</strong>
-        (
-          <%= Enum.count(@user.active_character.mods) %> /
-          <%= Enum.count(@mods) %>
-        )
-        <strong class='float-right'>Items</strong>
-      </li>
-    </ul>
-    <ul class="list-group list-group-flush h-list overflow-auto">
-      <%= for m <- @mods do %>
-        <li class="list-group-item px-2 py-0">
-          <%= if true do %>
-            <a class='text-primary' phx-click='toggle' phx-value-id='<%= m.id %>'>
-              <i class='<%= mod_enabled_class(@user.active_character, m) %>'></i>
-            </a>
+    <table class='table table-sm'>
+      <thead>
+        <tr>
+          <%= unless is_nil(@changeset.data.id) do %>
+            <th scope='col'><i class='icon-active'></i></th>
           <% end %>
-          <%= m.name %>
-          <span class='float-right'>
-            <%= Enum.count(m.items, & Enum.member?(@user.active_character.mods, &1)) %> /
-            <%= Enum.count(m.items) %>
-          </span>
-        </li>
-      <% end %>
-    </ul>
+          <th scope='col'>Mod</th>
+          <th scope='col' class='text-right'>Items</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render_many @mods, LotdWeb.ManageView, "_character_mods.html",
+          as: :mod,
+          character: (if @changeset.data.id, do: @changeset.data, else: nil)
+        %>
+      </tbody>
+    </table>
   </div>
 </div>
