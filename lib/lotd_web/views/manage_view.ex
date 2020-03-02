@@ -6,6 +6,10 @@ defmodule LotdWeb.ManageView do
     submit icon(ico, class: "text-primary"), class: "btn btn-light"
   end
 
+  def delete_button, do: content_tag :button, icon("remove", class: "text-danger"),
+    class: "btn btn-light",
+    type: "button",
+    phx_click: "delete"
 
   def visible_items(items, search) do
     search = String.downcase(search)

@@ -15,16 +15,7 @@
 
   <div class="btn-group ml-2" role="group" aria-label="Manage">
     <%= save_button(@changeset) %>
-    <%= if not is_nil(@changeset.data.id) && Enum.count(@changeset.data.items) == 0 do %>
-      <button
-        type='button'
-        class='btn btn-light'
-        phx-click='delete'
-        phx-value-id='<%= @changeset.data.id %>'
-      >
-        <i class='icon-remove text-danger'></i>
-      </button>
-    <% end %>
+    <%= if not is_nil(@changeset.data.id) && Enum.count(@changeset.data.items) == 0, do: delete_button() %>
   </div>
 </form>
 

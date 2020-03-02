@@ -19,7 +19,7 @@ defmodule LotdWeb.ModsLive do
     {:noreply, assign(socket, changeset: Mod.changeset(socket.assigns.changeset.data, params))}
   end
 
-  def handle_event("save", %{"mod" => params}, socket) do
+  def handle_event("save", _params, socket) do
     case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
       {:ok, mod } ->
         mod = Lotd.Repo.preload(mod, :items)
@@ -43,7 +43,7 @@ defmodule LotdWeb.ModsLive do
     end
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("delete", _params, socket) do
     mod = Enum.find(socket.assigns.mods, & &1.id == socket.assigns.changeset.data.id)
     case Gallery.delete_mod(mod) do
       {:ok, mod} ->

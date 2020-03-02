@@ -19,7 +19,7 @@ defmodule LotdWeb.RoomsLive do
     {:noreply, assign(socket, changeset: Room.changeset(socket.assigns.changeset.data, params))}
   end
 
-  def handle_event("save", %{"room" => params}, socket) do
+  def handle_event("save", _params, socket) do
     case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
       {:ok, room } ->
         room = Lotd.Repo.preload(room, :displays)
@@ -43,7 +43,7 @@ defmodule LotdWeb.RoomsLive do
     end
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("delete", _params, socket) do
     room = Enum.find(socket.assigns.rooms, & &1.id == socket.assigns.changeset.data.id)
     case Gallery.delete_room(room) do
       {:ok, room} ->

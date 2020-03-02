@@ -25,7 +25,7 @@
       <% end %>
       <th class='border-top-0' scope='col'>Item</th>
 
-      <th scope="col" class='d-none d-lg-table-cell border-top-0'>
+      <th scope="col" class='d-none d-xl-table-cell border-top-0'>
         <%= render "filter_room.html",
           character_items: @character_items,
           displays: @displays,
@@ -47,7 +47,7 @@
           filter_val: @filter_val
         %>
       </th>
-      <th scope="col" class='d-none d-md-table-cell border-top-0'>
+      <th scope="col" class='d-none d-xl-table-cell border-top-0'>
         <%= render "filter_region.html",
           character_items: @character_items,
           regions: @regions,
@@ -57,8 +57,8 @@
           filter_val: @filter_val
         %>
       </th>
-      <th scope="col" class='d-none d-md-table-cell border-top-0'>Location</th>
-      <th scope="col" class='d-none d-md-table-cell border-top-0 px-0'>
+      <th scope="col" class='d-none d-lg-table-cell border-top-0'>Location</th>
+      <th scope="col" class='d-none d-sm-table-cell border-top-0 px-0'>
         <%= render "filter_mod.html",
           character_items: @character_items,
           hide: @hide,

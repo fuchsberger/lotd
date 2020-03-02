@@ -52,7 +52,7 @@ defmodule LotdWeb.ItemsLive do
     end
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("delete", _params, socket) do
     item = Enum.find(socket.assigns.items, & &1.id == socket.assigns.changeset.data.id)
     case Gallery.delete_item(item) do
       {:ok, item} ->

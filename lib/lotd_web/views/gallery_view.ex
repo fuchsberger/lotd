@@ -91,10 +91,11 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def details_cell(nil), do: content_tag(:td, "", class: "d-none d-md-table-cell small")
+  def details_cell(nil, visibility),
+    do: content_tag(:td, "", class: "d-none d-#{visibility}-table-cell small")
 
-  def details_cell(object) do
-    class = "d-none d-md-table-cell small"
+  def details_cell(object, visibility) do
+    class = "d-none d-#{visibility}-table-cell small"
 
     if object.url do
       content_tag(:td, link(object.name, to: object.url, class: "text-dark", target: "_blank"), class: class)

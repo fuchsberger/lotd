@@ -19,7 +19,7 @@ defmodule LotdWeb.RegionsLive do
     {:noreply, assign(socket, changeset: Region.changeset(socket.assigns.changeset.data, params))}
   end
 
-  def handle_event("save", %{"region" => params}, socket) do
+  def handle_event("save", _params, socket) do
     case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
       {:ok, region } ->
         region = Lotd.Repo.preload(region, :locations)
@@ -43,7 +43,7 @@ defmodule LotdWeb.RegionsLive do
     end
   end
 
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("delete", _params, socket) do
     region = Enum.find(socket.assigns.regions, & &1.id == socket.assigns.changeset.data.id)
     case Gallery.delete_region(region) do
       {:ok, region} ->

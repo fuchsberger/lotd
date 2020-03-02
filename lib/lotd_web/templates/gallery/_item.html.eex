@@ -18,12 +18,12 @@
     %>
   </th>
 
-  <%= details_cell(@item.display.room) %>
-  <%= details_cell(@item.display) %>
-  <%= details_cell(@item.location && @item.location.region) %>
-  <%= details_cell(@item.location) %>
+  <%= details_cell(@item.display.room, "xl") %>
+  <%= details_cell(@item.display, "md") %>
+  <%= details_cell(@item.location && @item.location.region, "xl") %>
+  <%= details_cell(@item.location, "lg") %>
 
-  <td class='d-none d-md-table-cell px-0'>
+  <td class='d-none d-sm-table-cell px-0'>
     <a class='text-dark' href='<%= @item.mod.url %>' target='_blank'>
       <i class='icon-mod' data-placement='left' title='<%= @item.mod.name %>' phx-hook='tooltip'></i>
     </a>
