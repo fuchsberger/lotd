@@ -53,7 +53,10 @@ defmodule LotdWeb.CharactersLive do
   end
 
   def handle_event("save", _params, socket) do
-    case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
+    changeset =
+      Ecto.Changeset.put_change(socket.assigns.changeset, :user_id, socket.assigns.user.id)
+
+    case Lotd.Repo.insert_or_update(changeset) do
       {:ok, character } ->
         character = Repo.preload(character, [:items, :mods])
         {:noreply, assign(socket,
