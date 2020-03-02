@@ -2,11 +2,13 @@
 
 ### New Features
   - Locations now belong to a region
-  - Improved Gallery view (table format) that displays further information about items.
   - Columns are filterable and hide automatically according to screen size
+  - Characters can now be created / edited on mobile devices
 
 ### Enhancments
   - Separated management from Gallery view
+  - Improved Gallery view (table format) that displays further information about items.
+  - Improved Character page and added legend.
 
 ### Bug Fixes
   - When hitting ENTER in a search field it would redirect to a 404 page
