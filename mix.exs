@@ -38,7 +38,7 @@ defmodule Lotd.MixProject do
       {:phoenix_ecto, "~> 4.1"},
       {:ecto_sql, "~> 3.3"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.13"},
+      {:phoenix_html, "~> 2.14"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.17"},
       {:jason, "~> 1.1"},
