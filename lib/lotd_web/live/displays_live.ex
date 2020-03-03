@@ -24,9 +24,16 @@ defmodule LotdWeb.DisplaysLive do
   def handle_event("save", _params, socket) do
     case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
       {:ok, display } ->
+
+        changeset =
+          %Display{}
+          |> Gallery.change_display()
+          |> Ecto.Changeset.put_change(:room_id, display.room_id)
+
         display = Lotd.Repo.preload(display, [:room, :items], force: true)
+
         {:noreply, assign(socket,
-          changeset: Gallery.change_display(%Display{}),
+          changeset: changeset,
           displays: update_collection(socket.assigns.displays, display)
         )}
 
@@ -38,7 +45,12 @@ defmodule LotdWeb.DisplaysLive do
   def handle_event("edit", %{"id" => id}, socket) do
     id = String.to_integer(id)
     if socket.assigns.changeset.data.id == id do
-      {:noreply, assign(socket, changeset: Gallery.change_display(%Display{}))}
+      changeset =
+        %Display{}
+        |> Gallery.change_display()
+        |> Ecto.Changeset.put_change(:room_id, socket.assigns.changeset.data.room_id)
+      {:noreply, assign(socket, changeset: changeset)}
+
     else
       display = Enum.find(socket.assigns.displays, & &1.id == id)
       {:noreply, assign(socket, changeset: Gallery.change_display(display))}
@@ -48,15 +60,21 @@ defmodule LotdWeb.DisplaysLive do
   def handle_event("delete", _params, socket) do
     display = Enum.find(socket.assigns.displays, & &1.id == socket.assigns.changeset.data.id)
     case Gallery.delete_display(display) do
+
       {:ok, display} ->
+
+        changeset =
+          %Display{}
+          |> Gallery.change_display()
+          |> Ecto.Changeset.put_change(:room_id, display.room_id)
+
         {:noreply, assign(socket,
-          changeset: Gallery.change_display(%Display{}),
+          changeset: changeset,
           displays: Enum.reject(socket.assigns.displays, & &1.id == display.id)
         )}
 
       {:error, _reason} ->
         {:noreply, socket}
     end
-
   end
 end

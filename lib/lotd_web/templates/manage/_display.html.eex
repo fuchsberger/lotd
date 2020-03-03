@@ -1,4 +1,4 @@
-<%= if is_nil(@filter) || @filter == @display.region_id do %>
+<%= if is_nil(@filter) || @filter == @display.room_id do %>
   <tr
     class='<%= if @display.id == @edit_id, do: "table-active" %>'
     phx-click='edit'

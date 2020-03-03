@@ -33,14 +33,6 @@ defmodule LotdWeb.GalleryLive do
     {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
   end
 
-  defp list_assoc(collection, assoc) do
-    collection
-    |> Enum.map(& Map.get(&1, assoc))
-    |> Enum.reject(& &1 == nil)
-    |> Enum.uniq()
-    |> Enum.sort_by(& &1.name, :asc)
-  end
-
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
     case {type, id} do
       {"", ""} -> {:noreply, assign(socket, filter: nil,  filter_val: nil)}
