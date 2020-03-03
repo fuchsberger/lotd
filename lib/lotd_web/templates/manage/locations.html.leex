@@ -39,7 +39,7 @@
   <tbody>
     <%= render_many @locations, LotdWeb.ManageView, "_location.html",
       as: :location,
-      filter: Ecto.Changeset.get_change(@changeset, :region_id),
+      filter: Ecto.Changeset.get_field(@changeset, :region_id),
       edit_id: @changeset.data.id
     %>
   </tbody>

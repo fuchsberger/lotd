@@ -45,10 +45,12 @@ defmodule LotdWeb.DisplaysLive do
   def handle_event("edit", %{"id" => id}, socket) do
     id = String.to_integer(id)
     if socket.assigns.changeset.data.id == id do
+
       changeset =
         %Display{}
         |> Gallery.change_display()
         |> Ecto.Changeset.put_change(:room_id, socket.assigns.changeset.data.room_id)
+
       {:noreply, assign(socket, changeset: changeset)}
 
     else

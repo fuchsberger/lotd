@@ -24,9 +24,16 @@ defmodule LotdWeb.LocationsLive do
   def handle_event("save", _params, socket) do
     case Lotd.Repo.insert_or_update(socket.assigns.changeset) do
       {:ok, location } ->
+
+        changeset =
+          %Location{}
+          |> Gallery.change_location()
+          |> Ecto.Changeset.put_change(:region_id, location.region_id)
+
         location = Lotd.Repo.preload(location, [:region, :items], force: true)
+
         {:noreply, assign(socket,
-          changeset: Gallery.change_location(%Location{}),
+          changeset: changeset,
           locations: update_collection(socket.assigns.locations, location)
         )}
 
@@ -37,10 +44,18 @@ defmodule LotdWeb.LocationsLive do
 
   def handle_event("edit", %{"id" => id}, socket) do
     id = String.to_integer(id)
+
     if socket.assigns.changeset.data.id == id do
-      {:noreply, assign(socket, changeset: Gallery.change_location(%Location{}))}
+      changeset =
+        %Location{}
+        |> Gallery.change_location()
+        |> Ecto.Changeset.put_change(:region_id, socket.assigns.changeset.data.region_id)
+
+      {:noreply, assign(socket, changeset: changeset)}
+
     else
       location = Enum.find(socket.assigns.locations, & &1.id == id)
+      IO.inspect Gallery.change_location(location)
       {:noreply, assign(socket, changeset: Gallery.change_location(location))}
     end
   end
@@ -49,8 +64,13 @@ defmodule LotdWeb.LocationsLive do
     location = Enum.find(socket.assigns.locations, & &1.id == socket.assigns.changeset.data.id)
     case Gallery.delete_location(location) do
       {:ok, location} ->
+        changeset =
+          %Location{}
+          |> Gallery.change_location()
+          |> Ecto.Changeset.put_change(:region_id, location.region_id)
+
         {:noreply, assign(socket,
-          changeset: Gallery.change_location(%Location{}),
+          changeset: changeset,
           locations: Enum.reject(socket.assigns.locations, & &1.id == location.id)
         )}
 
