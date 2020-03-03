@@ -1,4 +1,11 @@
-## 0.6.1
+## 0.6.2
+
+### Enhancments
+  - Improved Filtering in Admin View
+  - Displays can now only be filtered if a room or display is currently being filtered.
+  - Locations can now only be filtered if a region or location is currently being filtered.
+
+# 0.6
 
 ### New Features
   - Locations now belong to a region

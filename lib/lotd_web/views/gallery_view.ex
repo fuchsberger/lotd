@@ -115,9 +115,13 @@ defmodule LotdWeb.GalleryView do
 
   def display_options(items, filter, id, nil) do
     displays = case {filter, id} do
-      {_, nil} -> list_assoc(items, :display)
+      {_, nil} -> []
       {"room", id} -> list_assoc(items, :display) |> Enum.filter(& &1.room_id == id)
-      _ -> list_assoc(items, :display)
+      {"display", id} ->
+        displays = list_assoc(items, :display)
+        room_id = Enum.find(displays, & &1.id == id).room_id
+        Enum.filter(displays, & &1.room_id == room_id)
+      _ -> []
     end
 
     Enum.map(displays, fn display ->
@@ -131,10 +135,15 @@ defmodule LotdWeb.GalleryView do
 
   def display_options(items, filter, id, character_items) do
     displays = case {filter, id} do
-      {_, nil} -> list_assoc(items, :display)
+      {_, nil} -> []
       {"room", id} -> list_assoc(items, :display) |> Enum.filter(& &1.room_id == id)
-      _ -> list_assoc(items, :display)
+      {"display", id} ->
+        displays = list_assoc(items, :display)
+        room_id = Enum.find(displays, & &1.id == id).room_id
+        Enum.filter(displays, & &1.room_id == room_id)
+      _ -> []
     end
+
     character_items = Enum.filter(items, & Enum.member?(character_items, &1.id))
 
     Enum.map(displays, fn display ->
@@ -179,9 +188,13 @@ defmodule LotdWeb.GalleryView do
 
   def location_options(items, filter, id, nil) do
     locations = case {filter, id} do
-      {_, nil} -> list_assoc(items, :location)
+      {_, nil} -> []
       {"region", id} -> list_assoc(items, :location) |> Enum.filter(& &1.region_id == id)
-      _ -> list_assoc(items, :location)
+      {"location", id} ->
+        locations = list_assoc(items, :location)
+        region_id = Enum.find(locations, & &1.id == id).region_id
+        Enum.filter(locations, & &1.region_id == region_id)
+      _ -> []
     end
 
     Enum.map(locations, fn location ->
@@ -195,9 +208,13 @@ defmodule LotdWeb.GalleryView do
 
   def location_options(items, filter, id, character_items) do
     locations = case {filter, id} do
-      {_, nil} -> list_assoc(items, :location)
+      {_, nil} -> []
       {"region", id} -> list_assoc(items, :location) |> Enum.filter(& &1.region_id == id)
-      _ -> list_assoc(items, :location)
+      {"location", id} ->
+        locations = list_assoc(items, :location)
+        region_id = Enum.find(locations, & &1.id == id).region_id
+        Enum.filter(locations, & &1.region_id == region_id)
+        _ -> []
     end
     character_items = Enum.filter(items, & Enum.member?(character_items, &1.id))
 
