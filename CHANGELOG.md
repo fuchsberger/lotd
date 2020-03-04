@@ -1,3 +1,8 @@
+## 0.6.3
+
+### New Features
+  - Added Replica Support
+
 ## 0.6.2
 
 ### Enhancments
