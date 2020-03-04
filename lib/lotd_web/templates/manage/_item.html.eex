@@ -7,6 +7,7 @@
     <%= if @item.url, do: link icon("show"), to: @item.url, target: "_blank" %>
   </td>
   <td><%= @item.name %></td>
+  <td class='px-0'><%= if @item.replica, do: icon("replica") %></td>
   <td class='small'><%= @item.display.name %></td>
   <td class='small'><%= unless is_nil(@item.location_id), do: @item.location.name %></td>
   <td class='small'><%= @item.mod.name %></td>

@@ -8,6 +8,7 @@ defmodule Lotd.Gallery.Item do
   schema "items" do
     field :name, :string
     field :url, :string
+    field :replica, :boolean, default: false
     field :room_id, :integer, virtual: true
 
     belongs_to :display, Lotd.Gallery.Display
@@ -20,7 +21,8 @@ defmodule Lotd.Gallery.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, ~w(name url room_id display_id location_id mod_id)a)
+    |> cast(attrs, ~w(name url replica room_id display_id location_id mod_id)a)
+    |> validate_inclusion(:replica, [true, false])
     |> validate_required([:name, :display_id, :mod_id])
     |> validate_length(:name, max: 250)
     |> assoc_constraint(:display)
