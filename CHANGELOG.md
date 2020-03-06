@@ -1,3 +1,11 @@
+## 0.6.4
+
+### Enhancments
+  - Toned down visibility of replica icon
+
+### Bug Fixes
+  - Region and Location filter now working as intended.
+
 ## 0.6.3
 
 ### New Features

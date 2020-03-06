@@ -263,7 +263,7 @@ defmodule LotdWeb.GalleryView do
 
   def visible_items(items, character_items, filter, filter_val, hide, search) do
     displays = list_assoc(items, :display)
-    locations = list_assoc(items, :locations)
+    locations = list_assoc(items, :location)
 
     items =
       cond do

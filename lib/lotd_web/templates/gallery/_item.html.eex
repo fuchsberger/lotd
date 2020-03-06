@@ -17,7 +17,9 @@
       else: content_tag :span, @item.name, class: "text-secondary"
     %>
   </th>
-  <td class='d-none d-sm-table-cell px-0'><%= if @item.replica, do: icon("replica") %></td>
+  <td class='d-none d-sm-table-cell px-0'>
+    <%= if @item.replica, do: icon("replica", class: "text-muted") %>
+  </td>
   <%= details_cell(@item.display.room, "xl") %>
   <%= details_cell(@item.display, "md") %>
   <%= details_cell(@item.location && @item.location.region, "xl") %>
