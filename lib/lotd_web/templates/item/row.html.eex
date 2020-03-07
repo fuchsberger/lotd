@@ -1,12 +1,12 @@
 <tr>
-  <%= unless is_nil(@character_items) do %>
+  <%= unless is_nil(@character) do %>
     <td class='p-0'>
       <button
         class='btn btn-link p-0'
         phx-click='toggle-item'
         phx-value-id='<%= @item.id %>'
       >
-        <i class='icon-<%= if Enum.member?(@character_items, @item.id), do: "active", else: "inactive" %>'></i>
+        <i class='icon-<%= if Enum.member?(@character.items, @item.id), do: "active", else: "inactive" %>'></i>
       </button>
     </td>
   <% end %>
@@ -14,7 +14,7 @@
   <th class='text-truncate' scope="row">
     <%= if @item.url,
       do: link(@item.name, to: @item.url, class: "text-dark", target: "_blank"),
-      else: content_tag :span, @item.name, class: "text-secondary"
+      else: content_tag :span, name(@item, @search), class: "text-secondary"
     %>
   </th>
   <td class='d-none d-sm-table-cell px-0'>

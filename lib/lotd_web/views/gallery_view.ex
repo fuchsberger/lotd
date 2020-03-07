@@ -26,63 +26,6 @@ defmodule LotdWeb.GalleryView do
     |> Enum.count()
   end
 
-  defp crumb_link(title, filter, id) do
-    link title, to: "#", phx_click: "filter", phx_value_type: filter, phx_value_id: id
-  end
-
-  defp crumb(content, active \\ false) do
-    if active do
-      content_tag(:li, content, class: "breadcrumb-item active", aria_current: "page")
-    else
-      content_tag(:li, content, class: "breadcrumb-item")
-    end
-  end
-
-  def filters(filter, id, items) do
-    case {filter, id} do
-      {_, nil} ->
-        []
-
-      {"room", id} ->
-        displays = list_assoc(items, :display)
-        room = Enum.find(list_assoc(displays, :room), & &1.id == id)
-        [room]
-
-      {"display", id} ->
-        display = Enum.find(list_assoc(items, :display), & &1.id == id)
-        [{"room", display.room}, display]
-
-      {"region", id} ->
-        locations = list_assoc(items, :location)
-        region = Enum.find(list_assoc(locations, :region), & &1.id == id)
-        [region]
-
-      {"location", id} ->
-        location = Enum.find(list_assoc(items, :location), & &1.id == id)
-        [{"region", location.region}, location]
-
-      {"mod", id} ->
-        mod = Enum.find(list_assoc(items, :mod), & &1.id == id)
-        [mod]
-
-      _ ->
-        []
-    end
-  end
-
-  def details_cell(nil, visibility),
-    do: content_tag(:td, "", class: "d-none d-#{visibility}-table-cell small")
-
-  def details_cell(object, visibility) do
-    class = "d-none d-#{visibility}-table-cell small"
-
-    if object.url do
-      content_tag(:td, link(object.name, to: object.url, class: "text-dark", target: "_blank"), class: class)
-    else
-      content_tag(:td, content_tag(:span, object.name, class: "text-muted"), class: class)
-    end
-  end
-
   def room_options(items, nil) do
     displays = list_assoc(items, :display)
     rooms = list_assoc(displays, :room)

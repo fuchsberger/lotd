@@ -31,25 +31,94 @@ defmodule Lotd.Gallery do
     end
   end
 
+  def get(type, id) do
+    case type do
+      "room" -> get_room!(id)
+      "display" -> get_display!(id)
+      "region" -> get_region!(id)
+      "location" -> get_location!(id)
+      "mod" -> get_mod!(id)
+      _ -> nil
+    end
+  end
+
+  def find(module, query), do:
+    Repo.all from(e in module,
+      select: {e.id, e.name},
+      order_by: e.name,
+      where: ilike(e.name, ^"%#{query}%"),
+      limit: 3
+    )
+
   # ITEMS ----------------------------------------------------------------------------------------
-  def list_items do
+  def item_query, do: from(i in Item,
+    order_by: i.name,
+    preload: [:mod, display: [:room], location: [:region]],
+    limit: 200
+  )
+
+  def list_items(), do:
     Repo.all from(i in Item,
       preload: [:mod, display: [:room], location: [:region]],
       order_by: i.name
     )
+
+  def list_items(query, nil), do:
+    Repo.all from(i in item_query(), where: ilike(i.name, ^"%#{query}%"))
+
+  def list_items(query, character), do:
+    Repo.all from(i in item_query(),
+      preload: [characters: ^from(c in Character, select: c.id, where: c.id == ^character.id)],
+      where: i.mod_id in ^character.mods and ilike(i.name, ^"%#{query}%")
+    )
+
+  def list_items("room", id, nil) do
+    display_ids = Repo.all from(d in Display, select: d.id, where: d.room_id == ^id)
+    Repo.all from(i in item_query(), where: i.display_id in ^display_ids)
   end
 
-  def list_items(character), do:
-    Repo.all from(i in Item,
-      order_by: i.name,
-      preload: [
-        :mod,
-        characters: ^from(c in Character, select: c.id, where: c.id == ^character.id),
-        location: [:region],
-        display: [:room]
-      ],
-      where: i.mod_id in ^character.mods
+  def list_items("room", id, character) do
+    display_ids = Repo.all from(d in Display, select: d.id, where: d.room_id == ^id)
+    Repo.all from(i in item_query(),
+      where: i.display_id in ^display_ids and i.mod_id in ^character.mods
     )
+  end
+
+  def list_items("display", id, nil) do
+    Repo.all from(i in item_query(), where: i.display_id == ^id)
+  end
+
+  def list_items("display", id, character) do
+    Repo.all from(i in item_query(), where: i.display_id == ^id and i.mod_id in ^character.mods)
+  end
+
+  def list_items("region", id, nil) do
+    location_ids = Repo.all from(l in Location, select: l.id, where: l.region_id == ^id)
+    Repo.all from(i in item_query(), where: i.location_id in ^location_ids)
+  end
+
+  def list_items("region", id, character) do
+    location_ids = Repo.all from(l in Location, select: l.id, where: l.region_id == ^id)
+    Repo.all from(i in item_query(),
+      where: i.location_id in ^location_ids and i.mod_id in ^character.mods
+    )
+  end
+
+  def list_items("location", id, nil) do
+    Repo.all from(i in item_query(), where: i.location_id == ^id)
+  end
+
+  def list_items("location", id, character) do
+    Repo.all from(i in item_query(), where: i.location_id == ^id and i.mod_id in ^character.mods)
+  end
+
+  def list_items("mod", id, nil) do
+    Repo.all from(i in item_query(), where: i.mod_id == ^id)
+  end
+
+  def list_items("mod", id, character) do
+    Repo.all from(i in item_query(), where: i.mod_id == ^id and i.mod_id in ^character.mods)
+  end
 
   def get_item!(id), do: Repo.get!(Item, id)
 

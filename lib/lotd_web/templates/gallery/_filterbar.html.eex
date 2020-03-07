@@ -1,47 +1,36 @@
-<div class="d-flex pt-2">
-  <%= f = form_for :search, "#", [class: "flex-grow-1", phx_change: :search, phx_submit: :search] %>
+<div class="form-group">
+  <%= f = form_for :search, "#", [phx_change: :search, phx_submit: :search] %>
     <div class='input-group'>
       <%= text_input f, :query,
         autofocus: true,
         class: "form-control",
         placeholder: "Search...",
-        phx_debounce: 300,
+        phx_debounce: 800,
         value: @search
       %>
 
       <div class="input-group-append">
+        <%= unless is_nil(@filter) do %>
+          <span class="input-group-text"><%= @filter.name %></span>
+        <% end %>
         <button
           class="btn btn-light border px-1"
           type="button"
-          phx-click="clear-search"
+          phx-click="clear"
           phx-hook='tooltip'
-          title="Clear Search"
+          title="Clear Search & Filter"
         >
           <i class='icon-remove'></i>
         </button>
       </div>
     </div>
   </form>
-  <nav aria-label="breadcrumb" class='pl-2 d-none d-md-block'>
-    <ol class="breadcrumb mb-0 py-2 bg-light">
-      <%= case @filters do
-          [{filter1, obj1}, obj2] ->
-            [
-              crumb(crumb_link("All", "", "")),
-              crumb(crumb_link(obj1.name, filter1, obj1.id)),
-              crumb(obj2.name, true)
-            ]
+</div>
 
-          [obj] ->
-            [
-              crumb(crumb_link("All", "", "")),
-              crumb(obj.name, true)
-            ]
-
-          [] ->
-            crumb("All", true)
-        end
-      %>
-    </ol>
-  </nav>
+<div class='form-row'>
+  <%= render "_filter_col.html", type: "room", entries: @rooms %>
+  <%= render "_filter_col.html", type: "display", entries: @displays %>
+  <%= render "_filter_col.html", type: "region", entries: @regions %>
+  <%= render "_filter_col.html", type: "location", entries: @locations %>
+  <%= render "_filter_col.html", type: "mod", entries: @mods %>
 </div>

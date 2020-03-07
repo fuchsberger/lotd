@@ -1,10 +1,10 @@
 ## 0.6.4
 
 ### Enhancments
+  - Syntax Highlighting in item names on search
+  - Searching happens now on database level (performance optimized)
+  - Filtering happens now on search
   - Toned down visibility of replica icon
-
-### Bug Fixes
-  - Region and Location filter now working as intended.
 
 ## 0.6.3
 
