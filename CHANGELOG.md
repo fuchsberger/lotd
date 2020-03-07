@@ -1,10 +1,17 @@
 ## 0.6.4
 
+### New Features
+  - safety confirmation before deleting things
+
 ### Enhancments
   - Syntax Highlighting in item names on search
   - Searching happens now on database level (performance optimized)
   - Filtering happens now on search
+  - searching also improved in manage view
+  - items and locations are now autoupdated whenever elements change
+  - improved save button
   - Toned down visibility of replica icon
+  - only admins can now delete stuff
 
 ## 0.6.3
 

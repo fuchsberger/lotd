@@ -4,6 +4,7 @@ import $ from 'jquery'
 import 'popper.js'
 import 'bootstrap'
 import { Socket } from "phoenix"
+import "phoenix_html"
 import LiveSocket from "phoenix_live_view"
 import connect from './nexus'
 

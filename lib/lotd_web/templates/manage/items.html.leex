@@ -1,13 +1,3 @@
-<%= f = form_for :search, "#", [
-  as: :search,
-  class: "form-group mt-2",
-  novalidate: true,
-  phx_change: :search,
-  phx_submit: :search
-] %>
-  <%= text_input f, :term, class: "form-control", value: @search, placeholder: "Search..." %>
-</form>
-
 <%= f = form_for @changeset, "#", [
   class: "#{unless is_nil(@changeset.action), do: "was-validated"}",
   novalidate: true,
@@ -26,16 +16,11 @@
     </div>
 
     <div class='col form-group'>
-
-      <%= label :item, :replica, class: "control-label" do %>
-        <%= checkbox(f, :replica) %>
-        Replica
-      <% end %>
-
-      <div class="btn-group ml-2" role="group" aria-label="Manage">
-        <%= save_button(@changeset) %>
-        <%= if not is_nil(@changeset.data.id), do: delete_button() %>
-      </div>
+      <%= select f, :mod_id, @mod_options,
+        class: "#{control_class(f, :mod_id)}",
+        selected: @changeset.data.mod_id,
+        prompt: "Select Mod"
+      %>
     </div>
   </div>
 
@@ -55,11 +40,16 @@
       %>
     </div>
     <div class='col form-group'>
-      <%= select f, :mod_id, @mod_options,
-        class: "#{control_class(f, :mod_id)}",
-        selected: @changeset.data.mod_id,
-        prompt: "Select Mod"
-      %>
+
+      <%= label :item, :replica, class: "control-label" do %>
+        <%= checkbox(f, :replica) %>
+        Replica
+      <% end %>
+
+      <div class="btn-group ml-2" role="group" aria-label="Manage">
+        <%= save_button(@changeset) %>
+        <%= if @admin && not is_nil(@changeset.data.id), do: delete_button() %>
+      </div>
     </div>
   </div>
 </form>
@@ -76,7 +66,7 @@
     </tr>
   </thead>
   <tbody>
-    <%= render_many visible_items(@items, @search), LotdWeb.ManageView, "_item.html",
+    <%= render_many @items, LotdWeb.ManageView, "_item.html",
       as: :item,
       display_filter: Ecto.Changeset.get_change(@changeset, :display_id),
       location_filter: Ecto.Changeset.get_change(@changeset, :location_id),

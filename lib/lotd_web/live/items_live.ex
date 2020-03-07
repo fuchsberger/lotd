@@ -3,29 +3,32 @@ defmodule LotdWeb.ItemsLive do
   use Phoenix.LiveView, container: {:div, class: "container"}
 
   import LotdWeb.LiveHelpers
-  alias Lotd.Gallery
+  alias Lotd.{Accounts, Gallery}
   alias Lotd.Gallery.Item
 
   def render(assigns), do: LotdWeb.ManageView.render("items.html", assigns)
 
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"user_id" => user_id }, socket) do
+    changeset = Gallery.change_item(%Item{})
+    user = Accounts.get_user!(user_id)
+
     {:ok, assign(socket,
-      changeset: Gallery.change_item(%Item{}),
-      items: Gallery.list_items(),
+      admin: user.admin,
+      changeset: changeset,
+      items: Gallery.list_items(Ecto.Changeset.get_change(changeset, :name), nil),
       display_options: Gallery.list_display_options(),
       location_options: Gallery.list_location_options(),
-      mod_options: Gallery.list_mod_options(),
-      search: ""
+      mod_options: Gallery.list_mod_options()
     )}
   end
 
-  def handle_event("search", %{"search" => %{"term" => query}}, socket) do
-    {:noreply, assign(socket, :search, query)}
-  end
-
   def handle_event("validate", %{"item" => params}, socket) do
+    changeset = Item.changeset(socket.assigns.changeset.data, params)
     {:noreply, assign(socket,
-      changeset: Item.changeset(socket.assigns.changeset.data, params))}
+      changeset: changeset,
+      items: Gallery.list_items(Ecto.Changeset.get_change(changeset, :name), nil),
+      location_options: Gallery.list_location_options(),
+    )}
   end
 
   def handle_event("save", %{"item" => _params}, socket) do

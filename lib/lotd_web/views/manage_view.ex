@@ -7,14 +7,17 @@ defmodule LotdWeb.ManageView do
   end
 
   def save_button(changeset) do
-    ico = if is_nil(changeset.data.id), do: "add", else: "edit"
-    submit icon(ico, class: "text-primary"), class: "btn btn-light"
+    if is_nil(changeset.data.id),
+      do: submit([icon("add"), " Add"], class: "btn btn-light text-primary"),
+      else: submit([icon("edit"), " Update"], class: "btn btn-light text-primary")
   end
 
-  def delete_button, do: content_tag :button, icon("remove", class: "text-danger"),
-    class: "btn btn-light",
-    type: "button",
-    phx_click: "delete"
+  def delete_button, do:
+    content_tag :button, icon("remove", class: "text-danger"),
+      class: "btn btn-light",
+      data_confirm: "Are you sure you want to delete this?",
+      type: "button",
+      phx_click: "delete"
 
   def visible_items(items, search) do
     search = String.downcase(search)
