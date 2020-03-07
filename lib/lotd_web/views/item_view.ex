@@ -21,10 +21,17 @@ defmodule LotdWeb.ItemView do
   end
 
   def name(item, search) do
-    case String.split(item.name, search, parts: 2) do
-      [name] -> name
-      ["", name] -> [ content_tag(:mark, search, class: "px-0"), name ]
-      [prefix, suffix] -> [ prefix, content_tag(:mark, search, class: "px-0"), suffix ]
+    if String.length(search) > 2 do
+      case String.split(item.name, [search, String.capitalize(search)], parts: 2) do
+        [name] -> name
+        ["", name] -> [ content_tag(:mark, String.capitalize(search), class: "px-0"), name ]
+        [prefix, suffix] ->
+          if String.last(prefix) == " ",
+            do: [ prefix, content_tag(:mark, String.capitalize(search), class: "px-0"), suffix ],
+            else: [ prefix, content_tag(:mark, search, class: "px-0"), suffix ]
+      end
+    else
+      item.name
     end
   end
 end

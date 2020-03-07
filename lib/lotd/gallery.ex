@@ -57,6 +57,51 @@ defmodule Lotd.Gallery do
     limit: 200
   )
 
+  def list_items(assigns) do
+    query =
+      item_query()
+      |> query_character(assigns.character, assigns.hide)
+      |> query_filter(assigns.filter)
+      |> query_search(assigns.search)
+
+    Repo.all(query)
+  end
+
+  defp query_character(query, nil, _hide), do: query
+
+  defp query_character(query, character, false),
+    do: query |> where([i], i.mod_id in ^character.mods)
+
+  defp query_character(query, character, true),
+    do: query |> where([i], i.mod_id in ^character.mods and not(i.id in ^character.items))
+
+  defp query_filter(query, nil), do: query
+
+  defp query_filter(query, %Room{} = filter) do
+    display_ids = Repo.all(from d in Display, select: d.id, where: d.room_id == ^filter.id)
+    query |> where([i], i.display_id in ^display_ids)
+  end
+
+  defp query_filter(query, %Display{} = filter),
+    do: query |> where([i], i.display_id == ^filter.id)
+
+  defp query_filter(query, %Region{} = filter) do
+    location_ids = Repo.all(from l in Location, select: l.id, where: l.region_id == ^filter.id)
+    query |> where([i], i.location_id in ^location_ids)
+  end
+
+  defp query_filter(query, %Location{} = filter),
+    do: query |> where([i], i.location_id == ^filter.id)
+
+  defp query_filter(query, %Mod{} = filter),
+    do: query |> where([i], i.mod_id == ^filter.id)
+
+  defp query_search(query, search) do
+    if String.length(search) > 2,
+      do: query |> where([i], ilike(i.name, ^"%#{search}%")),
+      else: query
+  end
+
   def list_items(), do:
     Repo.all from(i in Item,
       preload: [:mod, display: [:room], location: [:region]],

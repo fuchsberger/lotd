@@ -27,7 +27,7 @@ defmodule LotdWeb.ItemsLive do
     {:noreply, assign(socket,
       changeset: changeset,
       items: Gallery.list_items(Ecto.Changeset.get_change(changeset, :name), nil),
-      location_options: Gallery.list_location_options(),
+      location_options: Gallery.list_location_options()
     )}
   end
 

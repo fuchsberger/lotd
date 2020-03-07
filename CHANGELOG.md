@@ -2,6 +2,7 @@
 
 ### New Features
   - safety confirmation before deleting things
+  - the app will now remember your hide items selection
 
 ### Enhancments
   - Syntax Highlighting in item names on search

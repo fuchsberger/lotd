@@ -1,7 +1,6 @@
 defmodule LotdWeb.GalleryLive do
 
   use Phoenix.LiveView, container: {:div, class: "container-fluid"}
-  # use LotdWeb, :live
 
   alias Lotd.{Accounts, Gallery}
   alias Lotd.Gallery.{Room, Region, Display, Location, Mod}
@@ -19,56 +18,55 @@ defmodule LotdWeb.GalleryLive do
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
   def mount(_params, %{"user_id" => user_id }, socket) do
-    character = Accounts.get_user!(user_id).active_character
-    assigns = [
-      character: character,
-      hide: false,
-      items: Gallery.list_items(Keyword.get(@defaults, :search), character),
-    ]
-    {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
+    user = Accounts.get_user!(user_id)
+
+    socket = assign(socket, Keyword.merge(@defaults, [
+      character: user.active_character,
+      hide: user.hide,
+      user_id: user_id
+    ]))
+
+    {:ok, assign(socket, items: Gallery.list_items(socket.assigns))}
   end
 
   def mount(_params, _session, socket) do
-    assigns = [
-      character: nil,
-      hide: false,
-      items: Gallery.list_items(Keyword.get(@defaults, :search), nil)
-    ]
-    {:ok, assign(socket, Keyword.merge(@defaults, assigns))}
+    socket = assign(socket, Keyword.merge(@defaults, [character: nil, hide: false]))
+    {:ok, assign(socket, items: Gallery.list_items(socket.assigns))}
   end
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
-    filter = Gallery.get(type, id)
-
-    assigns = @defaults
-    |> Keyword.put(:filter, filter)
-    |> Keyword.put(:items, Gallery.list_items(type, id, socket.assigns.character))
-
-    {:noreply, assign(socket, assigns)}
+    socket = assign(socket, Keyword.merge(@defaults, [filter: Gallery.get(type, id)]))
+    {:noreply, assign(socket, items: Gallery.list_items(socket.assigns))}
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
-    filter = String.length(query) > 2
-    {:noreply, assign(socket,
-      search: query,
-      filter: nil,
-      items: Gallery.list_items(query, socket.assigns.character),
-      rooms: (if filter, do: Gallery.find(Room, query), else: []),
-      displays: (if filter, do: Gallery.find(Display, query), else: []),
-      regions: (if filter, do: Gallery.find(Region, query), else: []),
-      locations: (if filter, do: Gallery.find(Location, query), else: []),
-      mods: (if filter, do: Gallery.find(Mod, query), else: [])
-    )}
+    if String.length(query) > 2 do
+      socket = assign(socket,
+        search: query,
+        filter: nil,
+        rooms: Gallery.find(Room, query),
+        displays: Gallery.find(Display, query),
+        regions: Gallery.find(Region, query),
+        locations: Gallery.find(Location, query),
+        mods: Gallery.find(Mod, query)
+      )
+      {:noreply, assign(socket, items: Gallery.list_items(socket.assigns))}
+    else
+      {:noreply, assign(socket, Keyword.merge(@defaults, [search: query]))}
+    end
   end
 
   def handle_event("clear", _params, socket) do
-    {:noreply, assign(socket,
-      Keyword.put(@defaults, :items, Gallery.list_items("", socket.assigns.character))
-    )}
+    socket = assign(socket, @defaults)
+    {:noreply, assign(socket, items: Gallery.list_items(socket.assigns))}
   end
 
   def handle_event("toggle-hide", _params, socket) do
-    {:noreply, assign(socket, :hide, !socket.assigns.hide)}
+    user = Accounts.get_user!(socket.assigns.user_id)
+    Accounts.update_user(user, %{hide: !user.hide})
+
+    socket = assign(socket, hide: !user.hide)
+    {:noreply, assign(socket, items: Gallery.list_items(socket.assigns))}
   end
 
   def handle_event("toggle-item", %{"id" => id}, socket) do

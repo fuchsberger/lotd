@@ -4,6 +4,7 @@ defmodule Lotd.Accounts.User do
 
   schema "users" do
     field :name, :string
+    field :hide, :boolean, default: false
     field :admin, :boolean, default: false
     field :moderator, :boolean, default: false
     belongs_to :active_character, Lotd.Accounts.Character
@@ -13,7 +14,7 @@ defmodule Lotd.Accounts.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:id, :admin, :name, :moderator, :active_character_id])
+    |> cast(attrs, [:id, :hide, :admin, :name, :moderator, :active_character_id])
     |> validate_required([:name])
     |> assoc_constraint(:active_character)
   end
