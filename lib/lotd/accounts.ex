@@ -43,14 +43,12 @@ defmodule Lotd.Accounts do
     |> Repo.all()
   end
 
-  def get_character(id), do: Repo.get(Character, id)
-  def get_character!(id), do: from(c in Character, preload: :items) |> Repo.get!(id)
+  def get_character!(id), do:
+    Repo.get!(from(c in Character,
+      preload: [ items: ^from(i in Item, select: i.id), mods: ^from(m in Mod, select: m.id)]
+    ), id)
 
-  def get_character!(id, :mods) do
-    Character
-    |> preload(mods: ^from(m in Mod, select: m.id))
-    |> Repo.get(id)
-  end
+  def load_character_items(character), do: Repo.preload(character, :items, force: true)
 
   def change_character(%Character{} = character), do: Character.changeset(character, %{})
 
