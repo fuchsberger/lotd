@@ -60,7 +60,7 @@ defmodule Lotd.Gallery do
   def list_items(assigns) do
     query =
       item_query()
-      |> query_character(assigns.character, assigns.hide)
+      |> query_character(assigns.character, assigns.hide_changeset.data.hide)
       |> query_filter(assigns.filter)
       |> query_search(assigns.search)
 
@@ -104,7 +104,7 @@ defmodule Lotd.Gallery do
 
   def list_items(), do:
     Repo.all from(i in Item,
-      preload: [:mod, display: [:room], location: [:region]],
+      preload: [display: [:room], location: [:region]],
       order_by: i.name
     )
 
@@ -226,6 +226,8 @@ defmodule Lotd.Gallery do
     do: Repo.all from(m in Mod, select: {m.name, m.id}, order_by: m.name)
 
   def list_mods(ids), do: Repo.all from(d in Mod, order_by: d.name, where: d.id in ^ids)
+
+  def get_mods(items), do: Repo.all(Ecto.assoc(items, :mod) |> order_by(:name))
 
   def get_mod!(id), do: Repo.get!(Mod, id)
 

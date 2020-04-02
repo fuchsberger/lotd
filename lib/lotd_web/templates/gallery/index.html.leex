@@ -1,46 +1,78 @@
-<%= render "_filterbar.html",
-  search: @search,
-  filter: @filter,
-  rooms: @rooms,
-  displays: @displays,
-  regions: @regions,
-  locations: @locations,
-  mods: @mods
-%>
+<div class='row'>
+  <%# Select Tab %>
+  <div class='d-none d-md-block col-md-5'>
+    <ul class="nav nav-tabs flex-column flex-md-row">
+      <li class="nav-item">
+        <a class="nav-link<%= if @tab == "gallery", do: " active" %>" href="#"
+          phx-click='tab' phx-value-tab='gallery'>Gallery</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link<%= if @tab == "location", do: " active" %>" href="#"
+          phx-click='tab' phx-value-tab='location'>Locations</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link<%= if @tab == "mod", do: " active" %>" href="#"
+          phx-click='tab' phx-value-tab='mod'>Mods</a>
+      </li>
+    </ul>
 
-<table class="table table-sm">
-  <thead>
-    <tr>
+    <%= if @tab == "mod" do %>
+      <ul class="list-group list-group-flush">
+        <%= render_many @mods, LotdWeb.GalleryView, "_mod.html",
+          as: :mod,
+          character: @character,
+          filter: @filter,
+          hide: @hide,
+          items: @items
+        %>
+      </ul>
+    <% end %>
+  </div>
+
+  <div class='col-md-7'>
+    <%# render "_filterbar.html",
+      search: @search,
+      filter: @filter,
+      rooms: @rooms,
+      displays: @displays,
+      regions: @regions,
+      locations: @locations,
+      mods: @mods
+    %>
+    <div class='d-flex justify-content-between mb-1'>
       <%= unless is_nil(@character) do %>
-        <th class='border-top-0 px-0' scope='col'>
-          <button
-            class="btn btn-link p-0"
-            type="button"
-            title='Hide Selected'
-            phx-click="toggle-hide"
-            phx-hook='tooltip'
-          >
-            <i class='text-primary icon-<%= if @hide, do: "hide", else: "show" %>' ></i>
-          </button>
-        </th>
+        <%= f = form_for @hide_changeset, "#", [class: "", phx_change: :update] %>
+          <div class="form-check">
+            <%= checkbox f, :hide, class: "form-check-label mr-1" %>
+            <%= label f, :hide, "hide collected", class: "form-check-label" %>
+          </div>
+        </form>
       <% end %>
-      <th class='border-top-0' scope='col'>Item</th>
-      <th class='px-0 d-none d-sm-table-cell border-top-0'>
-        <i class='icon-replica' title='Replica' phx-hook='tooltip'></i>
-      </th>
-      <th scope="col" class='d-none d-xl-table-cell border-top-0'>Room</th>
-      <th scope="col" class='d-none d-md-table-cell border-top-0'>Display</th>
-      <th scope="col" class='d-none d-xl-table-cell border-top-0'>Region</th>
-      <th scope="col" class='d-none d-lg-table-cell border-top-0'>Location</th>
-      <th scope="col" class='d-none d-xl-table-cell border-top-0 px-0'>Mod</th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render_many @items, LotdWeb.ItemView, "row.html", character: @character, search: @search %>
-  </tbody>
-</table>
-<%= if Enum.count(@items) == 200 do %>
-  <p class="text-center"><small>
-    Only 200 items listed for performance reasons. Use filters / search to find a specific item.
-  </p></small>
-<% end %>
+
+      <%= unless is_nil(@filter) do %>
+        <span class='float-right'>
+          current filter: <strong><%= @filter.name %></strong>
+          <i>(<%= struct_name(@filter) %>)</i>
+        </span>
+      <% end %>
+    </div>
+
+    <ul class="list-group">
+      <%= render_many visible_items(@items, @search, @filter, @hide, @character), LotdWeb.ItemView, "row.html",
+        character: @character,
+        details: @details,
+        mods: @mods,
+        search: @search
+      %>
+    </ul>
+
+    <%= if Enum.count(@items) == 200 do %>
+      <p class="text-center"><small>
+        Only 200 items listed for performance reasons.
+        Use filters / search to find a specific item.
+      </p></small>
+    <% end %>
+  </div>
+</div>
+
+

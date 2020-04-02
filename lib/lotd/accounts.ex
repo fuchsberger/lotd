@@ -24,6 +24,7 @@ defmodule Lotd.Accounts do
     |> Repo.get!(id)
   end
 
+
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
@@ -33,6 +34,15 @@ defmodule Lotd.Accounts do
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
+    |> Repo.update()
+  end
+
+
+  def hide_changeset(%User{} = user), do: User.hide_changeset(user, %{})
+
+  def toggle_hide(%User{} = user, attrs) do
+    user
+    |> User.hide_changeset(attrs)
     |> Repo.update()
   end
 

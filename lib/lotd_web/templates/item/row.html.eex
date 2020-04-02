@@ -1,28 +1,30 @@
-<tr>
+<li class='list-group-item p-1' >
   <%= unless is_nil(@character) do %>
-    <td class='p-0'>
-      <button
-        class='btn btn-link p-0'
-        phx-click='toggle-item'
-        phx-value-id='<%= @item.id %>'
-      >
-        <i class='icon-<%= if Enum.member?(@character.items, @item.id), do: "active", else: "inactive" %>'></i>
-      </button>
-    </td>
+    <button class='btn btn-link p-0' phx-click='toggle-item' phx-value-id='<%= @item.id %>' type='button'>
+      <i class='icon-<%= if Enum.member?(@character.items, @item.id), do: "active", else: "inactive" %>'></i>
+    </button>
   <% end %>
 
-  <th class='text-truncate' scope="row">
-    <%= if @item.url,
-      do: link(@item.name, to: @item.url, class: "text-dark", target: "_blank"),
-      else: content_tag :span, name(@item, @search), class: "text-secondary"
-    %>
-  </th>
-  <td class='d-none d-sm-table-cell px-0'>
-    <%= if @item.replica, do: icon("replica", class: "text-muted") %>
-  </td>
-  <%= details_cell(@item.display.room, "xl") %>
-  <%= details_cell(@item.display, "md") %>
-  <%= details_cell(@item.location && @item.location.region, "xl") %>
-  <%= details_cell(@item.location, "lg") %>
-  <%= details_cell(@item.mod, "xl") %>
-</tr>
+  <%= if @item.url,
+    do: link(content_tag(:strong, @item.name), to: @item.url, class: "text-dark", target: "_blank"),
+    else: content_tag :strong, name(@item, @search), class: "text-secondary"
+  %>
+
+  <%= if @item.replica, do: icon("replica", class: "d-none d-sm-inline-block text-muted") %>
+
+  <a class='float-right' data-toggle="collapse" href='#collapse-item-<%= @item.id %>'>More...</a>
+
+  <%= if @details do %>
+    <p id='collapse-item-<%= @item.id %>' class='collapse small mb-0'>
+      <%# Display %>
+
+      <%# Location %>
+
+
+      <%# Mod Link %>
+      <% mod = Enum.find(@mods, & &1.id == @item.mod_id) %>
+      <i class='icon-mod'></i>
+      <a href='<%= mod.url %>' target='_blank' title='Mod' data-placement='bottom' phx-hook='tooltip'><%= mod.name %></a>
+    </p>
+  <% end %>
+</li>
