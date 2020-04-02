@@ -6,7 +6,7 @@ defmodule LotdWeb.GalleryLive do
   alias Lotd.Gallery.{Room, Region, Display, Location, Mod}
 
   @defaults [
-    tab: "mod",
+    tab: "gallery",
     search: ""
   ]
 
@@ -29,7 +29,7 @@ defmodule LotdWeb.GalleryLive do
     |> assign(@defaults)
     |> assign(:character, user.active_character)
     |> assign(:details, true)
-    |> assign(:filter, List.first(mods))
+    |> assign(:filter, List.first(rooms))
     |> assign(:hide_changeset, Accounts.hide_changeset(user))
     |> assign(:hide, user.hide)
     |> assign(:items, items)

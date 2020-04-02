@@ -16,22 +16,102 @@
       </li>
     </ul>
 
+    <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
+      <% displays = visible_entries(@displays, @search, @filter, @items, @hide, @character) %>
+      <% rooms = visible_entries(@rooms, @search, @filter, @displays, @hide, @character, @items) %>
+
+      <%= if Enum.count(rooms) > 0 do %>
+        <ul class="list-group list-group-flush">
+          <li class='list-group-item bg-light p-1'>
+            <strong>Rooms</strong>
+            <span class='float-right'>
+              <%= if String.length(@search) >= 3, do: "#{Enum.count(rooms)}/ " %>
+              <%= Enum.count(@rooms) %>
+            </span>
+          </li>
+          <%= render_many rooms, LotdWeb.GalleryView, "_entry.html",
+            as: :entry,
+            type: "room",
+            hide: @hide
+          %>
+        </ul>
+      <% end %>
+
+      <%= if Enum.count(displays) > 0 do %>
+        <ul class="list-group list-group-flush">
+          <li class='list-group-item bg-light p-1'>
+            <strong>Displays</strong>
+            <span class='float-right'>
+              <%= if String.length(@search) >= 3, do: "#{Enum.count(displays)}/ " %>
+              <%= Enum.count(@displays) %>
+            </span>
+          </li>
+          <%= render_many displays, LotdWeb.GalleryView, "_entry.html",
+            as: :entry,
+            type: "display",
+            hide: @hide
+          %>
+        </ul>
+      <% end %>
+    <% end %>
+
+    <%= if @tab == "location" || String.length(@search) >= 3 do %>
+      <% locations = visible_entries(@locations, @search, @filter, @items, @hide, @character) %>
+      <% regions = visible_entries(@regions, @search, @filter, @locations, @hide, @character, @items) %>
+
+      <%= if Enum.count(regions) > 0 do %>
+        <ul class="list-group list-group-flush">
+          <li class='list-group-item bg-light p-1'>
+            <strong>Regions</strong>
+            <span class='float-right'>
+              <%= if String.length(@search) >= 3, do: "#{Enum.count(regions)}/ " %>
+              <%= Enum.count(@regions) %>
+            </span>
+          </li>
+          <%= render_many regions, LotdWeb.GalleryView, "_entry.html",
+            as: :entry,
+            type: "region",
+            hide: @hide
+          %>
+        </ul>
+      <% end %>
+
+      <%= if Enum.count(locations) > 0 do %>
+        <ul class="list-group list-group-flush">
+          <li class='list-group-item bg-light p-1'>
+            <strong>Locations</strong>
+            <span class='float-right'>
+              <%= if String.length(@search) >= 3, do: "#{Enum.count(locations)}/ " %>
+              <%= Enum.count(@locations) %>
+            </span>
+          </li>
+          <%= render_many locations, LotdWeb.GalleryView, "_entry.html",
+            as: :entry,
+            type: "location",
+            hide: @hide
+          %>
+        </ul>
+      <% end %>
+    <% end %>
+
     <%= if @tab == "mod" || String.length(@search) >= 3 do %>
-      <% mods = visible_mods(@mods, @search, @filter, @items, @hide, @character) %>
-      <ul class="list-group list-group-flush">
-        <li class='list-group-item bg-light p-1'>
-          <strong>Mods</strong>
-          <span class='float-right'>
-            <%= if String.length(@search) >= 3, do: "#{Enum.count(mods)}/ " %>
-            <%= Enum.count(@mods) %>
-          </span>
-        </li>
-        <%= render_many mods, LotdWeb.GalleryView, "_entry.html",
-          as: :entry,
-          type: "mod",
-          hide: @hide
-        %>
-      </ul>
+      <% mods = visible_entries(@mods, @search, @filter, @items, @hide, @character) %>
+      <%= if Enum.count(mods) > 0 do %>
+        <ul class="list-group list-group-flush">
+          <li class='list-group-item bg-light p-1'>
+            <strong>Mods</strong>
+            <span class='float-right'>
+              <%= if String.length(@search) >= 3, do: "#{Enum.count(mods)}/ " %>
+              <%= Enum.count(@mods) %>
+            </span>
+          </li>
+          <%= render_many mods, LotdWeb.GalleryView, "_entry.html",
+            as: :entry,
+            type: "mod",
+            hide: @hide
+          %>
+        </ul>
+      <% end %>
     <% end %>
   </div>
 
@@ -85,7 +165,7 @@
     </div>
 
     <ul class="list-group">
-      <%= render_many visible_items(@items, @search, @filter, @hide, @character),
+      <%= render_many visible_items(@items, @displays, @locations, @search, @filter, @hide, @character),
         LotdWeb.ItemView, "row.html",
         character: @character,
         details: @details,
