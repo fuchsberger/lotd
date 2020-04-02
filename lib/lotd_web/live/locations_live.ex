@@ -55,7 +55,6 @@ defmodule LotdWeb.LocationsLive do
 
     else
       location = Enum.find(socket.assigns.locations, & &1.id == id)
-      IO.inspect Gallery.change_location(location)
       {:noreply, assign(socket, changeset: Gallery.change_location(location))}
     end
   end

@@ -1,0 +1,18 @@
+<li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if @entry.filtered?, do: " active" %>"
+  phx-click='filter'
+  phx-value-type='<%= @type %>'
+  phx-value-id='<%= @entry.id %>'
+>
+  <%= @entry.name %>
+  <%= if @hide do %>
+    <span class="badge badge-light badge-pill"
+      title='<%= "Remaining Items (Total: #{@entry.count} )" %>'
+      phx-hook='tooltip'>
+      <%= @entry.count - @entry.found %>
+    </span>
+  <% else %>
+    <span class="badge badge-light badge-pill" title='Total Items' phx-hook='tooltip'>
+      <%= @entry.count %>
+    </span>
+  <% end %>
+</li>

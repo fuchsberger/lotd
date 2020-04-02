@@ -3,16 +3,23 @@ defmodule LotdWeb.GalleryView do
 
   alias Lotd.Gallery.{Item, Room, Display, Region, Location, Mod}
 
-  def found(character, struct) do
+  defp found(_items, _struct, nil), do: nil
+
+  defp found(items, struct, character) do
     case struct do
       %Mod{id: id} ->
-        character.items
-        |> Enum.filter(& &1 == id)
+        # get items for that mod
+        items = Enum.filter(items, & &1.mod_id == id)
+
+        # get collected items for that character
+        items
+        |> Enum.filter(& Enum.member?(character.items, &1.id))
         |> Enum.count()
     end
   end
 
-  def count(items, struct) do
+  @spec count(any, Lotd.Gallery.Mod.t()) :: non_neg_integer
+  defp count(items, struct) do
     case struct do
       %Mod{id: id} ->
         items
@@ -32,6 +39,25 @@ defmodule LotdWeb.GalleryView do
     |> to_string()
     |> String.split(".")
     |> List.last()
+  end
+
+  def visible_mods(mods, search, filter, items, hide, character) do
+    # filter search
+    mods =
+      if String.length(search) >= 3 do
+        query = String.downcase(search, :ascii)
+        Enum.filter(mods, & String.contains?(String.downcase(&1.name, :ascii), query))
+      else
+        mods
+      end
+
+    mods
+    |> Enum.map(& Map.merge(&1, %{
+        count: count(items, &1),
+        found: found(items, &1, character),
+        filtered?: filtered?(filter, &1)
+      }))
+    |> Enum.reject(& hide && &1.found == &1.count)
   end
 
   def visible_items(items, search, filter, hide, character) do

@@ -7,11 +7,7 @@ defmodule LotdWeb.GalleryLive do
 
   @defaults [
     tab: "mod",
-    search: "",
-    rooms: [],
-    displays: [],
-    regions: [],
-    locations: []
+    search: ""
   ]
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
@@ -21,7 +17,12 @@ defmodule LotdWeb.GalleryLive do
 
     items = if user.moderator || user.admin,
       do: Gallery.list_items(),
-      else: Gallery.list_items(user.active_character.mod_ids)
+      else: Gallery.list_items(user)
+
+    displays = Gallery.get_displays(items)
+    rooms = Gallery.get_rooms(displays)
+    locations = Gallery.get_locations(items)
+    regions = Gallery.get_regions(locations)
     mods = Gallery.get_mods(items)
 
     {:ok, socket
@@ -32,12 +33,20 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:hide_changeset, Accounts.hide_changeset(user))
     |> assign(:hide, user.hide)
     |> assign(:items, items)
+    |> assign(:displays, displays)
+    |> assign(:rooms, rooms)
+    |> assign(:locations, locations)
+    |> assign(:regions, regions)
     |> assign(:mods, mods)
     |> assign(:user_id, user.id)}
   end
 
   def mount(_params, _session, socket) do
     items = Gallery.list_items()
+    displays = Gallery.get_displays(items)
+    rooms = Gallery.get_rooms(displays)
+    locations = Gallery.get_locations(items)
+    regions = Gallery.get_regions(locations)
     mods = Gallery.get_mods(items)
 
     {:ok, socket
@@ -47,39 +56,28 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:filter, List.first(mods))
     |> assign(:hide, false)
     |> assign(:items, items)
+    |> assign(:displays, displays)
+    |> assign(:rooms, rooms)
+    |> assign(:locations, locations)
+    |> assign(:regions, regions)
     |> assign(:mods, mods)}
   end
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
-    socket = assign(socket, Keyword.merge(@defaults, [filter: Gallery.get(type, id)]))
-    {:noreply, assign(socket, items: Gallery.list_items(socket.assigns))}
+    {:noreply, socket
+    |> assign(filter: Gallery.get(type, id))
+    |> assign(search: "")}
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
-    if String.length(query) > 2 do
-      socket = assign(socket,
-        search: query,
-        filter: nil,
-        rooms: Gallery.find(Room, query),
-        displays: Gallery.find(Display, query),
-        regions: Gallery.find(Region, query),
-        locations: Gallery.find(Location, query),
-        mods: Gallery.find(Mod, query)
-      )
-      {:noreply, assign(socket, items: Gallery.list_items(socket.assigns))}
-    else
-      {:noreply, assign(socket, Keyword.merge(@defaults, [search: query]))}
-    end
+    {:noreply, assign(socket, search: query)}
   end
 
   def handle_event("tab", %{"tab" => tab}, socket) do
     {:noreply, assign(socket, :tab, tab)}
   end
 
-  def handle_event("clear", _params, socket) do
-    socket = assign(socket, @defaults)
-    {:noreply, assign(socket, items: Gallery.list_items(socket.assigns))}
-  end
+  def handle_event("clear", _params, socket), do: {:noreply, assign(socket, search: "")}
 
   def handle_event("toggle", %{"type" => type}, socket) do
     case type do
@@ -91,10 +89,10 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("update", %{"user" => %{"hide" => _hide} = params}, socket) do
     case Accounts.toggle_hide(socket.assigns.hide_changeset.data, params) do
       {:ok, user} ->
-        socket = assign(socket, hide: user.hide)
         {:noreply, socket
-        |> assign(:hide_changeset, Accounts.hide_changeset(user))
-        |> assign(:items, Gallery.list_items(socket.assigns))}
+        |> assign(:hide, user.hide)
+        |> assign(:hide_changeset, Accounts.hide_changeset(user))}
+
       {:error, changeset} ->
         {:noreply, assign(socket, :hide_changeset, changeset)}
     end

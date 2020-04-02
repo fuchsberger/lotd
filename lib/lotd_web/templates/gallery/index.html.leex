@@ -16,29 +16,51 @@
       </li>
     </ul>
 
-    <%= if @tab == "mod" do %>
+    <%= if @tab == "mod" || String.length(@search) >= 3 do %>
+      <% mods = visible_mods(@mods, @search, @filter, @items, @hide, @character) %>
       <ul class="list-group list-group-flush">
-        <%= render_many @mods, LotdWeb.GalleryView, "_mod.html",
-          as: :mod,
-          character: @character,
-          filter: @filter,
-          hide: @hide,
-          items: @items
+        <li class='list-group-item bg-light p-1'>
+          <strong>Mods</strong>
+          <span class='float-right'>
+            <%= if String.length(@search) >= 3, do: "#{Enum.count(mods)}/ " %>
+            <%= Enum.count(@mods) %>
+          </span>
+        </li>
+        <%= render_many mods, LotdWeb.GalleryView, "_entry.html",
+          as: :entry,
+          type: "mod",
+          hide: @hide
         %>
       </ul>
     <% end %>
   </div>
 
   <div class='col-md-7'>
-    <%# render "_filterbar.html",
-      search: @search,
-      filter: @filter,
-      rooms: @rooms,
-      displays: @displays,
-      regions: @regions,
-      locations: @locations,
-      mods: @mods
-    %>
+    <div class="form-group">
+      <%= f = form_for :search, "#", [phx_change: :search, phx_submit: :search] %>
+        <div class='input-group'>
+          <%= text_input f, :query,
+            autofocus: true,
+            class: "form-control",
+            placeholder: "Search...",
+            phx_debounce: 800,
+            value: @search
+          %>
+
+          <div class="input-group-append">
+            <button
+              class="btn btn-light border px-1"
+              type="button"
+              phx-click="clear"
+              phx-hook='tooltip'
+              title="Clear Search"
+            >
+              <i class='icon-remove'></i>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
     <div class='d-flex justify-content-between mb-1'>
       <%= unless is_nil(@character) do %>
         <%= f = form_for @hide_changeset, "#", [class: "", phx_change: :update] %>
@@ -51,27 +73,26 @@
 
       <%= unless is_nil(@filter) do %>
         <span class='float-right'>
-          current filter: <strong><%= @filter.name %></strong>
-          <i>(<%= struct_name(@filter) %>)</i>
+          current filter:
+          <%= if String.length(@search) >= 3 do %>
+            <strong>Search</strong>
+          <% else %>
+            <strong><%= @filter.name %></strong>
+            <i>(<%= struct_name(@filter) %>)</i>
+          <% end %>
         </span>
       <% end %>
     </div>
 
     <ul class="list-group">
-      <%= render_many visible_items(@items, @search, @filter, @hide, @character), LotdWeb.ItemView, "row.html",
+      <%= render_many visible_items(@items, @search, @filter, @hide, @character),
+        LotdWeb.ItemView, "row.html",
         character: @character,
         details: @details,
         mods: @mods,
         search: @search
       %>
     </ul>
-
-    <%= if Enum.count(@items) == 200 do %>
-      <p class="text-center"><small>
-        Only 200 items listed for performance reasons.
-        Use filters / search to find a specific item.
-      </p></small>
-    <% end %>
   </div>
 </div>
 

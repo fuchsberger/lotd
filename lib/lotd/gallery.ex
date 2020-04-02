@@ -51,119 +51,12 @@ defmodule Lotd.Gallery do
     )
 
   # ITEMS ----------------------------------------------------------------------------------------
-  def item_query, do: from(i in Item,
-    order_by: i.name,
-    preload: [:mod, display: [:room], location: [:region]],
-    limit: 200
-  )
+  def item_query, do: from(i in Item, order_by: i.name)
 
-  def list_items(assigns) do
-    query =
-      item_query()
-      |> query_character(assigns.character, assigns.hide_changeset.data.hide)
-      |> query_filter(assigns.filter)
-      |> query_search(assigns.search)
+  def list_items, do: Repo.all from(i in Item, order_by: i.name)
 
-    Repo.all(query)
-  end
-
-  defp query_character(query, nil, _hide), do: query
-
-  defp query_character(query, character, false),
-    do: query |> where([i], i.mod_id in ^character.mods)
-
-  defp query_character(query, character, true),
-    do: query |> where([i], i.mod_id in ^character.mods and not(i.id in ^character.items))
-
-  defp query_filter(query, nil), do: query
-
-  defp query_filter(query, %Room{} = filter) do
-    display_ids = Repo.all(from d in Display, select: d.id, where: d.room_id == ^filter.id)
-    query |> where([i], i.display_id in ^display_ids)
-  end
-
-  defp query_filter(query, %Display{} = filter),
-    do: query |> where([i], i.display_id == ^filter.id)
-
-  defp query_filter(query, %Region{} = filter) do
-    location_ids = Repo.all(from l in Location, select: l.id, where: l.region_id == ^filter.id)
-    query |> where([i], i.location_id in ^location_ids)
-  end
-
-  defp query_filter(query, %Location{} = filter),
-    do: query |> where([i], i.location_id == ^filter.id)
-
-  defp query_filter(query, %Mod{} = filter),
-    do: query |> where([i], i.mod_id == ^filter.id)
-
-  defp query_search(query, search) do
-    if String.length(search) > 2,
-      do: query |> where([i], ilike(i.name, ^"%#{search}%")),
-      else: query
-  end
-
-  def list_items(), do:
-    Repo.all from(i in Item,
-      preload: [display: [:room], location: [:region]],
-      order_by: i.name
-    )
-
-  def list_items(query, nil), do:
-    Repo.all from(i in item_query(), where: ilike(i.name, ^"%#{query}%"))
-
-  def list_items(query, character), do:
-    Repo.all from(i in item_query(),
-      preload: [characters: ^from(c in Character, select: c.id, where: c.id == ^character.id)],
-      where: i.mod_id in ^character.mods and ilike(i.name, ^"%#{query}%")
-    )
-
-  def list_items("room", id, nil) do
-    display_ids = Repo.all from(d in Display, select: d.id, where: d.room_id == ^id)
-    Repo.all from(i in item_query(), where: i.display_id in ^display_ids)
-  end
-
-  def list_items("room", id, character) do
-    display_ids = Repo.all from(d in Display, select: d.id, where: d.room_id == ^id)
-    Repo.all from(i in item_query(),
-      where: i.display_id in ^display_ids and i.mod_id in ^character.mods
-    )
-  end
-
-  def list_items("display", id, nil) do
-    Repo.all from(i in item_query(), where: i.display_id == ^id)
-  end
-
-  def list_items("display", id, character) do
-    Repo.all from(i in item_query(), where: i.display_id == ^id and i.mod_id in ^character.mods)
-  end
-
-  def list_items("region", id, nil) do
-    location_ids = Repo.all from(l in Location, select: l.id, where: l.region_id == ^id)
-    Repo.all from(i in item_query(), where: i.location_id in ^location_ids)
-  end
-
-  def list_items("region", id, character) do
-    location_ids = Repo.all from(l in Location, select: l.id, where: l.region_id == ^id)
-    Repo.all from(i in item_query(),
-      where: i.location_id in ^location_ids and i.mod_id in ^character.mods
-    )
-  end
-
-  def list_items("location", id, nil) do
-    Repo.all from(i in item_query(), where: i.location_id == ^id)
-  end
-
-  def list_items("location", id, character) do
-    Repo.all from(i in item_query(), where: i.location_id == ^id and i.mod_id in ^character.mods)
-  end
-
-  def list_items("mod", id, nil) do
-    Repo.all from(i in item_query(), where: i.mod_id == ^id)
-  end
-
-  def list_items("mod", id, character) do
-    Repo.all from(i in item_query(), where: i.mod_id == ^id and i.mod_id in ^character.mods)
-  end
+  def list_items(user),
+    do: Repo.all from(i in Item, order_by: i.name, where: i.mod_id in ^user.active_character.mods)
 
   def get_item!(id), do: Repo.get!(Item, id)
 
@@ -177,6 +70,8 @@ defmodule Lotd.Gallery do
   def list_room_options,
     do: Repo.all from(r in Room, select: {r.name, r.id}, order_by: r.name)
 
+  def get_rooms(displays), do: Repo.all(Ecto.assoc(displays, :room) |> order_by(:name))
+
   def get_room!(id), do: Repo.get!(Room, id)
 
   def change_room(%Room{} = room), do: Room.changeset(room, %{})
@@ -188,6 +83,8 @@ defmodule Lotd.Gallery do
 
   def list_display_options,
     do: Repo.all from(d in Display, select: {d.name, d.id}, order_by: d.name)
+
+  def get_displays(items), do: Repo.all(Ecto.assoc(items, :display) |> order_by(:name))
 
   def get_display!(id), do: Repo.get!(Display, id)
 
@@ -201,6 +98,8 @@ defmodule Lotd.Gallery do
   def list_region_options,
     do: Repo.all from(r in Region, select: {r.name, r.id}, order_by: r.name)
 
+  def get_regions(locations), do: Repo.all(Ecto.assoc(locations, :region) |> order_by(:name))
+
   def get_region!(id), do: Repo.get!(Region, id)
 
   def change_region(%Region{} = region), do: Region.changeset(region, %{})
@@ -212,6 +111,8 @@ defmodule Lotd.Gallery do
 
   def list_location_options,
     do: Repo.all from(l in Location, select: {l.name, l.id}, order_by: l.name)
+
+  def get_locations(items), do: Repo.all(Ecto.assoc(items, :location) |> order_by(:name))
 
   def get_location!(id), do: Repo.get!(Location, id)
 
