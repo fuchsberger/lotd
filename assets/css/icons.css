@@ -56,16 +56,12 @@
 }
 
 .icon-logout:before { content: '\e800'; } /* '' */
-.icon-search:before { content: '\e801'; } /* '' */
-.icon-add:before { content: '\e802'; } /* '' */
 .icon-settings:before { content: '\e803'; } /* '' */
-.icon-show:before { content: '\e804'; } /* '' */
 .icon-home:before { content: '\e805'; } /* '' */
 .icon-remove:before { content: '\e806'; } /* '' */
 .icon-edit:before { content: '\e807'; } /* '' */
-.icon-hide:before { content: '\e808'; } /* '' */
-.icon-users:before { content: '\e809'; } /* '' */
 .icon-replica:before { content: '\e80a'; } /* '' */
+.icon-location:before { content: '\f124'; } /* '' */
 .icon-mod:before { content: '\f12e'; } /* '' */
 .icon-active:before { content: '\f14a'; } /* '' */
 .icon-inactive:before { content: '\f196'; } /* '' */

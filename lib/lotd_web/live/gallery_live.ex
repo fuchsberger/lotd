@@ -5,17 +5,14 @@ defmodule LotdWeb.GalleryLive do
   alias Lotd.{Accounts, Gallery}
   alias Lotd.Gallery.{Room, Region, Display, Location, Mod}
 
-  @defaults [
-    tab: "gallery",
-    search: ""
-  ]
-
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
-  def mount(_params, %{"user_id" => user_id }, socket) do
-    user = Accounts.get_user!(user_id)
+  def mount(_params, session, socket) do
+    user = Accounts.get_user!(Map.get(session, "user_id"))
 
-    items = if user.moderator || user.admin,
+    hide = if is_nil(user), do: false, else: user.hide
+
+    items = if is_nil(user) || user.moderator || user.admin,
       do: Gallery.list_items(),
       else: Gallery.list_items(user)
 
@@ -26,41 +23,20 @@ defmodule LotdWeb.GalleryLive do
     mods = Gallery.get_mods(items)
 
     {:ok, socket
-    |> assign(@defaults)
-    |> assign(:character, user.active_character)
-    |> assign(:details, true)
+    |> assign(:character, if is_nil(user) do false else user.active_character end)
     |> assign(:filter, List.first(rooms))
     |> assign(:hide_changeset, Accounts.hide_changeset(user))
-    |> assign(:hide, user.hide)
+    |> assign(:hide, hide)
     |> assign(:items, items)
     |> assign(:displays, displays)
     |> assign(:rooms, rooms)
     |> assign(:locations, locations)
     |> assign(:regions, regions)
+    |> assign(:search, "")
+    |> assign(:tab, "gallery")
     |> assign(:mods, mods)
-    |> assign(:user_id, user.id)}
-  end
-
-  def mount(_params, _session, socket) do
-    items = Gallery.list_items()
-    displays = Gallery.get_displays(items)
-    rooms = Gallery.get_rooms(displays)
-    locations = Gallery.get_locations(items)
-    regions = Gallery.get_regions(locations)
-    mods = Gallery.get_mods(items)
-
-    {:ok, socket
-    |> assign(@defaults)
-    |> assign(:character, nil)
-    |> assign(:details, true)
-    |> assign(:filter, List.first(mods))
-    |> assign(:hide, false)
-    |> assign(:items, items)
-    |> assign(:displays, displays)
-    |> assign(:rooms, rooms)
-    |> assign(:locations, locations)
-    |> assign(:regions, regions)
-    |> assign(:mods, mods)}
+    |> assign(:user_id, user.id)
+    |> assign(:user, user.id)}
   end
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do

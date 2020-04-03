@@ -32,10 +32,19 @@ defmodule LotdWeb.GalleryView do
     |> Enum.count()
   end
 
-  def filtered?(nil, _struct), do: false
-
   def filtered?(filter, struct) do
-    filter.__struct__ == struct.__struct__ && filter.id == struct.id
+    case struct do
+      %Room{} ->
+        (filter.__struct__ == struct.__struct__ && filter.id == struct.id) ||
+        (filter.__struct__ == Display && filter.room_id == struct.id)
+
+      %Region{} ->
+        (filter.__struct__ == struct.__struct__ && filter.id == struct.id) ||
+        (filter.__struct__ == Location && filter.region_id == struct.id)
+
+      _ ->
+        not is_nil(filter) && filter.__struct__ == struct.__struct__ && filter.id == struct.id
+    end
   end
 
   def type(struct) do
@@ -68,7 +77,23 @@ defmodule LotdWeb.GalleryView do
     |> Enum.reject(& hide && &1.found == &1.count)
   end
 
-  def visible_items(items, displays, locations, search, filter, hide, character) do
+  def visible_displays(displays, filter) do
+    case filter do
+      %Display{room_id: id} -> Enum.filter(displays, & &1.room_id == id)
+      %Room{id: id} -> Enum.filter(displays, & &1.room_id == id)
+      _ -> []
+    end
+  end
+
+  def visible_locations(locations, filter) do
+    case filter do
+      %Location{region_id: id} -> Enum.filter(locations, & &1.region_id == id)
+      %Region{id: id} -> Enum.filter(locations, & &1.region_id == id)
+      _ -> []
+    end
+  end
+
+  def visible_items(items, rooms, displays, regions, locations, mods, search, filter, hide, character) do
     items =
       if String.length(search) >= 3 do
         query = String.downcase(search, :ascii)
@@ -94,6 +119,21 @@ defmodule LotdWeb.GalleryView do
         end
       end
 
-    if hide, do: Enum.reject(items, & Enum.member?(character.items, &1.id)), else: items
+    items = if hide, do: Enum.reject(items, & Enum.member?(character.items, &1.id)), else: items
+
+    Enum.map(items, fn item ->
+      display = Enum.find(displays, & &1.id == item.display_id)
+      room = Enum.find(rooms, & &1.id == display.room_id)
+      location = Enum.find(locations, & &1.id == item.location_id)
+      region = if location, do: Enum.find(regions, & &1.id == location.region_id), else: nil
+      mod = Enum.find(mods, & &1.id == item.mod_id)
+
+      item
+      |> Map.put(:display, display)
+      |> Map.put(:region, region)
+      |> Map.put(:room, room)
+      |> Map.put(:location, location)
+      |> Map.put(:mod, mod)
+    end)
   end
 end

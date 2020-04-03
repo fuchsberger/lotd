@@ -1,6 +1,6 @@
 <div class='row'>
   <%# Select Tab %>
-  <div class='d-none d-md-block col-md-5'>
+  <div class='d-none d-md-block col-md-auto'>
     <ul class="nav nav-tabs flex-column flex-md-row">
       <li class="nav-item">
         <a class="nav-link<%= if @tab == "gallery", do: " active" %>" href="#"
@@ -17,17 +17,20 @@
     </ul>
 
     <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
-      <% displays = visible_entries(@displays, @search, @filter, @items, @hide, @character) %>
+      <% vDisplays = visible_displays(@displays, @filter) %>
+      <% displays = visible_entries(vDisplays, @search, @filter, @items, @hide, @character) %>
       <% rooms = visible_entries(@rooms, @search, @filter, @displays, @hide, @character, @items) %>
 
       <%= if Enum.count(rooms) > 0 do %>
         <ul class="list-group list-group-flush">
           <li class='list-group-item bg-light p-1'>
             <strong>Rooms</strong>
-            <span class='float-right'>
-              <%= if String.length(@search) >= 3, do: "#{Enum.count(rooms)}/ " %>
-              <%= Enum.count(@rooms) %>
-            </span>
+            <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
+              <span class='float-right'>
+                <%= if String.length(@search) >= 3, do: "#{Enum.count(rooms)}/ " %>
+                <%= Enum.count(@rooms) %>
+              </span>
+            <% end %>
           </li>
           <%= render_many rooms, LotdWeb.GalleryView, "_entry.html",
             as: :entry,
@@ -56,7 +59,8 @@
     <% end %>
 
     <%= if @tab == "location" || String.length(@search) >= 3 do %>
-      <% locations = visible_entries(@locations, @search, @filter, @items, @hide, @character) %>
+      <% vLocations = visible_locations(@locations, @filter) %>
+      <% locations = visible_entries(vLocations, @search, @filter, @items, @hide, @character) %>
       <% regions = visible_entries(@regions, @search, @filter, @locations, @hide, @character, @items) %>
 
       <%= if Enum.count(regions) > 0 do %>
@@ -115,7 +119,7 @@
     <% end %>
   </div>
 
-  <div class='col-md-7'>
+  <div class='col'>
     <div class="form-group">
       <%= f = form_for :search, "#", [phx_change: :search, phx_submit: :search] %>
         <div class='input-group'>
@@ -164,15 +168,31 @@
       <% end %>
     </div>
 
-    <ul class="list-group">
-      <%= render_many visible_items(@items, @displays, @locations, @search, @filter, @hide, @character),
-        LotdWeb.ItemView, "row.html",
-        character: @character,
-        details: @details,
-        mods: @mods,
-        search: @search
-      %>
-    </ul>
+    <table class="table table-sm table-hover">
+      <thead>
+        <tr>
+          <th scope="col" class='p-0'></th>
+          <th scope="col">Name</th>
+          <th scope="col"><i class='icon-replica' title='Replica' phx-hook='tooltip'></i></th>
+          <th scope="col" class='d-none d-lg-table-cell'>
+            <i class='icon-location'></i> Location
+          </th>
+          <th scope="col" class='d-none d-xl-table-cell'>
+            <i class='icon-display'></i> Display
+          </th>
+          <th scope="col" class='p-0'><i class='icon-mod' title='Mod' phx-hook='Mod'></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render_many visible_items(@items, @rooms, @displays, @regions, @locations, @mods, @search, @filter, @hide, @character),
+          LotdWeb.ItemView, "row.html",
+          character: @character,
+          mods: @mods,
+          search: @search,
+          tab: @tab
+        %>
+      </tbody>
+    </table>
   </div>
 </div>
 

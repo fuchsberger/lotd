@@ -1,30 +1,37 @@
-<li class='list-group-item p-1' >
-  <%= unless is_nil(@character) do %>
-    <button class='btn btn-link p-0' phx-click='toggle-item' phx-value-id='<%= @item.id %>' type='button'>
-      <i class='icon-<%= if Enum.member?(@character.items, @item.id), do: "active", else: "inactive" %>'></i>
-    </button>
-  <% end %>
+<tr>
+  <td class='p-0'>
+    <%= unless is_nil(@character) do %>
+      <button class='btn btn-link p-0' phx-click='toggle-item' phx-value-id='<%= @item.id %>' type='button'>
+        <i class='icon-<%= if Enum.member?(@character.items, @item.id), do: "active", else: "inactive" %>'></i>
+      </button>
+    <% end %>
+  </td>
 
-  <%= if @item.url,
-    do: link(content_tag(:strong, @item.name), to: @item.url, class: "text-dark", target: "_blank"),
-    else: content_tag :strong, name(@item, @search), class: "text-secondary"
-  %>
+  <th scope='row'>
+    <%= if @item.url,
+      do: link(content_tag(:strong, @item.name), to: @item.url, class: "text-dark", target: "_blank"),
+      else: content_tag :strong, name(@item, @search), class: "text-secondary"
+    %>
+  </th>
 
-  <%= if @item.replica, do: icon("replica", class: "d-none d-sm-inline-block text-muted") %>
+  <td>
+    <%= if @item.replica, do: icon "replica", class: "text-muted" %>
+  </td>
 
-  <a class='float-right' data-toggle="collapse" href='#collapse-item-<%= @item.id %>'>More...</a>
+  <td class='small d-none d-lg-table-cell text-truncate'>
+    <%= unless is_nil(@item.region), do: [assoc_link(@item.region, "Region"), " » "] %>
+    <%= unless is_nil(@item.location), do: assoc_link(@item.location, "Location") %>
+  </td>
 
-  <%= if @details do %>
-    <p id='collapse-item-<%= @item.id %>' class='collapse small mb-0'>
-      <%# Display %>
+  <td class='small d-none d-xl-table-cell text-truncate'>
+    <%= assoc_link(@item.room, "Room") %> »
+    <%= assoc_link(@item.display, "Display") %>
+  </td>
 
-      <%# Location %>
-
-
-      <%# Mod Link %>
-      <% mod = Enum.find(@mods, & &1.id == @item.mod_id) %>
-      <i class='icon-mod'></i>
-      <a href='<%= mod.url %>' target='_blank' title='Mod' data-placement='bottom' phx-hook='tooltip'><%= mod.name %></a>
-    </p>
-  <% end %>
-</li>
+  <td class='p-0'>
+    <%= link icon("mod", title: @item.mod.name, phx_hook: "tooltip"),
+      to: @item.mod.url,
+      target: "_blank"
+    %>
+  </td>
+</tr>
