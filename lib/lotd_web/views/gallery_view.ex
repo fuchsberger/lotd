@@ -3,6 +3,9 @@ defmodule LotdWeb.GalleryView do
 
   alias Lotd.Gallery.{Room, Display, Region, Location, Mod}
 
+  def character(nil), do: nil
+  def character(user), do: user.active_character
+
   def filtered_entries(entries, struct, items) do
     case struct do
       %Display{id: id} ->
@@ -47,6 +50,11 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
+  def hide?(nil), do: false
+  def hide?(user), do: user.hide
+
+  def hide_changeset(user), do: Lotd.Accounts.User.hide_changeset(user, %{})
+
   def type(struct) do
     struct.__struct__
     |> to_string()
@@ -63,18 +71,19 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def visible_entries(entries, search, filter, assoc, hide, character, items \\ nil) do
+  def visible_entries(entries, search, filter, assoc, user, items \\ nil) do
+
     entries
     |> search_entries(search)
     |> Enum.map(fn entry ->
         items = filtered_entries(assoc, entry, items)
         Map.merge(entry, %{
           count: Enum.count(items),
-          found: found(items, character),
+          found: found(items, character(user)),
           filtered?: filtered?(filter, entry)
         })
       end)
-    |> Enum.reject(& hide && &1.found == &1.count)
+    |> Enum.reject(& hide?(user) && &1.found == &1.count)
   end
 
   def visible_displays(displays, filter) do
@@ -93,7 +102,7 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def visible_items(items, rooms, displays, regions, locations, mods, search, filter, hide, character) do
+  def visible_items(items, rooms, displays, regions, locations, mods, search, filter, user) do
     items =
       if String.length(search) >= 3 do
         query = String.downcase(search, :ascii)
@@ -119,7 +128,9 @@ defmodule LotdWeb.GalleryView do
         end
       end
 
-    items = if hide, do: Enum.reject(items, & Enum.member?(character.items, &1.id)), else: items
+    items = if hide?(user),
+      do: Enum.reject(items, & Enum.member?(user.active_character.items, &1.id)),
+      else: items
 
     Enum.map(items, fn item ->
       display = Enum.find(displays, & &1.id == item.display_id)

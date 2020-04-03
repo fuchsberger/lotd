@@ -1,3 +1,4 @@
+<% hide = hide?(@user) %>
 <div class='row'>
   <%# Select Tab %>
   <div class='d-none d-md-block col-md-auto'>
@@ -18,8 +19,8 @@
 
     <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
       <% vDisplays = visible_displays(@displays, @filter) %>
-      <% displays = visible_entries(vDisplays, @search, @filter, @items, @hide, @character) %>
-      <% rooms = visible_entries(@rooms, @search, @filter, @displays, @hide, @character, @items) %>
+      <% displays = visible_entries(vDisplays, @search, @filter, @items, @user) %>
+      <% rooms = visible_entries(@rooms, @search, @filter, @displays, @user, @items) %>
 
       <%= if Enum.count(rooms) > 0 do %>
         <ul class="list-group list-group-flush">
@@ -35,7 +36,7 @@
           <%= render_many rooms, LotdWeb.GalleryView, "_entry.html",
             as: :entry,
             type: "room",
-            hide: @hide
+            hide: hide
           %>
         </ul>
       <% end %>
@@ -52,7 +53,7 @@
           <%= render_many displays, LotdWeb.GalleryView, "_entry.html",
             as: :entry,
             type: "display",
-            hide: @hide
+            hide: hide
           %>
         </ul>
       <% end %>
@@ -60,8 +61,8 @@
 
     <%= if @tab == "location" || String.length(@search) >= 3 do %>
       <% vLocations = visible_locations(@locations, @filter) %>
-      <% locations = visible_entries(vLocations, @search, @filter, @items, @hide, @character) %>
-      <% regions = visible_entries(@regions, @search, @filter, @locations, @hide, @character, @items) %>
+      <% locations = visible_entries(vLocations, @search, @filter, @items, @user) %>
+      <% regions = visible_entries(@regions, @search, @filter, @locations, @user, @items) %>
 
       <%= if Enum.count(regions) > 0 do %>
         <ul class="list-group list-group-flush">
@@ -75,7 +76,7 @@
           <%= render_many regions, LotdWeb.GalleryView, "_entry.html",
             as: :entry,
             type: "region",
-            hide: @hide
+            hide: hide
           %>
         </ul>
       <% end %>
@@ -92,14 +93,14 @@
           <%= render_many locations, LotdWeb.GalleryView, "_entry.html",
             as: :entry,
             type: "location",
-            hide: @hide
+            hide: hide
           %>
         </ul>
       <% end %>
     <% end %>
 
     <%= if @tab == "mod" || String.length(@search) >= 3 do %>
-      <% mods = visible_entries(@mods, @search, @filter, @items, @hide, @character) %>
+      <% mods = visible_entries(@mods, @search, @filter, @items, @user) %>
       <%= if Enum.count(mods) > 0 do %>
         <ul class="list-group list-group-flush">
           <li class='list-group-item bg-light p-1'>
@@ -112,7 +113,7 @@
           <%= render_many mods, LotdWeb.GalleryView, "_entry.html",
             as: :entry,
             type: "mod",
-            hide: @hide
+            hide: hide
           %>
         </ul>
       <% end %>
@@ -146,8 +147,8 @@
       </form>
     </div>
     <div class='d-flex justify-content-between mb-1'>
-      <%= unless is_nil(@character) do %>
-        <%= f = form_for @hide_changeset, "#", [class: "", phx_change: :update] %>
+      <%= unless is_nil(@user) do %>
+        <%= f = form_for hide_changeset(@user), "#", [class: "", phx_change: :update] %>
           <div class="form-check">
             <%= checkbox f, :hide, class: "form-check-label mr-1" %>
             <%= label f, :hide, "hide collected", class: "form-check-label" %>
@@ -184,9 +185,9 @@
         </tr>
       </thead>
       <tbody>
-        <%= render_many visible_items(@items, @rooms, @displays, @regions, @locations, @mods, @search, @filter, @hide, @character),
+        <%= render_many visible_items(@items, @rooms, @displays, @regions, @locations, @mods, @search, @filter, @user),
           LotdWeb.ItemView, "row.html",
-          character: @character,
+          character: character(@user),
           mods: @mods,
           search: @search,
           tab: @tab

@@ -11,8 +11,6 @@ defmodule LotdWeb.GalleryLive do
     user_id = Map.get(session, "user_id")
     user = if user_id, do: Accounts.get_user!(user_id), else: nil
 
-    hide = if is_nil(user), do: false, else: user.hide
-
     items = if is_nil(user) || user.moderator || user.admin,
       do: Gallery.list_items(),
       else: Gallery.list_items(user)
@@ -26,8 +24,6 @@ defmodule LotdWeb.GalleryLive do
     {:ok, socket
     |> assign(:character, if is_nil(user) do false else user.active_character end)
     |> assign(:filter, List.first(rooms))
-    |> assign(:hide_changeset, Accounts.hide_changeset(user))
-    |> assign(:hide, hide)
     |> assign(:items, items)
     |> assign(:displays, displays)
     |> assign(:rooms, rooms)
@@ -36,8 +32,7 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:search, "")
     |> assign(:tab, "gallery")
     |> assign(:mods, mods)
-    |> assign(:user_id, user.id)
-    |> assign(:user, user.id)}
+    |> assign(:user, if is_nil(user) do nil else user end)}
   end
 
   def handle_event("filter", %{"type" => type, "id" => id}, socket) do
@@ -56,34 +51,27 @@ defmodule LotdWeb.GalleryLive do
 
   def handle_event("clear", _params, socket), do: {:noreply, assign(socket, search: "")}
 
-  def handle_event("toggle", %{"type" => type}, socket) do
-    case type do
-      "details" ->
-        {:noreply, assign(socket, details: !socket.assigns.details)}
-    end
-  end
 
   def handle_event("update", %{"user" => %{"hide" => _hide} = params}, socket) do
-    case Accounts.toggle_hide(socket.assigns.hide_changeset.data, params) do
-      {:ok, user} ->
-        {:noreply, socket
-        |> assign(:hide, user.hide)
-        |> assign(:hide_changeset, Accounts.hide_changeset(user))}
+    case Accounts.toggle_hide(socket.assigns.user, params) do
+      {:ok, %{hide: hide}} ->
+        {:noreply, assign(socket, :user, Map.put(socket.assigns.user, :hide, hide))}
 
-      {:error, changeset} ->
-        {:noreply, assign(socket, :hide_changeset, changeset)}
+      {:error, _changeset} ->
+        {:noreply, socket}
     end
   end
 
   def handle_event("toggle-item", %{"id" => id}, socket) do
 
-    character = Accounts.load_character_items(socket.assigns.character)
+    character = Accounts.load_character_items(socket.assigns.user.active_character)
     item = Gallery.get_item!(id)
 
     if Enum.member?(Enum.map(character.items, & &1.id), item.id),
       do: Accounts.remove_item(character, item),
       else: Accounts.collect_item(character, item)
 
-    {:noreply, assign(socket, character: Accounts.get_character!(character.id))}
+    {:noreply, assign(socket, :user,
+      Map.put(socket.assigns.user, :active_character, Accounts.get_character!(character.id)))}
   end
 end
