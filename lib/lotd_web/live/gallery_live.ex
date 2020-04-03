@@ -8,7 +8,8 @@ defmodule LotdWeb.GalleryLive do
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
   def mount(_params, session, socket) do
-    user = Accounts.get_user!(Map.get(session, "user_id"))
+    user_id = Map.get(session, "user_id")
+    user = if user_id, do: Accounts.get_user!(user_id), else: nil
 
     hide = if is_nil(user), do: false, else: user.hide
 
