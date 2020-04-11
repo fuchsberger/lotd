@@ -4,7 +4,10 @@
   phx-value-type='mod'
   phx-value-id='<%= @mod.id %>'
 >
-  <%= @mod.name %>
+  <span class='flex-grow-1'>
+    <%= toggler(@mod, @type) %>
+    <%= @mod.name %>
+  </span>
   <%= if @hide do %>
     <%= if count != @mod.found do %>
       <span class="badge badge-light badge-pill"

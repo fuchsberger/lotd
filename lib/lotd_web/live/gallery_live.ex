@@ -95,6 +95,19 @@ defmodule LotdWeb.GalleryLive do
       Map.put(socket.assigns.user, :active_character, Accounts.get_character!(character.id)))}
   end
 
+  def handle_event("activate", %{"id" => id}, socket) do
+    mod = mod(socket, id)
+    Accounts.activate_mod(socket.assigns.character, mod)
+    {:noreply, assign(socket, :character_mod_ids, [mod.id | socket.assigns.character_mod_ids])}
+  end
+
+  def handle_event("deactivate", %{"id" => id}, socket) do
+    mod = mod(socket, id)
+    Accounts.deactivate_mod(socket.assigns.character, mod)
+    character_mod_ids = Enum.reject(socket.assigns.character_mod_ids, & &1 == mod.id)
+    {:noreply, assign(socket, :character_mod_ids, character_mod_ids)}
+  end
+
   def handle_event("validate", %{"mod" => params}, socket) do
     changeset = Gallery.change_mod(socket.assigns.changeset.data, params)
     {:noreply, assign(socket, :changeset, changeset)}
@@ -139,4 +152,6 @@ defmodule LotdWeb.GalleryLive do
         {:noreply, socket}
     end
   end
+
+  defp mod(socket, id), do: Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
 end

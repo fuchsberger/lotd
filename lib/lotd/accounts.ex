@@ -17,10 +17,7 @@ defmodule Lotd.Accounts do
 
   def get_user!(id) do
     User
-    |> preload(active_character: [
-        items: ^from(i in Item, select: i.id),
-        mods: ^from(m in Mod, select: m.id)
-      ])
+    |> preload(:active_character)
     |> Repo.get!(id)
   end
 
@@ -100,19 +97,21 @@ defmodule Lotd.Accounts do
     |> Repo.update!()
   end
 
-  def update_character_add_mod(%Character{} = character, mod) do
+  def activate_mod(%Character{} = character, %Mod{} = mod) do
     character = Repo.preload(character, :mods)
 
     character
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, [ mod | character.mods ])
+    |> Ecto.Changeset.put_assoc(:mods, [mod | character.mods])
     |> Repo.update!()
   end
 
-  def update_character_remove_mod(%Character{} = character, mod_id) do
+  def deactivate_mod(%Character{} = character, %Mod{} = mod) do
+    character = Repo.preload(character, :mods)
+
     character
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, & &1.id == mod_id))
+    |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, & &1.id == mod.id))
     |> Repo.update!()
   end
 end
