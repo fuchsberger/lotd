@@ -100,23 +100,13 @@
     <% end %>
 
     <%= if @tab == "mod" || String.length(@search) >= 3 do %>
-      <% mods = visible_entries(@mods, @search, @filter, @items, @user) %>
-      <%= if Enum.count(mods) > 0 do %>
-        <ul class="list-group list-group-flush">
-          <li class='list-group-item bg-light p-1'>
-            <strong>Mods</strong>
-            <span class='float-right'>
-              <%= if String.length(@search) >= 3, do: "#{Enum.count(mods)}/ " %>
-              <%= Enum.count(@mods) %>
-            </span>
-          </li>
-          <%= render_many mods, LotdWeb.GalleryView, "_entry.html",
-            as: :entry,
-            type: "mod",
-            hide: hide
-          %>
-        </ul>
-      <% end %>
+      <%= render LotdWeb.ModView, "list.html",
+        character_item_ids: @character_item_ids,
+        character_mod_ids: @character_mod_ids,
+        filter: @filter,
+        hide: hide,
+        mods: @mods
+      %>
     <% end %>
   </div>
 
@@ -185,7 +175,7 @@
         </tr>
       </thead>
       <tbody>
-        <%= render_many visible_items(@items, @rooms, @displays, @regions, @locations, @mods, @search, @filter, @user),
+        <%# render_many visible_items(@items, @rooms, @displays, @regions, @locations, @mods, @search, @filter, @user),
           LotdWeb.ItemView, "row.html",
           character: character(@user),
           mods: @mods,

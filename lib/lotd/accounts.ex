@@ -58,6 +58,14 @@ defmodule Lotd.Accounts do
       preload: [ items: ^from(i in Item, select: i.id), mods: ^from(m in Mod, select: m.id)]
     ), id)
 
+  def get_character_mod_ids(%Character{} = character) do
+    Repo.all from m in Ecto.assoc(character, :mods), select: m.id
+  end
+
+  def get_character_item_ids(%Character{} = character) do
+    Repo.all from i in Ecto.assoc(character, :items), select: i.id
+  end
+
   def load_character_items(character), do: Repo.preload(character, :items, force: true)
 
   def change_character(%Character{} = character), do: Character.changeset(character, %{})

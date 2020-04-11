@@ -11,6 +11,12 @@ defmodule LotdWeb.ViewHelpers do
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
   end
 
+  def divider(title, count) do
+    content_tag :li,
+      [content_tag(:strong, title), content_tag(:span, count, class: "float-right")],
+      class: "list-group-item bg-light p-1"
+  end
+
   def icon(name, opts \\ [] ), do: content_tag(:i, "",
     [{:class, "icon-#{name} #{Keyword.get(opts, :class, "")}"} | Keyword.delete(opts, :class)])
 

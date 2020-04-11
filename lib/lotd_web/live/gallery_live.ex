@@ -10,6 +10,7 @@ defmodule LotdWeb.GalleryLive do
   def mount(_params, session, socket) do
     user_id = Map.get(session, "user_id")
     user = if user_id, do: Accounts.get_user!(user_id), else: nil
+    character = user && user.active_character
 
     items = if is_nil(user) || user.moderator || user.admin,
       do: Gallery.list_items(),
@@ -19,18 +20,20 @@ defmodule LotdWeb.GalleryLive do
     rooms = Gallery.get_rooms(displays)
     locations = Gallery.get_locations(items)
     regions = Gallery.get_regions(locations)
-    mods = Gallery.get_mods(items)
+    mods = Gallery.list_mods()
 
     {:ok, socket
-    |> assign(:character, if is_nil(user) do false else user.active_character end)
-    |> assign(:filter, List.first(rooms))
+    |> assign(:character, character)
+    |> assign(:character_item_ids, user && Accounts.get_character_item_ids(character))
+    |> assign(:character_mod_ids, user && Accounts.get_character_mod_ids(character))
+    |> assign(:filter, List.first(mods))
     |> assign(:items, items)
     |> assign(:displays, displays)
     |> assign(:rooms, rooms)
     |> assign(:locations, locations)
     |> assign(:regions, regions)
     |> assign(:search, "")
-    |> assign(:tab, "gallery")
+    |> assign(:tab, "mod")
     |> assign(:mods, mods)
     |> assign(:user, if is_nil(user) do nil else user end)}
   end

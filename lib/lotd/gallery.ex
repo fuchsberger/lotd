@@ -121,7 +121,12 @@ defmodule Lotd.Gallery do
   def delete_location(%Location{} = location), do: Repo.delete(location)
 
   # MODS -----------------------------------------------------------------------------------------
-  def list_mods, do: Repo.all from(d in Mod, preload: :items, order_by: d.name)
+  def list_mods do
+    Repo.all from(m in Mod,
+      order_by: [m.id != 1, m.name],
+      preload: [items: ^from(i in Item, select: i.id)]
+    )
+  end
 
   def list_mod_options,
     do: Repo.all from(m in Mod, select: {m.name, m.id}, order_by: m.name)
