@@ -137,7 +137,19 @@ defmodule Lotd.Gallery do
 
   def get_mod!(id), do: Repo.get!(Mod, id)
 
-  def change_mod(%Mod{} = mod), do: Mod.changeset(mod, %{})
+  def create_mod(params) do
+    %Mod{}
+    |> change_mod(params)
+    |> Repo.insert()
+  end
+
+  def change_mod(%Mod{} = mod, params \\ %{}), do: Mod.changeset(mod, params)
+
+  def update_mod(%Mod{} = mod, params) do
+    mod
+    |> change_mod(params)
+    |> Repo.update()
+  end
 
   def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
 end

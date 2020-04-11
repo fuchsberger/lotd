@@ -37,7 +37,6 @@
               <%= link "Displays", to: Routes.live_path(@conn, LotdWeb.DisplaysLive), class: "dropdown-item" %>
               <%= link "Regions", to: Routes.live_path(@conn, LotdWeb.RegionsLive), class: "dropdown-item" %>
               <%= link "Locations", to: Routes.live_path(@conn, LotdWeb.LocationsLive), class: "dropdown-item" %>
-              <%= link "Mods", to: Routes.live_path(@conn, LotdWeb.ModsLive), class: "dropdown-item" %>
             <% end %>
             <%= if @admin do %>
               <div class="dropdown-divider"></div>

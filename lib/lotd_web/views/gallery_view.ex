@@ -1,6 +1,7 @@
 defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
+  alias Lotd.Gallery
   alias Lotd.Gallery.{Room, Display, Region, Location, Mod}
 
   def character(nil), do: nil
@@ -25,6 +26,20 @@ defmodule LotdWeb.GalleryView do
       %Mod{id: id} ->
         Enum.filter(entries, & &1.mod_id == id)
     end
+  end
+
+  def form_action(changeset) do
+    if changeset.data.id, do: :update, else: :insert
+  end
+
+  def form_btn_text(changeset) do
+    if changeset.data.id, do: "Update", else: "Create"
+  end
+
+  def form_heading_text(changeset) do
+    if changeset.data.id,
+      do: "Edit #{type(changeset.data)}",
+      else: "Add #{type(changeset.data)}"
   end
 
   defp found(_items, nil), do: nil

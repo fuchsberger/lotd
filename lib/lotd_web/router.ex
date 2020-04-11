@@ -35,7 +35,6 @@ defmodule LotdWeb.Router do
     live "/displays", DisplaysLive
     live "/regions", RegionsLive
     live "/locations", LocationsLive
-    live "/mods", ModsLive
   end
 
   scope "/", LotdWeb do

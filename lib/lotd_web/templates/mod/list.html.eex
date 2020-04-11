@@ -1,20 +1,18 @@
-<% filter = filter(@mods, @filter) %>
-
 <ul class="list-group list-group-flush">
   <%= if @character_mod_ids do %>
     <% {active, finished, inactive} = sort_mods(@mods, @character_mod_ids, @character_item_ids) %>
     <%= divider("Active", Enum.count(active)) %>
-    <%= render_many active, LotdWeb.ModView, "mod.html", filter: filter, hide: @hide %>
+    <%= render_many active, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide %>
 
     <%= divider("Finished", Enum.count(finished)) %>
-    <%= render_many finished, LotdWeb.ModView, "mod.html", filter: filter, hide: @hide %>
+    <%= render_many finished, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide %>
 
     <%= divider("Inactive", Enum.count(inactive)) %>
-    <%= render_many inactive, LotdWeb.ModView, "mod.html", filter: filter, hide: @hide %>
+    <%= render_many inactive, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide %>
 
   <% else %>
     <%= divider("Mods", Enum.count(@mods)) %>
-    <%= render_many @mods, LotdWeb.ModView, "mod.html", filter: filter, hide: @hide %>
+    <%= render_many @mods, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide %>
 
   <% end %>
 </ul>

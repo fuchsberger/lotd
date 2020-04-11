@@ -2,6 +2,11 @@
 <div class='row'>
   <%# Select Tab %>
   <div class='d-none d-md-block col-md-auto'>
+    <%= if @moderate && @changeset, do: render "form.html",
+      admin: @admin,
+      changeset: @changeset
+    %>
+
     <ul class="nav nav-tabs flex-column flex-md-row">
       <li class="nav-item">
         <a class="nav-link<%= if @tab == "gallery", do: " active" %>" href="#"
@@ -15,98 +20,108 @@
         <a class="nav-link<%= if @tab == "mod", do: " active" %>" href="#"
           phx-click='tab' phx-value-tab='mod'>Mods</a>
       </li>
+
+      <%= if @moderator do %>
+        <li class="nav-item" phx-hook='tooltip' title='Toggle Manage'>
+          <a class="nav-link" href="#" phx-click='toggle' phx-value-type='moderate'>
+            <i class='icon-settings'></i>
+          </a>
+        </li>
+      <% end %>
     </ul>
 
-    <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
-      <% vDisplays = visible_displays(@displays, @filter) %>
-      <% displays = visible_entries(vDisplays, @search, @filter, @items, @user) %>
-      <% rooms = visible_entries(@rooms, @search, @filter, @displays, @user, @items) %>
+    <%= if String.length(@search) < 3 do %>
+      <%= if @tab == "gallery" do %>
+        <% vDisplays = visible_displays(@displays, @filter) %>
+        <% displays = visible_entries(vDisplays, @search, @filter, @items, @user) %>
+        <% rooms = visible_entries(@rooms, @search, @filter, @displays, @user, @items) %>
 
-      <%= if Enum.count(rooms) > 0 do %>
-        <ul class="list-group list-group-flush">
-          <li class='list-group-item bg-light p-1'>
-            <strong>Rooms</strong>
-            <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
+        <%= if Enum.count(rooms) > 0 do %>
+          <ul class="list-group list-group-flush">
+            <li class='list-group-item bg-light p-1'>
+              <strong>Rooms</strong>
+              <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
+                <span class='float-right'>
+                  <%= if String.length(@search) >= 3, do: "#{Enum.count(rooms)}/ " %>
+                  <%= Enum.count(@rooms) %>
+                </span>
+              <% end %>
+            </li>
+            <%= render_many rooms, LotdWeb.GalleryView, "_entry.html",
+              as: :entry,
+              type: "room",
+              hide: hide
+            %>
+          </ul>
+        <% end %>
+
+        <%= if Enum.count(displays) > 0 do %>
+          <ul class="list-group list-group-flush">
+            <li class='list-group-item bg-light p-1'>
+              <strong>Displays</strong>
               <span class='float-right'>
-                <%= if String.length(@search) >= 3, do: "#{Enum.count(rooms)}/ " %>
-                <%= Enum.count(@rooms) %>
+                <%= if String.length(@search) >= 3, do: "#{Enum.count(displays)}/ " %>
+                <%= Enum.count(@displays) %>
               </span>
-            <% end %>
-          </li>
-          <%= render_many rooms, LotdWeb.GalleryView, "_entry.html",
-            as: :entry,
-            type: "room",
-            hide: hide
-          %>
-        </ul>
+            </li>
+            <%= render_many displays, LotdWeb.GalleryView, "_entry.html",
+              as: :entry,
+              type: "display",
+              hide: hide
+            %>
+          </ul>
+        <% end %>
       <% end %>
 
-      <%= if Enum.count(displays) > 0 do %>
-        <ul class="list-group list-group-flush">
-          <li class='list-group-item bg-light p-1'>
-            <strong>Displays</strong>
-            <span class='float-right'>
-              <%= if String.length(@search) >= 3, do: "#{Enum.count(displays)}/ " %>
-              <%= Enum.count(@displays) %>
-            </span>
-          </li>
-          <%= render_many displays, LotdWeb.GalleryView, "_entry.html",
-            as: :entry,
-            type: "display",
-            hide: hide
-          %>
-        </ul>
+      <%= if @tab == "location" do %>
+        <% vLocations = visible_locations(@locations, @filter) %>
+        <% locations = visible_entries(vLocations, @search, @filter, @items, @user) %>
+        <% regions = visible_entries(@regions, @search, @filter, @locations, @user, @items) %>
+
+        <%= if Enum.count(regions) > 0 do %>
+          <ul class="list-group list-group-flush">
+            <li class='list-group-item bg-light p-1'>
+              <strong>Regions</strong>
+              <span class='float-right'>
+                <%= if String.length(@search) >= 3, do: "#{Enum.count(regions)}/ " %>
+                <%= Enum.count(@regions) %>
+              </span>
+            </li>
+            <%= render_many regions, LotdWeb.GalleryView, "_entry.html",
+              as: :entry,
+              type: "region",
+              hide: hide
+            %>
+          </ul>
+        <% end %>
+
+        <%= if Enum.count(locations) > 0 do %>
+          <ul class="list-group list-group-flush">
+            <li class='list-group-item bg-light p-1'>
+              <strong>Locations</strong>
+              <span class='float-right'>
+                <%= if String.length(@search) >= 3, do: "#{Enum.count(locations)}/ " %>
+                <%= Enum.count(@locations) %>
+              </span>
+            </li>
+            <%= render_many locations, LotdWeb.GalleryView, "_entry.html",
+              as: :entry,
+              type: "location",
+              hide: hide
+            %>
+          </ul>
+        <% end %>
       <% end %>
-    <% end %>
 
-    <%= if @tab == "location" || String.length(@search) >= 3 do %>
-      <% vLocations = visible_locations(@locations, @filter) %>
-      <% locations = visible_entries(vLocations, @search, @filter, @items, @user) %>
-      <% regions = visible_entries(@regions, @search, @filter, @locations, @user, @items) %>
-
-      <%= if Enum.count(regions) > 0 do %>
-        <ul class="list-group list-group-flush">
-          <li class='list-group-item bg-light p-1'>
-            <strong>Regions</strong>
-            <span class='float-right'>
-              <%= if String.length(@search) >= 3, do: "#{Enum.count(regions)}/ " %>
-              <%= Enum.count(@regions) %>
-            </span>
-          </li>
-          <%= render_many regions, LotdWeb.GalleryView, "_entry.html",
-            as: :entry,
-            type: "region",
-            hide: hide
-          %>
-        </ul>
+      <%= if @tab == "mod" do %>
+        <%= render LotdWeb.ModView, "list.html",
+          character_item_ids: @character_item_ids,
+          character_mod_ids: @character_mod_ids,
+          filter: @filter_type == "mod" && @filter_id,
+          hide: hide,
+          mods: @mods
+        %>
       <% end %>
-
-      <%= if Enum.count(locations) > 0 do %>
-        <ul class="list-group list-group-flush">
-          <li class='list-group-item bg-light p-1'>
-            <strong>Locations</strong>
-            <span class='float-right'>
-              <%= if String.length(@search) >= 3, do: "#{Enum.count(locations)}/ " %>
-              <%= Enum.count(@locations) %>
-            </span>
-          </li>
-          <%= render_many locations, LotdWeb.GalleryView, "_entry.html",
-            as: :entry,
-            type: "location",
-            hide: hide
-          %>
-        </ul>
-      <% end %>
-    <% end %>
-
-    <%= if @tab == "mod" || String.length(@search) >= 3 do %>
-      <%= render LotdWeb.ModView, "list.html",
-        character_item_ids: @character_item_ids,
-        character_mod_ids: @character_mod_ids,
-        filter: @filter,
-        hide: hide,
-        mods: @mods
-      %>
     <% end %>
   </div>
 
@@ -146,14 +161,15 @@
         </form>
       <% end %>
 
-      <%= unless is_nil(@filter) do %>
+      <%= unless is_nil(@filter_id) do %>
+        <% filter = Gallery.get(@filter_type, @filter_id) %>
         <span class='float-right'>
           current filter:
           <%= if String.length(@search) >= 3 do %>
             <strong>Search</strong>
           <% else %>
-            <strong><%= @filter.name %></strong>
-            <i>(<%= struct_name(@filter) %>)</i>
+            <strong><%= filter.name %></strong>
+            <i>(<%= String.capitalize(@filter_type) %>)</i>
           <% end %>
         </span>
       <% end %>

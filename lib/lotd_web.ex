@@ -34,7 +34,7 @@ defmodule LotdWeb do
       use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb
       use Phoenix.HTML
 
-      import Phoenix.HTML.Form, except: [select: 4, text_input: 3, url_input: 3]
+      import Phoenix.HTML.Form, except: [select: 4, text_input: 2, text_input: 3, url_input: 3]
       import LotdWeb.ViewHelpers
       import Phoenix.LiveView.Helpers
       import LotdWeb.ErrorHelpers

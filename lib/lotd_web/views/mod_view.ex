@@ -1,7 +1,15 @@
 defmodule LotdWeb.ModView do
   use LotdWeb, :view
 
+  alias Lotd.Gallery
   alias Lotd.Gallery.Mod
+
+  def changeset(filter) do
+    case filter do
+      %Mod{} -> Gallery.change_mod(filter)
+      _ -> Gallery.change_mod(%Mod{})
+    end
+  end
 
   def filter(mods, struct) do
     case struct do
