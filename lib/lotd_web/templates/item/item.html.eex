@@ -1,0 +1,50 @@
+<tr>
+  <td class='p-0'>
+    <%= if @character_item_ids do %>
+      <button class='btn btn-link p-0' phx-click='toggle-item' phx-value-id='<%= @item.id %>' type='button'>
+        <i class='icon-<%= if Enum.member?(@character_item_ids, @item.id), do: "active", else: "inactive" %>'></i>
+      </button>
+    <% end %>
+  </td>
+
+  <th scope='row'>
+    <%= if @item.url,
+      do: link(content_tag(:strong, @item.name), to: @item.url, class: "text-dark", target: "_blank"),
+      else: content_tag :strong, name(@item, @search), class: "text-secondary"
+    %>
+  </th>
+
+  <td>
+    <%= if @item.replica, do: icon "replica", class: "text-muted" %>
+  </td>
+
+  <td class='small d-none d-lg-table-cell text-truncate'>
+    <%= unless is_nil(@item.location) do %>
+      <%= unless is_nil(@item.location.region), do: [assoc_link(@item.location.region), " » "] %>
+      <%= assoc_link(@item.location) %>
+      <a href='#' phx-click='filter' phx-value-location='<%= @item.location.id %>'>
+        <%= @item.location.name %>
+      </a>
+    <% end %>
+  </td>
+
+  <td class='small d-none d-xl-table-cell text-truncate'>
+    <%= unless is_nil(@item.display) do %>
+      <%= unless is_nil(@item.display.room) do %>
+        <a href='#' phx-click='filter' phx-value-display='<%= @item.display.room.id %>'>
+          <%= @item.display.room.name %>
+        </a> »
+      <% end %>
+      <a href='#' phx-click='filter' phx-value-display='<%= @item.display.id %>'>
+        <%= @item.display.name %>
+      </a>
+    <% end %>
+  </td>
+
+  <td class='p-0'>
+    <%= link icon("mod", title: @item.mod.name, phx_hook: "tooltip"),
+      to: @item.mod.url,
+      target: "_blank"
+    %>
+  </td>
+</tr>

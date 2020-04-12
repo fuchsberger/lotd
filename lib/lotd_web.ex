@@ -51,7 +51,7 @@ defmodule LotdWeb do
       import Phoenix.LiveView.Router
       import Plug.Conn
       import Phoenix.Controller
-      import LotdWeb.Auth, only: [user: 2, moderator: 2, admin: 2]
+      import LotdWeb.Auth, only: [user: 2, admin: 2]
     end
   end
 

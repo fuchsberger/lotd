@@ -34,19 +34,18 @@ defmodule Lotd.Accounts do
     |> Repo.update()
   end
 
-
-  def hide_changeset(%User{} = user), do: User.hide_changeset(user, %{})
-
-  def toggle_hide(%User{} = user, attrs) do
-    user
-    |> User.hide_changeset(attrs)
-    |> Repo.update()
-  end
-
   # CHARACTERS -----------------------------------------------------------------------------------
 
   def list_characters(%User{} = user) do
     from(c in Character, preload: [:items, :mods], where: c.user_id == ^user.id, order_by: c.name)
+    |> Repo.all()
+  end
+
+  def list_characters(user_id) do
+    User
+    |> Repo.get(user_id)
+    |> Ecto.assoc(:characters)
+    |> order_by(:name)
     |> Repo.all()
   end
 
@@ -65,7 +64,8 @@ defmodule Lotd.Accounts do
 
   def load_character_items(character), do: Repo.preload(character, :items, force: true)
 
-  def change_character(%Character{} = character), do: Character.changeset(character, %{})
+  def change_character(%Character{} = character, params \\ %{}),
+    do: Character.changeset(character, params)
 
   def create_character(attrs \\ %{}) do
     %Character{}
@@ -99,19 +99,25 @@ defmodule Lotd.Accounts do
 
   def activate_mod(%Character{} = character, %Mod{} = mod) do
     character = Repo.preload(character, :mods)
+    character_mods = [mod | character.mods]
 
     character
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, [mod | character.mods])
+    |> Ecto.Changeset.put_assoc(:mods, character_mods)
     |> Repo.update!()
+
+    Enum.map(character_mods, & &1.id)
   end
 
   def deactivate_mod(%Character{} = character, %Mod{} = mod) do
     character = Repo.preload(character, :mods)
+    character_mods = Enum.reject(character.mods, & &1.id == mod.id)
 
     character
     |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, & &1.id == mod.id))
+    |> Ecto.Changeset.put_assoc(:mods, character_mods)
     |> Repo.update!()
+
+    Enum.map(character_mods, & &1.id)
   end
 end

@@ -1,9 +1,0 @@
-<tr
-  class='<%= if @mod.id == @edit_id, do: "table-active" %>'
-  phx-click='edit'
-  phx-value-id='<%= @mod.id %>'
->
-  <td><%= @mod.name %></td>
-  <td class='small'><%= if @mod.url, do: link @mod.url, to: @mod.url, target: "_blank" %></td>
-  <td><%= Enum.count @mod.items %></td>
-<tr>

@@ -1,8 +1,7 @@
 <% count = Enum.count(@mod.items) %>
 <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if @mod.id == @filter, do: " active" %>"
   phx-click='filter'
-  phx-value-type='mod'
-  phx-value-id='<%= @mod.id %>'
+  phx-value-mod='<%= @mod.id %>'
 >
   <span class='flex-grow-1'>
     <%= toggler(@mod, @type) %>
@@ -10,9 +9,7 @@
   </span>
   <%= if @hide do %>
     <%= if count != @mod.found do %>
-      <span class="badge badge-light badge-pill"
-        title='<%= "Remaining Items (Total: #{count} )" %>'
-        phx-hook='tooltip'>
+      <span class="badge badge-light badge-pill" title='Remaining Items' phx-hook='tooltip'>
         <%= count - @mod.found %>
       </span>
     <% end %>

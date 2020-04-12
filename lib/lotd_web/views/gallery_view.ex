@@ -2,10 +2,35 @@ defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
   alias Lotd.Gallery
+  alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Room, Display, Region, Location, Mod}
 
   def character(nil), do: nil
   def character(user), do: user.active_character
+
+  def character?(struct), do: struct.__struct__ == Character
+
+  def filter?(socket) do
+    cond do
+      socket.assigns.filter_mod -> :mod
+      socket.assigns.filter_display -> :display
+      socket.assigns.filter_room -> :room
+      socket.assigns.filter_location -> :location
+      socket.assigns.filter_region -> :region
+      true -> nil
+    end
+  end
+
+  def filtered_struct(socket) do
+    case filter?(socket) do
+      :display -> Enum.find socket.assigns.displays, & &1.id == socket.assigns.filter_display
+      :room -> Enum.find socket.assigns.rooms, & &1.id == socket.assigns.filter_room
+      :location -> Enum.find socket.assigns.locations, & &1.id == socket.assigns.filter_location
+      :region -> Enum.find socket.assigns.regions, & &1.id == socket.assigns.filter_region
+      :mod -> Enum.find socket.assigns.mods, & &1.id == socket.assigns.filter_mod
+      nil -> nil
+    end
+  end
 
   def filtered_entries(entries, struct, items) do
     case struct do
@@ -65,11 +90,6 @@ defmodule LotdWeb.GalleryView do
     end
   end
 
-  def hide?(nil), do: false
-  def hide?(user), do: user.hide
-
-  def hide_changeset(user), do: Lotd.Accounts.User.hide_changeset(user, %{})
-
   def type(struct) do
     struct.__struct__
     |> to_string()
@@ -98,7 +118,7 @@ defmodule LotdWeb.GalleryView do
           filtered?: filtered?(filter, entry)
         })
       end)
-    |> Enum.reject(& hide?(user) && &1.found == &1.count)
+    # |> Enum.reject(& hide?(user) && &1.found == &1.count)
   end
 
   def visible_displays(displays, filter) do
@@ -143,9 +163,9 @@ defmodule LotdWeb.GalleryView do
         end
       end
 
-    items = if hide?(user),
-      do: Enum.reject(items, & Enum.member?(user.active_character.items, &1.id)),
-      else: items
+    # items = if hide?(user),
+    #   do: Enum.reject(items, & Enum.member?(user.active_character.items, &1.id)),
+    #   else: items
 
     Enum.map(items, fn item ->
       display = Enum.find(displays, & &1.id == item.display_id)

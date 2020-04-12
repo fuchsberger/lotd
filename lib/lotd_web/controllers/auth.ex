@@ -58,18 +58,6 @@ defmodule LotdWeb.Auth do
     end
   end
 
-  def moderator(conn, _opts) do
-    if conn.assigns.current_user.moderator do
-      conn
-    else
-      conn
-      |> put_status(403)
-      |> put_view(LotdWeb.ErrorView)
-      |> render("403.html")
-      |> halt()
-    end
-  end
-
   def admin(conn, _opts) do
     if conn.assigns.current_user.admin do
       conn

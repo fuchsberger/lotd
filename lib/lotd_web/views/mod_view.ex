@@ -47,9 +47,24 @@ defmodule LotdWeb.ModView do
 
   def toggler(mod, type) do
     case type do
-      :all -> nil
-      :active -> link(icon("active"), to: "#", phx_click: "deactivate", phx_value_id: mod.id)
-      :inactive -> link(icon("inactive"), to: "#", phx_click: "activate", phx_value_id: mod.id)
+      :all ->
+        nil
+
+      :active ->
+        link icon("active"),
+          to: "#",
+          phx_click: "deactivate",
+          phx_value_mod: mod.id,
+          phx_hook: "tooltip",
+          title: "Deactivate Mod"
+
+      :inactive ->
+        link icon("inactive"),
+          to: "#",
+          phx_click: "activate",
+          phx_value_mod: mod.id,
+          phx_hook: "tooltip",
+          title: "Activate Mod"
     end
   end
 end

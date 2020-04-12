@@ -5,12 +5,14 @@ defmodule Lotd.Gallery do
   import Ecto.Query, warn: false
 
   alias Lotd.Repo
+  alias Lotd.Accounts
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Room, Region, Display, Location, Mod}
 
   # GENERAL --------------------------------------------------------------------------------------
   def changeset(type) do
     case type do
+      "character" -> Accounts.change_character(%Character{})
       "item" -> change_item(%Item{})
       "room" -> change_room(%Room{})
       "display" -> change_display(%Display{})
@@ -55,12 +57,52 @@ defmodule Lotd.Gallery do
 
   def list_items, do: Repo.all from(i in Item, order_by: i.name)
 
-  def list_items(user),
-    do: Repo.all from(i in Item, order_by: i.name, where: i.mod_id in ^user.active_character.mods)
+  def list_items(filters) do
+    query = from i in Item,
+      preload: [:mod, location: :region, display: :room],
+      order_by: :name,
+      limit: 200
+
+    search = Keyword.get(filters, :search)
+
+    query =
+      if String.length(search) > 2 do
+        # search
+        from(i in query, where: ilike(i.name, ^"%#{search}%"))
+      else
+        #filter
+        id = Keyword.get(filters, :filter_id)
+        case Keyword.get(filters, :filter_type) do
+          :display -> from(i in query, where: i.display_id == ^id)
+          :location -> from(i in query, where: i.location_id == ^id)
+          :mod -> from(i in query, where: i.mod_id == ^id)
+          nil -> query
+        end
+      end
+
+    query
+    |> query_hide(filters)
+    |> query_mods(filters)
+    |> Repo.all()
+  end
+
+  defp query_hide(query, filters) do
+    if Keyword.get(filters, :hide),
+      do: where(query, [i], i.id not in ^Keyword.get(filters, :character_item_ids)),
+      else: query
+  end
+
+  defp query_mods(query, filters) do
+    if mod_ids = Keyword.get(filters, :character_mod_ids),
+      do: where(query, [i], i.mod_id in ^mod_ids),
+      else: query
+  end
+
+  # do: Repo.all from(i in Item, order_by: i.name, where: i.mod_id in ^user.active_character.mods)
 
   def get_item!(id), do: Repo.get!(Item, id)
 
-  def change_item(%Item{} = item), do: Item.changeset(item, %{})
+  def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
 
   def delete_item(%Item{} = item), do: Repo.delete(item)
 
@@ -74,7 +116,7 @@ defmodule Lotd.Gallery do
 
   def get_room!(id), do: Repo.get!(Room, id)
 
-  def change_room(%Room{} = room), do: Room.changeset(room, %{})
+  def change_room(%Room{} = room, params \\ %{}), do: Room.changeset(room, params)
 
   def delete_room(%Room{} = room), do: Repo.delete(room)
 
@@ -88,7 +130,7 @@ defmodule Lotd.Gallery do
 
   def get_display!(id), do: Repo.get!(Display, id)
 
-  def change_display(%Display{} = display), do: Display.changeset(display, %{})
+  def change_display(%Display{} = display, params \\ %{}), do: Display.changeset(display, params)
 
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
@@ -102,7 +144,7 @@ defmodule Lotd.Gallery do
 
   def get_region!(id), do: Repo.get!(Region, id)
 
-  def change_region(%Region{} = region), do: Region.changeset(region, %{})
+  def change_region(%Region{} = region, params \\ %{}), do: Region.changeset(region, params)
 
   def delete_region(%Region{} = region), do: Repo.delete(region)
 
@@ -116,7 +158,8 @@ defmodule Lotd.Gallery do
 
   def get_location!(id), do: Repo.get!(Location, id)
 
-  def change_location(%Location{} = location), do: Location.changeset(location, %{})
+  def change_location(%Location{} = location, params \\ %{}),
+    do: Location.changeset(location, params)
 
   def delete_location(%Location{} = location), do: Repo.delete(location)
 

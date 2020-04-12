@@ -1,0 +1,16 @@
+<ul class="list-group list-group-flush">
+
+  <%= divider "Regions", Enum.count(@regions) %>
+
+  <%= render_many @regions, LotdWeb.LocationView, "region.html",
+    as: :region,
+    filter: @filter,
+    hide: @hide
+  %>
+
+  <%= if Enum.count(@regions) == 0 do %>
+    <li class="list-group-item small text-center text-muted text-italic p-1">
+      <em>no regions in the database...</em>
+    </li>
+  <% end %>
+</ul>

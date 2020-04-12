@@ -1,0 +1,26 @@
+<% active = @active_id == @character.id %>
+
+<li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center"
+>
+  <span class='flex-grow-1'>
+    <%= unless active do %>
+      <a href='#'
+        phx-click='activate'
+        phx-value-character='<%= @character.id %>'
+        phx-hook='tooltip'
+        title='Activate Character'
+      >
+        <i class='icon-inactive'></i>
+      </a>
+    <% end %>
+    <%= if active do %>
+      <strong><%= @character.name %></strong> <em>(active)</em>
+    <% else %>
+      <%= @character.name %>
+    <% end %>
+  </span>
+
+  <a href='#' phx-click='edit' phx-value-character='<%= @character.id %>'>
+    <i class='icon-edit'></i>
+  </a>
+</li>

@@ -14,14 +14,8 @@ defmodule Lotd.Accounts.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:id, :admin, :name, :moderator, :active_character_id])
+    |> cast(attrs, [:id, :admin, :name, :moderator, :hide, :active_character_id])
     |> validate_required([:name])
     |> assoc_constraint(:active_character)
-  end
-
-  def hide_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:hide])
-    |> validate_required([:hide])
   end
 end

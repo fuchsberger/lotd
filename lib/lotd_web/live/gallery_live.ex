@@ -3,7 +3,17 @@ defmodule LotdWeb.GalleryLive do
   use Phoenix.LiveView, container: {:div, class: "container-fluid"}
 
   alias Lotd.{Accounts, Gallery}
+  alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Room, Region, Display, Location, Mod}
+
+  @filters %{
+    filter_item: nil,
+    filter_display: nil,
+    filter_room: nil,
+    filter_location: nil,
+    filter_region: nil,
+    filter_mod: nil
+  }
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
@@ -12,49 +22,45 @@ defmodule LotdWeb.GalleryLive do
     user = if user_id, do: Accounts.get_user!(user_id), else: nil
     character = user && user.active_character
 
-    items = if is_nil(user) || user.moderator || user.admin,
-      do: Gallery.list_items(),
-      else: Gallery.list_items(user)
+    socket =
+      socket
+      |> assign(@filters)
+      |> assign(:admin, user && user.admin)
+      |> assign(:character, character)
+      |> assign(:characters, user && Accounts.list_characters(user.id))
+      |> assign(:character_item_ids, user && Accounts.get_character_item_ids(character))
+      |> assign(:character_mod_ids, user && Accounts.get_character_mod_ids(character))
+      |> assign(:changeset, nil)
+      |> assign(:hide, user && user.hide)
+      |> assign(:moderate, false)
+      |> assign(:moderator, user && user.moderator)
+      |> assign(:mods, Gallery.list_mods())
+      |> assign(:rooms, Gallery.list_regions())
+      |> assign(:regions, Gallery.list_regions())
+      |> assign(:search, "")
+      |> assign(:tab, "mod")
 
-    displays = Gallery.get_displays(items)
-    rooms = Gallery.get_rooms(displays)
-    locations = Gallery.get_locations(items)
-    regions = Gallery.get_regions(locations)
-    mods = Gallery.list_mods()
-
-    {:ok, socket
-    |> assign(:admin, user && user.admin)
-    |> assign(:character, character)
-    |> assign(:character_item_ids, user && Accounts.get_character_item_ids(character))
-    |> assign(:character_mod_ids, user && Accounts.get_character_mod_ids(character))
-    |> assign(:changeset, Gallery.changeset("mod"))
-    |> assign(:filter_id, nil)
-    |> assign(:filter_type, nil)
-    |> assign(:items, items)
-    |> assign(:displays, displays)
-    |> assign(:rooms, rooms)
-    |> assign(:locations, locations)
-    |> assign(:regions, regions)
-    |> assign(:search, "")
-    |> assign(:tab, "mod")
-    |> assign(:moderate, true)
-    |> assign(:moderator, user && user.moderator)
-    |> assign(:mods, mods)
-    |> assign(:user, user)}
+    {:ok, assign(socket, :items, items(socket))}
   end
 
-  def handle_event("filter", %{"type" => type, "id" => id}, socket) do
+  def handle_event("filter", %{"mod" => id}, socket) do
     id = String.to_integer(id)
-    {changeset, type, id} =
-      if type == socket.assigns.filter_type && id == socket.assigns.filter_id,
-        do: {Gallery.changeset(type), nil, nil},
-        else: {Gallery.changeset(type, id), type, id}
 
-    {:noreply, socket
-    |> assign(changeset: changeset)
-    |> assign(filter_id: id)
-    |> assign(filter_type: type)
-    |> assign(search: "")}
+    if socket.assigns.filter_mod == id do
+      {:noreply, reset(socket)}
+    else
+      changeset = if socket.assigns.moderate,
+        do: socket.assigns.mods |> Enum.find(& &1.id == id) |> Gallery.change_mod(),
+        else: nil
+
+      socket =
+        socket
+        |> reset()
+        |> assign(filter_mod: id)
+        |> assign(changeset: changeset)
+
+      {:noreply, assign(socket, :items, items(socket))}
+    end
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
@@ -65,22 +71,7 @@ defmodule LotdWeb.GalleryLive do
     {:noreply, assign(socket, :tab, tab)}
   end
 
-  def handle_event("toggle", %{"type" => "moderate" = _type}, socket) do
-    {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
-  end
-
   def handle_event("clear", _params, socket), do: {:noreply, assign(socket, search: "")}
-
-
-  def handle_event("update", %{"user" => %{"hide" => _hide} = params}, socket) do
-    case Accounts.toggle_hide(socket.assigns.user, params) do
-      {:ok, %{hide: hide}} ->
-        {:noreply, assign(socket, :user, Map.put(socket.assigns.user, :hide, hide))}
-
-      {:error, _changeset} ->
-        {:noreply, socket}
-    end
-  end
 
   def handle_event("toggle-item", %{"id" => id}, socket) do
 
@@ -95,33 +86,105 @@ defmodule LotdWeb.GalleryLive do
       Map.put(socket.assigns.user, :active_character, Accounts.get_character!(character.id)))}
   end
 
-  def handle_event("activate", %{"id" => id}, socket) do
-    mod = mod(socket, id)
-    Accounts.activate_mod(socket.assigns.character, mod)
-    {:noreply, assign(socket, :character_mod_ids, [mod.id | socket.assigns.character_mod_ids])}
+  def handle_event("toggle", %{"hide" => _}, socket) do
+    user = Accounts.get_user(socket.assigns.character.user_id)
+    items(socket)
+    case Accounts.update_user(user, %{hide: !socket.assigns.hide}) do
+      {:ok, user} ->
+        socket = assign(socket, :hide, user.hide)
+        {:noreply, assign(socket, :items, items(socket))}
+      {:error, _changeset} -> {:noreply, socket}
+    end
   end
 
-  def handle_event("deactivate", %{"id" => id}, socket) do
-    mod = mod(socket, id)
-    Accounts.deactivate_mod(socket.assigns.character, mod)
-    character_mod_ids = Enum.reject(socket.assigns.character_mod_ids, & &1 == mod.id)
-    {:noreply, assign(socket, :character_mod_ids, character_mod_ids)}
+  def handle_event("toggle", %{"moderate" => _}, socket) do
+    {:noreply, assign(socket, :moderate, !socket.assigns.moderate)}
   end
 
-  def handle_event("validate", %{"mod" => params}, socket) do
-    changeset = Gallery.change_mod(socket.assigns.changeset.data, params)
+  def handle_event("activate", %{"character" => id}, socket) do
+    case socket.assigns.character.user_id
+      |> Accounts.get_user!()
+      |> Accounts.update_user(%{active_character_id: id})
+    do
+      {:ok, user} ->
+        character = Accounts.get_character!(user.active_character_id)
+
+        socket =
+          socket
+          |> assign(:character, character)
+          |> assign(:character_item_ids, Accounts.get_character_item_ids(character))
+          |> assign(:character_mod_ids, Accounts.get_character_mod_ids(character))
+
+        {:noreply, assign(socket, :items, items(socket))}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("activate", %{"mod" => id}, socket) do
+    mod_ids = Accounts.activate_mod(socket.assigns.character, mod(socket, id))
+    socket = assign(socket, :character_mod_ids, mod_ids)
+    {:noreply, assign(socket, :items, items(socket))}
+  end
+
+  def handle_event("deactivate", %{"mod" => id}, socket) do
+    mod_ids = Accounts.deactivate_mod(socket.assigns.character, mod(socket, id))
+    socket = assign(socket, :character_mod_ids, mod_ids)
+    {:noreply, assign(socket, :items, items(socket))}
+  end
+
+  def handle_event("add", %{"type" => type}, socket) do
+    {:noreply, assign(socket, :changeset, Gallery.changeset(type))}
+  end
+
+  def handle_event("edit", %{"character" => id}, socket) do
+    character = Enum.find(socket.assigns.characters, & &1.id == String.to_integer(id))
+    {:noreply, assign(socket, :changeset, Accounts.change_character(character, %{}))}
+  end
+
+  def handle_event("cancel", _params, socket), do: {:noreply, assign(socket, :changeset, nil)}
+
+  def handle_event("validate", params, socket) do
+    data = socket.assigns.changeset.data
+    changeset =
+      case params do
+        %{"character" => params} -> Accounts.change_character data, params
+        %{"item" => params} ->      Gallery.change_item       data, params
+        %{"display" => params} ->   Gallery.change_display    data, params
+        %{"room" => params} ->      Gallery.change_room       data, params
+        %{"location" => params} ->  Gallery.change_location   data, params
+        %{"region" => params} ->    Gallery.change_region     data, params
+        %{"mod" => params} ->       Gallery.change_mod        data, params
+      end
+
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("insert", %{"mod" => params}, socket) do
-    case Gallery.create_mod(params) do
-      {:ok, _mod} ->
-        {:noreply, socket
-        |> assign(:changeset, Gallery.change_mod(%Mod{}))
-        |> assign(:mods, Gallery.list_mods())}
+  def handle_event("insert", params, socket) do
+    case params do
+      %{"character" => params} ->
+        params = Map.put(params, "user_id", socket.assigns.character.user_id)
+        case Accounts.create_character(params) do
+          {:ok, character} ->
+            {:noreply, socket
+            |> assign(:changeset, nil)
+            |> assign(:characters, Accounts.list_characters(character.user_id))}
 
-      {:error, changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+          {:error, changeset} ->
+            {:noreply, assign(socket, :changeset, changeset)}
+        end
+
+      %{"mod" => params} ->
+        case Gallery.create_mod(params) do
+          {:ok, _mod} ->
+            {:noreply, socket
+            |> assign(:changeset, Gallery.change_mod(%Mod{}))
+            |> assign(:mods, Gallery.list_mods())}
+
+          {:error, changeset} ->
+            {:noreply, assign(socket, :changeset, changeset)}
+        end
     end
   end
 
@@ -129,7 +192,7 @@ defmodule LotdWeb.GalleryLive do
     case Gallery.update_mod(socket.assigns.changeset.data, params) do
       {:ok, _mod} ->
         {:noreply, socket
-        |> assign(:changeset, Gallery.change_mod(%Mod{}))
+        |> assign(:changeset, nil)
         |> assign(:mods, Gallery.list_mods())}
 
       {:error, changeset} ->
@@ -137,21 +200,64 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
-  def handle_event("delete", %{"type" => "Mod" = _type, "id" => id}, socket) do
-    mod = Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
-
-    case Gallery.delete_mod(mod) do
-      {:ok, _mod} ->
+  def handle_event("update", %{"character" => params}, socket) do
+    case Accounts.update_character(socket.assigns.changeset.data, params) do
+      {:ok, character} ->
         {:noreply, socket
-        |> assign(:changeset, Gallery.change_mod(%Mod{}))
-        |> assign(:character_mod_ids, Accounts.get_character_mod_ids(socket.assigns.character))
-        |> assign(:filter_id, nil)
-        |> assign(:mods, Gallery.list_mods())}
+        |> assign(:changeset, nil)
+        |> assign(:characters, Accounts.list_characters(character.user_id))}
 
-      {:error, _reason} ->
-        {:noreply, socket}
+      {:error, changeset} ->
+        {:noreply, assign(socket, :changeset, changeset)}
+    end
+  end
+
+  def handle_event("delete", _params, socket) do
+    case socket.assigns.changeset.data do
+      %Character{} = character ->
+        case Accounts.delete_character(character) do
+          {:ok, char} ->
+            {:noreply, socket
+            |> assign(:changeset, nil)
+            |> assign(:characters, Enum.reject(socket.assigns.characters, & &1.id == char.id))}
+
+          {:error, _reason} ->
+            {:noreply, socket}
+        end
+
+      %Mod{} = mod ->
+        case Gallery.delete_mod(mod) do
+          {:ok, _mod} ->
+            {:noreply, socket
+            |> assign(:changeset, Gallery.change_mod(%Mod{}))
+            |> assign(:character_mod_ids, Accounts.get_character_mod_ids(socket.assigns.character))
+            |> assign(:filter_id, nil)
+            |> assign(:mods, Gallery.list_mods())}
+
+          {:error, _reason} ->
+            {:noreply, socket}
+        end
     end
   end
 
   defp mod(socket, id), do: Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
+
+  defp items(socket) do
+    struct = LotdWeb.GalleryView.filtered_struct(socket)
+    []
+    |> Keyword.put(:search, socket.assigns.search)
+    |> Keyword.put(:hide, socket.assigns.hide)
+    |> Keyword.put(:character_item_ids, socket.assigns.character_item_ids)
+    |> Keyword.put(:character_mod_ids, socket.assigns.character_mod_ids)
+    |> Keyword.put(:filter_id, struct && struct.id)
+    |> Keyword.put(:filter_type, LotdWeb.GalleryView.filter?(socket))
+    |> Gallery.list_items()
+  end
+
+  defp reset(socket) do
+    socket
+    |> assign(@filters)
+    |> assign(changeset: nil)
+    |> assign(search: "")
+  end
 end

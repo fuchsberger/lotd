@@ -1,21 +1,11 @@
 defmodule LotdWeb.ItemView do
   use LotdWeb, :view
 
-  def assoc_link(assoc, title) do
-    if assoc.url, do:
-      link(assoc.name,
-        data_placement: "bottom",
-        to: assoc.url,
-        target: "_blank",
-        title: title,
-        phx_hook: "tooltip"
-      ),
-    else:
-      content_tag :span, assoc.name,
-        class: "text-secondary",
-        data_placement: "bottom",
-        title: title,
-        phx_hook: "tooltip"
+  def assoc_link(assoc) do
+    #TODO: fix url
+    if false && assoc.url,
+      do: link(assoc.name, to: assoc.url, target: "_blank"),
+      else: content_tag(:span, assoc.name, class: "text-secondary")
   end
 
   def check_item(moderator) do

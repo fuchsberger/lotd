@@ -4,13 +4,13 @@ defmodule LotdWeb.LayoutView do
   import Phoenix.Controller, only: [current_path: 2]
 
   def logout_button(conn) do
-    link icon("logout"),
+    link [icon("logout"), conn.assigns.current_user.name ],
       to: Routes.session_path(conn, :delete, conn.assigns.current_user.id),
       method: "delete",
       id: "logout-button",
       class: "nav-link font-weight-bold",
       data_toggle: "tooltip",
-      title: "Logout #{conn.assigns.current_user.name}"
+      title: "Logout"
   end
 
   def nav_item(conn, name, to, icon) do

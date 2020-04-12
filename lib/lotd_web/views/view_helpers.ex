@@ -11,10 +11,25 @@ defmodule LotdWeb.ViewHelpers do
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
   end
 
-  def divider(title, count) do
+  def add_btn(type) do
+    link icon("inactive"),
+      to: "#",
+      title: "Add #{String.capitalize(type)}",
+      phx_click: "add",
+      phx_hook: "tooltip",
+      phx_value_type: type
+  end
+
+  def divider(title, right_content \\ "") do
     content_tag :li,
-      [content_tag(:strong, title), content_tag(:span, count, class: "float-right")],
+      [content_tag(:strong, title), content_tag(:span, right_content, class: "float-right")],
       class: "list-group-item bg-light p-1"
+  end
+
+  def divider_info(title) do
+    content_tag :li,
+      content_tag(:em, title),
+      class: "list-group-item small text-center text-muted text-italic p-1"
   end
 
   def icon(name, opts \\ [] ), do: content_tag(:i, "",
