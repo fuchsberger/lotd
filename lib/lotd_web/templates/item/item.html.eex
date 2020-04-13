@@ -41,10 +41,13 @@
     <% end %>
   </td>
 
-  <td class='p-0'>
-    <%= link icon("mod", title: @item.mod.name, phx_hook: "tooltip"),
-      to: @item.mod.url,
-      target: "_blank"
-    %>
+  <td class='p-0 d-none d-xl-table-cell'>
+    <a href='#'
+      phx-click='filter'
+      phx-value-mod='<%= @item.mod_id %>'
+      phx-hook='tooltip'
+      title='<%= @item.mod.name %>'
+    ><i class='icon-mod'></i>
+    </a>
   </td>
 </tr>

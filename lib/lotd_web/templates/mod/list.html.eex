@@ -1,7 +1,7 @@
 <ul class="list-group list-group-flush">
   <%= if @character_mod_ids do %>
 
-    <%= divider "Characters", add_btn("character") %>
+    <%= divider "Characters", [content_tag(:span, Enum.count(@characters)), add_btn("character")] %>
     <%= render_many @characters, LotdWeb.ModView, "character.html",
       as: :character,
       active_id: @active_character_id
@@ -9,7 +9,7 @@
 
     <% {active, finished, inactive} = sort_mods(@mods, @character_mod_ids, @character_item_ids) %>
 
-    <%= if @moderate do %>
+    <%= if @moderator do %>
       <%= divider "Active Mods", [content_tag(:span, Enum.count(active)), add_btn("mod")] %>
     <% else %>
       <%= divider "Active Mods", Enum.count(active) %>

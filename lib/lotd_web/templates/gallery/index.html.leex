@@ -4,23 +4,23 @@
 
     <ul class="nav nav-tabs flex-column flex-md-row">
       <li class="nav-item">
-        <a class="nav-link<%= if @tab == "gallery", do: " active" %>" href="#"
-          phx-click='tab' phx-value-tab='gallery'>Gallery</a>
+        <a class="nav-link<%= if @tab == 1, do: " active" %>" href="#"
+          phx-click='tab' phx-value-tab='1'>Gallery</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link<%= if @tab == "location", do: " active" %>" href="#"
-          phx-click='tab' phx-value-tab='location'>Locations</a>
+        <a class="nav-link<%= if @tab == 2, do: " active" %>" href="#"
+          phx-click='tab' phx-value-tab='2'>Locations</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link<%= if @tab == "mod", do: " active" %>" href="#"
-          phx-click='tab' phx-value-tab='mod'>Mods</a>
+        <a class="nav-link<%= if @tab == 3, do: " active" %>" href="#"
+          phx-click='tab' phx-value-tab='3'>Mods</a>
       </li>
     </ul>
 
     <%= if @changeset, do: render "form.html", admin: @admin, changeset: @changeset, active_id: @character && @character.id %>
 
     <%= if String.length(@search) < 3 do %>
-      <%= if @tab == "gallery" do %>
+      <%= if @tab == 1 do %>
         <% vDisplays = visible_displays(@displays, @filter) %>
         <% displays = visible_entries(vDisplays, @search, @filter, @items, @user) %>
         <% rooms = visible_entries(@rooms, @search, @filter, @displays, @user, @items) %>
@@ -29,7 +29,7 @@
           <ul class="list-group list-group-flush">
             <li class='list-group-item bg-light p-1'>
               <strong>Rooms</strong>
-              <%= if @tab == "gallery" || String.length(@search) >= 3 do %>
+              <%= if @tab == 1 || String.length(@search) >= 3 do %>
                 <span class='float-right'>
                   <%= if String.length(@search) >= 3, do: "#{Enum.count(rooms)}/ " %>
                   <%= Enum.count(@rooms) %>
@@ -62,7 +62,7 @@
         <% end %>
       <% end %>
 
-      <%= if @tab == "location" do %>
+      <%= if @tab == 2 do %>
         <%= render LotdWeb.LocationView, "list.html",
           character_item_ids: @character_item_ids,
           filter: @filter_region,
@@ -71,7 +71,7 @@
         %>
       <% end %>
 
-      <%= if @tab == "mod" do %>
+      <%= if @tab == 3 do %>
         <%= render LotdWeb.ModView, "list.html",
           active_character_id: @character.id,
           characters: @characters,
@@ -80,7 +80,7 @@
           filter: @filter_mod,
           hide: @hide,
           mods: @mods,
-          moderate: @moderate
+          moderator: @moderator
         %>
       <% end %>
     <% end %>
@@ -120,13 +120,6 @@
         hide collected
       <% end %>
 
-      <%= if @moderator do %>
-        <a class='ml-2' href='#' phx-click='toggle' phx-value-moderate=''>
-          <i class='icon-<%= if @moderate, do: "active", else: "inactive" %>'></i>
-        </a>
-        moderate
-      <% end %>
-
       <%= if @filter_mod || @filter_location || @filter_display || @filter_room || @filter_region do %>
         <span class='text-right flex-grow-1'>
           current filter:
@@ -136,6 +129,11 @@
             <% filter = filtered_struct(@socket) %>
             <strong><%= filter.name %></strong>
             <i>(<%= @socket |> filter?() |> Atom.to_string() |> String.capitalize() %>)</i>
+
+            <%= if @moderator do %>
+              <a href='#' phx-click='edit'><i class='icon-edit'></i></a>
+            <% end %>
+
             <%= if filter.url do %>
               <a href='<%= filter.url %>' target='_blank'><i class='icon-link'></i></a>
             <% end %>
@@ -156,7 +154,9 @@
           <th scope="col" class='d-none d-xl-table-cell'>
             <i class='icon-display'></i> Display
           </th>
-          <th scope="col" class='p-0'><i class='icon-mod' title='Mod' phx-hook='Mod'></i></th>
+          <th scope="col" class='p-0 d-none d-xl-table-cell'>
+            <i class='icon-mod' title='Mod' phx-hook='Mod'></i>
+          </th>
         </tr>
       </thead>
       <tbody>

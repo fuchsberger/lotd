@@ -73,10 +73,21 @@ defmodule Lotd.Gallery do
         #filter
         id = Keyword.get(filters, :filter_id)
         case Keyword.get(filters, :filter_type) do
-          :display -> from(i in query, where: i.display_id == ^id)
-          :location -> from(i in query, where: i.location_id == ^id)
-          :mod -> from(i in query, where: i.mod_id == ^id)
-          nil -> query
+          :display ->
+            from(i in query, where: i.display_id == ^id)
+
+          :location ->
+            from(i in query, where: i.location_id == ^id)
+
+          :region ->
+            location_ids = Keyword.get(filters, :struct).locations |> Enum.map(& &1.id)
+            from(i in query, where: i.location_id in ^location_ids)
+
+          :mod ->
+            from(i in query, where: i.mod_id == ^id)
+
+          nil ->
+            query
         end
       end
 

@@ -1,9 +1,11 @@
 <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if @region.id == @filter, do: " active" %>"
   phx-click='filter'
-  phx-value-type='region'
-  phx-value-id='<%= @region.id %>'
+  phx-value-region='<%= @region.id %>'
 >
   <span class='flex-grow-1'>
     <%= @region.name %>
+  </span>
+  <span class="badge badge-light badge-pill" title='Locations' phx-hook='tooltip'>
+    <%= Enum.count(@region.locations) %>
   </span>
 </li>
