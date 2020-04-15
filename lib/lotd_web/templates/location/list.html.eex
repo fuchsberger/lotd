@@ -4,7 +4,7 @@
 
   <%= render_many @regions, LotdWeb.LocationView, "region.html",
     as: :region,
-    filter: @filter,
+    filter: @filter_region,
     hide: @hide
   %>
 
@@ -12,5 +12,13 @@
     <li class="list-group-item small text-center text-muted text-italic p-1">
       <em>no regions in the database...</em>
     </li>
+  <% end %>
+  <% region = Enum.find(@regions, & &1.id == @filter_region) %>
+  <%= unless is_nil(region) do %>
+    <%= divider "Locations", Enum.count(region.locations) %>
+    <%= render_many region.locations, LotdWeb.LocationView, "location.html",
+      filter: @filter_location,
+      hide: @hide
+    %>
   <% end %>
 </ul>

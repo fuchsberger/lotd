@@ -37,26 +37,36 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:rooms, Gallery.list_regions())
     |> assign(:regions, Gallery.list_regions())
     |> assign(:search, "")
-    |> assign(:tab, 3)
+    |> assign(:tab, 2)
     |> sync_items(:ok)
   end
 
   def handle_event("filter", params, socket) do
-
-    {filter, id} =
+    filters =
       case params do
-        %{"display" => id} -> {:filter_display, String.to_integer(id)}
-        %{"room" => id} -> {:filter_room, String.to_integer(id)}
-        %{"location" => id} -> {:filter_location, String.to_integer(id)}
-        %{"region" => id} -> {:filter_region, String.to_integer(id)}
-        %{"mod" => id} -> {:filter_mod, String.to_integer(id)}
+        %{"display" => id} ->
+          @filters
+          |> Map.put(:filter_room, socket.assigns.filter_room)
+          |> Map.put(:filter_display, String.to_integer(id))
+
+        %{"room" => id} ->
+          Map.put(@filters, :filter_room, String.to_integer(id))
+
+        %{"location" => id} ->
+          @filters
+          |> Map.put(:filter_region, socket.assigns.filter_region)
+          |> Map.put(:filter_location, String.to_integer(id))
+
+        %{"region" => id} ->
+          Map.put(@filters, :filter_region, String.to_integer(id))
+
+        %{"mod" => id} ->
+          Map.put(@filters, :filter_mod, String.to_integer(id))
       end
 
-    socket = if Map.get(socket.assigns, filter) == id,
-      do: reset(socket),
-      else: socket |> reset() |> assign(filter, id)
-
-    sync_items(socket)
+    socket
+    |> assign(filters)
+    |> sync_items()
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
@@ -260,6 +270,7 @@ defmodule LotdWeb.GalleryLive do
 
   defp sync_items(socket, return \\ :noreply) do
     struct = LotdWeb.GalleryView.filtered_struct(socket)
+    IO.inspect struct
 
     items =
       []

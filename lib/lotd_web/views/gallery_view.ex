@@ -23,11 +23,24 @@ defmodule LotdWeb.GalleryView do
 
   def filtered_struct(socket) do
     case filter?(socket) do
-      :display -> Enum.find socket.assigns.displays, & &1.id == socket.assigns.filter_display
-      :room -> Enum.find socket.assigns.rooms, & &1.id == socket.assigns.filter_room
-      :location -> Enum.find socket.assigns.locations, & &1.id == socket.assigns.filter_location
-      :region -> Enum.find socket.assigns.regions, & &1.id == socket.assigns.filter_region
-      :mod -> Enum.find socket.assigns.mods, & &1.id == socket.assigns.filter_mod
+      :display ->
+        Enum.find socket.assigns.displays, & &1.id == socket.assigns.filter_display
+
+      :room ->
+        Enum.find socket.assigns.rooms, & &1.id == socket.assigns.filter_room
+
+      :location ->
+        socket.assigns.regions
+        |> Enum.find(& &1.id == socket.assigns.filter_region)
+        |> Map.get(:locations)
+        |> Enum.find(& &1.id == socket.assigns.filter_location)
+
+      :region ->
+        Enum.find socket.assigns.regions, & &1.id == socket.assigns.filter_region
+
+      :mod ->
+        Enum.find socket.assigns.mods, & &1.id == socket.assigns.filter_mod
+
       nil -> nil
     end
   end
@@ -88,6 +101,12 @@ defmodule LotdWeb.GalleryView do
       _ ->
         not is_nil(filter) && filter.__struct__ == struct.__struct__ && filter.id == struct.id
     end
+  end
+
+  def locations(regions, filter) do
+    regions
+    |> Enum.find(& &1.id == filter)
+    |> Map.get(:locations)
   end
 
   def type(struct) do

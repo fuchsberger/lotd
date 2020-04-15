@@ -65,7 +65,8 @@
       <%= if @tab == 2 do %>
         <%= render LotdWeb.LocationView, "list.html",
           character_item_ids: @character_item_ids,
-          filter: @filter_region,
+          filter_region: @filter_region,
+          filter_location: @filter_location,
           hide: @hide,
           regions: @regions
         %>
@@ -73,7 +74,7 @@
 
       <%= if @tab == 3 do %>
         <%= render LotdWeb.ModView, "list.html",
-          active_character_id: @character.id,
+          active_character_id: @character && @character.id,
           characters: @characters,
           character_item_ids: @character_item_ids,
           character_mod_ids: @character_mod_ids,

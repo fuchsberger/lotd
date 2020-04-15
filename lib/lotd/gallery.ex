@@ -146,7 +146,12 @@ defmodule Lotd.Gallery do
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # REGIONS --------------------------------------------------------------------------------------
-  def list_regions, do: Repo.all from(r in Region, preload: :locations, order_by: r.name)
+  def list_regions do
+    Repo.all from(r in Region,
+      preload: [locations: [items: ^from(i in Item, select: i.id)]],
+      order_by: r.name
+    )
+  end
 
   def list_region_options,
     do: Repo.all from(r in Region, select: {r.name, r.id}, order_by: r.name)
