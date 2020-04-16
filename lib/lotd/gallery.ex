@@ -35,11 +35,11 @@ defmodule Lotd.Gallery do
 
   def get(type, id) do
     case type do
-      "room" -> get_room!(id)
-      "display" -> get_display!(id)
-      "region" -> get_region!(id)
-      "location" -> get_location!(id)
-      "mod" -> get_mod!(id)
+      Room -> get_room!(id)
+      Display || "display" -> get_display!(id)
+      Region || "region" -> get_region!(id)
+      Location || "location" -> get_location!(id)
+      Mod || "mod" -> get_mod!(id)
       _ -> nil
     end
   end

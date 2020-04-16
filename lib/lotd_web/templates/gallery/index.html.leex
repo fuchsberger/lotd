@@ -107,16 +107,16 @@
           <%= if String.length(@search) >= 3 do %>
             <strong>Search</strong>
           <% else %>
-            <% filter = filtered_struct(@socket) %>
-            <strong><%= filter.name %></strong>
-            <i>(<%= @socket |> filter?() |> Atom.to_string() |> String.capitalize() %>)</i>
+            <% @filter %>
+            <strong><%= @filter.name %></strong>
+            <i>(<%= type(@filter) %>)</i>
 
             <%= if @moderator do %>
               <a href='#' phx-click='edit'><i class='icon-edit'></i></a>
             <% end %>
 
-            <%= if filter.url do %>
-              <a href='<%= filter.url %>' target='_blank'><i class='icon-link'></i></a>
+            <%= if @filter.url do %>
+              <a href='<%= @filter.url %>' target='_blank'><i class='icon-link'></i></a>
             <% end %>
           <% end %>
         </span>
