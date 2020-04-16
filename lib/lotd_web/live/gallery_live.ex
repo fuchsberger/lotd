@@ -38,7 +38,7 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:regions, Gallery.list_regions())
     |> assign(:search, "")
     |> assign(:tab, 2)
-    |> sync_items(:ok)
+    |> sync_lists(:ok)
   end
 
   def handle_event("filter", params, socket) do
@@ -66,7 +66,7 @@ defmodule LotdWeb.GalleryLive do
 
     socket
     |> assign(filters)
-    |> sync_items()
+    |> sync_lists()
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
@@ -98,7 +98,7 @@ defmodule LotdWeb.GalleryLive do
       {:ok, user} ->
         socket
         |> assign(:hide, user.hide)
-        |> sync_items()
+        |> sync_lists()
 
       {:error, _changeset} -> {:noreply, socket}
     end
@@ -120,7 +120,7 @@ defmodule LotdWeb.GalleryLive do
         |> assign(:character, character)
         |> assign(:character_item_ids, Accounts.get_character_item_ids(character))
         |> assign(:character_mod_ids, Accounts.get_character_mod_ids(character))
-        |> sync_items()
+        |> sync_lists()
 
       {:error, _reason} ->
         {:noreply, socket}
@@ -130,13 +130,13 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("activate", %{"mod" => id}, socket) do
     mod_ids = Accounts.activate_mod(socket.assigns.character, mod(socket, id))
     socket = assign(socket, :character_mod_ids, mod_ids)
-    sync_items(socket)
+    sync_lists(socket)
   end
 
   def handle_event("deactivate", %{"mod" => id}, socket) do
     mod_ids = Accounts.deactivate_mod(socket.assigns.character, mod(socket, id))
     socket = assign(socket, :character_mod_ids, mod_ids)
-    sync_items(socket)
+    sync_lists(socket)
   end
 
   def handle_event("add", %{"type" => type}, socket) do
@@ -268,13 +268,16 @@ defmodule LotdWeb.GalleryLive do
     |> assign(search: "")
   end
 
-  defp sync_items(socket, return \\ :noreply) do
+  defp sync_lists(socket, return \\ :noreply) do
     struct = LotdWeb.GalleryView.filtered_struct(socket)
-    IO.inspect struct
+
+    search = socket.assigns.search
+    region = socket.assigns.filter_region
+    character_item_ids = socket.assigns.hide && socket.assigns.character_item_ids
 
     items =
       []
-      |> Keyword.put(:search, socket.assigns.search)
+      |> Keyword.put(:search, search)
       |> Keyword.put(:hide, socket.assigns.hide)
       |> Keyword.put(:character_item_ids, socket.assigns.character_item_ids)
       |> Keyword.put(:character_mod_ids, socket.assigns.character_mod_ids)
@@ -283,6 +286,9 @@ defmodule LotdWeb.GalleryLive do
       |> Keyword.put(:struct, LotdWeb.GalleryView.filtered_struct(socket))
       |> Gallery.list_items()
 
-    {return, assign(socket, :items, items)}
+
+    {return, socket
+    |> assign(:items, items)
+    |> assign(:locations, Gallery.list_locations(search, region, character_item_ids))}
   end
 end

@@ -165,7 +165,32 @@ defmodule Lotd.Gallery do
   def delete_region(%Region{} = region), do: Repo.delete(region)
 
   # LOCATIONS ------------------------------------------------------------------------------------
-  def list_locations, do: Repo.all from(r in Location, preload: [:region, :items], order_by: r.name)
+  def list_locations(search, region_id, item_ids) do
+
+    subquery = if item_ids,
+      do: from(i in Item, select: map(i, [:id, :location_id]), where: i.id in ^item_ids),
+      else: from(i in Item, select: map(i, [:id, :location_id]))
+
+    from(l in Location,
+      join: i in subquery(subquery), on: i.location_id == l.id,
+      select: %{id: l.id, name: l.name},
+      group_by: l.id,
+      select_merge: %{count: count(i.id)},
+      order_by: l.name
+    )
+    |> filter_search(search)
+    |> filter_region(region_id)
+    |> Repo.all()
+  end
+
+  defp filter_search(query, search) do
+    if String.length(search) > 3,
+      do: where(query, [l], ilike(l.name, ^"%#{search}%")),
+      else: query
+  end
+
+  defp filter_region(query, nil), do: query
+  defp filter_region(query, region_id), do:  where(query, [l], l.region_id == ^region_id)
 
   def list_location_options,
     do: Repo.all from(l in Location, select: {l.name, l.id}, order_by: l.name)

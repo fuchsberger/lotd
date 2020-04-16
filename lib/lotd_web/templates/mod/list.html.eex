@@ -1,41 +1,39 @@
-<ul class="list-group list-group-flush">
-  <%= if @character_mod_ids do %>
+<%= if @character_mod_ids do %>
 
-    <%= divider "Characters", [content_tag(:span, Enum.count(@characters)), add_btn("character")] %>
-    <%= render_many @characters, LotdWeb.ModView, "character.html",
-      as: :character,
-      active_id: @active_character_id
-    %>
+  <%= divider "Characters", [content_tag(:span, Enum.count(@characters)), add_btn("character")] %>
+  <%= render_many @characters, LotdWeb.ModView, "character.html",
+    as: :character,
+    active_id: @active_character_id
+  %>
 
-    <% {active, finished, inactive} = sort_mods(@mods, @character_mod_ids, @character_item_ids) %>
+  <% {active, finished, inactive} = sort_mods(@mods, @character_mod_ids, @character_item_ids) %>
 
-    <%= if @moderator do %>
-      <%= divider "Active Mods", [content_tag(:span, Enum.count(active)), add_btn("mod")] %>
-    <% else %>
-      <%= divider "Active Mods", Enum.count(active) %>
-    <% end %>
-
-    <%= if Enum.count(active) > 0,
-      do: render_many(active, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :active),
-      else: divider_info("please activate some mods...")
-    %>
-
-    <%= if Enum.count(finished) > 0, do: [
-        divider("Completed Mods", Enum.count(finished)),
-        render_many(finished, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :active)
-      ]
-    %>
-
-    <%= if Enum.count(inactive) > 0, do: [
-        divider("Inactive Mods", Enum.count(inactive)),
-        render_many(inactive, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :inactive)
-      ]
-    %>
-
+  <%= if @moderator do %>
+    <%= divider "Active Mods", [content_tag(:span, Enum.count(active)), add_btn("mod")] %>
   <% else %>
-    <%= divider("Mods", Enum.count(@mods)) %>
-    <%= render_many @mods, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :all %>
+    <%= divider "Active Mods", Enum.count(active) %>
   <% end %>
 
-  <%= if Enum.count(@mods) == 0, do: divider_info "no mods in the database..." %>
-</ul>
+  <%= if Enum.count(active) > 0,
+    do: render_many(active, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :active),
+    else: divider_info("please activate some mods...")
+  %>
+
+  <%= if Enum.count(finished) > 0, do: [
+      divider("Completed Mods", Enum.count(finished)),
+      render_many(finished, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :active)
+    ]
+  %>
+
+  <%= if Enum.count(inactive) > 0, do: [
+      divider("Inactive Mods", Enum.count(inactive)),
+      render_many(inactive, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :inactive)
+    ]
+  %>
+
+<% else %>
+  <%= divider("Mods", Enum.count(@mods)) %>
+  <%= render_many @mods, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :all %>
+<% end %>
+
+<%= if Enum.count(@mods) == 0, do: divider_info "no mods in the database..." %>

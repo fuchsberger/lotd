@@ -1,90 +1,66 @@
 <div class='row'>
-  <%# Select Tab %>
   <div class='d-none d-md-block col-md-auto pr-0'>
 
+    <%# Tab Menu %>
     <ul class="nav nav-tabs flex-column flex-md-row">
-      <li class="nav-item">
-        <a class="nav-link<%= if @tab == 1, do: " active" %>" href="#"
-          phx-click='tab' phx-value-tab='1'>Gallery</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link<%= if @tab == 2, do: " active" %>" href="#"
-          phx-click='tab' phx-value-tab='2'>Locations</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link<%= if @tab == 3, do: " active" %>" href="#"
-          phx-click='tab' phx-value-tab='3'>Mods</a>
-      </li>
+      <%= tab 1, "Gallery", @tab %>
+      <%= tab 2, "Locations", @tab %>
+      <%= tab 3, "Mods", @tab %>
     </ul>
 
-    <%= if @changeset, do: render "form.html", admin: @admin, changeset: @changeset, active_id: @character && @character.id %>
+    <%# Moderator Form %>
+    <%= if @changeset, do: render "form.html",
+      admin: @admin,
+      changeset: @changeset,
+      active_id: @character && @character.id
+    %>
 
-    <%= if String.length(@search) < 3 do %>
-      <%= if @tab == 1 do %>
-        <% vDisplays = visible_displays(@displays, @filter) %>
-        <% displays = visible_entries(vDisplays, @search, @filter, @items, @user) %>
-        <% rooms = visible_entries(@rooms, @search, @filter, @displays, @user, @items) %>
+    <ul class="list-group list-group-flush">
+      <%= if String.length(@search) < 3 do %>
+        <%# Tab: Gallery / Displays %>
+        <%= if @tab == 1 do %>
 
-        <%= if Enum.count(rooms) > 0 do %>
-          <ul class="list-group list-group-flush">
-            <li class='list-group-item bg-light p-1'>
-              <strong>Rooms</strong>
-              <%= if @tab == 1 || String.length(@search) >= 3 do %>
-                <span class='float-right'>
-                  <%= if String.length(@search) >= 3, do: "#{Enum.count(rooms)}/ " %>
-                  <%= Enum.count(@rooms) %>
-                </span>
-              <% end %>
-            </li>
-            <%= render_many rooms, LotdWeb.GalleryView, "_entry.html",
-              as: :entry,
-              type: "room",
-              hide: @hide
-            %>
-          </ul>
         <% end %>
 
-        <%= if Enum.count(displays) > 0 do %>
-          <ul class="list-group list-group-flush">
-            <li class='list-group-item bg-light p-1'>
-              <strong>Displays</strong>
-              <span class='float-right'>
-                <%= if String.length(@search) >= 3, do: "#{Enum.count(displays)}/ " %>
-                <%= Enum.count(@displays) %>
-              </span>
-            </li>
-            <%= render_many displays, LotdWeb.GalleryView, "_entry.html",
-              as: :entry,
-              type: "display",
-              hide: @hide
-            %>
-          </ul>
+        <%# Tab: Regions / Locations %>
+        <%= if @tab == 2 do %>
+          <%= divider "Regions", Enum.count(@regions) %>
+
+          <%= render_many @regions, LotdWeb.LocationView, "region.html",
+            as: :region,
+            filter: @filter_region,
+            hide: @hide
+          %>
+          <%= if Enum.count(@regions) == 0, do: divider_info("no regions in the database...") %>
+
+          <%= divider "Locations", Enum.count(@locations) %>
+
+          <%= render_many @locations, LotdWeb.LocationView, "location.html",
+            filter: @filter_location %>
+
         <% end %>
-      <% end %>
 
-      <%= if @tab == 2 do %>
-        <%= render LotdWeb.LocationView, "list.html",
-          character_item_ids: @character_item_ids,
-          filter_region: @filter_region,
-          filter_location: @filter_location,
-          hide: @hide,
-          regions: @regions
-        %>
-      <% end %>
+        <%# Tab: Characters / Mods %>
+        <%= if @tab == 3 do %>
+          <%= render LotdWeb.ModView, "list.html",
+            active_character_id: @character && @character.id,
+            characters: @characters,
+            character_item_ids: @character_item_ids,
+            character_mod_ids: @character_mod_ids,
+            filter: @filter_mod,
+            hide: @hide,
+            mods: @mods,
+            moderator: @moderator
+          %>
+        <% end %>
 
-      <%= if @tab == 3 do %>
-        <%= render LotdWeb.ModView, "list.html",
-          active_character_id: @character && @character.id,
-          characters: @characters,
-          character_item_ids: @character_item_ids,
-          character_mod_ids: @character_mod_ids,
-          filter: @filter_mod,
-          hide: @hide,
-          mods: @mods,
-          moderator: @moderator
-        %>
+      <%# Tab: Search Results %>
+      <% else %>
+
+          <%= divider "Search Results" %>
+
       <% end %>
-    <% end %>
+    </ul>
   </div>
 
   <div class='col'>
