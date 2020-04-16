@@ -34,8 +34,6 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:moderate, false)
     |> assign(:moderator, user && user.moderator)
     |> assign(:mods, Gallery.list_mods())
-    |> assign(:rooms, Gallery.list_regions())
-    |> assign(:regions, Gallery.list_regions())
     |> assign(:search, "")
     |> assign(:tab, 2)
     |> sync_lists(:ok)
@@ -289,6 +287,7 @@ defmodule LotdWeb.GalleryLive do
 
     {return, socket
     |> assign(:items, items)
+    |> assign(:regions, Gallery.list_regions(search))
     |> assign(:locations, Gallery.list_locations(search, region, character_item_ids))}
   end
 end

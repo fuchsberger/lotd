@@ -1,0 +1,11 @@
+<li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if @entry.id == @filter, do: " active" %>"
+  phx-click='filter'
+  phx-value-<%= @type %>='<%= @entry.id %>'
+>
+  <span class='flex-grow-1'>
+    <%= @entry.name %>
+  </span>
+  <span class="badge badge-light badge-pill">
+    <%= @entry.count %>
+  </span>
+</li>

@@ -1,11 +1,5 @@
 <%= if @character_mod_ids do %>
 
-  <%= divider "Characters", [content_tag(:span, Enum.count(@characters)), add_btn("character")] %>
-  <%= render_many @characters, LotdWeb.ModView, "character.html",
-    as: :character,
-    active_id: @active_character_id
-  %>
-
   <% {active, finished, inactive} = sort_mods(@mods, @character_mod_ids, @character_item_ids) %>
 
   <%= if @moderator do %>
@@ -35,5 +29,3 @@
   <%= divider("Mods", Enum.count(@mods)) %>
   <%= render_many @mods, LotdWeb.ModView, "mod.html", filter: @filter, hide: @hide, type: :all %>
 <% end %>
-
-<%= if Enum.count(@mods) == 0, do: divider_info "no mods in the database..." %>

@@ -43,7 +43,7 @@ defmodule Lotd.Gallery do
       _ -> nil
     end
   end
-
+;
   def find(module, query), do:
     Repo.all from(e in module,
       select: {e.id, e.name},
@@ -51,6 +51,12 @@ defmodule Lotd.Gallery do
       where: ilike(e.name, ^"%#{query}%"),
       limit: 3
     )
+
+  defp filter_search(query, search) do
+    if String.length(search) > 3,
+      do: where(query, [q], ilike(q.name, ^"%#{search}%")),
+      else: query
+  end
 
   # ITEMS ----------------------------------------------------------------------------------------
   def item_query, do: from(i in Item, order_by: i.name)
@@ -146,17 +152,11 @@ defmodule Lotd.Gallery do
   def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # REGIONS --------------------------------------------------------------------------------------
-  def list_regions do
-    Repo.all from(r in Region,
-      preload: [locations: [items: ^from(i in Item, select: i.id)]],
-      order_by: r.name
-    )
+  def list_regions(search) do
+    from(r in Region, select: %{id: r.id, name: r.name}, order_by: r.name)
+    |> filter_search(search)
+    |> Repo.all()
   end
-
-  def list_region_options,
-    do: Repo.all from(r in Region, select: {r.name, r.id}, order_by: r.name)
-
-  def get_regions(locations), do: Repo.all(Ecto.assoc(locations, :region) |> order_by(:name))
 
   def get_region!(id), do: Repo.get!(Region, id)
 
@@ -181,12 +181,6 @@ defmodule Lotd.Gallery do
     |> filter_search(search)
     |> filter_region(region_id)
     |> Repo.all()
-  end
-
-  defp filter_search(query, search) do
-    if String.length(search) > 3,
-      do: where(query, [l], ilike(l.name, ^"%#{search}%")),
-      else: query
   end
 
   defp filter_region(query, nil), do: query

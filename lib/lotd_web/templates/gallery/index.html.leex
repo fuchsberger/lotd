@@ -3,9 +3,9 @@
 
     <%# Tab Menu %>
     <ul class="nav nav-tabs flex-column flex-md-row">
-      <%= tab 1, "Gallery", @tab %>
-      <%= tab 2, "Locations", @tab %>
-      <%= tab 3, "Mods", @tab %>
+      <%= tab 1, "Gallery", @tab, @search %>
+      <%= tab 2, "Locations", @tab, @search %>
+      <%= tab 3, "Mods", @tab, @search %>
     </ul>
 
     <%# Moderator Form %>
@@ -16,49 +16,53 @@
     %>
 
     <ul class="list-group list-group-flush">
-      <%= if String.length(@search) < 3 do %>
-        <%# Tab: Gallery / Displays %>
-        <%= if @tab == 1 do %>
 
+      <%= if searching?(@search), do: divider "Search Results" %>
+
+      <%# Tab: Gallery / Displays %>
+      <%= if @tab == 1 || searching?(@search) do %>
+
+      <% end %>
+
+      <%# Tab: Regions / Locations %>
+      <%= if @tab == 2 || searching?(@search) do %>
+
+        <%= divider "Regions", Enum.count(@regions) %>
+        <%= for region <- @regions, do: entry_base(region, :phx_value_region, @filter_region) %>
+        <%= if Enum.count(@regions) == 0, do: divider_info("no regions in the database...") %>
+
+        <%= divider "Locations", Enum.count(@locations) %>
+
+        <%= if @filter_region do %>
+          <%= render_many @locations, LotdWeb.GalleryView, "entry.html",
+          filter: @filter_location, type: "location" %>
+        <% else %>
+          <%= divider_info "search or select region to show locations..." %>
         <% end %>
+      <% end %>
 
-        <%# Tab: Regions / Locations %>
-        <%= if @tab == 2 do %>
-          <%= divider "Regions", Enum.count(@regions) %>
+      <%# Tab: Characters / Mods %>
+      <%= if @tab == 3 && @character_mod_ids do %>
+        <%= divider "Characters", [content_tag(:span, Enum.count(@characters)), add_btn("character")] %>
+        <%= render_many @characters, LotdWeb.ModView, "character.html",
+          as: :character,
+          active_id: @active_character_id
+        %>
+      <% end %>
 
-          <%= render_many @regions, LotdWeb.LocationView, "region.html",
-            as: :region,
-            filter: @filter_region,
-            hide: @hide
-          %>
-          <%= if Enum.count(@regions) == 0, do: divider_info("no regions in the database...") %>
+      <%= if @tab == 3 || searching?(@search) do %>
+        <%= render LotdWeb.ModView, "list.html",
+          active_character_id: @character && @character.id,
+          characters: @characters,
+          character_item_ids: @character_item_ids,
+          character_mod_ids: @character_mod_ids,
+          filter: @filter_mod,
+          hide: @hide,
+          mods: @mods,
+          moderator: @moderator
+        %>
 
-          <%= divider "Locations", Enum.count(@locations) %>
-
-          <%= render_many @locations, LotdWeb.LocationView, "location.html",
-            filter: @filter_location %>
-
-        <% end %>
-
-        <%# Tab: Characters / Mods %>
-        <%= if @tab == 3 do %>
-          <%= render LotdWeb.ModView, "list.html",
-            active_character_id: @character && @character.id,
-            characters: @characters,
-            character_item_ids: @character_item_ids,
-            character_mod_ids: @character_mod_ids,
-            filter: @filter_mod,
-            hide: @hide,
-            mods: @mods,
-            moderator: @moderator
-          %>
-        <% end %>
-
-      <%# Tab: Search Results %>
-      <% else %>
-
-          <%= divider "Search Results" %>
-
+        <%= if Enum.count(@mods) == 0, do: divider_info "no mods in the database..." %>
       <% end %>
     </ul>
   </div>

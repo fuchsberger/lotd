@@ -7,6 +7,14 @@ defmodule LotdWeb.GalleryView do
 
   @min_search_chars 3
 
+  def entry_base(map, type, active \\ nil) do
+    opts = [
+      class: "list-group-item small p-1 list-group-item-action #{map.id == active}",
+      phx_click: "filter"
+    ]
+    content_tag :li, map.name, Keyword.put(opts, type, map.id)
+  end
+
   def character(nil), do: nil
   def character(user), do: user.active_character
 
@@ -80,8 +88,8 @@ defmodule LotdWeb.GalleryView do
 
   def searching?(query), do: String.length(query) > @min_search_chars
 
-  def tab(number, title, active) do
-    active = if number == active, do: " active"
+  def tab(number, title, active, search) do
+    active = if number == active && not searching?(search), do: " active"
     content_tag :li,
       link(title, to: "#", class: "nav-link #{active}", phx_click: "tab", phx_value_tab: number), class: "nav-item"
   end
