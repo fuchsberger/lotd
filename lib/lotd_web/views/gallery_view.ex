@@ -3,55 +3,84 @@ defmodule LotdWeb.GalleryView do
 
   alias Lotd.Gallery
   alias Lotd.Accounts.Character
-  alias Lotd.Gallery.{Room, Display, Region, Location}
+  alias Lotd.Gallery.{Room, Display, Region, Location, Mod}
+  alias LotdWeb.EntryView
 
+  @entry_class "list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center"
   @min_search_chars 3
-
-  def entry_base(map, type, active \\ nil) do
-    opts = [
-      class: "list-group-item small p-1 list-group-item-action #{map.id == active}",
-      phx_click: "filter"
-    ]
-    content_tag :li, map.name, Keyword.put(opts, type, map.id)
-  end
-
-  def character(nil), do: nil
-  def character(user), do: user.active_character
 
   def character?(struct), do: struct.__struct__ == Character
 
-  def filter?(socket) do
-    cond do
-      socket.assigns.filter_mod -> :mod
-      socket.assigns.filter_display -> :display
-      socket.assigns.filter_room -> :room
-      socket.assigns.filter_location -> :location
-      socket.assigns.filter_region -> :region
-      true -> nil
+  def new?(_type, nil), do: false
+
+  def new?(type, changeset) do
+    case {type, changeset.data} do
+      {:character, %Character{} = data} -> is_nil(Map.get(data, :id))
+      {:mod, %Mod{} = data} -> is_nil(Map.get(data, :id))
+      {_, _} -> false
     end
   end
 
-  def filtered_struct(socket) do
-    case filter?(socket) do
-      :display ->
-        Enum.find socket.assigns.displays, & &1.id == socket.assigns.filter_display
+  def edit?(_type, nil), do: false
 
-      :room ->
-        Enum.find socket.assigns.rooms, & &1.id == socket.assigns.filter_room
+  def edit?(type, changeset) do
+    case {type, changeset.data} do
+      {:character, %Character{} = data} -> not is_nil(Map.get(data, :id))
+      {_, _} -> false
+    end
+  end
 
-      :location ->
-        socket.assigns.regions
-        |> Enum.find(& &1.id == socket.assigns.filter_region)
-        |> Map.get(:locations)
-        |> Enum.find(& &1.id == socket.assigns.filter_location)
+  def edit_character?(changeset) do
+    changeset && character?(changeset.data) && not is_nil(Map.get(changeset.data, :id))
+  end
 
-      :region ->
-        Enum.find socket.assigns.regions, & &1.id == socket.assigns.filter_region
+  def divider(type, right \\ nil, add \\ false, prefix \\ "") do
+    add = if add, do: Atom.to_string(type), else: nil
+    title = if is_atom(type),
+      do: "#{prefix}#{type |> Atom.to_string() |> String.capitalize()}s",
+      else: type
 
-      :mod ->
-        Enum.find socket.assigns.mods, & &1.id == socket.assigns.filter_mod
+    render EntryView, "divider.html", add: add, right: right, title: title
+  end
 
-      nil -> nil
+  def entry(template, opts), do: render EntryView, template, opts
+
+  def entries(template, list, opts), do: render_many list, EntryView, template, opts
+
+  def entry(type, map, filter) do
+    content_tag :li, [
+      content_tag(:span, map.name, class: "flex-grow-1"),
+      content_tag(:span, map.count, class: "badge badge-light badge-pill")
+    ], options(type, map.id, filter)
+  end
+
+  def entry(:mod, mod, filter, active?) do
+    content_tag :li, [
+      content_tag(:span, [toggler(mod.id, active?), mod.name], class: "flex-grow-1"),
+      content_tag(:span, mod.item_count, class: "badge badge-light badge-pill")
+    ], options(:mod, mod.id, filter)
+  end
+
+  def entry(type, id, name, filter), do: content_tag :li, name, options(type, id, filter)
+
+  def filter?(nil, _type), do: false
+  def filter?(entry, :display), do: entry && entry.__struct__ == Display && entry.id
+  def filter?(entry, :location), do: entry && entry.__struct__ == Location && entry.id
+  def filter?(entry, :mod), do: entry && entry.__struct__ == Mod && entry.id
+
+  def filter?(entry, :room) do
+    case entry do
+      %Display{} -> entry.room_id
+      %Room{} -> entry.id
+      _ -> false
+    end
+  end
+
+  def filter?(entry, :region) do
+    case entry do
+      %Location{} -> entry.region_id
+      %Region{} -> entry.id
+      _ -> false
     end
   end
 
@@ -65,25 +94,13 @@ defmodule LotdWeb.GalleryView do
       else: "Add #{type(changeset.data)}"
   end
 
-  def filtered?(filter, struct) do
-    case struct do
-      %Room{} ->
-        (filter.__struct__ == struct.__struct__ && filter.id == struct.id) ||
-        (filter.__struct__ == Display && filter.room_id == struct.id)
+  def info(title), do: render EntryView, "info.html", title: title
 
-      %Region{} ->
-        (filter.__struct__ == struct.__struct__ && filter.id == struct.id) ||
-        (filter.__struct__ == Location && filter.region_id == struct.id)
+  defp options(type, id, filter) do
+    {class, action} = if id == filter, do: {" active", "clear"}, else: {"", "filter"}
 
-      _ ->
-        not is_nil(filter) && filter.__struct__ == struct.__struct__ && filter.id == struct.id
-    end
-  end
-
-  def locations(regions, filter) do
-    regions
-    |> Enum.find(& &1.id == filter)
-    |> Map.get(:locations)
+    [class: "#{@entry_class}#{class}", phx_click: action]
+    |> Keyword.put(String.to_atom("phx_value_#{Atom.to_string(type)}"), id)
   end
 
   def searching?(query), do: String.length(query) > @min_search_chars
@@ -94,10 +111,14 @@ defmodule LotdWeb.GalleryView do
       link(title, to: "#", class: "nav-link #{active}", phx_click: "tab", phx_value_tab: number), class: "nav-item"
   end
 
-  def type(struct) do
-    struct.__struct__
-    |> to_string()
-    |> String.split(".")
-    |> List.last()
+  def toggler(id, active?) do
+    action = if active?, do: "deactivate", else: "activate"
+
+    link icon(if active?, do: "active", else: "inactive"),
+      to: "#",
+      phx_click: action,
+      phx_value_mod: id,
+      phx_hook: "tooltip",
+      title: String.capitalize("#{action} Mod")
   end
 end

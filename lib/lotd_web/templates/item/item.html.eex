@@ -1,16 +1,16 @@
 <tr>
-  <td class='p-0'>
-    <%= if @character_item_ids do %>
+  <%= if @character_item_ids do %>
+    <td class='align-middle'>
       <button class='btn btn-link p-0' phx-click='toggle-item' phx-value-id='<%= @item.id %>' type='button'>
         <i class='icon-<%= if Enum.member?(@character_item_ids, @item.id), do: "active", else: "inactive" %>'></i>
       </button>
-    <% end %>
-  </td>
+    </td>
+  <% end %>
 
-  <th scope='row'>
+  <th class='align-middle' scope='row'>
     <%= if @item.url,
-      do: link(content_tag(:strong, @item.name), to: @item.url, class: "text-dark", target: "_blank"),
-      else: content_tag :strong, name(@item, @search), class: "text-secondary"
+      do: link(@item.name, to: @item.url, class: "text-dark", target: "_blank"),
+      else: content_tag :span, name(@item, @search), class: "text-black-50"
     %>
   </th>
 
@@ -18,30 +18,30 @@
     <%= if @item.replica, do: icon "replica", class: "text-muted" %>
   </td>
 
-  <td class='small d-none d-lg-table-cell text-truncate'>
+  <td class='align-middle small d-none d-lg-table-cell text-truncate'>
     <%= unless is_nil(@item.location) do %>
+      <i class='icon-location'></i>
       <%= unless is_nil(@item.location.region), do: [assoc_link(@item.location.region), " » "] %>
       <%= assoc_link(@item.location) %>
-      <a href='#' phx-click='filter' phx-value-location='<%= @item.location.id %>'>
+      <a class='text-black-50' href='#' phx-click='filter' phx-value-location='<%= @item.location.id %>'>
         <%= @item.location.name %>
       </a>
+      <br>
     <% end %>
-  </td>
-
-  <td class='small d-none d-xl-table-cell text-truncate'>
     <%= unless is_nil(@item.display) do %>
       <%= unless is_nil(@item.display.room) do %>
-        <a href='#' phx-click='filter' phx-value-display='<%= @item.display.room.id %>'>
+        <i class='icon-displays'></i>
+        <a class='text-black-50' href='#' phx-click='filter' phx-value-display='<%= @item.display.room.id %>'>
           <%= @item.display.room.name %>
         </a> »
       <% end %>
-      <a href='#' phx-click='filter' phx-value-display='<%= @item.display.id %>'>
+      <a class='text-black-50' href='#' phx-click='filter' phx-value-display='<%= @item.display.id %>'>
         <%= @item.display.name %>
       </a>
     <% end %>
   </td>
 
-  <td class='p-0 d-none d-xl-table-cell'>
+  <td class='align-middle p-0 d-none d-xl-table-cell'>
     <a href='#'
       phx-click='filter'
       phx-value-mod='<%= @item.mod_id %>'

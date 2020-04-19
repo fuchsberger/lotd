@@ -1,5 +1,5 @@
 <div class='row'>
-  <div class='d-none d-md-block col-md-auto pr-0'>
+  <div class='d-none d-md-block col-md-5 col-lg-4 col-xl-3 pr-0'>
 
     <%# Tab Menu %>
     <ul class="nav nav-tabs flex-column flex-md-row">
@@ -9,7 +9,7 @@
     </ul>
 
     <%# Moderator Form %>
-    <%= if @changeset, do: render "form.html",
+    <%# if @changeset, do: render "form.html",
       admin: @admin,
       changeset: @changeset,
       active_id: @character && @character.id
@@ -24,50 +24,39 @@
 
       <% end %>
 
-      <%# Tab: Regions / Locations %>
+      <%# Tab: Locations %>
       <%= if @tab == 2 || searching?(@search) do %>
 
-        <%= divider "Regions", Enum.count(@regions) %>
-        <%= for region <- @regions, do: entry_base(region, :phx_value_region, @filter_region) %>
-        <%= if Enum.count(@regions) == 0, do: divider_info("no regions in the database...") %>
+        <%# Region List %>
+        <%= divider :region, Enum.count(@regions) , @moderator%>
+        <% filter = filter?(@filter, :region) %>
+        <%= for {id, name} <- @regions, do: entry(:region, id, name, filter) %>
+        <%= if Enum.count(@regions) == 0, do: info("no regions in the database...") %>
 
-        <%= divider "Locations", Enum.count(@locations) %>
-
-        <%= if @filter_region do %>
-          <%= render_many @locations, LotdWeb.GalleryView, "entry.html",
-          filter: @filter_location, type: "location" %>
-        <% else %>
-          <%= divider_info "search or select region to show locations..." %>
-        <% end %>
+        <%# Location List %>
+        <%= divider :location, Enum.count(@locations), @moderator %>
+        <% filter = filter?(@filter, :location) %>
+        <%= for location <- @locations, do: entry(:location, location, filter) %>
+        <% if Enum.count(@locations) == 0, do: info "search or select region to show locations..." %>
       <% end %>
 
-      <%# Tab: Characters / Mods %>
-      <%= if @tab == 3 && @character_mod_ids do %>
-        <%= divider "Characters", [content_tag(:span, Enum.count(@characters)), add_btn("character")] %>
-        <%= render_many @characters, LotdWeb.ModView, "character.html",
-          as: :character,
-          active_id: @active_character_id
-        %>
-      <% end %>
-
-      <%= if @tab == 3 || searching?(@search) do %>
-        <%= render LotdWeb.ModView, "list.html",
-          active_character_id: @character && @character.id,
+      <%= if @tab == 3 || searching?(@search), do:
+        render "tab_mods.html",
+          admin?: @admin?,
+          changeset: @changeset,
           characters: @characters,
-          character_item_ids: @character_item_ids,
           character_mod_ids: @character_mod_ids,
-          filter: @filter_mod,
-          hide: @hide,
+          filter: filter?(@filter, :mod),
+          hide?: @hide?,
+          moderator: @moderator,
+          active_mods: @active_mods,
           mods: @mods,
-          moderator: @moderator
-        %>
-
-        <%= if Enum.count(@mods) == 0, do: divider_info "no mods in the database..." %>
-      <% end %>
+          show_characters: @tab == 3 && @character
+      %>
     </ul>
   </div>
 
-  <div class='col'>
+  <div class='col col-md-7 col-lg-8 col-xl-9'>
     <div class="form-group">
       <%= f = form_for :search, "#", [phx_change: :search, phx_submit: :search] %>
         <div class='input-group'>
@@ -84,6 +73,7 @@
               class="btn btn-light border px-1"
               type="button"
               phx-click="clear"
+              phx-value-search=""
               phx-hook='tooltip'
               title="Clear Search"
             >
@@ -93,47 +83,40 @@
         </div>
       </form>
     </div>
-    <div class='d-flex mb-1'>
-      <%= unless is_nil(@character) do %>
-        <a href='#' phx-click='toggle' phx-value-hide=''>
-          <i class='icon-<%= if @hide, do: "active", else: "inactive" %>'></i>
-        </a>
-        hide collected
-      <% end %>
-
-      <%= if @filter_mod || @filter_location || @filter_display || @filter_room || @filter_region do %>
-        <span class='text-right flex-grow-1'>
-          current filter:
-          <%= if String.length(@search) >= 3 do %>
-            <strong>Search</strong>
-          <% else %>
-            <% @filter %>
-            <strong><%= @filter.name %></strong>
-            <i>(<%= type(@filter) %>)</i>
-
-            <%= if @moderator do %>
-              <a href='#' phx-click='edit'><i class='icon-edit'></i></a>
-            <% end %>
-
-            <%= if @filter.url do %>
-              <a href='<%= @filter.url %>' target='_blank'><i class='icon-link'></i></a>
-            <% end %>
-          <% end %>
-        </span>
-      <% end %>
-    </div>
 
     <table class="table table-sm table-hover">
       <thead>
         <tr>
-          <th scope="col" class='p-0'></th>
+          <%= unless is_nil(@character_id) do %>
+            <th scope="col">
+              <a href='#' phx-click='toggle' phx-value-hide=''>
+                <%= if @hide?,
+                  do: icon("hide", phx_hook: "tooltip", title: "Show collected items"),
+                  else: icon("show", phx_hook: "tooltip", title: "Hide collected items") %>
+              </a>
+            </th>
+          <% end %>
           <th scope="col">Name</th>
           <th scope="col"><i class='icon-replica' title='Replica' phx-hook='tooltip'></i></th>
           <th scope="col" class='d-none d-lg-table-cell'>
-            <i class='icon-location'></i> Location
-          </th>
-          <th scope="col" class='d-none d-xl-table-cell'>
-            <i class='icon-display'></i> Display
+            Location / Display
+            <%= if @filter || String.length(@search) >= 3 do %>
+              <span class='badge badge-light'>
+                <%= if String.length(@search) >= 3 do %>
+                  Searching...
+                <% else %>
+                  <%= type(@filter) %>:
+                  <%= if @filter.url do %>
+                    <a class='text-dark' href='<%= @filter.url %>' target='_blank'><%= @filter.name %></a>
+                  <% else %>
+                    <%= @filter.name %>
+                  <% end %>
+                  <a class='text-dark' href='#' phx-click='clear' phx-value-filter=''>
+                    <i class='icon-remove'></i>
+                  </a>
+                <% end %>
+              </span>
+            <% end %>
           </th>
           <th scope="col" class='p-0 d-none d-xl-table-cell'>
             <i class='icon-mod' title='Mod' phx-hook='Mod'></i>
@@ -144,26 +127,17 @@
         <%= render_many @items,
           LotdWeb.ItemView, "item.html",
           character_item_ids: @character_item_ids,
-          mods: @mods,
           search: @search,
           tab: @tab
         %>
-        <%= if Enum.count(@items) == 0 do %>
-          <tr>
-            <td class='p-0 text-muted text-center' colspan='6'>
-              <em>no items match your current filters / search...</em>
-            </td>
-          <tr>
-        <% end %>
-        <%= if Enum.count(@items) == 200 do %>
-          <tr>
-            <td class='p-0 text-muted text-center' colspan='6'>
-              <em>only 200 items are displayed. Use filters / search to find more.</em>
-            </td>
-          <tr>
-        <% end %>
       </tbody>
     </table>
+    <%= if Enum.count(@items) == 0 do %>
+      <p class='text-center text-muted font-italic'>no items match your current filters / search...</p>
+    <% end %>
+    <%= if Enum.count(@items) == 200 do %>
+      <p class='small text-center text-muted font-italic'>only 200 items are displayed. Use filters / search to find more.</p>
+    <% end %>
   </div>
 </div>
 

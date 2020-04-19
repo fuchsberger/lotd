@@ -37,15 +37,14 @@ defmodule Lotd.Accounts do
   # CHARACTERS -----------------------------------------------------------------------------------
 
   def list_characters(%User{} = user) do
-    from(c in Character, preload: [:items, :mods], where: c.user_id == ^user.id, order_by: c.name)
-    |> Repo.all()
-  end
-
-  def list_characters(user_id) do
-    User
-    |> Repo.get(user_id)
-    |> Ecto.assoc(:characters)
-    |> order_by(:name)
+    from(c in Character,
+      left_join: i in assoc(c, :items),
+      select: map(c, [:id, :name]),
+      group_by: c.id,
+      select_merge: %{item_count: count(i.id)},
+      where: c.user_id == ^user.id,
+      order_by: c.name
+    )
     |> Repo.all()
   end
 

@@ -1,0 +1,21 @@
+<%= if @changeset && @changeset.data.id == @entry.id do %>
+  <%= render "mod_form.html", changeset: @changeset %>
+<% else %>
+  <li class="<%= entry_class(@entry.id == @filter) %>">
+    <span class='flex-grow-1'>
+      <%= if @authenticated do %>
+        <%= if Enum.member?(@character_mod_ids, @entry.id),
+          do: link(icon("active"), to: "#", phx_click: "deactivate", phx_value_mod: @entry.id, phx_hook: "tooltip", title: "Deactivate Mod"),
+          else: link(icon("inactive"), to: "#", phx_click: "activate", phx_value_mod: @entry.id, phx_hook: "tooltip", title: "Activate Mod")
+        %>
+      <% end %>
+      <%= @entry.name %>
+    </span>
+
+    <%= if @moderator do %>
+      <a href='#' class='badge badge-light badge-pill' phx-click='edit' phx-value-mod='<%= @entry.id %>'><%= @entry.item_count %></a>
+    <% else %>
+      <span class='badge badge-light badge-pill'><%= @entry.item_count %></span>
+    <% end %>
+  </li>
+<% end %>

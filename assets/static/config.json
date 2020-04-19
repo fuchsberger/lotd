@@ -77,6 +77,18 @@
       "css": "link",
       "code": 61582,
       "src": "fontawesome"
+    },
+    {
+      "uid": "7fd683b2c518ceb9e5fa6757f2276faa",
+      "css": "hide",
+      "code": 59400,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "c5fd349cbd3d23e4ade333789c29c729",
+      "css": "show",
+      "code": 59396,
+      "src": "fontawesome"
     }
   ]
 }

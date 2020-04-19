@@ -4,8 +4,8 @@ defmodule LotdWeb.ItemView do
   def assoc_link(assoc) do
     #TODO: fix url
     if false && assoc.url,
-      do: link(assoc.name, to: assoc.url, target: "_blank"),
-      else: content_tag(:span, assoc.name, class: "text-secondary")
+      do: link(assoc.name, class: "text-black-50", to: assoc.url, target: "_blank"),
+      else: content_tag(:span, assoc.name, class: "text-black-50")
   end
 
   def check_item(moderator) do
