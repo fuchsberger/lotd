@@ -80,20 +80,40 @@ defmodule LotdWeb.GalleryLive do
     |> sync_lists()
   end
 
-  def handle_event("filter", %{"mod" => id}, socket) do
-    id = String.to_integer(id)
-    case socket.assigns.filter do
-      {:mod, id = id} -> socket |> assign(:filter, nil) |> sync_lists()
-      _ -> socket |> assign(:filter, {:mod, id}) |> sync_lists()
+  def handle_event("filter", params, socket) do
+    {type, id} =  case params do
+      %{"mod" => id} -> {:mod, id}
+      %{"display" => id} -> {:display, id}
+      %{"room" => id} -> {:room, id}
+      %{"location" => id} -> {:location, id}
+      %{"region" => id} -> {:region, id}
     end
-  end
+    id = String.to_integer(id)
 
-  def handle_event("filter", %{"region" => id}, socket) do
-    id = String.to_integer(id)
-    case socket.assigns.filter do
-      {:region, id = id} -> socket |> assign(:filter, nil) |> sync_lists()
-      _ -> socket |> assign(:filter, {:region, id}) |> sync_lists()
+    filter = case {socket.assigns.filter, type} do
+      {nil, _type} -> {type, id}
+
+      {{:location, filter_id}, :location} ->
+        if filter_id == id do
+          {:region, Enum.find(socket.assigns.locations, & &1.id == id).region_id}
+        else
+          {:location, id}
+        end
+
+      {{:display, filter_id}, :display} ->
+        if filter_id == id do
+          {:room, Enum.find(socket.assigns.displays, & &1.id == id).room_id}
+        else
+          {:display, id}
+        end
+
+      {{filter_type, filter_id}, _type} ->
+        if type == filter_type && id == filter_id, do: nil, else: {type, id}
     end
+
+    socket
+    |> assign(:filter, filter)
+    |> sync_lists()
   end
 
   def handle_event("search", %{"search" => %{"query" => query}}, socket) do
@@ -148,6 +168,14 @@ defmodule LotdWeb.GalleryLive do
       socket.assigns.active_mods ++ socket.assigns.mods
       |> Enum.find(& &1.id == String.to_integer(id))
       |> Gallery.change_mod(%{})
+    {:noreply, assign(socket, :changeset, changeset)}
+  end
+
+  def handle_event("edit", %{"region" => id}, socket) do
+    changeset =
+      socket.assigns.regions
+      |> Enum.find(& &1.id == String.to_integer(id))
+      |> Gallery.change_region(%{})
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
