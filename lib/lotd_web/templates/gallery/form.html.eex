@@ -1,42 +1,41 @@
-<%= f = form_for @changeset, "#", [
-    class: "#{unless is_nil(@changeset.action), do: "was-validated"}",
-    novalidate: true,
-    phx_change: :validate,
-    phx_submit: form_action(@changeset)
-  ]
+<%= f = form_for @changeset, "#",
+  class: "#{unless is_nil(@changeset.action), do: "was-validated"}",
+  novalidate: true,
+  phx_change: :validate,
+  phx_submit: :save
 %>
   <div class='d-flex'>
-    <h5 class='flex-grow-1'><%= form_heading_text(@changeset) %></h5>
-    <button
-      class='btn btn-sm btn-outline-secondary mr-2'
-      phx-click='cancel'
-      type='button'
-    >Cancel</button>
-
-    <% char = character?(@changeset.data) %>
-    <% char_valid? = char && @changeset.data.id != @active_id %>
-    <%= if char_valid? || (not char && @admin && @changeset.data.id) do %>
-      <button
-        class='btn btn-sm btn-outline-danger mr-2'
-        data-confirm="Are you sure you want to delete? This is irreversible!"
-        phx-click='delete'
-        phx-value-type='<%= type(@changeset.data) %>'
-        phx-value-id='<%= @changeset.data.id %>'
-        type='button'
-      >Delete</button>
-    <% end %>
-    <%= submit form_btn_text(@changeset), class: "btn btn-sm btn-outline-primary" %>
+    <h5 class='flex-grow-1'><%= if edit?(@changeset), do: "Update", else: "Add" %> <%= type(@changeset.data) %></h5>
+    <div>
+      <button class='btn btn-sm btn-outline-secondary mr-2' type='button' phx-click='cancel'>Cancel</button>
+      <%= if @user.admin do %>
+        <button class='btn btn-sm btn-outline-danger mr-2' type='button' phx-click='delete'>Delete</button>
+      <% end %>
+      <%= submit_button(@changeset) %>
+    </div>
   </div>
 
-  <div class="form-group my-1">
-    <%= text_input f, :name, class: "form-control form-control-sm #{control_class(f, :url)}", placeholder: "Name" %>
-    <%= error_tag f, :name %>
-  </div>
+  <div class='row'>
+    <div class="col form-group">
+      <%= label f, :name %>
+      <%= text_input f, :name, class: "form-control form-control-sm #{control_class(f, :name)}", placeholder: "Name" %>
+      <%= error_tag f, :name %>
+    </div>
 
-  <%= if Map.has_key?(@changeset.data, :url) do %>
-    <div class="form-group mb-1">
+    <div class="col form-group">
+      <%= label f, :url %>
       <%= text_input f, :url, class: "form-control form-control-sm #{control_class(f, :url)}", placeholder: "Url" %>
       <%= error_tag f, :url %>
+    </div>
+  </div>
+
+  <%= unless is_mod?(@changeset) do %>
+    <div class='row'>
+      <%= if is_display?(@changeset) do %>
+        <%= label f, :room_id %>
+        <%= select f, :room_id, [] %>
+        <%= error_tag f, :room_id %>
+      <% end %>
     </div>
   <% end %>
 </form>

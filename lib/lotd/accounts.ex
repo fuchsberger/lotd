@@ -16,11 +16,12 @@ defmodule Lotd.Accounts do
   def get_user(id), do: Repo.get(User, id)
 
   def get_user!(id) do
-    User
-    |> preload(:active_character)
-    |> Repo.get!(id)
+    subquery = from(c in Character,
+      preload: [items: ^from(m in Item, select: m.id), mods: ^from(m in Mod, select: m.id)],
+      order_by: c.name
+    )
+    from(u in User, preload: [:active_character, characters: ^subquery]) |> Repo.get!(id)
   end
-
 
   def create_user(attrs \\ %{}) do
     %User{}
@@ -39,7 +40,6 @@ defmodule Lotd.Accounts do
   def list_characters(%User{} = user) do
     from(c in Character,
       left_join: i in assoc(c, :items),
-      select: map(c, [:id, :name]),
       group_by: c.id,
       select_merge: %{item_count: count(i.id)},
       where: c.user_id == ^user.id,
@@ -66,30 +66,18 @@ defmodule Lotd.Accounts do
   def change_character(%Character{} = character, params \\ %{}),
     do: Character.changeset(character, params)
 
-  def create_character(attrs \\ %{}) do
-    %Character{}
-    |> Character.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def update_character(%Character{} = character, attrs) do
-    character
-    |> Character.changeset(attrs)
-    |> Repo.update()
-  end
-
   def delete_character(%Character{} = character), do: Repo.delete(character)
 
   # MUSEUM FEATURES
 
-  def collect_item(character, item) do
+  def collect_item(%Character{} = character, item) do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
     |> Repo.update!()
   end
 
-  def remove_item(character, item) do
+  def remove_item(%Character{} = character, item) do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, & &1.id == item.id))
@@ -97,26 +85,22 @@ defmodule Lotd.Accounts do
   end
 
   def activate_mod(%Character{} = character, %Mod{} = mod) do
-    character = Repo.preload(character, :mods)
+    character = Repo.preload(character, :mods, force: true)
     character_mods = [mod | character.mods]
 
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:mods, character_mods)
-    |> Repo.update!()
-
-    Enum.map(character_mods, & &1.id)
+    |> Repo.update()
   end
 
   def deactivate_mod(%Character{} = character, %Mod{} = mod) do
-    character = Repo.preload(character, :mods)
+    character = Repo.preload(character, :mods, force: true)
     character_mods = Enum.reject(character.mods, & &1.id == mod.id)
 
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:mods, character_mods)
-    |> Repo.update!()
-
-    Enum.map(character_mods, & &1.id)
+    |> Repo.update()
   end
 end

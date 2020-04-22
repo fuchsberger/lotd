@@ -22,28 +22,6 @@ defmodule Lotd.Gallery do
     end
   end
 
-  def changeset(type, id) do
-    case type do
-      "item" -> change_item(get_item!(id))
-      "room" -> change_room(get_room!(id))
-      "display" -> change_display(get_display!(id))
-      "region" -> change_region(get_region!(id))
-      "location" -> change_location(get_location!(id))
-      "mod" -> change_mod(get_mod!(id))
-    end
-  end
-
-  def get(type, id) do
-    case type do
-      Room -> get_room!(id)
-      Display -> get_display!(id)
-      Region -> get_region!(id)
-      Location -> get_location!(id)
-      Mod -> get_mod!(id)
-      _ -> nil
-    end
-  end
-
   def find(module, query), do:
     Repo.all from(e in module,
       select: {e.id, e.name},
@@ -59,49 +37,49 @@ defmodule Lotd.Gallery do
   end
 
   # ITEMS ----------------------------------------------------------------------------------------
-  def item_query, do: from(i in Item, order_by: i.name)
 
-  def list_items, do: Repo.all from(i in Item, order_by: i.name)
+  def item_query, do: from i in Item,
+    preload: [:mod, location: :region, display: :room],
+    order_by: i.name,
+    limit: 200
 
-  def list_items(search, filter, item_ids, mod_ids) do
-    query = from i in Item,
-      preload: [:mod, location: :region, display: :room],
-      order_by: i.name,
-      limit: 200
+  def list_items(search, filter, user) do
+    query = item_query()
 
-    cond do
+    query = cond do
       # search
-      String.length(search) > 2 -> from(i in query, where: ilike(i.name, ^"%#{search}%"))
+      String.length(search) > 2 ->
+        from(i in query, where: ilike(i.name, ^"%#{search}%"))
 
       #  no filter
-      is_nil(filter) -> query
+      is_nil(filter) ->
+        query
 
       # filter
-      true ->
-        case filter.__struct__ do
-          Display -> from(i in query, where: i.display_id == ^filter.id)
-          Room -> from(i in query, where: i.display_id in ^list_display_ids(filter.id))
-          Location -> from(i in query, where: i.location_id == ^filter.id)
-          Region -> from(i in query, where: i.location_id in ^list_location_ids(filter.id))
-          Mod -> from(i in query, where: i.mod_id == ^filter.id)
+      {type, id} = filter ->
+        case type do
+          :display -> from(i in query, where: i.display_id == ^id)
+          :room -> from(i in query, where: i.display_id in ^list_display_ids(id))
+          :location -> from(i in query, where: i.location_id == ^id)
+          :region -> from(i in query, where: i.location_id in ^list_location_ids(id))
+          :mod -> from(i in query, where: i.mod_id == ^id)
         end
     end
-    |> query_items(item_ids)
-    |> query_mods(mod_ids)
-    |> Repo.all()
+
+    if user do
+      character = Enum.find(user.characters, & &1.id == user.active_character_id)
+      query
+      |> where([i], i.id not in ^character.items)
+      |> where([i], i.mod_id in ^character.mods)
+      |> Repo.all()
+    else
+      Repo.all(query)
+    end
   end
-
-  defp query_items(query, false), do: query
-  defp query_items(query, item_ids), do: where(query, [i], i.id not in ^item_ids)
-
-  defp query_mods(query, false), do: query
-  defp query_mods(query, mod_ids), do: where(query, [i], i.mod_id in ^mod_ids)
 
   def get_item!(id), do: Repo.get!(Item, id)
 
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
-
-  def delete_item(%Item{} = item), do: Repo.delete(item)
 
   # ROOMS ----------------------------------------------------------------------------------------
   def list_rooms, do: Repo.all from(r in Room, preload: :displays, order_by: r.name)
@@ -132,8 +110,6 @@ defmodule Lotd.Gallery do
   def get_display!(id), do: Repo.get!(Display, id)
 
   def change_display(%Display{} = display, params \\ %{}), do: Display.changeset(display, params)
-
-  def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # REGIONS --------------------------------------------------------------------------------------
   def list_regions(search) do
@@ -188,8 +164,6 @@ defmodule Lotd.Gallery do
   def change_location(%Location{} = location, params \\ %{}),
     do: Location.changeset(location, params)
 
-  def delete_location(%Location{} = location), do: Repo.delete(location)
-
   # MODS -----------------------------------------------------------------------------------------
 
   defp mod_query(item_ids \\ nil) do
@@ -199,7 +173,6 @@ defmodule Lotd.Gallery do
 
     from(m in Mod,
       left_join: i in subquery(subquery), on: i.mod_id == m.id,
-      select: %{id: m.id, name: m.name},
       group_by: m.id,
       select_merge: %{item_count: count(i.id)},
       order_by: [m.id != 1, m.name]
@@ -234,28 +207,5 @@ defmodule Lotd.Gallery do
     |> Repo.all()
   end
 
-  def list_mod_options,
-    do: Repo.all from(m in Mod, select: {m.name, m.id}, order_by: m.name)
-
-  def list_mods(ids), do: Repo.all from(d in Mod, order_by: d.name, where: d.id in ^ids)
-
-  def get_mods(items), do: Repo.all(Ecto.assoc(items, :mod) |> order_by(:name))
-
-  def get_mod!(id), do: Repo.get!(Mod, id)
-
-  def create_mod(params) do
-    %Mod{}
-    |> change_mod(params)
-    |> Repo.insert()
-  end
-
   def change_mod(%Mod{} = mod, params \\ %{}), do: Mod.changeset(mod, params)
-
-  def update_mod(%Mod{} = mod, params) do
-    mod
-    |> change_mod(params)
-    |> Repo.update()
-  end
-
-  def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
 end

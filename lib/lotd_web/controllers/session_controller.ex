@@ -2,6 +2,7 @@ defmodule LotdWeb.SessionController do
   use LotdWeb, :controller
 
   alias Lotd.{Accounts, Gallery}
+  alias Lotd.Accounts.Character
   alias LotdWeb.Auth
 
   @doc """
@@ -32,19 +33,19 @@ defmodule LotdWeb.SessionController do
               {:ok, user} ->
 
                 # also create a default character
-                {:ok, character} = Accounts.create_character(%{
-                  name: "Default Character",
-                  user_id: user.id
-                })
+                {:ok, character} =
+                  %Character{}
+                  |> Accounts.change_character(%{name: "Default Character", user_id: user.id})
+                  |> Lotd.Repo.insert!()
 
                 # activate character and enable Legacy of the Dragonborn mod by default
                 Accounts.update_user(user, %{ active_character_id: character.id})
-                Accounts.update_character_add_mod(character, Gallery.get_mod!(1))
+                Accounts.activate_mod(character, Lotd.Repo.get!(Mod, 1))
 
-                # login and redirect to settings page
+                # login and redirect to gallery page
                 conn
                 |> Auth.login(user)
-                |> redirect(to: Routes.live_path(conn, LotdWeb.CharactersLive))
+                |> redirect(to: Routes.live_path(conn, LotdWeb.GalleryLive))
 
               {:error, _changeset} ->
                 conn

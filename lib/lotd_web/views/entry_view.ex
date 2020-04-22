@@ -18,13 +18,4 @@ defmodule LotdWeb.EntryView do
     d-flex justify-content-between align-items-center\
     #{if active?, do: " active"}"
   end
-
-  def render("character.json", %{entry: character, active: active?}) do
-    %{
-      id: character.id,
-      name: character.name,
-      item_count: character.item_count,
-      active: character.id == active?
-    }
-  end
 end

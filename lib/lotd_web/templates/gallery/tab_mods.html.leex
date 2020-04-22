@@ -1,0 +1,103 @@
+<%# Character Section %>
+<%= if String.length(@search) <= 2 && @user && @tab == 3 do %>
+
+  <%= divider :character, Enum.count(@user.characters), true %>
+
+  <%# New Character Form %>
+  <%= if is_character?(@changeset) && new?(@changeset), do: render "rename_form.html", assigns %>
+
+  <%# List characters / edit form %>
+  <%= for character <- @user.characters do %>
+    <%= if is_character?(@changeset) && @changeset.data.id == character.id do %>
+      <%= render "rename_form.html", changeset: @changeset %>
+    <% else %>
+      <li class="<%= entry_class() %>">
+        <span class='flex-grow-1'>
+          <%= if character.id == @user.active_character_id do %>
+            <strong><%= character.name %></strong>
+          <% else %>
+            <a href='#'
+              phx-click='activate'
+              phx-value-character='<%= character.id %>'
+              phx-hook='tooltip'
+              title='Activate Character'
+            >
+              <i class='icon-inactive'></i>
+            </a>
+            <%= character.name %>
+          <% end %>
+        </span>
+        <span>
+          <span class='badge badge-light badge-pill' title='Items collected' phx-hook='tooltip'><%= Enum.count(character.items) %></span>
+          <a href='#' phx-click='edit' phx-value-character='<%= character.id %>' phx-hook='tooltip' title='Rename'><i class='icon-edit'></i></a>
+
+          <%= if character.id == @user.active_character_id do %>
+            <i class='icon-active' title='Active Character' phx-hook='tooltip'></i>
+          <% else %>
+            <a href='#' class='text-danger' data-confirm='Are you sure you want to delete this character? You will permanently loose all items this character has collected.' phx-click='delete' phx-value-character='<%= character.id %>' phx-hook='tooltip' title='Delete'><i class='icon-remove'></i></a>
+          <% end %>
+        </span>
+      </li>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%# Active Mods %>
+<%= if Enum.count(@active_mods) > 0 do %>
+
+  <%= divider :mod, Enum.count(@active_mods), @user.moderator, "Active " %>
+  <%= if @user && Enum.count(@active_mods) == 0, do: info "please activate some mods..." %>
+
+  <%= for mod <- @active_mods do %>
+    <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:mod, mod.id, @filter), do: " active" %>" phx-click='filter' phx-value-mod='<%= mod.id %>'>
+      <span class='flex-grow-1'>
+        <a href='#'
+          phx-click='<%= if active?(@user, mod), do: "de" %>activate'
+          phx-value-mod='<%= mod.id %>'
+        ><i class='icon-<%= unless active?(@user, mod), do: "in" %>active'></i></a>
+        <%= mod.name %>
+      </span>
+
+      <%= if @user.moderator do %>
+        <a href='#' class='badge badge-light badge-pill' phx-hook='tooltip' phx-click='edit' phx-value-mod='<%= mod.id %>' title='Edit Mod'><%= mod.item_count %></a>
+      <% else %>
+        <span class='badge badge-light badge-pill'><%= mod.item_count %></span>
+      <% end %>
+    </li>
+  <% end %>
+<% end %>
+
+<%# Inactive / Completed Mods %>
+<%= if Enum.count(@mods) > 0 do %>
+
+  <%= cond do
+    String.length(@search) > 2 ->
+      divider(:mod, Enum.count(@mods), @user.moderator)
+
+    @user && @user.hide ->
+      divider(:mod, Enum.count(@mods), @user.moderator, "Inactive / Completed ")
+
+    @user -> divider(:mod, Enum.count(@mods), @user.moderator, "Inactive ")
+    true -> divider(:mod, Enum.count(@mods), false)
+  end %>
+
+  <%= for mod <- @mods do %>
+    <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:mod, mod.id, @filter), do: " active" %>" phx-click='filter' phx-value-mod='<%= mod.id %>'>
+      <span class='flex-grow-1'>
+        <%= if @user do %>
+          <a href='#'
+            phx-click='<%= if active?(@user, mod), do: "de" %>activate'
+            phx-value-mod='<%= mod.id %>'
+          ><i class='icon-<%= unless active?(@user, mod), do: "in" %>active'></i></a>
+        <% end %>
+        <%= mod.name %>
+      </span>
+
+      <%= if @user.moderator do %>
+        <a href='#' class='badge badge-light badge-pill' phx-hook='tooltip' phx-click='edit' phx-value-mod='<%= mod.id %>' title='Edit Mod'><%= mod.item_count %></a>
+      <% else %>
+        <span class='badge badge-light badge-pill'><%= mod.item_count %></span>
+      <% end %>
+    </li>
+  <% end %>
+<% end %>

@@ -20,39 +20,27 @@
       <%= if searching?(@search), do: divider "Search Results" %>
 
       <%# Tab: Gallery / Displays %>
-      <%= if @tab == 1 || searching?(@search) do %>
+      <%= if @tab == 1 do #|| searching?(@search) do %>
 
       <% end %>
 
       <%# Tab: Locations %>
-      <%= if @tab == 2 || searching?(@search) do %>
+      <%= if @tab == 2 do #|| searching?(@search) do %>
 
         <%# Region List %>
-        <%= divider :region, Enum.count(@regions) , @moderator%>
+        <%= divider :region, Enum.count(@regions) , @user && @user.moderator%>
         <% filter = filter?(@filter, :region) %>
         <%= for {id, name} <- @regions, do: entry(:region, id, name, filter) %>
         <%= if Enum.count(@regions) == 0, do: info("no regions in the database...") %>
 
         <%# Location List %>
-        <%= divider :location, Enum.count(@locations), @moderator %>
+        <%= divider :location, Enum.count(@locations), @user && @user.moderator %>
         <% filter = filter?(@filter, :location) %>
         <%= for location <- @locations, do: entry(:location, location, filter) %>
         <% if Enum.count(@locations) == 0, do: info "search or select region to show locations..." %>
       <% end %>
 
-      <%= if @tab == 3 || searching?(@search), do:
-        render "tab_mods.html",
-          admin?: @admin?,
-          changeset: @changeset,
-          characters: @characters,
-          character_mod_ids: @character_mod_ids,
-          filter: filter?(@filter, :mod),
-          hide?: @hide?,
-          moderator: @moderator,
-          active_mods: @active_mods,
-          mods: @mods,
-          show_characters: @tab == 3 && @character
-      %>
+      <%= if @tab == 3 || searching?(@search), do: render "tab_mods.html", assigns %>
     </ul>
   </div>
 
@@ -84,13 +72,15 @@
       </form>
     </div>
 
+    <%= if is_item?(@changeset) || is_display?(@changeset) || is_location?(@changeset) || is_mod?(@changeset), do: render "form.html", assigns %>
+
     <table class="table table-sm table-hover">
       <thead>
         <tr>
-          <%= unless is_nil(@character_id) do %>
+          <%= unless is_nil(@user) do %>
             <th scope="col">
               <a href='#' phx-click='toggle' phx-value-hide=''>
-                <%= if @hide?,
+                <%= if @user.hide,
                   do: icon("hide", phx_hook: "tooltip", title: "Show collected items"),
                   else: icon("show", phx_hook: "tooltip", title: "Hide collected items") %>
               </a>
@@ -105,11 +95,15 @@
                 <%= if String.length(@search) >= 3 do %>
                   Searching...
                 <% else %>
-                  <%= type(@filter) %>:
-                  <%= if @filter.url do %>
-                    <a class='text-dark' href='<%= @filter.url %>' target='_blank'><%= @filter.name %></a>
+                  <%
+                    {type, _id} = @filter
+                    filter = get_filter(@active_mods ++ @mods, @filter)
+                  %>
+                  <%= Atom.to_string(type) |> String.capitalize() %>:
+                  <%= if filter.url do %>
+                    <a class='text-dark' href='<%= filter.url %>' target='_blank'><%= filter.name %></a>
                   <% else %>
-                    <%= @filter.name %>
+                    <%= filter.name %>
                   <% end %>
                   <a class='text-dark' href='#' phx-click='clear' phx-value-filter=''>
                     <i class='icon-remove'></i>
@@ -124,12 +118,61 @@
         </tr>
       </thead>
       <tbody>
-        <%= render_many @items,
-          LotdWeb.ItemView, "item.html",
-          character_item_ids: @character_item_ids,
-          search: @search,
-          tab: @tab
-        %>
+        <%= for item <- @items do %>
+          <tr>
+            <%= if @user do %>
+              <td class='align-middle'>
+                <button class='btn btn-link p-0' phx-click='toggle' phx-value-item='<%= item.id %>' type='button'>
+                  <i class='icon-<%= if Enum.member?(active_character(@user).items, item.id), do: "active", else: "inactive" %>'></i>
+                </button>
+              </td>
+            <% end %>
+
+            <th class='align-middle' scope='row'>
+              <%= if item.url,
+                do: link(item.name, to: item.url, class: "text-dark", target: "_blank"),
+                else: content_tag :span, name(item, @search), class: "text-black-50"
+              %>
+            </th>
+
+            <td>
+              <%= if item.replica, do: icon "replica", class: "text-muted" %>
+            </td>
+
+            <td class='align-middle small d-none d-lg-table-cell text-truncate'>
+              <%= unless is_nil(item.location) do %>
+                <i class='icon-location'></i>
+                <%= unless is_nil(item.location.region), do: [assoc_link(item.location.region), " » "] %>
+                <%= assoc_link(item.location) %>
+                <a class='text-black-50' href='#' phx-click='filter' phx-value-location='<%= item.location.id %>'>
+                  <%= item.location.name %>
+                </a>
+                <br>
+              <% end %>
+              <%= unless is_nil(item.display) do %>
+                <%= unless is_nil(item.display.room) do %>
+                  <i class='icon-displays'></i>
+                  <a class='text-black-50' href='#' phx-click='filter' phx-value-display='<%= item.display.room.id %>'>
+                    <%= item.display.room.name %>
+                  </a> »
+                <% end %>
+                <a class='text-black-50' href='#' phx-click='filter' phx-value-display='<%= item.display.id %>'>
+                  <%= item.display.name %>
+                </a>
+              <% end %>
+            </td>
+
+            <td class='align-middle p-0 d-none d-xl-table-cell'>
+              <a href='#'
+                phx-click='filter'
+                phx-value-mod='<%= item.mod_id %>'
+                phx-hook='tooltip'
+                title='<%= item.mod.name %>'
+              ><i class='icon-mod'></i>
+              </a>
+            </td>
+          </tr>
+        <% end %>
       </tbody>
     </table>
     <%= if Enum.count(@items) == 0 do %>
