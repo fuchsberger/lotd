@@ -22,19 +22,13 @@ defmodule Lotd.Gallery do
     end
   end
 
-  def find(module, query), do:
-    Repo.all from(e in module,
-      select: {e.id, e.name},
-      order_by: e.name,
-      where: ilike(e.name, ^"%#{query}%"),
-      limit: 3
-    )
-
-  defp filter_search(query, search) do
-    if String.length(search) > 3,
-      do: where(query, [q], ilike(q.name, ^"%#{search}%")),
-      else: query
+  def find(module, query) do
+    from(e in module, select: {e.id, e.name}, order_by: e.name, limit: 3)
+    |> filter_search(query)
+    |> Repo.all()
   end
+
+  defp filter_search(query, search), do: where(query, [q], ilike(q.name, ^"%#{search}%"))
 
   # ITEMS ----------------------------------------------------------------------------------------
 
@@ -49,7 +43,7 @@ defmodule Lotd.Gallery do
     query = cond do
       # search
       String.length(search) > 2 ->
-        from(i in query, where: ilike(i.name, ^"%#{search}%"))
+        filter_search(query, search)
 
       #  no filter
       is_nil(filter) ->
@@ -112,8 +106,18 @@ defmodule Lotd.Gallery do
   def change_display(%Display{} = display, params \\ %{}), do: Display.changeset(display, params)
 
   # REGIONS --------------------------------------------------------------------------------------
+  def region_query do
+    from r in Region,
+      left_join: l in assoc(r, :locations),
+      order_by: r.name,
+      group_by: r.id,
+      select_merge: %{location_count: count(l.id)}
+  end
+
+  def list_regions(), do: Repo.all(region_query())
+
   def list_regions(search) do
-    from(r in Region, select: {r.id, r.name}, order_by: r.name)
+    region_query()
     |> filter_search(search)
     |> Repo.all()
   end
@@ -125,28 +129,44 @@ defmodule Lotd.Gallery do
   def delete_region(%Region{} = region), do: Repo.delete(region)
 
   # LOCATIONS ------------------------------------------------------------------------------------
-  def list_locations(search, filter, item_ids) do
-
+  def location_query(item_ids) do
     subquery = if item_ids,
       do: from(i in Item, select: map(i, [:id, :location_id]), where: i.id in ^item_ids),
       else: from(i in Item, select: map(i, [:id, :location_id]))
 
-    query = from(l in Location,
-      join: i in subquery(subquery), on: i.location_id == l.id,
-      select: %{id: l.id, name: l.name},
+    from(l in Location,
+      left_join: i in subquery(subquery), on: i.location_id == l.id,
       group_by: l.id,
-      select_merge: %{count: count(i.id)},
+      select_merge: %{item_count: count(i.id)},
       order_by: l.name
     )
-
-    cond do
-      String.length(search) > 2 -> query |> filter_search(search) |> Repo.all()
-      is_nil(filter) -> []
-      filter.__struct__ == Region -> query |> filter_region(filter.id) |> Repo.all()
-      filter.__struct__ == Location -> query |> filter_region(filter.region_id) |> Repo.all()
-      true -> []
-    end
   end
+
+
+  def list_locations(item_ids, search) when is_binary(search) do
+    item_ids
+    |> location_query()
+    |> filter_search(search)
+    |> Repo.all()
+  end
+
+  def list_locations(item_ids, {:region, id}) do
+    item_ids
+    |> location_query()
+    |> filter_region(id)
+    |> Repo.all()
+  end
+
+  def list_locations(item_ids, {:location, id}) do
+    region_id = from(l in Location, select: l.region_id) |> Repo.get(id)
+
+    item_ids
+    |> location_query()
+    |> filter_region(region_id)
+    |> Repo.all()
+  end
+
+  def list_locations(_item_ids, _filter), do: []
 
   defp filter_region(query, id), do:  where(query, [l], l.region_id == ^id)
 
@@ -194,7 +214,7 @@ defmodule Lotd.Gallery do
   """
   def list_mods(search) when is_binary(search) do
     mod_query()
-    |> where([m], ilike(m.name, ^"%#{search}%"))
+    |> filter_search(search)
     |> Repo.all()
   end
 
@@ -203,7 +223,7 @@ defmodule Lotd.Gallery do
   """
   def list_mods(item_ids, search) do
     mod_query(item_ids)
-    |> where([m], ilike(m.name, ^"%#{search}%"))
+    |> filter_search(search)
     |> Repo.all()
   end
 

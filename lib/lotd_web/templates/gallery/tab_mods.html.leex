@@ -90,7 +90,7 @@
             phx-value-mod='<%= mod.id %>'
           ><i class='icon-<%= unless active?(@user, mod), do: "in" %>active'></i></a>
         <% end %>
-        <%= mod.name %>
+        <%= name(mod.name, @search) %>
       </span>
 
       <%= if @user.moderator do %>

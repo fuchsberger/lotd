@@ -1,0 +1,27 @@
+<%# Region List %>
+<%= if Enum.count(@regions) > 0 do %>
+  <%= divider :region, Enum.count(@regions) , @user && @user.moderator%>
+  <%= for region <- @regions do %>
+    <%= if is_region?(@changeset) && @changeset.data.id == region.id do %>
+      <%= render "rename_form.html", changeset: @changeset %>
+    <% else %>
+      <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:region, region.id, @filter), do: " active" %>" phx-click='filter' phx-value-region='<%= region.id %>'>
+        <span class='flex-grow-1'><%= name(region.name, @search) %></span>
+
+        <%= if @user.moderator do %>
+          <a href='#' class='badge badge-light badge-pill' phx-hook='tooltip' phx-click='edit' phx-value-region='<%= region.id %>' title='Edit Region'><%= region.location_count %></a>
+        <% else %>
+          <span class='badge badge-light badge-pill' phx-hook='tooltip' title='Location Count'><%= region.location_count %></span>
+        <% end %>
+      </li>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%# Location List %>
+<%= if Enum.count(@locations) > 0 do %>
+  <%= divider :location, Enum.count(@locations), @user && @user.moderator %>
+  <%= for location <- @locations do %>
+
+  <% end %>
+<% end %>

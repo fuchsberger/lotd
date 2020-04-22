@@ -3,9 +3,6 @@ defmodule LotdWeb.GalleryLive do
   use Phoenix.LiveView, container: {:div, class: "container"}
 
   alias Lotd.{Accounts, Gallery}
-  alias Lotd.Accounts.Character
-  alias Lotd.Gallery.{Room, Region, Display, Location, Mod}
-  alias LotdWeb.EntryView
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
@@ -16,9 +13,8 @@ defmodule LotdWeb.GalleryLive do
     socket
     |> assign(:changeset, nil)
     |> assign(:filter, nil)
-    |> assign(:searching?, false)
     |> assign(:search, "")
-    |> assign(:tab, 3)
+    |> assign(:tab, 2)
     |> assign(:user, user)
     |> sync_lists(:ok)
   end
@@ -72,6 +68,12 @@ defmodule LotdWeb.GalleryLive do
     end
   end
 
+  def handle_event("clear", %{"filter" => _}, socket) do
+    socket
+    |> assign(:filter, nil)
+    |> sync_lists()
+  end
+
   def handle_event("clear", %{"search" => _}, socket) do
     socket
     |> assign(:search, "")
@@ -83,6 +85,14 @@ defmodule LotdWeb.GalleryLive do
     case socket.assigns.filter do
       {:mod, id = id} -> socket |> assign(:filter, nil) |> sync_lists()
       _ -> socket |> assign(:filter, {:mod, id}) |> sync_lists()
+    end
+  end
+
+  def handle_event("filter", %{"region" => id}, socket) do
+    id = String.to_integer(id)
+    case socket.assigns.filter do
+      {:region, id = id} -> socket |> assign(:filter, nil) |> sync_lists()
+      _ -> socket |> assign(:filter, {:region, id}) |> sync_lists()
     end
   end
 
@@ -213,30 +223,43 @@ defmodule LotdWeb.GalleryLive do
   defp sync_lists(socket, return \\ :noreply) do
     {return, socket
     |> assign(:items, Gallery.list_items(socket.assigns.search, socket.assigns.filter, socket.assigns.user))
-    # |> sync_locations()
+    |> sync_locations()
     |> sync_mods()}
   end
 
-  defp sync_locations(socket) do
-    if socket.assigns.tab == 2 || String.length(socket.assigns.search) > 2 do
+  defp sync_locations(%{assigns: %{filter: filter, search: search, tab: tab}} = socket) do
+
+    if tab == 2 || String.length(search) > 2 do
+
+      regions = case searching?(socket) do
+        true -> Gallery.list_regions(search)
+        false -> Gallery.list_regions()
+      end
+
+      c_items = socket.assigns.user && socket.assigns.user.hide && active_character(socket).items
+
+      locations = case searching?(socket) do
+        true -> Gallery.list_locations(c_items, search)
+        false -> Gallery.list_locations(c_items, filter)
+      end
+
       socket
-      |> assign(:regions, Gallery.list_regions(socket.assigns.search))
-      |> assign(:locations, Gallery.list_locations(
-          socket.assigns.search,
-          socket.assigns.filter,
-          socket.assigns.hide? && socket.assigns.character_item_ids
-        ))
+      |> assign(:regions, regions)
+      |> assign(:locations, locations)
     else
       socket
+      |> assign(:regions, [])
+      |> assign(:locations, [])
     end
   end
 
-  defp sync_mods(%{assigns: %{search: search, tab: tab}} = socket) do
-
-    character = active_character(socket)
+  defp sync_mods(%{assigns: %{search: search, tab: tab, user: user}} = socket) do
 
     if tab == 3 || searching?(socket) do
-      mods = case {socket.assigns.user && socket.assigns.user.hide, searching?(socket)} do
+
+      character = active_character(socket)
+
+      mods = case {user && user.hide, searching?(socket)} do
         {true, true} -> Gallery.list_mods(character.items, search)
         {true, false} -> Gallery.list_mods(character.items)
         {false, true} -> Gallery.list_mods(search)

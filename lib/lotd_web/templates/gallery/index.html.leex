@@ -23,23 +23,7 @@
       <%= if @tab == 1 do #|| searching?(@search) do %>
 
       <% end %>
-
-      <%# Tab: Locations %>
-      <%= if @tab == 2 do #|| searching?(@search) do %>
-
-        <%# Region List %>
-        <%= divider :region, Enum.count(@regions) , @user && @user.moderator%>
-        <% filter = filter?(@filter, :region) %>
-        <%= for {id, name} <- @regions, do: entry(:region, id, name, filter) %>
-        <%= if Enum.count(@regions) == 0, do: info("no regions in the database...") %>
-
-        <%# Location List %>
-        <%= divider :location, Enum.count(@locations), @user && @user.moderator %>
-        <% filter = filter?(@filter, :location) %>
-        <%= for location <- @locations, do: entry(:location, location, filter) %>
-        <% if Enum.count(@locations) == 0, do: info "search or select region to show locations..." %>
-      <% end %>
-
+      <%= if @tab == 2 || searching?(@search), do: render "tab_locations.html", assigns %>
       <%= if @tab == 3 || searching?(@search), do: render "tab_mods.html", assigns %>
     </ul>
   </div>
@@ -90,26 +74,14 @@
           <th scope="col"><i class='icon-replica' title='Replica' phx-hook='tooltip'></i></th>
           <th scope="col" class='d-none d-lg-table-cell'>
             Location / Display
-            <%= if @filter || String.length(@search) >= 3 do %>
-              <span class='badge badge-light'>
-                <%= if String.length(@search) >= 3 do %>
-                  Searching...
-                <% else %>
-                  <%
-                    {type, _id} = @filter
-                    filter = get_filter(@active_mods ++ @mods, @filter)
-                  %>
-                  <%= Atom.to_string(type) |> String.capitalize() %>:
-                  <%= if filter.url do %>
-                    <a class='text-dark' href='<%= filter.url %>' target='_blank'><%= filter.name %></a>
-                  <% else %>
-                    <%= filter.name %>
-                  <% end %>
-                  <a class='text-dark' href='#' phx-click='clear' phx-value-filter=''>
-                    <i class='icon-remove'></i>
-                  </a>
-                <% end %>
-              </span>
+
+            <%= if @filter do %>
+              <% {type, _id} = @filter %>
+              <a class='badge badge-light' href='#' phx-click='clear' phx-value-filter=''>Filter: <%= Atom.to_string(type) |> String.capitalize() %><i class='icon-remove'></i></a>
+            <% end %>
+
+            <%= if String.length(@search) >= 3 do %>
+              <a class='badge badge-light' href='#' phx-click='clear' phx-value-search=''>Searching...<i class='icon-remove'></i></a>
             <% end %>
           </th>
           <th scope="col" class='p-0 d-none d-xl-table-cell'>
@@ -131,7 +103,7 @@
             <th class='align-middle' scope='row'>
               <%= if item.url,
                 do: link(item.name, to: item.url, class: "text-dark", target: "_blank"),
-                else: content_tag :span, name(item, @search), class: "text-black-50"
+                else: content_tag :span, name(item.name, @search), class: "text-black-50"
               %>
             </th>
 

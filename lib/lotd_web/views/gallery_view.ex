@@ -77,33 +77,9 @@ defmodule LotdWeb.GalleryView do
     #{if active?, do: " active"}"
   end
 
-
-
-  def filter?(nil, _type), do: false
-  def filter?(entry, :display), do: entry && entry.__struct__ == Display && entry.id
-  def filter?(entry, :location), do: entry && entry.__struct__ == Location && entry.id
-  def filter?(entry, :mod), do: entry && entry.__struct__ == Mod && entry.id
-
-  def filter?(entry, :room) do
-    case entry do
-      %Display{} -> entry.room_id
-      %Room{} -> entry.id
-      _ -> false
-    end
-  end
-
-  def filter?(entry, :region) do
-    case entry do
-      %Location{} -> entry.region_id
-      %Region{} -> entry.id
-      _ -> false
-    end
-  end
-
   def filter?(_type, _id, nil), do: false
 
   def filter?(type, id, {filter_type, filter_id}), do: type == filter_type && id == filter_id
-
 
   def form_action(changeset), do: if changeset.data.id, do: :update, else: :insert
 
@@ -113,13 +89,6 @@ defmodule LotdWeb.GalleryView do
     if changeset.data.id,
       do: "Edit #{type(changeset.data)}",
       else: "Add #{type(changeset.data)}"
-  end
-
-  def get_filter(mods, filter) do
-    case filter do
-      {:mod, id} -> Enum.find(mods, & &1.id == id)
-      _ -> nil
-    end
   end
 
   def info(title), do: render EntryView, "info.html", title: title
@@ -133,9 +102,9 @@ defmodule LotdWeb.GalleryView do
   def is_region?(changeset), do: changeset && changeset.data.__struct__ == Region
   def is_room?(changeset), do: changeset && changeset.data.__struct__ == Room
 
-  def name(item, search) do
+  def name(name, search) do
     if String.length(search) > 2 do
-      case String.split(item.name, [search, String.capitalize(search)], parts: 2) do
+      case String.split(name, [search, String.capitalize(search)], parts: 2) do
         [name] -> name
         ["", name] -> [ content_tag(:mark, String.capitalize(search), class: "px-0"), name ]
         [prefix, suffix] ->
@@ -144,7 +113,7 @@ defmodule LotdWeb.GalleryView do
             else: [ prefix, content_tag(:mark, search, class: "px-0"), suffix ]
       end
     else
-      item.name
+      name
     end
   end
 
