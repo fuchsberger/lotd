@@ -33,14 +33,14 @@ defmodule LotdWeb.SessionController do
               {:ok, user} ->
 
                 # also create a default character
-                {:ok, character} =
+                character =
                   %Character{}
                   |> Accounts.change_character(%{name: "Default Character", user_id: user.id})
                   |> Lotd.Repo.insert!()
 
                 # activate character and enable Legacy of the Dragonborn mod by default
                 Accounts.update_user(user, %{ active_character_id: character.id})
-                Accounts.activate_mod(character, Lotd.Repo.get!(Mod, 1))
+                Accounts.activate_mod(character, Lotd.Repo.get!(Lotd.Gallery.Mod, 1))
 
                 # login and redirect to gallery page
                 conn
