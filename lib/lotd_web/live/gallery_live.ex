@@ -382,7 +382,7 @@ defmodule LotdWeb.GalleryLive do
       if user && user.hide do
         socket
         |> assign(:regions, regions)
-        |> assign(:locations, Enum.filter(regions, & &1.location_count > 0))
+        |> assign(:locations, Enum.filter(locations, & &1.item_count > 0))
       else
         socket
         |> assign(:regions, regions)
