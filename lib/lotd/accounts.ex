@@ -71,6 +71,8 @@ defmodule Lotd.Accounts do
   # MUSEUM FEATURES
 
   def collect_item(%Character{} = character, item) do
+    character = Repo.preload(character, :items, force: true)
+
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
@@ -78,6 +80,8 @@ defmodule Lotd.Accounts do
   end
 
   def remove_item(%Character{} = character, item) do
+    character = Repo.preload(character, :items, force: true)
+
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, & &1.id == item.id))

@@ -37,38 +37,51 @@ defmodule Lotd.Gallery do
     order_by: i.name,
     limit: 200
 
-  def list_items(search, filter, user) do
-    query = item_query()
-
-    query = cond do
+  def list_items(user, search, filter) do
+    cond do
       # search
       String.length(search) > 2 ->
-        filter_search(query, search)
+        item_query()
+        |> filter_search(search)
+        |> filter_hide(user)
+        |> filter_user_mods(user)
+        |> Repo.all()
 
       #  no filter
       is_nil(filter) ->
-        query
+        item_query()
+        |> filter_hide(user)
+        |> filter_user_mods(user)
+        |> Repo.all()
 
       # filter
       {type, id} = filter ->
         case type do
-          :display -> from(i in query, where: i.display_id == ^id)
-          :room -> from(i in query, where: i.display_id in ^list_display_ids(id))
-          :location -> from(i in query, where: i.location_id == ^id)
-          :region -> from(i in query, where: i.location_id in ^list_location_ids(id))
-          :mod -> from(i in query, where: i.mod_id == ^id)
+          :display -> from(i in item_query(), where: i.display_id == ^id)
+          :location -> from(i in item_query(), where: i.location_id == ^id)
+          :mod -> from(i in item_query(), where: i.mod_id == ^id)
+          :room ->  from(i in item_query(), where: i.display_id in ^list_display_ids(id))
+          :region -> from(i in item_query(), where: i.location_id in ^list_location_ids(id))
         end
+        |> filter_hide(user)
+        |> Repo.all()
     end
+  end
 
-    if user do
+  def filter_hide(query, user) do
+    if(user && user.hide) do
       character = Enum.find(user.characters, & &1.id == user.active_character_id)
-      query
-      |> where([i], i.id not in ^character.items)
-      |> where([i], i.mod_id in ^character.mods)
-      |> Repo.all()
+      where(query, [i], i.id not in ^character.items)
     else
-      Repo.all(query)
+      query
     end
+  end
+
+  def filter_user_mods(query, nil), do: query
+
+  def filter_user_mods(query, user) do
+    character = Enum.find(user.characters, & &1.id == user.active_character_id)
+    where(query, [i], i.mod_id in ^character.mods)
   end
 
   def get_item!(id), do: Repo.get!(Item, id)

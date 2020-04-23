@@ -9,7 +9,7 @@
   <%# List characters / edit form %>
   <%= for character <- @user.characters do %>
     <%= if is_character?(@changeset) && @changeset.data.id == character.id do %>
-      <%= render "rename_form.html", changeset: @changeset %>
+      <%= render "rename_form.html", assigns %>
     <% else %>
       <li class="<%= entry_class() %>">
         <span class='flex-grow-1'>

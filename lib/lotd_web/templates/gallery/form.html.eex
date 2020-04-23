@@ -36,6 +36,15 @@
         <%= select f, :room_id, [] %>
         <%= error_tag f, :room_id %>
       <% end %>
+
+      <%= if is_location?(@changeset) do %>
+        <div class="col form-group">
+          <%= label f, :region_name, "Region" %>
+          <%= hidden_input f, :region_id, [] %>
+          <%= text_input f, :region_name, class: "form-control form-control-sm #{control_class(f, :region_id)}", readonly: true %>
+          <%= error_tag f, :region_id %>
+        </div>
+      <% end %>
     </div>
   <% end %>
 </form>

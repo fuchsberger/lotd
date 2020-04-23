@@ -7,6 +7,7 @@ defmodule Lotd.Gallery.Location do
   schema "locations" do
     field :name, :string
     field :url, :string
+    field :region_name, :string, virtual: true
     field :item_count, :integer, virtual: true
     belongs_to :region, Lotd.Gallery.Region
     has_many :items, Lotd.Gallery.Item
