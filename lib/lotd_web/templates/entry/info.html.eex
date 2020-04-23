@@ -1,3 +1,0 @@
-<li class='list-group-item small text-center text-muted text-italic p-1'>
-  <em><%= @title %></em>
-</li>

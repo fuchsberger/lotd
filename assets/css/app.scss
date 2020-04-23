@@ -1,7 +1,4 @@
-@import "../../deps/phoenix_live_view/assets/css/live_view.css";
-
 @import "./bootstrap";
-
 @import "./icons.css";
 @import "./navbar";
 @import "./gallery";
@@ -13,3 +10,5 @@
   background-color: #d1ecf1;
   border-color: #bee5eb;
 }
+
+.list-group-item button { line-height: 1.0; }

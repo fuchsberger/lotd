@@ -64,6 +64,7 @@ defmodule Lotd.Gallery do
           :region -> from(i in item_query(), where: i.location_id in ^list_location_ids(id))
         end
         |> filter_hide(user)
+        |> filter_user_mods(user)
         |> Repo.all()
     end
   end
@@ -258,7 +259,7 @@ defmodule Lotd.Gallery do
       select_merge: %{item_count: count(i.id)},
       order_by: [m.id != 1, m.name]
     )
-  end;
+  end
 
   @doc """
   Lists mods with item_count (all items)
@@ -287,6 +288,8 @@ defmodule Lotd.Gallery do
     |> filter_search(search)
     |> Repo.all()
   end
+
+  def get_mod!(id), do: Repo.get!(Mod, id)
 
   def change_mod(%Mod{} = mod, params \\ %{}), do: Mod.changeset(mod, params)
 end

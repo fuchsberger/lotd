@@ -1,41 +1,39 @@
 <%# Room List %>
-<%= if Enum.count(@rooms) > 0 do %>
-  <%= divider :room, Enum.count(@rooms) , @user && @user.moderator%>
+<%= divider :room, Enum.count(@rooms) , @user && @user.moderator%>
 
-  <%# New Room Form %>
-  <%= if is_room?(@changeset) && new?(@changeset), do: render "rename_form.html", assigns %>
+<%# New Room Form %>
+<%= if is_room?(@changeset) && new?(@changeset), do: render "rename_form.html", assigns %>
 
-  <%= for room <- @rooms do %>
-    <%= if is_room?(@changeset) && @changeset.data.id == room.id do %>
-      <%= render "rename_form.html", assigns %>
-    <% else %>
-      <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:room, room.id, @filter), do: " active" %>" phx-click='filter' phx-value-room='<%= room.id %>'>
-        <span class='flex-grow-1'><%= name(room.name, @search) %></span>
-
-        <%= if @user && @user.moderator do %>
-          <a href='#' class='badge badge-light badge-pill' phx-hook='tooltip' phx-click='edit' phx-value-room='<%= room.id %>' title='Edit Room'><%= room.display_count %></a>
-        <% else %>
-          <span class='badge badge-light badge-pill' phx-hook='tooltip' title='Display Count'><%= room.display_count %></span>
-        <% end %>
-      </li>
-    <% end %>
+<%= for room <- @rooms do %>
+  <%= if is_room?(@changeset) && @changeset.data.id == room.id do %>
+    <%= render "rename_form.html", assigns %>
+  <% else %>
+    <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:room, room.id, @filter), do: " active" %>" phx-click='filter' phx-value-room='<%= room.id %>'>
+      <%= if @user && @user.moderator do %>
+        <button type='button' class='btn btn-link p-0' phx-hook='tooltip' phx-click='edit' phx-value-room='<%= room.id %>' title='Edit Room'><i class='icon-edit'></i></button>
+      <% end %>
+      <span class='flex-grow-1'><%= name(room.name, @search) %></span>
+      <span class='badge badge-light badge-pill' phx-hook='tooltip' title='Display Count'><%= room.display_count %></span>
+    </li>
   <% end %>
 <% end %>
 
 <%# Display List %>
 <%= divider :display, Enum.count(@displays), @user && @user.moderator %>
 
+<%# New Display Form %>
+<%= if is_display?(@changeset), do: render "rename_form.html", assigns %>
+
 <%= for display <- @displays do %>
   <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:display, display.id, @filter), do: " active" %>" phx-click='filter' phx-value-display='<%= display.id %>'>
-    <span class='flex-grow-1'><%= name(display.name, @search) %></span>
-
     <%= if @user && @user.moderator do %>
-      <a href='#' class='badge badge-light badge-pill' phx-hook='tooltip' phx-click='edit' phx-value-display='<%= display.id %>' title='Edit Display'><%= display.item_count %></a>
-    <% else %>
-      <span class='badge badge-light badge-pill'><%= display.item_count %></span>
+      <button class='btn btn-link p-0' type='button' phx-hook='tooltip' phx-click='edit' phx-value-display='<%= display.id %>' title='Edit Display'><i class='icon-edit'></i></button>
     <% end %>
+    <span class='flex-grow-1'><%= name(display.name, @search) %></span>
+    <span class='badge badge-light badge-pill' phx-hook='tooltip' title='<%= count_tooltip(@user && @user.hide) %>'><%= display.item_count %></span>
   </li>
 <% end %>
+
 <%= if Enum.count(@displays) == 0 do %>
   <li class='list-group-item small p-1 text-center'>No items match current filter.</li>
 <% end %>

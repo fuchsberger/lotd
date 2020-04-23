@@ -5,10 +5,10 @@
   phx_submit: :save
 %>
   <div class='d-flex'>
-    <h5 class='flex-grow-1'><%= if edit?(@changeset), do: "Update", else: "Add" %> <%= type(@changeset.data) %></h5>
+    <h5 class='flex-grow-1'><%= if edit?(@changeset), do: "Update", else: "Add" %> Item</h5>
     <div>
       <button class='btn btn-sm btn-outline-secondary mr-2' type='button' phx-click='cancel'>Cancel</button>
-      <%= if @user.admin do %>
+      <%= if @user.admin && edit?(@changeset) do %>
         <button class='btn btn-sm btn-outline-danger mr-2' type='button' phx-click='delete'>Delete</button>
       <% end %>
       <%= submit_button(@changeset) %>
@@ -29,48 +29,26 @@
     </div>
   </div>
 
-  <%= unless is_mod?(@changeset) do %>
-    <div class='row'>
-      <%= if is_item?(@changeset) do %>
-        <div class="col form-group">
-          <%= label f, :display_name, "Display (*)" %>
-          <%= hidden_input f, :display_id, [] %>
-          <%= text_input f, :display_name, class: "form-control form-control-sm #{control_class(f, :display_name)}" %>
-          <%= error_tag f, :display_id %>
-        </div>
-        <div class="col form-group">
-          <%= label f, :location_name, "Location (*)" %>
-          <%= hidden_input f, :location_id, [] %>
-          <%= text_input f, :location_name, class: "form-control form-control-sm #{control_class(f, :location_id)}" %>
-          <%= error_tag f, :location_id %>
-        </div>
-        <div class="col form-group">
-          <%= label f, :mod_name, "Mod (*)" %>
-          <%= hidden_input f, :mod_id, [] %>
-          <%= text_input f, :mod_name, class: "form-control form-control-sm #{control_class(f, :mod_name)}" %>
-          <%= error_tag f, :mod_id %>
-        </div>
-      <% end %>
-
-
-      <%= if is_display?(@changeset) do %>
-        <div class="col form-group">
-          <%= label f, :room_name, "Room (*)" %>
-          <%= hidden_input f, :room_id, [] %>
-          <%= text_input f, :room_name, class: "form-control form-control-sm #{control_class(f, :room_id)}" %>
-          <%= error_tag f, :room_id %>
-        </div>
-      <% end %>
-
-      <%= if is_location?(@changeset) do %>
-        <div class="col form-group">
-          <%= label f, :region_name, "Region (*)" %>
-          <%= hidden_input f, :region_id, [] %>
-          <%= text_input f, :region_name, class: "form-control form-control-sm #{control_class(f, :region_id)}" %>
-          <%= error_tag f, :region_id %>
-        </div>
-      <% end %>
+  <div class='row'>
+    <div class="col form-group">
+      <%= label f, :display_name, "Display (*)" %>
+      <%= hidden_input f, :display_id, [] %>
+      <%= text_input f, :display_name, class: "form-control form-control-sm #{control_class(f, :display_name)}" %>
+      <%= error_tag f, :display_id %>
     </div>
-    <p class='small'>(*) Do not enter associations directly. Instead use search/filter and then click them in the panel on the left.</p>
-  <% end %>
+    <div class="col form-group">
+      <%= label f, :location_name, "Location (*)" %>
+      <%= hidden_input f, :location_id, [] %>
+      <%= text_input f, :location_name, class: "form-control form-control-sm #{control_class(f, :location_id)}" %>
+      <%= error_tag f, :location_id %>
+    </div>
+    <div class="col form-group">
+      <%= label f, :mod_name, "Mod (*)" %>
+      <%= hidden_input f, :mod_id, [] %>
+      <%= text_input f, :mod_name, class: "form-control form-control-sm #{control_class(f, :mod_name)}" %>
+      <%= error_tag f, :mod_id %>
+    </div>
+  </div>
+
+  <p class='small'>(*) Do not enter associations directly. Instead use search/filter and then click them in the panel on the left.</p>
 </form>

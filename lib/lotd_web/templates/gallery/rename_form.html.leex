@@ -18,5 +18,22 @@
       <div class="input-group-append"><%= submit_button @changeset %></div>
       <%= error_tag f, :name %>
     </div>
+
+
+    <%= if is_display?(@changeset) do %>
+      <div class="form-group mb-1">
+        <%= hidden_input f, :room_id, [] %>
+        <%= text_input f, :room_name, class: "form-control form-control-sm #{control_class(f, :room_id)}", placeholder: "Room (select above)" %>
+        <%= error_tag f, :room_id %>
+      </div>
+    <% end %>
+
+    <%= if is_location?(@changeset) do %>
+      <div class="form-group mb-1">
+        <%= hidden_input f, :region_id, [] %>
+        <%= text_input f, :region_name, class: "form-control form-control-sm #{control_class(f, :region_id)}", placeholder: "Region (select above)" %>
+        <%= error_tag f, :region_id %>
+      </div>
+    <% end %>
   </form>
 </li>

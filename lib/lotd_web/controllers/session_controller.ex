@@ -1,7 +1,7 @@
 defmodule LotdWeb.SessionController do
   use LotdWeb, :controller
 
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.Accounts
   alias Lotd.Accounts.Character
   alias LotdWeb.Auth
 

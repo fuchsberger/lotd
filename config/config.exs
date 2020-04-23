@@ -23,7 +23,7 @@ config :lotd, LotdWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "o4VDttM6WVlwFFes9c7jo+u46DrK2lKDdhC9tF2rUYiq7UMf7h5H8Xaz56KsoRdb",
   render_errors: [view: LotdWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Lotd.PubSub, adapter: Phoenix.PubSub.PG2],
+  pubsub_server: Lotd.PubSub,
   live_view: [ signing_salt: "yPX4HroHXx7yWYqHVUYU1EMv7QKl5WuK" ]
 
 # Configures Elixir's Logger

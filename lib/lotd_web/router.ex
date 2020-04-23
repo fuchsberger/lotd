@@ -8,6 +8,7 @@ defmodule LotdWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug LotdWeb.Auth
+    plug :put_root_layout, {LotdWeb.LayoutView, :root}
   end
 
   scope "/", LotdWeb do

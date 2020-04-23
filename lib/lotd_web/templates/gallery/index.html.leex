@@ -43,7 +43,7 @@
       </form>
     </div>
 
-    <%= if is_item?(@changeset) || is_display?(@changeset) || is_location?(@changeset) || is_mod?(@changeset), do: render "form.html", assigns %>
+    <%= if is_item?(@changeset), do: render "form.html", assigns %>
 
     <table class="table table-sm table-hover">
       <thead>
@@ -102,38 +102,37 @@
             <td class='align-middle small d-none d-lg-table-cell text-truncate'>
               <%= unless is_nil(item.location) do %>
                 <i class='icon-location'></i>
-                <%= unless is_nil(item.location.region), do: [assoc_link(item.location.region), " » "] %>
-                <%= assoc_link(item.location) %>
-                <a class='text-black-50' href='#' phx-click='filter' phx-value-location='<%= item.location.id %>'>
-                  <%= item.location.name %>
-                </a>
+                <%= unless is_nil(item.location.region) do %>
+                  <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-region='<%= item.location.region.id %>'><%= item.location.region.name %></button> »
+                <% end %>
+                <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-location='<%= item.location.id %>'><%= item.location.name %></button>
                 <br>
               <% end %>
               <%= unless is_nil(item.display) do %>
+                <i class='icon-displays'></i>
                 <%= unless is_nil(item.display.room) do %>
-                  <i class='icon-displays'></i>
-                  <a class='text-black-50' href='#' phx-click='filter' phx-value-display='<%= item.display.room.id %>'>
-                    <%= item.display.room.name %>
-                  </a> »
+                  <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-room='<%= item.display.room.id %>'><%= item.display.room.name %></button> »
                 <% end %>
-                <a class='text-black-50' href='#' phx-click='filter' phx-value-display='<%= item.display.id %>'>
-                  <%= item.display.name %>
-                </a>
+                <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-display='<%= item.display.id %>'><%= item.display.name %></button>
               <% end %>
             </td>
 
             <td class='align-middle p-0 d-none d-xl-table-cell'>
-              <a href='#'
+              <button
+                class='btn btn-link p-0'
                 phx-click='filter'
                 phx-value-mod='<%= item.mod_id %>'
                 phx-hook='tooltip'
                 title='<%= item.mod.name %>'
+                type='submit'
               ><i class='icon-mod'></i>
-              </a>
+              </button>
             </td>
 
             <%= if @user && @user.moderator do %>
-              <td class='align-middle p-0 d-none d-xl-table-cell'><a href='#' phx-hook='tooltip' title='Edit Item' phx-click='edit' phx-value-item='<%= item.id %>'><i class='icon-edit'></i></td>
+              <td class='align-middle p-0 d-none d-xl-table-cell'>
+                <button class='btn btn-link p-0' type='button' phx-hook='tooltip' title='Edit Item' phx-click='edit' phx-value-item='<%= item.id %>'><i class='icon-edit'></i></button>
+              </td>
             <% end %>
           </tr>
         <% end %>
