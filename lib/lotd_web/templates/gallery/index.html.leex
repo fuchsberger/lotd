@@ -50,11 +50,9 @@
         <tr>
           <%= unless is_nil(@user) do %>
             <th scope="col">
-              <a href='#' phx-click='toggle' phx-value-hide=''>
-                <%= if @user.hide,
-                  do: icon("hide", phx_hook: "tooltip", title: "Show collected items"),
-                  else: icon("show", phx_hook: "tooltip", title: "Hide collected items") %>
-              </a>
+              <button class='btn p-0 btn-link type='button' phx-click='toggle' phx-value-hide=''>
+                <i class='icon-<%= hide_text(!@user.hide) %>' phx-hook='tooltip' title='<%= hide_text(@user.hide) %> collected items'></i>
+              </button>
             </th>
           <% end %>
           <th scope="col">Name</th>
@@ -74,6 +72,9 @@
           <th scope="col" class='p-0 d-none d-xl-table-cell'>
             <i class='icon-mod' title='Mod' phx-hook='Mod'></i>
           </th>
+          <%= if @user && @user.moderator do %>
+            <th scope="col" class='p-0 d-none d-xl-table-cell'><button class='btn p-0 btn-link type='button' phx-click='add' phx-value-type='item' ><i class='icon-inactive' phx-hook='tooltip' title='Add Item'></i></button></th>
+          <% end %>
         </tr>
       </thead>
       <tbody>
@@ -130,6 +131,10 @@
               ><i class='icon-mod'></i>
               </a>
             </td>
+
+            <%= if @user && @user.moderator do %>
+              <td class='align-middle p-0 d-none d-xl-table-cell'><a href='#' phx-hook='tooltip' title='Edit Item' phx-click='edit' phx-value-item='<%= item.id %>'><i class='icon-edit'></i></td>
+            <% end %>
           </tr>
         <% end %>
       </tbody>

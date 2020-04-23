@@ -2,7 +2,7 @@ defmodule LotdWeb.GalleryLive do
 
   use Phoenix.LiveView, container: {:div, class: "container"}
 
-  alias Lotd.{Accounts, Gallery}
+  alias Lotd.{Accounts, Gallery, Repo}
   alias Lotd.Accounts.Character
 
   def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
@@ -203,6 +203,18 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("edit", params, socket) do
     changeset =
       case params do
+        %{"item" => id} ->
+          item =
+            socket.assigns.items
+            |> Enum.find(& &1.id == String.to_integer(id))
+            |> Repo.preload([:display, :location, :mod])
+
+          Gallery.change_item(item, %{
+            display_name: (if item.display, do: item.display.name, else: ""),
+            location_name: (if item.location, do: item.location.name, else: ""),
+            mod_name: (if item.mod, do: item.mod.name, else: ""),
+          })
+
         %{"character" => id} ->
           socket.assigns.user.characters
           |> Enum.find(& &1.id == String.to_integer(id))
@@ -253,13 +265,21 @@ defmodule LotdWeb.GalleryLive do
     {:noreply, assign(socket, :changeset, changeset)}
   end
 
-  def handle_event("save", _params, socket) do
+  def handle_event("save", params, socket) do
+    data = socket.assigns.changeset.data
     changeset =
-      if socket.assigns.changeset.data.__struct__ == Character,
-        do: Ecto.Changeset.change(socket.assigns.changeset, %{user_id: socket.assigns.user.id}),
-        else: socket.assigns.changeset
+      case params do
+        %{"character" => params} ->
+          Accounts.change_character data, Map.put(params, "user_id", socket.assigns.user.id)
+        %{"item" => params} ->      Gallery.change_item       data, params
+        %{"display" => params} ->   Gallery.change_display    data, params
+        %{"room" => params} ->      Gallery.change_room       data, params
+        %{"location" => params} ->  Gallery.change_location   data, params
+        %{"region" => params} ->    Gallery.change_region     data, params
+        %{"mod" => params} ->       Gallery.change_mod        data, params
+      end
 
-    case Lotd.Repo.insert_or_update(changeset) do
+    case Repo.insert_or_update(changeset) do
       {:ok, _entry} ->
         socket
         |> assign(:changeset, nil)
@@ -283,7 +303,7 @@ defmodule LotdWeb.GalleryLive do
   end
 
   def handle_event("delete", _params, socket) do
-    case Lotd.Repo.delete(socket.assigns.changeset.data) do
+    case Repo.delete(socket.assigns.changeset.data) do
       {:ok, _struct} ->
         socket
         |> assign(:changeset, nil)

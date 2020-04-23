@@ -2,7 +2,7 @@ defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
   alias Lotd.Accounts.Character
-  alias Lotd.Gallery.{Room, Display, Region, Location, Mod}
+  alias Lotd.Gallery.{Item, Room, Display, Region, Location, Mod}
   alias LotdWeb.{EntryView}
 
   @entry_class "list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center"
@@ -90,6 +90,9 @@ defmodule LotdWeb.GalleryView do
       do: "Edit #{type(changeset.data)}",
       else: "Add #{type(changeset.data)}"
   end
+
+  def hide_text(true), do: "show"
+  def hide_text(false), do: "hide"
 
   def info(title), do: render EntryView, "info.html", title: title
 
