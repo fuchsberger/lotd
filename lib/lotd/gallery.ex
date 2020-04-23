@@ -200,7 +200,7 @@ defmodule Lotd.Gallery do
     from(l in Location,
       left_join: i in subquery(subquery), on: i.location_id == l.id,
       group_by: l.id,
-      select_merge: %{item_count: count(i.id)},
+      select_merge: %{location_count: count(i.id)},
       order_by: l.name
     )
   end
