@@ -1,6 +1,5 @@
 <div class='row'>
   <div class='d-none d-md-block col-md-5 col-lg-4 col-xl-3 pr-0'>
-
     <%# Tab Menu %>
     <ul class="nav nav-tabs flex-column flex-md-row">
       <%= tab 1, "Gallery", @tab, @search %>
@@ -8,21 +7,9 @@
       <%= tab 3, "Mods", @tab, @search %>
     </ul>
 
-    <%# Moderator Form %>
-    <%# if @changeset, do: render "form.html",
-      admin: @admin,
-      changeset: @changeset,
-      active_id: @character && @character.id
-    %>
-
     <ul class="list-group list-group-flush">
-
       <%= if searching?(@search), do: divider "Search Results" %>
-
-      <%# Tab: Gallery / Displays %>
-      <%= if @tab == 1 do #|| searching?(@search) do %>
-
-      <% end %>
+      <%= if @tab == 1 || searching?(@search), do: render "tab_gallery.html", assigns %>
       <%= if @tab == 2 || searching?(@search), do: render "tab_locations.html", assigns %>
       <%= if @tab == 3 || searching?(@search), do: render "tab_mods.html", assigns %>
     </ul>

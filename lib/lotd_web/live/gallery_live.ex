@@ -15,7 +15,7 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:changeset, nil)
     |> assign(:filter, nil)
     |> assign(:search, "")
-    |> assign(:tab, 2)
+    |> assign(:tab, 1)
     |> assign(:user, user)
     |> sync_lists(:ok)
   end
@@ -96,6 +96,21 @@ defmodule LotdWeb.GalleryLive do
     |> sync_lists()
   end
 
+  def handle_event("filter", %{"room" => id}, socket) do
+    room = Enum.find(socket.assigns.rooms, & &1.id == String.to_integer(id))
+
+    changeset = if socket.assigns.changeset && Map.has_key?(socket.assigns.changeset.data, :room_id),
+      do: Ecto.Changeset.change(socket.assigns.changeset, %{room_id: room.id, room_name: room.name}),
+      else: socket.assigns.changeset
+
+    filter = {:room, room.id}
+
+    socket
+    |> assign(:changeset, changeset)
+    |> assign(:filter, (if filter == socket.assigns.filter, do: nil, else: filter))
+    |> sync_lists()
+  end
+
   def handle_event("filter", %{"location" => id}, socket) do
     location = Enum.find(socket.assigns.locations, & &1.id == String.to_integer(id))
 
@@ -107,6 +122,24 @@ defmodule LotdWeb.GalleryLive do
       else: socket.assigns.changeset
 
     filter = {:location, location.id}
+
+    socket
+    |> assign(:changeset, changeset)
+    |> assign(:filter, (if filter == socket.assigns.filter, do: nil, else: filter))
+    |> sync_lists()
+  end
+
+  def handle_event("filter", %{"display" => id}, socket) do
+    display = Enum.find(socket.assigns.displays, & &1.id == String.to_integer(id))
+
+    changeset = if socket.assigns.changeset && Map.has_key?(socket.assigns.changeset.data, :display_id),
+      do: Ecto.Changeset.change(socket.assigns.changeset, %{
+        display_id: display.id,
+        display_name: display.name
+      }),
+      else: socket.assigns.changeset
+
+    filter = {:display, display.id}
 
     socket
     |> assign(:changeset, changeset)
@@ -175,10 +208,20 @@ defmodule LotdWeb.GalleryLive do
           |> Enum.find(& &1.id == String.to_integer(id))
           |> Accounts.change_character()
 
+        %{"display" => id} ->
+          display = Enum.find(socket.assigns.displays, & &1.id == String.to_integer(id))
+          room = Enum.find(socket.assigns.regions, & &1.id == display.region_id)
+          Gallery.change_display(display, %{room_id: room.id, room_name: room.name})
+
         %{"location" => id} ->
           location = Enum.find(socket.assigns.locations, & &1.id == String.to_integer(id))
           region = Enum.find(socket.assigns.regions, & &1.id == location.region_id)
           Gallery.change_location(location, %{region_id: region.id, region_name: region.name})
+
+        %{"room" => id} ->
+          socket.assigns.rooms
+          |> Enum.find(& &1.id == String.to_integer(id))
+          |> Gallery.change_room()
 
         %{"region" => id} ->
           socket.assigns.regions
@@ -255,8 +298,35 @@ defmodule LotdWeb.GalleryLive do
   defp sync_lists(socket, return \\ :noreply) do
     {return, socket
     |> assign(:items, Gallery.list_items(socket.assigns.user, socket.assigns.search, socket.assigns.filter))
+    |> sync_displays()
     |> sync_locations()
     |> sync_mods()}
+  end
+
+  defp sync_displays(%{assigns: %{filter: filter, search: search, tab: tab}} = socket) do
+
+    if tab == 1 || String.length(search) > 2 do
+
+      rooms = case searching?(socket) do
+        true -> Gallery.list_rooms(search)
+        false -> Gallery.list_rooms()
+      end
+
+      c_items = socket.assigns.user && socket.assigns.user.hide && active_character(socket).items
+
+      displays = case searching?(socket) do
+        true -> Gallery.list_displays(c_items, search)
+        false -> Gallery.list_displays(c_items, filter)
+      end
+
+      socket
+      |> assign(:rooms, rooms)
+      |> assign(:displays, displays)
+    else
+      socket
+      |> assign(:rooms, [])
+      |> assign(:displays, [])
+    end
   end
 
   defp sync_locations(%{assigns: %{filter: filter, search: search, tab: tab}} = socket) do

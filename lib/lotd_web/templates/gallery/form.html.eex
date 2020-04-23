@@ -32,9 +32,12 @@
   <%= unless is_mod?(@changeset) do %>
     <div class='row'>
       <%= if is_display?(@changeset) do %>
-        <%= label f, :room_id %>
-        <%= select f, :room_id, [] %>
-        <%= error_tag f, :room_id %>
+        <div class="col form-group">
+          <%= label f, :room_name, "Room" %>
+          <%= hidden_input f, :room_id, [] %>
+          <%= text_input f, :room_name, class: "form-control form-control-sm #{control_class(f, :room_id)}", readonly: true %>
+          <%= error_tag f, :room_id %>
+        </div>
       <% end %>
 
       <%= if is_location?(@changeset) do %>

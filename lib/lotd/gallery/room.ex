@@ -5,6 +5,7 @@ defmodule Lotd.Gallery.Room do
 
   schema "rooms" do
     field :name, :string
+    field :display_count, :integer, virtual: true
     has_many :displays, Lotd.Gallery.Display
   end
 

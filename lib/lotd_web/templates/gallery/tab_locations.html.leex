@@ -12,7 +12,7 @@
       <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:region, region.id, @filter), do: " active" %>" phx-click='filter' phx-value-region='<%= region.id %>'>
         <span class='flex-grow-1'><%= name(region.name, @search) %></span>
 
-        <%= if @user.moderator do %>
+        <%= if @user && @user.moderator do %>
           <a href='#' class='badge badge-light badge-pill' phx-hook='tooltip' phx-click='edit' phx-value-region='<%= region.id %>' title='Edit Region'><%= region.location_count %></a>
         <% else %>
           <span class='badge badge-light badge-pill' phx-hook='tooltip' title='Location Count'><%= region.location_count %></span>
@@ -29,7 +29,7 @@
   <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:location, location.id, @filter), do: " active" %>" phx-click='filter' phx-value-location='<%= location.id %>'>
     <span class='flex-grow-1'><%= name(location.name, @search) %></span>
 
-    <%= if @user.moderator do %>
+    <%= if @user && @user.moderator do %>
       <a href='#' class='badge badge-light badge-pill' phx-hook='tooltip' phx-click='edit' phx-value-location='<%= location.id %>' title='Edit Location'><%= location.item_count %></a>
     <% else %>
       <span class='badge badge-light badge-pill'><%= location.item_count %></span>

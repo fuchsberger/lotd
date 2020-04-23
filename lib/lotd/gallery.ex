@@ -89,10 +89,21 @@ defmodule Lotd.Gallery do
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
 
   # ROOMS ----------------------------------------------------------------------------------------
-  def list_rooms, do: Repo.all from(r in Room, preload: :displays, order_by: r.name)
+  def room_query do
+    from r in Room,
+      left_join: d in assoc(r, :displays),
+      order_by: r.name,
+      group_by: r.id,
+      select_merge: %{display_count: count(d.id)}
+  end
 
-  def list_room_options,
-    do: Repo.all from(r in Room, select: {r.name, r.id}, order_by: r.name)
+  def list_rooms(), do: Repo.all(room_query())
+
+  def list_rooms(search) do
+    room_query()
+    |> filter_search(search)
+    |> Repo.all()
+  end
 
   def get_rooms(displays), do: Repo.all(Ecto.assoc(displays, :room) |> order_by(:name))
 
@@ -103,7 +114,45 @@ defmodule Lotd.Gallery do
   def delete_room(%Room{} = room), do: Repo.delete(room)
 
   # DISPLAYS -------------------------------------------------------------------------------------
-  def list_displays, do: Repo.all from(d in Display, preload: [:room, :items], order_by: d.name)
+  def display_query(item_ids) do
+    subquery = if item_ids,
+      do: from(i in Item, select: map(i, [:id, :display_id]), where: i.id in ^item_ids),
+      else: from(i in Item, select: map(i, [:id, :display_id]))
+
+    from(d in Display,
+      left_join: i in subquery(subquery), on: i.display_id == d.id,
+      group_by: d.id,
+      select_merge: %{item_count: count(i.id)},
+      order_by: d.name
+    )
+  end
+
+  def list_displays(item_ids, search) when is_binary(search) do
+    item_ids
+    |> display_query()
+    |> filter_search(search)
+    |> Repo.all()
+  end
+
+  def list_displays(item_ids, {:room, id}) do
+    item_ids
+    |> display_query()
+    |> filter_room(id)
+    |> Repo.all()
+  end
+
+  def list_displays(item_ids, {:display, id}) do
+    room_id = from(d in Display, select: d.room_id) |> Repo.get(id)
+
+    item_ids
+    |> display_query()
+    |> filter_room(room_id)
+    |> Repo.all()
+  end
+
+  def list_displays(_item_ids, _filter), do: []
+
+  defp filter_room(query, id), do: where(query, [d], d.room_id == ^id)
 
   defp list_display_ids(room_id) do
     Repo.all from(d in Display, select: d.id, where: d.room_id == ^room_id)
@@ -154,7 +203,6 @@ defmodule Lotd.Gallery do
       order_by: l.name
     )
   end
-
 
   def list_locations(item_ids, search) when is_binary(search) do
     item_ids
