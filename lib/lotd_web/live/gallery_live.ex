@@ -76,7 +76,6 @@ defmodule LotdWeb.GalleryLive do
 
   def handle_event("filter", %{"region" => id}, socket) do
 
-
     changeset = if socket.assigns.changeset && Map.has_key?(socket.assigns.changeset.data, :region_id) do
       region = Gallery.get_region!(String.to_integer(id))
       Ecto.Changeset.change(socket.assigns.changeset, %{
@@ -89,8 +88,9 @@ defmodule LotdWeb.GalleryLive do
 
     socket
     |> assign(:changeset, changeset)
-    |> assign(:tab, 2)
     |> assign(:filter, (if filter == socket.assigns.filter, do: nil, else: filter))
+    |> assign(:search, "")
+    |> assign(:tab, 2)
     |> sync_lists()
   end
 
@@ -107,8 +107,9 @@ defmodule LotdWeb.GalleryLive do
 
     socket
     |> assign(:changeset, changeset)
-    |> assign(:tab, 1)
     |> assign(:filter, (if filter == socket.assigns.filter, do: nil, else: filter))
+    |> assign(:search, "")
+    |> assign(:tab, 1)
     |> sync_lists()
   end
 
@@ -127,8 +128,9 @@ defmodule LotdWeb.GalleryLive do
 
     socket
     |> assign(:changeset, changeset)
-    |> assign(:tab, 2)
     |> assign(:filter, (if filter == socket.assigns.filter, do: nil, else: filter))
+    |> assign(:search, "")
+    |> assign(:tab, 2)
     |> sync_lists()
   end
 
@@ -147,8 +149,9 @@ defmodule LotdWeb.GalleryLive do
 
     socket
     |> assign(:changeset, changeset)
-    |> assign(:tab, 1)
     |> assign(:filter, (if filter == socket.assigns.filter, do: nil, else: filter))
+    |> assign(:search, "")
+    |> assign(:tab, 1)
     |> sync_lists()
   end
 
@@ -166,6 +169,7 @@ defmodule LotdWeb.GalleryLive do
     socket
     |> assign(:changeset, changeset)
     |> assign(:filter, (if filter == socket.assigns.filter, do: nil, else: filter))
+    |> assign(:search, "")
     |> assign(:tab, 3)
     |> sync_lists()
   end
