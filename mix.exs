@@ -4,7 +4,7 @@ defmodule Lotd.MixProject do
   def project do
     [
       app: :lotd,
-      version: "0.6.8",
+      version: "0.6.9",
       elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
