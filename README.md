@@ -27,18 +27,14 @@ This is a utility app for the mod "Legacy of the Dragonborn" and it allows to ke
 ## Deployment Notes
 This is a suggestion on how to get the server running in a linux (Ubuntu/Debian) production environment. Make sure to bump the version number in *mix.exs* before each update.
 
-```shell
-mix deps.get --only prod
-```
-
-| Command                                     | When to execute                       |
-| :---                                        | :---                                  |
-| $ `mix deps.get --only prod`                | only if deps have changed             |
-| `$ MIX_ENV=prod mix compile`                | always                                |
-| `$ cd assets && npm install`                | only if npm modules changed           |
-| `$ npm run deploy --prefix ./assets`        | only if assets or npm modules changed |
-| `$ mix phx.digest`                          | only if assets or npm modules changed |
-| `$ MIX_ENV=prod mix release`                | always                                |
-| `$ MIX_ENV=prod mix ecto.migrate`           | only when database changed            |
-| `$ sudo systemctl daemon-reload`            | always                                |
-| `$ sudo systemctl restart app_lotd.service` | always                                |
+| Command                                   | When to execute                       |
+| :---                                      | :---                                  |
+| `mix deps.get --only prod`                | only if deps have changed             |
+| `MIX_ENV=prod mix compile`                | always                                |
+| `cd assets && npm install`                | only if npm modules changed           |
+| `npm run deploy --prefix ./assets`        | only if assets or npm modules changed |
+| `mix phx.digest`                          | only if assets or npm modules changed |
+| `MIX_ENV=prod mix release`                | always                                |
+| `MIX_ENV=prod mix ecto.migrate`           | only when database changed            |
+| `sudo systemctl daemon-reload`            | always                                |
+| `sudo systemctl restart app_lotd.service` | always                                |

@@ -46,7 +46,7 @@ defmodule LotdWeb.GalleryLive do
         "location" ->
           {:noreply, socket
           |> assign(:changeset, Gallery.change_location(%Location{}))
-          |> assign(:region_option, Gallery.list_region_options())}
+          |> assign(:region_options, Gallery.list_region_options())}
 
         "region" ->
           {:noreply, assign(socket, :changeset, Gallery.change_region(%Region{}))}
