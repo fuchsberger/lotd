@@ -27,6 +27,10 @@ This is a utility app for the mod "Legacy of the Dragonborn" and it allows to ke
 ## Deployment Notes
 This is a suggestion on how to get the server running in a linux (Ubuntu/Debian) production environment. Make sure to bump the version number in *mix.exs* before each update.
 
+```shell
+mix deps.get --only prod
+```
+
 | Command                                     | When to execute                       |
 | :---                                        | :---                                  |
 | $ `mix deps.get --only prod`                | only if deps have changed             |
