@@ -1,10 +1,16 @@
+<%
+  locations = locations(@items)
+  regions = regions(locations, @user, @search)
+  locations = locations(locations, @user, @search, @filter)
+%>
+
 <%# Region List %>
-<%= divider :region, Enum.count(@regions) , @user && @user.moderator%>
+<%= divider :region, Enum.count(regions) , @user && @user.moderator%>
 
 <%# New Region Form %>
 <%= if is_region?(@changeset) && new?(@changeset), do: render "rename_form.html", assigns %>
 
-<%= for region <- @regions do %>
+<%= for region <- regions do %>
   <%= if is_region?(@changeset) && @changeset.data.id == region.id do %>
     <%= render "rename_form.html", assigns %>
   <% else %>
@@ -13,27 +19,27 @@
         <button class='btn btn-link p-0' type='button' phx-hook='tooltip' phx-click='edit' phx-value-region='<%= region.id %>' title='Edit Region'><i class='icon-edit'></i></button>
       <% end %>
       <span class='flex-grow-1'><%= name(region.name, @search) %></span>
-      <span class='badge badge-light badge-pill' phx-hook='tooltip' title='Location Count'><%= region.location_count %></span>
+      <span class='badge badge-light badge-pill' phx-hook='tooltip' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= region.item_count %></span>
     </li>
   <% end %>
 <% end %>
 
 <%# Location List %>
-<%= divider :location, Enum.count(@locations), @user && @user.moderator %>
+<%= divider :location, Enum.count(locations), @user && @user.moderator %>
 
 <%# New Location Form %>
 <%= if is_location?(@changeset), do: render "rename_form.html", assigns %>
 
-<%= for location <- @locations do %>
+<%= for location <- locations do %>
   <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:location, location.id, @filter), do: " active" %>" phx-click='filter' phx-value-location='<%= location.id %>'>
     <%= if @user && @user.moderator do %>
       <button class='btn btn-link p-0' type='button' phx-hook='tooltip' phx-click='edit' phx-value-location='<%= location.id %>' title='Edit Location'><i class='icon-edit'></i></button>
     <% end %>
     <span class='flex-grow-1'><%= name(location.name, @search) %></span>
-    <span class='badge badge-light badge-pill' phx-hook='tooltip' title='<%= count_tooltip(@user && @user.hide) %>'><%= location.item_count %></span>
+    <span class='badge badge-light badge-pill' phx-hook='tooltip' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= location.item_count %></span>
   </li>
 <% end %>
 
-<%= if Enum.count(@locations) == 0 do %>
+<%= if Enum.count(locations) == 0 do %>
   <li class='list-group-item small p-1 text-center'>No items match current filter.</li>
 <% end %>

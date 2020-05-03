@@ -43,6 +43,7 @@
       </form>
     </div>
 
+    <% items = items(@items, @search, @filter, @user) %>
     <%= if is_item?(@changeset), do: render "form.html", assigns %>
 
     <table class="table table-sm table-hover">
@@ -78,7 +79,7 @@
         </tr>
       </thead>
       <tbody>
-        <%= for item <- @items do %>
+        <%= for item <- items do %>
           <tr>
             <%= if @user do %>
               <td class='align-middle'>
@@ -138,10 +139,10 @@
         <% end %>
       </tbody>
     </table>
-    <%= if Enum.count(@items) == 0 do %>
+    <%= if Enum.count(items) == 0 do %>
       <p class='text-center text-muted font-italic'>no items match your current filters / search...</p>
     <% end %>
-    <%= if Enum.count(@items) == 200 do %>
+    <%= if Enum.count(items) == 200 do %>
       <p class='small text-center text-muted font-italic'>only 200 items are displayed. Use filters / search to find more.</p>
     <% end %>
   </div>

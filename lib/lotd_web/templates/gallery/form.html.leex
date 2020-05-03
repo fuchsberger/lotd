@@ -33,24 +33,30 @@
 
   <div class='row'>
     <div class="col form-group">
-      <%= label f, :display_name, "Display (*)" %>
-      <%= hidden_input f, :display_id, [] %>
-      <%= text_input f, :display_name, class: "form-control form-control-sm #{control_class(f, :display_name)}" %>
+      <%= label f, :display_id, "Display" %>
+      <%= select f, :display_id, @display_options,
+        class: "form-control form-control-sm #{control_class(f, :display_id)}",
+        prompt: "Select Display"
+      %>
       <%= error_tag f, :display_id %>
     </div>
     <div class="col form-group">
-      <%= label f, :location_name, "Location (*)" %>
-      <%= hidden_input f, :location_id, [] %>
-      <%= text_input f, :location_name, class: "form-control form-control-sm #{control_class(f, :location_id)}" %>
+      <%= label f, :location_id, "Location" %>
+      <%= select f, :location_id, @location_options,
+        class: "form-control form-control-sm #{control_class(f, :location_id)}",
+        prompt: "Select Location"
+      %>
       <%= error_tag f, :location_id %>
     </div>
     <div class="col form-group">
-      <%= label f, :mod_name, "Mod (*)" %>
-      <%= hidden_input f, :mod_id, [] %>
-      <%= text_input f, :mod_name, class: "form-control form-control-sm #{control_class(f, :mod_name)}" %>
+      <%= label f, :mod_id, "Mod" %>
+      <%= select f, :mod_id, @mod_options,
+        class: "form-control form-control-sm #{control_class(f, :mod_id)}",
+        prompt: "Select Mod"
+      %>
       <%= error_tag f, :mod_id %>
     </div>
   </div>
 
-  <p class='small'>(*) Do not enter associations directly. Instead use search/filter and then click them in the panel on the left.</p>
+  <p class='small'>You may also click on filters to select display / location / mod.</p>
 </form>

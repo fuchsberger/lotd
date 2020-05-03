@@ -1,3 +1,5 @@
+<% mods = mods(@items, @user, @search, @filter) %>
+
 <%# Character Section %>
 <%= if String.length(@search) <= 2 && @user && @tab == 3 do %>
 
@@ -42,28 +44,44 @@
   <% end %>
 <% end %>
 
-<%= divider(:mod, Enum.count(@mods), @user && @user.moderator) %>
+<%= divider(:mod, Enum.count(mods), @user && @user.moderator) %>
 
 <%# New Mod Form %>
 <%= if is_mod?(@changeset) && new?(@changeset), do: render "rename_form.html", assigns %>
 
-<%= for mod <- @mods do %>
+<%= for mod <- mods do %>
   <%= if is_mod?(@changeset) && @changeset.data.id == mod.id do %>
     <%= render "rename_form.html", assigns %>
   <% else %>
     <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:mod, mod.id, @filter), do: " active" %>" phx-click='filter' phx-value-mod='<%= mod.id %>'>
       <span class='flex-grow-1'>
         <%= if @user do %>
-          <button class='btn btn-sm btn-link p-0' type='button' phx-click='<%= if active?(@user, mod), do: "de" %>activate' phx-value-mod='<%= mod.id %>'><i class='icon-<%= unless active?(@user, mod), do: "in" %>active'></i></button>
+          <button class='btn btn-sm btn-link p-0' type='button' phx-click='deactivate' phx-value-mod='<%= mod.id %>'><i class='icon-active'></i></button>
         <% end %><%= name(mod.name, @search) %>
       </span>
 
       <%= if @user && @user.moderator do %>
         <button class='btn btn-link badge badge-light badge-pill' type='button'  phx-hook='tooltip' phx-click='edit' phx-value-mod='<%= mod.id %>' title='Edit Mod'><%= mod.item_count %></button>
       <% else %>
-        <span class='badge badge-light badge-pill' phx-hook='tooltip' title='<%= count_tooltip(@user && @user.hide) %>'><%= mod.item_count %></span>
+        <span class='badge badge-light badge-pill' phx-hook='tooltip' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= mod.item_count %></span>
       <% end %>
     </li>
+  <% end %>
+<% end %>
+
+<%= if @user && String.length(@search) < 3 do %>
+  <% imods = inactive_mods(@mod_options, mods) %>
+
+  <%= if Enum.count(imods) > 0 do %>
+    <%= divider(:mod, Enum.count(imods), false, "Inactive ") %>
+    <%= for {name, id} <- imods do %>
+      <li class="list-group-item small p-1 d-flex justify-content-between align-items-center">
+        <span class='flex-grow-1'>
+          <button class='btn btn-sm btn-link p-0' type='button' phx-click='activate' phx-value-mod='<%= id %>'><i class='icon-inactive'></i></button>
+          <%= name %>
+        </span>
+      </li>
+    <% end %>
   <% end %>
 <% end %>
 

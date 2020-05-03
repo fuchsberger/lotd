@@ -19,11 +19,6 @@ defmodule Lotd.SkyrimTest do
 #       location
 #     end
 
-#     test "list_locations/0 returns all locations" do
-#       location = location_fixture()
-#       assert Gallery.list_locations() == [location]
-#     end
-
 #     test "get_location!/1 returns the location with given id" do
 #       location = location_fixture()
 #       assert Gallery.get_location!(location.id) == location
@@ -139,11 +134,6 @@ defmodule Lotd.SkyrimTest do
         |> Gallery.create_mod()
 
       mod
-    end
-
-    test "list_mods/0 returns all mods" do
-      mod = mod_fixture()
-      assert Gallery.list_mods() == [mod]
     end
 
     test "get_mod!/1 returns the mod with given id" do

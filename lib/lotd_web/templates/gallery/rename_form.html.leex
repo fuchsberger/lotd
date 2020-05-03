@@ -22,16 +22,20 @@
 
     <%= if is_display?(@changeset) do %>
       <div class="form-group mb-1">
-        <%= hidden_input f, :room_id, [] %>
-        <%= text_input f, :room_name, class: "form-control form-control-sm #{control_class(f, :room_id)}", placeholder: "Room (select above)" %>
+        <%= select f, :room_id, @room_options,
+          class: "form-control form-control-sm #{control_class(f, :room_id)}",
+          prompt: "Select Room"
+        %>
         <%= error_tag f, :room_id %>
       </div>
     <% end %>
 
     <%= if is_location?(@changeset) do %>
       <div class="form-group mb-1">
-        <%= hidden_input f, :region_id, [] %>
-        <%= text_input f, :region_name, class: "form-control form-control-sm #{control_class(f, :region_id)}", placeholder: "Region (select above)" %>
+        <%= select f, :region_id, @region_options,
+          class: "form-control form-control-sm #{control_class(f, :region_id)}",
+          prompt: "Select Region"
+        %>
         <%= error_tag f, :region_id %>
       </div>
     <% end %>

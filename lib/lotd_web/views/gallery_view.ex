@@ -1,7 +1,7 @@
 defmodule LotdWeb.GalleryView do
   use LotdWeb, :view
 
-  alias Lotd.Accounts.Character
+  alias Lotd.Accounts.{Character, User}
   alias Lotd.Gallery.{Item, Room, Display, Region, Location, Mod}
 
   def active?(user, mod), do: Enum.member?(active_character(user).mods, mod.id)
@@ -55,6 +55,266 @@ defmodule LotdWeb.GalleryView do
   end
 
   def new?(changeset), do: changeset && changeset.data.__meta__.state == :built
+
+  def displays(items) do
+    items
+    |> Enum.map(& &1.display)
+    |> Enum.uniq()
+    |> Enum.sort(&(&1.name < &2.name))
+    |> Enum.map(fn display ->
+        item_ids = items |> Enum.filter(& &1.display_id == display.id) |> Enum.map(& &1.id)
+        Map.put(display, :items, item_ids)
+      end)
+  end
+
+  def displays(displays, user, search, filter) do
+    case user do
+      nil ->
+        displays
+        |> filter(search, filter)
+        |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide: false} ->
+        displays
+        |> filter(search, filter)
+        |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide: true} ->
+        character = Enum.find(user.characters, & &1.id == user.active_character_id)
+
+        displays
+        |> filter(search, filter)
+        |> Enum.map(fn display ->
+          count =
+            display.items
+            |> Enum.filter(& not Enum.member?(character.items, &1))
+            |> Enum.count()
+
+          Map.put(display, :item_count, count)
+        end)
+    end
+  end
+
+  def items(items, search, filter, user) do
+    items
+    |> filter(search, filter)
+    |> filter_hide(user)
+    |> Enum.take(200)
+  end
+
+  def locations(items) do
+    items
+    |> Enum.map(& &1.location)
+    |> Enum.uniq()
+    |> Enum.reject(& is_nil(&1))
+    |> Enum.sort(&(&1.name < &2.name))
+    |> Enum.map(fn location ->
+        item_ids = items |> Enum.filter(& &1.location_id == location.id) |> Enum.map(& &1.id)
+        Map.put(location, :items, item_ids)
+      end)
+  end
+
+  def locations(locations, user, search, filter) do
+    case user do
+      nil ->
+        locations
+        |> filter(search, filter)
+        |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide: false} ->
+        locations
+        |> filter(search, filter)
+        |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide: true} ->
+        character = Enum.find(user.characters, & &1.id == user.active_character_id)
+
+        locations
+        |> filter(search, filter)
+        |> Enum.map(fn location ->
+          count =
+            location.items
+            |> Enum.filter(& not Enum.member?(character.items, &1))
+            |> Enum.count()
+
+          Map.put(location, :item_count, count)
+        end)
+    end
+  end
+
+  def mods(items, user, search, filter) do
+    mods =
+      items
+      |> Enum.map(& &1.mod)
+      |> Enum.uniq()
+      |> Enum.sort(&(&1.name < &2.name))
+      |> Enum.map(fn mod ->
+          item_ids = items |> Enum.filter(& &1.mod_id == mod.id) |> Enum.map(& &1.id)
+          Map.put(mod, :items, item_ids)
+        end)
+
+    case user do
+      nil ->
+        mods
+        |> filter(search, filter)
+        |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide: false} ->
+        mods
+        |> filter(search, filter)
+        |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide: true} ->
+        character = Enum.find(user.characters, & &1.id == user.active_character_id)
+
+        mods
+        |> filter(search, filter)
+        |> Enum.map(fn mod ->
+          count =
+            mod.items
+            |> Enum.filter(& not Enum.member?(character.items, &1))
+            |> Enum.count()
+
+          Map.put(mod, :item_count, count)
+        end)
+    end
+  end
+
+  def inactive_mods(all_ids, active_mods) do
+    Enum.filter(all_ids, fn {_name, id} ->
+      active_ids = Enum.map(active_mods, & &1.id)
+      not Enum.member?(active_ids, id)
+    end)
+  end
+
+  def regions(locations, user, search) do
+    regions =
+      locations
+      |> Enum.map(& &1.region)
+      |> Enum.uniq()
+      |> filter(search, nil)
+      |> Enum.sort(&(&1.name < &2.name))
+      |> Enum.map(fn region ->
+        item_ids =
+          locations
+          |> Enum.filter(& &1.region_id == region.id)
+          |> Enum.map(& &1.items)
+          |> List.flatten()
+        Map.put(region, :items, item_ids)
+      end)
+
+    case user do
+      nil -> Enum.map(regions, & Map.put(&1, :item_count, Enum.count(&1.items)))
+      %User{hide: false} -> Enum.map(regions, & Map.put(&1, :item_count, Enum.count(&1.items)))
+      %User{hide: true} ->
+        character = Enum.find(user.characters, & &1.id == user.active_character_id)
+
+        Enum.map(regions, fn region ->
+          count =
+            region.items
+            |> Enum.filter(& not Enum.member?(character.items, &1))
+            |> Enum.count()
+
+          Map.put(region, :item_count, count)
+        end)
+    end
+  end
+
+  def rooms(displays, user, search) do
+    rooms =
+      displays
+      |> Enum.map(& &1.room)
+      |> Enum.uniq()
+      |> filter(search, nil)
+      |> Enum.sort(&(&1.name < &2.name))
+      |> Enum.map(fn room ->
+        item_ids =
+          displays
+          |> Enum.filter(& &1.room_id == room.id)
+          |> Enum.map(& &1.items)
+          |> List.flatten()
+        Map.put(room, :items, item_ids)
+      end)
+
+    case user do
+      nil -> Enum.map(rooms, & Map.put(&1, :item_count, Enum.count(&1.items)))
+      %User{hide: false} -> Enum.map(rooms, & Map.put(&1, :item_count, Enum.count(&1.items)))
+      %User{hide: true} ->
+        character = Enum.find(user.characters, & &1.id == user.active_character_id)
+
+        Enum.map(rooms, fn room ->
+          count =
+            room.items
+            |> Enum.filter(& not Enum.member?(character.items, &1))
+            |> Enum.count()
+
+          Map.put(room, :item_count, count)
+        end)
+    end
+  end
+
+  def filter([], _search, _filter), do: []
+
+  def filter(list, search, filter) do
+    case String.length(search) > 2 do
+      false ->
+        # apply filter
+        case {List.first(list).__struct__, filter} do
+          {_, nil} -> list
+
+          {Display, {:display, id}} ->
+            room_id = Enum.find(list, & &1.id == id).room_id
+            Enum.filter(list, & &1.room_id == room_id)
+
+          {Display, {:room, room_id}} -> Enum.filter(list, & &1.room_id == room_id)
+
+          {Location, {:location, id}} ->
+            region_id = Enum.find(list, & &1.id == id).region_id
+            Enum.filter(list, & &1.region_id == region_id)
+
+          {Location, {:region, region_id}} -> Enum.filter(list, & &1.region_id == region_id)
+
+          {Item, {:display, id}} -> Enum.filter(list, & &1.display_id == id)
+          {Item, {:location, id}} -> Enum.filter(list, & &1.location_id == id)
+          {Item, {:mod, id}} -> Enum.filter(list, & &1.mod_id == id)
+
+          {Item, {:region, id}} ->
+            location_ids =
+              list
+              |> locations()
+              |> Enum.filter(& &1.region_id == id)
+              |> Enum.map(& &1.id)
+            Enum.filter(list, & Enum.member?(location_ids, &1.location_id))
+
+          {Item, {:room, id}} ->
+            display_ids =
+              list
+              |> displays()
+              |> Enum.filter(& &1.room_id == id)
+              |> Enum.map(& &1.id)
+            Enum.filter(list, & Enum.member?(display_ids, &1.display_id))
+
+          {_, _} -> list
+        end
+
+      true ->
+        # apply search
+        search = String.downcase(search, :ascii)
+        Enum.filter(list, fn entry ->
+          String.contains?(String.downcase(entry.name, :ascii), search)
+        end)
+    end
+  end
+
+  def filter_hide(list, user) do
+    case user do
+      nil -> list
+      %User{hide: false} -> list
+      %User{hide: true} ->
+        character = Enum.find(user.characters, & &1.id == user.active_character_id)
+        Enum.reject(list, & Enum.member?(character.items, &1.id))
+    end
+  end
 
   def searching?(query), do: String.length(query) > 2
 

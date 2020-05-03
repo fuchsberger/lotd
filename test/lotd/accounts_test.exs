@@ -99,16 +99,6 @@ defmodule Lotd.AccountsTest do
       {:ok, user: user_fixture()}
     end
 
-    test "list_characters/1 returns the user's characters with items", %{user: user} do
-      %Character{id: id} = character_fixture(@valid_attrs)
-      assert [%Character{id: ^id, items: []}] = Accounts.list_characters(user)
-    end
-
-    test "get_character!/1 returns the character with given id" do
-      %Character{id: id} = character_fixture(@valid_attrs)
-      assert %Character{id: ^id} = Accounts.get_character!(id)
-    end
-
     test "create_character/1 with valid data creates a character", %{user: user} do
       assert {:ok, %Character{name: n, user_id: i}} = Accounts.create_character(@valid_attrs)
       assert n == "name_new"
@@ -128,12 +118,6 @@ defmodule Lotd.AccountsTest do
     test "update_character/2 with invalid data returns error changeset" do
       character = character_fixture(@valid_attrs)
       assert {:error, %Ecto.Changeset{}} = Accounts.update_character(character, @invalid_attrs)
-    end
-
-    test "delete_character/1 deletes the character", %{user: user} do
-      character = character_fixture(user)
-      assert {:ok, %Character{}} = Accounts.delete_character(character)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_character!(character.id) end
     end
 
     test "change_character/1 returns a character changeset", %{user: user} do

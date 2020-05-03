@@ -37,32 +37,6 @@ defmodule Lotd.Accounts do
 
   # CHARACTERS -----------------------------------------------------------------------------------
 
-  def list_characters(%User{} = user) do
-    from(c in Character,
-      left_join: i in assoc(c, :items),
-      group_by: c.id,
-      select_merge: %{item_count: count(i.id)},
-      where: c.user_id == ^user.id,
-      order_by: c.name
-    )
-    |> Repo.all()
-  end
-
-  def get_character!(id), do:
-    Repo.get!(from(c in Character,
-      preload: [ items: ^from(i in Item, select: i.id), mods: ^from(m in Mod, select: m.id)]
-    ), id)
-
-  def get_character_mod_ids(%Character{} = character) do
-    Repo.all from m in Ecto.assoc(character, :mods), select: m.id
-  end
-
-  def get_character_item_ids(%Character{} = character) do
-    Repo.all from i in Ecto.assoc(character, :items), select: i.id
-  end
-
-  def load_character_items(character), do: Repo.preload(character, :items, force: true)
-
   def change_character(%Character{} = character, params \\ %{}),
     do: Character.changeset(character, params)
 
