@@ -145,10 +145,7 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("filter", %{"location" => id}, socket) do
     changeset = if socket.assigns.changeset && Map.has_key?(socket.assigns.changeset.data, :location_id) do
       location = Gallery.get_location!(String.to_integer(id))
-      Ecto.Changeset.change(socket.assigns.changeset, %{
-        location_id: location.id,
-        location_name: location.name
-      })
+      Ecto.Changeset.change(socket.assigns.changeset, %{location_id: location.id})
     else
       socket.assigns.changeset
     end
@@ -163,10 +160,7 @@ defmodule LotdWeb.GalleryLive do
   def handle_event("filter", %{"display" => id}, socket) do
     changeset = if socket.assigns.changeset && Map.has_key?(socket.assigns.changeset.data, :display_id) do
       display = Gallery.get_display!(String.to_integer(id))
-      Ecto.Changeset.change(socket.assigns.changeset, %{
-        display_id: display.id,
-        display_name: display.name
-      })
+      Ecto.Changeset.change(socket.assigns.changeset, %{display_id: display.id})
     else
       socket.assigns.changeset
     end
@@ -182,7 +176,7 @@ defmodule LotdWeb.GalleryLive do
 
     changeset = if socket.assigns.changeset && Map.has_key?(socket.assigns.changeset.data, :mod_id) do
       mod = Gallery.get_mod!(String.to_integer(id))
-      Ecto.Changeset.change(socket.assigns.changeset, %{mod_id: mod.id, mod_name: mod.name})
+      Ecto.Changeset.change(socket.assigns.changeset, %{mod_id: mod.id})
     else
       socket.assigns.changeset
     end

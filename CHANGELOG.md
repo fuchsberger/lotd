@@ -1,3 +1,11 @@
+## 0.6.10
+
+### Enhancments
+  - In hidden mod filters do no longer show up if there are no remaining items to collect.
+
+### Bug Fixes
+  - Moderation: Clicking on filters while editing an entry now correctly updates association id.
+
 ## 0.6.4
 
 ### New Features

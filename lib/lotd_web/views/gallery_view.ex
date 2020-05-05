@@ -22,6 +22,9 @@ defmodule LotdWeb.GalleryView do
 
   def edit?(changeset), do: changeset && changeset.data.__meta__.state == :loaded
 
+  def filter?(nil, _type), do: false
+  def filter?({ftype, _id}, type), do: ftype == type
+
   def filter?(_type, _id, nil), do: false
   def filter?(type, id, {filter_type, filter_id}), do: type == filter_type && id == filter_id
 
@@ -92,6 +95,7 @@ defmodule LotdWeb.GalleryView do
 
           Map.put(display, :item_count, count)
         end)
+        |> Enum.filter(& &1.item_count > 0)
     end
   end
 
@@ -139,6 +143,7 @@ defmodule LotdWeb.GalleryView do
 
           Map.put(location, :item_count, count)
         end)
+        |> Enum.filter(& &1.item_count > 0)
     end
   end
 
@@ -217,6 +222,7 @@ defmodule LotdWeb.GalleryView do
 
           Map.put(region, :item_count, count)
         end)
+        |> Enum.filter(& &1.item_count > 0)
     end
   end
 
@@ -250,6 +256,7 @@ defmodule LotdWeb.GalleryView do
 
           Map.put(room, :item_count, count)
         end)
+        |> Enum.filter(& &1.item_count > 0)
     end
   end
 
