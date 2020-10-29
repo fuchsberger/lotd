@@ -4,9 +4,10 @@
     <%= csrf_meta_tag() %>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="author" content="Alexander Fuchsberger"/>
+    <meta name="description" content="This tool allows you to easily keep track of the items you have collected for the Legacy of the Dragonborn Gallery. Simply sign in via Nexus and start collecting items."/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <title>LOTD Inventory Manager</title>
+    <title>LOTD Item Tracker</title>
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
   </head>
   <body>

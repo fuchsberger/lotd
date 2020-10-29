@@ -26,7 +26,8 @@ config :lotd, LotdWeb.Endpoint,
       "node_modules/webpack/bin/webpack.js",
       "--mode",
       "development",
-      "--watch-stdin",
+      "--color",
+      "--watch",
       cd: Path.expand("../assets", __DIR__)
     ]
   ]

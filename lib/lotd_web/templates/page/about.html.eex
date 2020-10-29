@@ -1,5 +1,7 @@
 <div class="container pt-2">
-  <h3>Introduction</h3>
+  <div class="content">
+  <h1 class="title">LOTD Item Tracker</h1>
+
   <p class="lead">This tool allows you to easily keep track of the items you have collected for the <a href='https://www.nexusmods.com/skyrimspecialedition/mods/11802' target='_blank'>Legacy of the Dragonborn Gallery</a>. Simply sign in via Nexus and start collecting items.</p>
   <p>I make no guarantees for the availability of the plattform and cannot be accounted for data loss.</p>
 
@@ -41,4 +43,5 @@
   <h4>Credits</h4>
   <p><strong>IceCreamAssassin</strong> and the entire LOTD team for creating such an awesome mod and allowing me to use their logo.<br>
   <strong>Pickysaurus</strong> for helping me with the Nexus API and coding a script to extract the necessary information from the involved esps.</p>
+  </div>
 </div>

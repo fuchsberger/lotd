@@ -1,47 +1,58 @@
 const path = require('path')
-const glob = require('glob')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = (env, options) => ({
-  stats: 'errors-warnings',
+  devtool: options.mode == 'development' ? 'source-map' : undefined,
+
+  // stats: 'minimal',
+
+  entry: './js/app.js',
+
   optimization: {
     minimizer: [
       new TerserPlugin({ test: /\.js(\?.*)?$/i, }),
       new OptimizeCSSAssetsPlugin({})
     ]
   },
-  entry: './js/app.js',
+
   output: {
     filename: 'app.js',
-    path: path.resolve(__dirname, '../priv/static/js')
+    path: path.resolve(__dirname, '../priv/static/js'),
+    publicPath: '/js/'
   },
+
   module: {
     rules: [
       {
+        // handles javaScript
         test: /\.js$/,
         exclude: /node_modules/i,
         use: { loader: 'babel-loader' }
       },
       {
-        test: /\.(s?)css$/i,
+        test: /\.s[ac]ss$/i,
         use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader'
+          MiniCssExtractPlugin.loader,  // extract CSS into separate file
+          'css-loader',                 // translates CSS into CommonJS
+          {
+            loader: 'sass-loader',      // compiles Sass to CSS
+            options: { sassOptions: { includePaths: ['node_modules/bulma/sass/']}}
+          }
         ]
       },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/i,
+        // handles icons font and logo
+        test: /\.(png|woff2)$/i,
         loader: 'url-loader',
-        options: { limit: 8192 }
+        options: { limit: 8192 } // 8 Kb
       }
     ]
   },
   plugins: [
     new MiniCssExtractPlugin({ filename: '../css/app.css' }),
-    new CopyWebpackPlugin([{ from: 'static/', to: '../' }])
+    new CopyWebpackPlugin({ patterns: [{ from: 'static/', to: '../' }]})
   ]
-});
+})
