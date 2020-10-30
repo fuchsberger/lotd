@@ -1,0 +1,43 @@
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <img class='ml-2' src="<%= Routes.static_path(@socket, "/images/logo_lotd.png") %>">
+
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div class='navbar-menu'>
+    <div class="navbar-start">
+      <%= live_patch [icon("displays"), "Gallery"],
+        to: Routes.gallery_path(@socket, :index),
+        class: "navbar-item#{if @live_action == :index, do: " active", else: ""}"
+      %>
+    </div>
+
+    <div class="navbar-end">
+      <%= live_patch [icon("home"), "About"],
+        to: Routes.gallery_path(@socket, :about),
+        class: "navbar-item#{if @live_action == :about, do: " active", else: ""}"
+      %>
+      <%= if is_nil(@user) do %>
+        <a id='login-button' class="navbar-item"><%= img_tag Routes.static_path(@socket, "/images/logo_nexus.png"), class: "mr-1" %> Sign In</a>
+        <%# Login Form (hidden) %>
+        <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
+          <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
+          <%= hidden_input(f, :api_key) %>
+        </form>
+      <% else %>
+        <%= link [img_tag(Routes.static_path(@socket, "/images/logo_nexus.png"), class: "mr-1"), "Logout"],
+          to: Routes.session_path(@socket, :delete, @user.id),
+          method: "delete",
+          class: "navbar-item",
+          title: "Logout #{@user.name}"
+        %>
+      <% end %>
+    </div>
+  </div>
+</nav>
+<%= @inner_content %>

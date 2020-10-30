@@ -14,12 +14,11 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    get "/about", PageController, :about
+    resources "/", SessionController, only: [:create, :delete]
 
-    live "/gallery", GalleryLive
-
-    resources "/session", SessionController, only: [:create, :delete]
+    live "/", GalleryLive, :index
+    live "/about", GalleryLive, :about
+    live "/gallery", GalleryLive, :gallery
   end
 
   scope "/", LotdWeb do

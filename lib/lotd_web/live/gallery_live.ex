@@ -1,12 +1,12 @@
 defmodule LotdWeb.GalleryLive do
 
-  use Phoenix.LiveView, container: {:div, class: "container"}
+  use Phoenix.LiveView,
+    container: {:div, class: "container"},
+    layout: {LotdWeb.LayoutView, "live.html"}
 
   alias Lotd.{Accounts, Gallery, Repo}
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Display, Location, Mod, Room, Region}
-
-  def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
   def mount(_params, session, socket) do
     user = if user_id = Map.get(session, "user_id"), do: Accounts.get_user!(user_id), else: nil
