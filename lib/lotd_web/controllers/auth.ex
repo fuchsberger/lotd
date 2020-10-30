@@ -1,12 +1,10 @@
 defmodule LotdWeb.Auth do
 
   import Plug.Conn
-  import Phoenix.Controller
 
   def init(opts), do: opts
 
   def call(conn, _opts) do
-
     user_id = get_session(conn, :user_id)
 
     cond do
@@ -20,53 +18,19 @@ defmodule LotdWeb.Auth do
   end
 
   defp put_current_user(conn, user) do
-    token = Phoenix.Token.sign(conn, "user_socket", user.id)
-
-    conn
-    |> assign(:current_user, user)
-    |> assign(:user_token, token)
+    assign(conn, :user_token, Phoenix.Token.sign(conn, "user_socket", user.id))
   end
 
   def login(conn, user) do
-    # load user, active_character and it's items and mods
-    user = Lotd.Accounts.get_user(user.id)
-
     case user do
       nil ->
-        assign(conn, :current_user, nil)
+        conn
       user ->
         conn
-        |> assign(:current_user, user)
         |> put_session(:user_id, user.id)
         |> configure_session(renew: true)
     end
   end
 
-  def logout(conn) do
-    configure_session(conn, drop: true)
-  end
-
-  def user(conn, _opts) do
-    if conn.assigns.current_user do
-      conn
-    else
-      conn
-      |> put_status(401)
-      |> put_view(LotdWeb.ErrorView)
-      |> render("401.html")
-      |> halt()
-    end
-  end
-
-  def admin(conn, _opts) do
-    if conn.assigns.current_user.admin do
-      conn
-    else
-      conn
-      |> put_status(403)
-      |> put_view(LotdWeb.ErrorView)
-      |> render("403.html")
-      |> halt()
-    end
-  end
+  def logout(conn), do: configure_session(conn, drop: true)
 end

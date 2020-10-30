@@ -19,11 +19,6 @@ defmodule LotdWeb.Router do
     live "/", GalleryLive, :index
     live "/about", GalleryLive, :about
     live "/gallery", GalleryLive, :gallery
-  end
-
-  scope "/", LotdWeb do
-    pipe_through [:browser, :user, :admin]
-
-    live "/users", UserLive
+    live "/users", UserLive, :users
   end
 end
