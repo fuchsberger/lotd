@@ -1,6 +1,0 @@
-<div class="alert alert-<%= @color %> alert-dismissible fade show" role="alert">
-  <%= @msg %>
-  <button type="button" class="close" phx-click="dismiss" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
