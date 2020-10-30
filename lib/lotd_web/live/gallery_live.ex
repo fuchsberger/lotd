@@ -15,6 +15,7 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:items, Gallery.list_items(user))
     |> assign(:show_menu?, false)
     |> assign(:mod_options, Gallery.list_mod_options())
+    |> assign(:page_title, "LOTD Tracker")
     |> assign(:search, "")
     |> assign(:tab, 3)
     |> assign(:user, user)}

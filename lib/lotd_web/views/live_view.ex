@@ -1,4 +1,5 @@
 defmodule LotdWeb.LiveView do
+
   use LotdWeb, :view
 
   alias Lotd.Accounts.{Character, User}
