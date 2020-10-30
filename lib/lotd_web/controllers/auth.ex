@@ -8,17 +8,11 @@ defmodule LotdWeb.Auth do
     user_id = get_session(conn, :user_id)
 
     cond do
-      user = conn.assigns[:current_user] ->
-        put_current_user(conn, user)
       user = user_id && Lotd.Accounts.get_user(user_id) ->
-        put_current_user(conn, user)
+        assign(conn, :user_token, Phoenix.Token.sign(conn, "user_socket", user.id))
       true ->
-        assign(conn, :current_user, nil)
+        conn
     end
-  end
-
-  defp put_current_user(conn, user) do
-    assign(conn, :user_token, Phoenix.Token.sign(conn, "user_socket", user.id))
   end
 
   def login(conn, user) do
