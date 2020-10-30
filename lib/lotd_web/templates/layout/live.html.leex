@@ -2,14 +2,14 @@
   <div class="navbar-brand">
     <img class='ml-2' src="<%= Routes.static_path(@socket, "/images/logo_lotd.png") %>">
 
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+    <a role="button" class="navbar-burger<%= if @show_menu?, do: " is-active" %>" data-target='nav-menu' aria-label="menu" aria-expanded="false" phx-click='toggle' phx-value-type='menu'>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
     </a>
   </div>
 
-  <div class='navbar-menu'>
+  <div class='navbar-menu<%= if @show_menu?, do: " is-active" %>' id='nav-menu'>
     <div class="navbar-start">
       <%= live_patch [icon("displays"), "Gallery"],
         to: Routes.gallery_path(@socket, :index),
@@ -40,4 +40,4 @@
     </div>
   </div>
 </nav>
-<%= @inner_content %>
+<div class='container'><%= @inner_content %></div>

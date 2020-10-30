@@ -1,8 +1,6 @@
 defmodule LotdWeb.GalleryLive do
 
-  use Phoenix.LiveView,
-    container: {:div, class: "container"},
-    layout: {LotdWeb.LayoutView, "live.html"}
+  use Phoenix.LiveView, layout: {LotdWeb.LayoutView, "live.html"}
 
   alias Lotd.{Accounts, Gallery, Repo}
   alias Lotd.Accounts.Character
@@ -15,6 +13,7 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:changeset, nil)
     |> assign(:filter, nil)
     |> assign(:items, Gallery.list_items(user))
+    |> assign(:show_menu?, false)
     |> assign(:mod_options, Gallery.list_mod_options())
     |> assign(:search, "")
     |> assign(:tab, 3)
@@ -213,6 +212,12 @@ defmodule LotdWeb.GalleryLive do
         {:noreply, assign(socket, :user, Accounts.get_user!(socket.assigns.user.id))}
 
       {:error, _changeset} -> {:noreply, socket}
+    end
+  end
+
+  def handle_event("toggle", %{"type" => type}, socket) do
+    case type do
+      "menu" -> {:noreply, assign(socket, :show_menu?, !socket.assigns.show_menu?)}
     end
   end
 
