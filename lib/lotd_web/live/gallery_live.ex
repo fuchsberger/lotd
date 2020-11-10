@@ -2,6 +2,7 @@ defmodule LotdWeb.GalleryLive do
 
   use Phoenix.LiveView, layout: {LotdWeb.LayoutView, "live.html"}
 
+  alias LotdWeb.Router.Helpers, as: Routes
   alias Lotd.{Accounts, Gallery, Repo}
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Display, Location, Mod, Room, Region}
@@ -10,6 +11,9 @@ defmodule LotdWeb.GalleryLive do
 
   def mount(_params, session, socket) do
     user = if user_id = Map.get(session, "user_id"), do: Accounts.get_user!(user_id), else: nil
+
+    # load all items once
+    # items = Gallery.
 
     {:ok, socket
     |> assign(:changeset, nil)
@@ -24,10 +28,15 @@ defmodule LotdWeb.GalleryLive do
   end
 
   def handle_params(_params, _uri, socket) do
-    # set page title
-    IO.inspect socket.assigns.live_action
-    title = socket.assigns.live_action |> Atom.to_string() |> String.capitalize()
-    {:noreply,  assign(socket, page_title: title)}
+    case socket.assigns.live_action do
+      :index ->
+        {:noreply, push_patch(socket, to: Routes.gallery_path(socket, :hall_of_heroes))}
+
+      action ->
+        # set and assign page title
+        title = action |> Atom.to_string() |> String.capitalize()
+        {:noreply,  assign(socket, page_title: title)}
+    end
   end
 
   defp active_character(socket), do: socket.assigns.user && Enum.find(socket.assigns.user.characters, & &1.id == socket.assigns.user.active_character_id)

@@ -20,7 +20,11 @@ defmodule LotdWeb.Router do
 
     live "/", GalleryLive, :index
     live "/about", GalleryLive, :about
-    live "/gallery", GalleryLive, :gallery
+    live "/armory", GalleryLive, :armory
+    live "/hall_of_heroes", GalleryLive, :hall_of_heroes
+    live "/dragonborn_hall", GalleryLive, :dragonborn_hall
+    live "/safehouse", GalleryLive, :safehouse
+    live "/hall_of_secrets", GalleryLive, :hall_of_secrets
     live "/locations", GalleryLive, :locations
     live "/mods", GalleryLive, :mods
     live "/users", UserLive, :users
