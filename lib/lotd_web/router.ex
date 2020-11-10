@@ -1,5 +1,7 @@
 defmodule LotdWeb.Router do
+
   use LotdWeb, :router
+  import Phoenix.LiveView.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -19,6 +21,8 @@ defmodule LotdWeb.Router do
     live "/", GalleryLive, :index
     live "/about", GalleryLive, :about
     live "/gallery", GalleryLive, :gallery
+    live "/locations", GalleryLive, :locations
+    live "/mods", GalleryLive, :mods
     live "/users", UserLive, :users
   end
 end

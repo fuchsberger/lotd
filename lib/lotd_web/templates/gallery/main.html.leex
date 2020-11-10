@@ -1,0 +1,7 @@
+<%= case @live_action do
+    :about -> render "about.html", assigns
+    :gallery -> render "gallery.html", assigns
+    :locations -> render "locations.html", assigns
+    :mods -> render "mods.html", assigns
+  end
+%>

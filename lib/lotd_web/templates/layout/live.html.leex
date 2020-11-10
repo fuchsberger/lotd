@@ -12,15 +12,23 @@
   <div class='navbar-menu<%= if @show_menu?, do: " is-active" %>' id='nav-menu'>
     <div class="navbar-start">
       <%= live_patch [icon("displays"), "Gallery"],
-        to: Routes.gallery_path(@socket, :index),
-        class: "navbar-item#{if @live_action == :index, do: " active", else: ""}"
+        to: Routes.gallery_path(@socket, :gallery),
+        class: "navbar-item#{if @live_action == :gallery, do: " is-active"}"
+      %>
+      <%= live_patch [icon("location"), "Locations"],
+        to: Routes.gallery_path(@socket, :locations),
+        class: "navbar-item#{if @live_action == :locations, do: " is-active"}"
+      %>
+      <%= live_patch [icon("mod"), "Mods"],
+        to: Routes.gallery_path(@socket, :mods),
+        class: "navbar-item#{if @live_action == :mods, do: " is-active"}"
       %>
     </div>
 
     <div class="navbar-end">
       <%= live_patch [icon("home"), "About"],
         to: Routes.gallery_path(@socket, :about),
-        class: "navbar-item#{if @live_action == :about, do: " active", else: ""}"
+        class: "navbar-item#{if @live_action == :about, do: " active"}"
       %>
       <%= if is_nil(@user) do %>
         <a id='login-button' class="navbar-item"><%= img_tag Routes.static_path(@socket, "/images/logo_nexus.png"), class: "mr-1" %> Sign In</a>

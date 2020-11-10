@@ -4,7 +4,7 @@ defmodule LotdWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_lotd_key",
-    max_age: 24*60*60*10, # 10 days
+    max_age: 24*60*60*2, # 2 days only, but refreshes when used
     signing_salt: "8y5LmsqX"
   ]
 

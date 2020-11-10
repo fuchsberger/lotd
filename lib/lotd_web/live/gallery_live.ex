@@ -6,6 +6,8 @@ defmodule LotdWeb.GalleryLive do
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Display, Location, Mod, Room, Region}
 
+  def render(assigns), do: Phoenix.View.render(LotdWeb.GalleryView, "main.html", assigns)
+
   def mount(_params, session, socket) do
     user = if user_id = Map.get(session, "user_id"), do: Accounts.get_user!(user_id), else: nil
 
@@ -13,12 +15,19 @@ defmodule LotdWeb.GalleryLive do
     |> assign(:changeset, nil)
     |> assign(:filter, nil)
     |> assign(:items, Gallery.list_items(user))
-    |> assign(:show_menu?, false)
     |> assign(:mod_options, Gallery.list_mod_options())
     |> assign(:page_title, "LOTD Tracker")
+    |> assign(:show_menu?, false)
     |> assign(:search, "")
     |> assign(:tab, 3)
     |> assign(:user, user)}
+  end
+
+  def handle_params(_params, _uri, socket) do
+    # set page title
+    IO.inspect socket.assigns.live_action
+    title = socket.assigns.live_action |> Atom.to_string() |> String.capitalize()
+    {:noreply,  assign(socket, page_title: title)}
   end
 
   defp active_character(socket), do: socket.assigns.user && Enum.find(socket.assigns.user.characters, & &1.id == socket.assigns.user.active_character_id)

@@ -9,7 +9,9 @@ defmodule LotdWeb.Auth do
 
     cond do
       user = user_id && Lotd.Accounts.get_user(user_id) ->
-        assign(conn, :user_token, Phoenix.Token.sign(conn, "user_socket", user.id))
+        conn
+        |> configure_session(renew: true)
+        |> assign(:user_token, Phoenix.Token.sign(conn, "user_socket", user.id))
       true ->
         conn
     end

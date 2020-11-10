@@ -13,7 +13,7 @@ module.exports = (env, options) => ({
 
   optimization: {
     minimizer: [
-      new TerserPlugin({ test: /\.js(\?.*)?$/i, }),
+      // new TerserPlugin({ test: /\.js(\?.*)?$/i, }),
       new OptimizeCSSAssetsPlugin({})
     ]
   },
@@ -28,12 +28,12 @@ module.exports = (env, options) => ({
     rules: [
       {
         // handles javaScript
-        test: /\.js$/,
+        test: /\.js$/i,
         exclude: /node_modules/i,
         use: { loader: 'babel-loader' }
       },
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.scss$/i,
         use: [
           MiniCssExtractPlugin.loader,  // extract CSS into separate file
           'css-loader',                 // translates CSS into CommonJS

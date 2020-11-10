@@ -1,4 +1,4 @@
-defmodule LotdWeb.LiveView do
+defmodule LotdWeb.GalleryView do
 
   use LotdWeb, :view
 
