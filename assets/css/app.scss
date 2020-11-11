@@ -1,14 +1,32 @@
-@import "./bulma";
-@import "./icons";
-// @import "./navbar";
-// @import "./gallery";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-// #left-panel { width: 280px!important;}
+/* Directives */
 
-// .list-group-item.active{
-//   color: #0c5460;
-//   background-color: #d1ecf1;
-//   border-color: #bee5eb;
-// }
+.bg-menu { background-color: #002a32; }
 
-// .list-group-item button { line-height: 1.0; }
+header nav a {
+  @apply block;
+  @apply mt-1;
+  @apply px-2;
+  @apply py-1;
+  @apply rounded;
+  color: #00d6d6;
+  font-weight: 700;
+}
+
+@screen sm {
+  header nav a {
+    @apply mt-0;
+    @apply ml-2;
+    @apply p-0;
+  }
+}
+
+header nav a:hover {
+  @apply bg-gray-800;
+  @apply text-gray-300;
+}
+
+

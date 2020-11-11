@@ -1,7 +1,10 @@
 <%= case @live_action do
-    :about -> render "about.html", assigns
-    :gallery -> render "gallery.html", assigns
-    :locations -> render "locations.html", assigns
+    :home -> render "home.html", assigns
+    :armory -> render "armory.html", assigns
+    :hall_of_heroes -> render "hall_of_heroes.html", assigns
+    :dragonborn_hall -> render "dragonborn_hall.html", assigns
+    :safehouse -> render "safehouse.html", assigns
+    :hall_of_secrets -> render "hall_of_secrets.html", assigns
     :mods -> render "mods.html", assigns
   end
 %>

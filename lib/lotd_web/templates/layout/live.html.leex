@@ -1,67 +1,64 @@
-<nav class="navbar is-light" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <img class='ml-2' src="<%= Routes.static_path(@socket, "/images/logo_lotd.png") %>">
+<header class='bg-menu sm:flex sm:items-center sm:justify-between sm:px-4'>
+  <div class='flex items-center justify-between text-menu px-4 sm:p-0'>
+    <%# Logo %>
+    <img src="<%= Routes.static_path(@socket, "/images/logo_lotd.png") %>">
 
-    <a role="button" class="navbar-burger<%= if @show_menu?, do: " is-active" %>" data-target='nav-menu' aria-label="menu" aria-expanded="false" phx-click='toggle' phx-value-type='menu'>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-
-  <div class='navbar-menu<%= if @show_menu?, do: " is-active" %>' id='nav-menu'>
-    <div class="navbar-start">
-      <%= live_patch [icon("home"), "About"],
-        to: Routes.gallery_path(@socket, :about),
-        class: "navbar-item#{if @live_action == :about, do: " active"}"
-      %>
-      <%= live_patch [icon("replica"), "Hall of Heroes"],
-        to: Routes.gallery_path(@socket, :hall_of_heroes),
-        class: "navbar-item#{if @live_action == :hall_of_heroes, do: " is-active"}"
-      %>
-      <%= live_patch [icon("replica"), "East Exhibit Halls"],
-        to: Routes.gallery_path(@socket, :hall_of_heroes),
-        class: "navbar-item#{if @live_action == :hall_of_heroes, do: " is-active"}"
-      %>
-      <%= live_patch [icon("replica"), "Library"],
-        to: Routes.gallery_path(@socket, :armory),
-        class: "navbar-item#{if @live_action == :armory, do: " is-active"}"
-      %>
-      <%= live_patch [icon("replica"), "Armory"],
-        to: Routes.gallery_path(@socket, :armory),
-        class: "navbar-item#{if @live_action == :armory, do: " is-active"}"
-      %>
-      <%= live_patch [icon("replica"), "Safehouse"],
-        to: Routes.gallery_path(@socket, :armory),
-        class: "navbar-item#{if @live_action == :armory, do: " is-active"}"
-      %>
-      <%= live_patch [icon("location"), "Other Rooms"],
-        to: Routes.gallery_path(@socket, :locations),
-        class: "navbar-item#{if @live_action == :locations, do: " is-active"}"
-      %>
-      <%= live_patch [icon("mod"), "Mods"],
-        to: Routes.gallery_path(@socket, :mods),
-        class: "navbar-item#{if @live_action == :mods, do: " is-active"}"
-      %>
-    </div>
-
-    <div class="navbar-end">
-      <%= if is_nil(@user) do %>
-        <a id='login-button' class="navbar-item"><%= img_tag Routes.static_path(@socket, "/images/logo_nexus.png"), class: "mr-1" %> Sign In</a>
-        <%# Login Form (hidden) %>
-        <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
-          <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
-          <%= hidden_input(f, :api_key) %>
-        </form>
-      <% else %>
-        <%= link [img_tag(Routes.static_path(@socket, "/images/logo_nexus.png"), class: "mr-1"), "Logout"],
-          to: Routes.session_path(@socket, :delete, @user.id),
-          method: "delete",
-          class: "navbar-item",
-          title: "Logout #{@user.name}"
-        %>
-      <% end %>
+    <%# Mobile Menu Button %>
+    <div class="sm:hidden">
+      <button type='button' class='block w-12 h-12 px-3' phx-click='toggle' phx-value-type='menu'>
+        <svg class='w-6 h-6 fill-current text-gray-300' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <path class='<%= if @show_menu?, do: "hidden", else: "block" %>' d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z"/>
+          <path class='<%= if @show_menu?, do: "block", else: "hidden" %>' d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"/>
+        </svg>
+      </button>
     </div>
   </div>
-</nav>
-<div class='container'><%= @inner_content %></div>
+
+  <nav class='px-2 pt-2 pb-4 sm:flex sm:p-0 <%= if @show_menu?, do: "block", else: "hidden" %>'>
+    <%= live_patch "Home",
+      to: Routes.gallery_path(@socket, :home),
+      class: "#{if @live_action == :home, do: " active"}"
+    %>
+    <%= live_patch "Hall of Heroes",
+      to: Routes.gallery_path(@socket, :hall_of_heroes),
+      class: "#{if @live_action == :hall_of_heroes, do: " is-active"}"
+    %>
+    <%= live_patch "East Exhibit Halls",
+      to: Routes.gallery_path(@socket, :hall_of_heroes),
+      class: "#{if @live_action == :hall_of_heroes, do: " is-active"}"
+    %>
+    <%= live_patch "Library",
+      to: Routes.gallery_path(@socket, :armory),
+      class: "#{if @live_action == :armory, do: " is-active"}"
+    %>
+    <%= live_patch "Armory",
+      to: Routes.gallery_path(@socket, :armory),
+      class: "#{if @live_action == :armory, do: " is-active"}"
+    %>
+    <%= live_patch "Safehouse",
+      to: Routes.gallery_path(@socket, :armory),
+      class: "#{if @live_action == :armory, do: " is-active"}"
+    %>
+    <%= live_patch "Mods",
+      to: Routes.gallery_path(@socket, :mods),
+      class: "#{if @live_action == :mods, do: " is-active"}"
+    %>
+    <%= if is_nil(@user) do %>
+      <a id='login-button'><%# img_tag Routes.static_path(@socket, "/images/logo_nexus.png"), class: "mr-1" %> Sign In</a>
+      <%# Login Form (hidden) %>
+      <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
+        <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
+        <%= hidden_input(f, :api_key) %>
+      </form>
+    <% else %>
+      <%# link [img_tag(Routes.static_path(@socket, "/images/logo_nexus.png"), class: "mr-1"), "Logout"],
+        to: Routes.session_path(@socket, :delete, @user.id),
+        method: "delete",
+        class: "navbar-item",
+        title: "Logout #{@user.name}"
+      %>
+    <% end %>
+  </nav>
+</header>
+
+<%= @inner_content %>

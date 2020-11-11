@@ -18,8 +18,7 @@ defmodule LotdWeb.Router do
 
     resources "/", SessionController, only: [:create, :delete]
 
-    live "/", GalleryLive, :index
-    live "/about", GalleryLive, :about
+    live "/", GalleryLive, :home
     live "/armory", GalleryLive, :armory
     live "/hall_of_heroes", GalleryLive, :hall_of_heroes
     live "/dragonborn_hall", GalleryLive, :dragonborn_hall

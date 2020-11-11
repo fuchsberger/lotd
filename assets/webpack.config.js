@@ -13,7 +13,7 @@ module.exports = (env, options) => ({
 
   optimization: {
     minimizer: [
-      // new TerserPlugin({ test: /\.js(\?.*)?$/i, }),
+      new TerserPlugin({ test: /\.js(\?.*)?$/i, }),
       new OptimizeCSSAssetsPlugin({})
     ]
   },
@@ -33,13 +33,23 @@ module.exports = (env, options) => ({
         use: { loader: 'babel-loader' }
       },
       {
-        test: /\.scss$/i,
+        test: /\.[s]?css$/,
         use: [
           MiniCssExtractPlugin.loader,  // extract CSS into separate file
           'css-loader',                 // translates CSS into CommonJS
+          'sass-loader',                // compiles Sass to CSS
           {
-            loader: 'sass-loader',      // compiles Sass to CSS
-            options: { sassOptions: { includePaths: ['node_modules/bulma/sass/']}}
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                ident: 'postcss',
+                plugins: [
+                  require("postcss-import"),
+                  require('tailwindcss'),
+                  require('autoprefixer')
+                ]
+              }
+            }
           }
         ]
       },

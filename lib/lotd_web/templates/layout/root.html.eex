@@ -9,7 +9,7 @@
     <%= live_title_tag @page_title, suffix: " | LOTD Tracker" %>
     <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
   </head>
-  <body>
+  <body class='bg-black text-white'>
     <%= @inner_content %>
     <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
   </body>
