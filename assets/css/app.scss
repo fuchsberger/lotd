@@ -6,19 +6,14 @@
 
 @layer components {
 
+  button:focus { @apply outline-none; }
+
   button.default {
     @apply h-8 bg-gray-800 border-gray-700 border rounded text-sm text-gray-300 leading-tight;
   }
 
-  button.default:focus { @apply outline-none; }
-
-
-
   button.default:hover { @apply bg-gray-700 text-white; }
   button.default.active {@apply bg-gray-600 text-white !important; }
-
-
-
 
   .bg-menu{ background-color: #002a32; }
 
@@ -41,7 +36,7 @@
 
   button.mobile{ @apply w-8 h-8 m-2 p-1 rounded-md text-gray-400; }
 
-  button.mobile:focus { @apply outline-none border-none; }
+  button.mobile:focus { @apply border-none; }
 
   button.mobile:hover,
   button.mobile.active {

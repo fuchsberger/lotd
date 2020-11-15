@@ -6,7 +6,7 @@ defmodule Lotd.Accounts do
 
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
-  alias Lotd.Gallery.{Item, Mod}
+  alias Lotd.Gallery.{Mod}
 
   # user
   def list_users do
@@ -15,13 +15,7 @@ defmodule Lotd.Accounts do
 
   def get_user(id), do: Repo.get(User, id)
 
-  def get_user!(id) do
-    subquery = from(c in Character,
-      preload: [items: ^from(m in Item, select: m.id), mods: ^from(m in Mod, select: m.id)],
-      order_by: c.name
-    )
-    from(u in User, preload: [:active_character, characters: ^subquery]) |> Repo.get!(id)
-  end
+  def get_user!(id), do: Repo.get!(from(u in User, preload: :active_character), id)
 
   def create_user(attrs \\ %{}) do
     %User{}
@@ -62,23 +56,23 @@ defmodule Lotd.Accounts do
     |> Repo.update!()
   end
 
-  def activate_mod(%Character{} = character, %Mod{} = mod) do
-    character = Repo.preload(character, :mods, force: true)
-    character_mods = [mod | character.mods]
+  def toggle_character_mod(%Character{} = character, mod) do
+    character = Repo.preload(character, :mods)
 
-    character
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, character_mods)
-    |> Repo.update()
-  end
+    case Enum.find(character.mods, & &1.id == mod.id) do
+      nil ->
+        character
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:mods, [mod | character.mods])
+        |> Repo.update!()
 
-  def deactivate_mod(%Character{} = character, %Mod{} = mod) do
-    character = Repo.preload(character, :mods, force: true)
-    character_mods = Enum.reject(character.mods, & &1.id == mod.id)
-
-    character
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, character_mods)
-    |> Repo.update()
+      mod ->
+        character
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_assoc(:mods, Enum.reject(character.mods, & &1.id == mod.id))
+        |> Repo.update!()
+    end
+    |> Map.get(:mods)
+    |> Enum.map(& &1.id)
   end
 end

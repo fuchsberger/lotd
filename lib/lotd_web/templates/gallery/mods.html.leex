@@ -14,7 +14,7 @@
     </svg>
   </button>
 
-  <select class="w-32 bg-gray-800 border h-8 text-sm border-gray-700 text-gray-300 px-2 rounded leading-tight focus:outline-none focus:bg-gray-900 focus:border-gray-500">
+  <select class="w-32 bg-gray-800 border h-8 text-sm border-gray-700 text-gray-300 px-2 rounded leading-tight focus:bg-gray-900 focus:border-gray-500">
     <option>Completion %</option>
     <option>Completion</option>
     <option>Remaining</option>
@@ -35,12 +35,12 @@
   </ul>
 </div>
 
-
-
 <table class='table-fixed w-full'>
   <thead>
     <tr class='bg-gray-800'>
-      <th class="w-10 py-1 bg-gray-50 text-left"></th>
+      <%= if @authenticated? do %>
+        <th class="w-8 pl-2 py-1 bg-gray-50 text-left<%= if @locked?, do: " hidden" %>"></th>
+      <% end %>
       <th class="px-2 py-1 bg-gray-50 text-left">Mod Name</th>
       <th class='w-10 pr-2 text-right'>
         <svg class='inline-block w-6 h-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,8 +51,14 @@
   </thead>
   <tbody class='bg-gray-900'>
     <%= for mod <- @mods do %>
-      <tr class='border-gray-700 border-b'>
-        <td class='pl-2'><%= icon(:checkmark, "w-6 h-6 inline-block text-green-500") %></td>
+      <tr class='border-gray-700 border-b<%= if @locked? && not Enum.member?(@character_mods, mod.id), do: " hidden" %>'>
+        <%= if @authenticated? do %>
+          <td class='pl-2<%= if @locked?, do: " hidden" %>'>
+            <button type='button' phx-click='toggle' phx-value-mod='<%= mod.id %>'>
+              <%= icon(:toggle, Enum.member?(@character_mods, mod.id)) %>
+            </button>
+          </td>
+        <% end %>
         <td class='pl-2 py-1 text-sm flex-grow truncate'><%= mod.name %></td>
         <td class='pr-2 text-right text-gray-400 font-mono'>122</td>
         <td class='hidden pr-2 text-right text-gray-400 font-mono'>122</td>

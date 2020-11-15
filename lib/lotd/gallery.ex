@@ -76,6 +76,12 @@ defmodule Lotd.Gallery do
 
   def list_mods, do: Repo.all(from(m in Mod, order_by: m.name))
 
+  def list_character_mod_ids(character) do
+    character
+    |> Repo.preload(mods: from(m in Mod, select: m.id))
+    |> Map.get(:mods)
+  end
+
   def list_mod_options() do
     from(m in Mod, select: {m.name, m.id}, order_by: m.name)
     |> Repo.all()

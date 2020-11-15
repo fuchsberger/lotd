@@ -10,28 +10,37 @@ defmodule LotdWeb.GalleryLive do
   def render(assigns), do: Phoenix.View.render(LotdWeb.GalleryView, "main.html", assigns)
 
   def mount(_params, session, socket) do
-    user = if user_id = Map.get(session, "user_id"), do: Accounts.get_user!(user_id), else: nil
 
-    # # load all mods once
-    # mods = Gallery.list_mods()
+    socket =
+      case Map.get(session, "user_id") do
+        nil ->
+          socket
+          |> assign(:authenticated?, false)
 
-    # items = Gallery.
+        user_id ->
+          user = Accounts.get_user!(user_id)
+
+          IO.inspect user.active_character
+
+          socket
+          |> assign(:authenticated?, true)
+          |> assign(:character_mods, Gallery.list_character_mod_ids(user.active_character))
+          |> assign(:user, user)
+      end
 
     {:ok, socket
-    |> assign(:authenticated?, not is_nil(user))
     |> assign(:changeset, nil)
     |> assign(:filter, nil)
     # |> assign(:items, Gallery.list_items(user))
     |> assign(:mods, Gallery.list_mods())
     # |> assign(:mod_options, Gallery.list_mod_options())
-    |> assign(:locked?, not is_nil(user))
+    |> assign(:locked?, true)
     |> assign(:page_title, "LOTD Tracker")
     |> assign(:show_help?, false)
     |> assign(:show_search?, false)
     |> assign(:show_menu?, false)
     |> assign(:search, "")
-    |> assign(:tab, 3)
-    |> assign(:user, user)}
+    |> assign(:tab, 3)}
   end
 
   def handle_params(_params, _uri, socket) do
@@ -98,34 +107,6 @@ defmodule LotdWeb.GalleryLive do
         |> assign(:user, user)}
 
       {:error, _reason} ->
-        {:noreply, socket}
-    end
-  end
-
-  def handle_event("activate", %{"mod" => id}, socket) do
-    case Accounts.activate_mod(active_character(socket), Gallery.get_mod!(id)) do
-      {:ok, _character} ->
-        user = Accounts.get_user!(socket.assigns.user.id)
-
-        {:noreply, socket
-        |> assign(:items, Gallery.list_items(user))
-        |> assign(:user, user)}
-
-      {:error, _changeset} ->
-        {:noreply, socket}
-    end
-  end
-
-  def handle_event("deactivate", %{"mod" => id}, socket) do
-    case Accounts.deactivate_mod(active_character(socket), Gallery.get_mod!(id)) do
-      {:ok, _character} ->
-        user = Accounts.get_user!(socket.assigns.user.id)
-
-        {:noreply, socket
-        |> assign(:items, Gallery.list_items(user))
-        |> assign(:user, user)}
-
-      {:error, _changeset} ->
         {:noreply, socket}
     end
   end
@@ -251,6 +232,12 @@ defmodule LotdWeb.GalleryLive do
       "help" -> {:noreply, assign(socket, :show_help?, !socket.assigns.show_help?)}
       "menu" -> {:noreply, assign(socket, :show_menu?, !socket.assigns.show_menu?)}
     end
+  end
+
+  def handle_event("toggle", %{"mod" => id}, socket) do
+    mod = Enum.find(socket.assigns.mods, & &1.id == String.to_integer(id))
+    character_mods = Accounts.toggle_character_mod(socket.assigns.user.active_character, mod)
+    {:noreply, assign(socket, :character_mods, character_mods)}
   end
 
   def handle_event("toggle", %{"moderate" => _}, socket) do

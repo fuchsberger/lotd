@@ -4,6 +4,7 @@ defmodule Lotd.Gallery.Mod do
 
   schema "mods" do
     field :name, :string
+
     has_many :items, Lotd.Gallery.Item
     many_to_many :characters, Lotd.Accounts.Character, join_through: "character_mods"
   end
