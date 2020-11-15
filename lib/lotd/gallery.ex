@@ -74,6 +74,8 @@ defmodule Lotd.Gallery do
 
   # MODS -----------------------------------------------------------------------------------------
 
+  def list_mods, do: Repo.all(from(m in Mod, order_by: m.name))
+
   def list_mod_options() do
     from(m in Mod, select: {m.name, m.id}, order_by: m.name)
     |> Repo.all()

@@ -12,15 +12,22 @@ defmodule LotdWeb.GalleryLive do
   def mount(_params, session, socket) do
     user = if user_id = Map.get(session, "user_id"), do: Accounts.get_user!(user_id), else: nil
 
-    # load all items once
+    # # load all mods once
+    # mods = Gallery.list_mods()
+
     # items = Gallery.
 
     {:ok, socket
+    |> assign(:authenticated?, not is_nil(user))
     |> assign(:changeset, nil)
     |> assign(:filter, nil)
-    |> assign(:items, Gallery.list_items(user))
-    |> assign(:mod_options, Gallery.list_mod_options())
+    # |> assign(:items, Gallery.list_items(user))
+    |> assign(:mods, Gallery.list_mods())
+    # |> assign(:mod_options, Gallery.list_mod_options())
+    |> assign(:locked?, not is_nil(user))
     |> assign(:page_title, "LOTD Tracker")
+    |> assign(:show_help?, false)
+    |> assign(:show_search?, false)
     |> assign(:show_menu?, false)
     |> assign(:search, "")
     |> assign(:tab, 3)
@@ -35,7 +42,11 @@ defmodule LotdWeb.GalleryLive do
       action ->
         # set and assign page title
         title = action |> Atom.to_string() |> String.capitalize()
-        {:noreply,  assign(socket, page_title: title)}
+
+        {:noreply, socket
+        |> assign(:show_help?, false)
+        |> assign(:show_menu?, false)
+        |> assign(:page_title, title)}
     end
   end
 
@@ -236,6 +247,8 @@ defmodule LotdWeb.GalleryLive do
 
   def handle_event("toggle", %{"type" => type}, socket) do
     case type do
+      "locked" -> {:noreply, assign(socket, :locked?, !socket.assigns.locked?)}
+      "help" -> {:noreply, assign(socket, :show_help?, !socket.assigns.show_help?)}
       "menu" -> {:noreply, assign(socket, :show_menu?, !socket.assigns.show_menu?)}
     end
   end

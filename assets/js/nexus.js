@@ -6,7 +6,16 @@ const uuidv4 = () => (
   })
 )
 
-export default () => {
+export default event => {
+
+  event.preventDefault()
+
+  // handle logout if already logged in
+  if (JSON.parse(document.getElementById('auth-button').dataset.authenticated)) {
+    window.location.replace("/logout")
+    return
+  }
+
   const socket = new WebSocket("wss://sso.nexusmods.com")
 
   // Connect to SSO service

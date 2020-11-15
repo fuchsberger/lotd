@@ -1,0 +1,57 @@
+<div class="flex items-center justify-between m-1">
+
+  <button class='default w-32' type='button' phx-click='toggle' phx-value-type='locked'>
+    <svg class='inline-block w-4 h-4 mr-1 <%= if @locked?, do: "text-green-500", else: "text-orange-400" %>' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path class='<%= if @locked?, do: "hidden" %>' stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+      <path class='<%= unless @locked?, do: "hidden" %>' stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>List <%= unless @locked?, do: "un" %>locked
+  </button>
+
+  <button class='default w-12 text-sm  px-2 leading-tight <%= if @show_help?, do: " active" %>' type='button' phx-click='toggle' phx-value-type='help'>
+    <svg class='inline-block w-6 h-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+    </svg>
+  </button>
+
+  <select class="w-32 bg-gray-800 border h-8 text-sm border-gray-700 text-gray-300 px-2 rounded leading-tight focus:outline-none focus:bg-gray-900 focus:border-gray-500">
+    <option>Completion %</option>
+    <option>Completion</option>
+    <option>Remaining</option>
+    <option>Total</option>
+  </select>
+</div>
+
+<div class='<%= unless @show_help?, do: "hidden" %> m-1 p-2 bg-gray-900 rounded text-sm'>
+  <strong>While Unlocked:</strong><br/>
+  <ul class='list-disc list-outside ml-5 mb-2'>
+    <li>All mods appear in gallery pages and search.</li>
+    <li>You can change the mods you play with.</li>
+  </ul>
+  <strong>While Locked:</strong><br/>
+  <ul class='list-disc list-outside ml-5'>
+    <li>Only active mods appear in gallery and search.</li>
+    <li>Modlist provides display count information.</li>
+  </ul>
+</div>
+
+<table class='table-fixed w-full'>
+  <thead>
+    <tr class='bg-gray-800'>
+      <th class="px-2 py-1 bg-gray-50 text-left">Mod Name</th>
+      <th class='w-10 pr-2 text-right'>
+        <svg class='inline-block w-6 h-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+      </th>
+    </tr>
+  </thead>
+  <tbody class='bg-gray-900'>
+    <%= for mod <- @mods do %>
+      <tr class='border-gray-700 border-b'>
+        <td class='pl-2 py-1 text-sm flex-grow truncate'><%= mod.name %></td>
+        <td class='pr-2 text-right text-gray-400 font-mono'>122</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -16,12 +16,15 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    resources "/", SessionController, only: [:create, :delete]
+    resources "/", SessionController, only: [:create]
+    get "/logout", SessionController, :delete
 
-    live "/", GalleryLive, :home
+    live "/", GalleryLive, :index
     live "/armory", GalleryLive, :armory
     live "/hall_of_heroes", GalleryLive, :hall_of_heroes
     live "/dragonborn_hall", GalleryLive, :dragonborn_hall
+    live "/east_exhibit_halls", GalleryLive, :east_exhibit_halls
+    live "/library", GalleryLive, :library
     live "/safehouse", GalleryLive, :safehouse
     live "/hall_of_secrets", GalleryLive, :hall_of_secrets
     live "/locations", GalleryLive, :locations

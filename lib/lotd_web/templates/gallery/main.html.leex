@@ -1,8 +1,10 @@
 <%= case @live_action do
-    :home -> render "home.html", assigns
+    :index -> render "index.html", assigns
     :armory -> render "armory.html", assigns
+    :library -> render "library.html", assigns
     :hall_of_heroes -> render "hall_of_heroes.html", assigns
     :dragonborn_hall -> render "dragonborn_hall.html", assigns
+    :east_exhibit_halls -> render "east_exhibit_halls.html", assigns
     :safehouse -> render "safehouse.html", assigns
     :hall_of_secrets -> render "hall_of_secrets.html", assigns
     :mods -> render "mods.html", assigns
