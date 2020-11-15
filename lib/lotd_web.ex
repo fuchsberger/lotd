@@ -37,6 +37,7 @@ defmodule LotdWeb do
       import Phoenix.HTML.Form,
         except: [select: 3, select: 4, text_input: 2, text_input: 3, url_input: 3]
 
+      import LotdWeb.Icons
       import LotdWeb.ViewHelpers
       import Phoenix.LiveView.Helpers
       import LotdWeb.ErrorHelpers

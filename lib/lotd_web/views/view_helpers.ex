@@ -11,9 +11,6 @@ defmodule LotdWeb.ViewHelpers do
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
   end
 
-  def icon(name, opts \\ [] ), do: content_tag(:i, "",
-    [{:class, "icon-#{name} #{Keyword.get(opts, :class, "")}"} | Keyword.delete(opts, :class)])
-
   def text_input(form, field, opts \\ []) do
     Form.text_input(form, field, opts ++ Form.input_validations(form, field))
   end
