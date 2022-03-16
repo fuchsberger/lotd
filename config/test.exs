@@ -4,7 +4,7 @@ use Mix.Config
 config :lotd, Lotd.Repo,
   username: "postgres",
   password: "postgres",
-  database: "lotd_test",
+  database: "lotd_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 

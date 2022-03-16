@@ -1,13 +1,13 @@
 <div class="flex items-center justify-between m-1">
 
   <button class='default w-32' type='button' phx-click='toggle' phx-value-type='locked'>
-    <svg class='inline-block w-4 h-4 mr-1 <%= if @locked?, do: "text-green-500", else: "text-orange-400" %>' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path class='<%= if @locked?, do: "hidden" %>' stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-      <path class='<%= unless @locked?, do: "hidden" %>' stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    <svg class={"inline-block w-4 h-4 mr-1 #{if @locked?, do: "text-green-500", else: "text-orange-400"}"} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path class={if @locked?, do: "hidden"} stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+      <path class={unless @locked?, do: "hidden"} stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
     </svg>List <%= unless @locked?, do: "un" %>locked
   </button>
 
-  <button class='default w-12 text-sm  px-2 leading-tight <%= if @show_help?, do: " active" %>' type='button' phx-click='toggle' phx-value-type='help'>
+  <button class={"default w-12 text-sm  px-2 leading-tight #{if @show_help?, do: " active"}"} type='button' phx-click='toggle' phx-value-type='help'>
     <svg class='inline-block w-6 h-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
 
@@ -22,7 +22,7 @@
   </select>
 </div>
 
-<div class='<%= unless @show_help?, do: "hidden" %> m-1 p-2 bg-gray-900 rounded text-sm'>
+<div class={"#{unless @show_help?, do: "hidden"} m-1 p-2 bg-gray-900 rounded text-sm"}>
   <strong>While Unlocked:</strong><br/>
   <ul class='list-disc list-outside ml-5 mb-2'>
     <li>All mods appear in gallery pages and search.</li>
@@ -39,7 +39,7 @@
   <thead>
     <tr class='bg-gray-800'>
       <%= if @authenticated? do %>
-        <th class="w-8 pl-2 py-1 bg-gray-50 text-left<%= if @locked?, do: " hidden" %>"></th>
+        <th class={"w-8 pl-2 py-1 bg-gray-50 text-left#{if @locked?, do: " hidden"}"}></th>
       <% end %>
       <th class="px-2 py-1 bg-gray-50 text-left">Mod Name</th>
       <th class='w-10 pr-2 text-right'>
@@ -51,10 +51,10 @@
   </thead>
   <tbody class='bg-gray-900'>
     <%= for mod <- @mods do %>
-      <tr class='border-gray-700 border-b<%= if @locked? && not Enum.member?(@character_mods, mod.id), do: " hidden" %>'>
+      <tr class={if @locked? && not Enum.member?(@character_mods, mod.id), do: "hidden", else: "border-gray-700 border-b"}>
         <%= if @authenticated? do %>
-          <td class='pl-2<%= if @locked?, do: " hidden" %>'>
-            <button type='button' phx-click='toggle' phx-value-mod='<%= mod.id %>'>
+          <td class={if @locked?, do: "hidden", else: "pl-2"}>
+            <button type='button' phx-click='toggle' phx-value-mod={mod.id}>
               <%= icon(:toggle, Enum.member?(@character_mods, mod.id)) %>
             </button>
           </td>

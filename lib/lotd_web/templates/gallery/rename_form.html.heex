@@ -1,10 +1,5 @@
 <li class="list-group-item small p-1">
-  <%= f = form_for @changeset, "#",
-    class: "#{unless is_nil(@changeset.action), do: "was-validated"}",
-    novalidate: true,
-    phx_change: :validate,
-    phx_submit: :save
-  %>
+  <.form let={f} for={@changeset} class={"#{unless is_nil(@changeset.action), do: "was-validated"}"} novalidate={true} phx_change={:validate} phx_submit={:save}>
     <div class="input-group">
       <%= if @user.admin && edit?(@changeset) && !is_character?(@changeset) do %>
         <div class="input-group-prepend">
@@ -39,5 +34,5 @@
         <%= error_tag f, :region_id %>
       </div>
     <% end %>
-  </form>
+  </.form>
 </li>

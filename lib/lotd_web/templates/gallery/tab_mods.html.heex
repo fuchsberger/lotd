@@ -20,7 +20,7 @@
           <% else %>
             <a href='#'
               phx-click='activate'
-              phx-value-character='<%= character.id %>'
+              phx-value-character={character.id}
               title='Activate Character'
             >
               <i class='icon-inactive'></i>
@@ -30,12 +30,12 @@
         </span>
         <span>
           <span class='badge badge-light badge-pill' title='Items collected'><%= Enum.count(character.items) %></span>
-          <a href='#' phx-click='edit' phx-value-character='<%= character.id %>' title='Rename'><i class='icon-edit'></i></a>
+          <a href='#' phx-click='edit' phx-value-character={character.id} title='Rename'><i class='icon-edit'></i></a>
 
           <%= if character.id == @user.active_character_id do %>
             <i class='icon-active' title='Active Character'></i>
           <% else %>
-            <a href='#' class='text-danger' data-confirm='Are you sure you want to delete this character? You will permanently loose all items this character has collected.' phx-click='delete' phx-value-character='<%= character.id %>' title='Delete'><i class='icon-remove'></i></a>
+            <a href='#' class='text-danger' data-confirm='Are you sure you want to delete this character? You will permanently loose all items this character has collected.' phx-click='delete' phx-value-character={character.id} title='Delete'><i class='icon-remove'></i></a>
           <% end %>
         </span>
       </li>
@@ -52,17 +52,17 @@
   <%= if is_mod?(@changeset) && @changeset.data.id == mod.id do %>
     <%= render "rename_form.html", assigns %>
   <% else %>
-    <li class="list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center<%= if filter?(:mod, mod.id, @filter), do: " active" %>" phx-click='filter' phx-value-mod='<%= mod.id %>'>
+    <li class={"list-group-item small p-1 list-group-item-action d-flex justify-content-between align-items-center#{if filter?(:mod, mod.id, @filter), do: " active"}"} phx-click='filter' phx-value-mod={mod.id}>
       <span class='flex-grow-1'>
         <%= if @user do %>
-          <button class='btn btn-sm btn-link p-0' type='button' phx-click='deactivate' phx-value-mod='<%= mod.id %>'><i class='icon-active'></i></button>
+          <button class='btn btn-sm btn-link p-0' type='button' phx-click='deactivate' phx-value-mod={mod.id}><i class='icon-active'></i></button>
         <% end %><%= name(mod.name, @search) %>
       </span>
 
       <%= if @user && @user.moderator do %>
-        <button class='btn btn-link badge badge-light badge-pill' type='button' phx-click='edit' phx-value-mod='<%= mod.id %>' title='Edit Mod'><%= mod.item_count %></button>
+        <button class='btn btn-link badge badge-light badge-pill' type='button' phx-click='edit' phx-value-mod={mod.id} title='Edit Mod'><%= mod.item_count %></button>
       <% else %>
-        <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= mod.item_count %></span>
+        <span class='badge badge-light badge-pill' title={"#{if @user && @user.hide, do: "Remaining", else: "Total"} Items"}><%= mod.item_count %></span>
       <% end %>
     </li>
   <% end %>
@@ -76,7 +76,7 @@
     <%= for {name, id} <- imods do %>
       <li class="list-group-item small p-1 d-flex justify-content-between align-items-center">
         <span class='flex-grow-1'>
-          <button class='btn btn-sm btn-link p-0' type='button' phx-click='activate' phx-value-mod='<%= id %>'><i class='icon-inactive'></i></button>
+          <button class='btn btn-sm btn-link p-0' type='button' phx-click='activate' phx-value-mod={id}><i class='icon-inactive'></i></button>
           <%= name %>
         </span>
       </li>

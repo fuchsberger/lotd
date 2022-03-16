@@ -1,27 +1,25 @@
-// const { colors } = require('tailwindcss/defaultTheme')
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  future: {
-    // removeDeprecatedGapUtilities: true,
-    // purgeLayersByDefault: true,
-  },
-  purge: [
-    "../**/*.html.eex",
-    "../**/*.html.leex",
-    "../**/views/**/*.ex",
-    "../**/live/**/*.ex",
-    "./js/**/*.js"
+  content: [
+    "../lib/*_web/**/*.*ex",
+    "./js/**/*.js",
+    // We need to include the Petal dependency so the classes get picked up by JIT.
+    "../deps/petal_components/**/*.*ex"
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
-        'menu': ['Arial Black', 'Gadget', 'sans-serif']
+        sans: ['Inter var', ...defaultTheme.fontFamily.sans],
       }
     }
   },
   variants: {},
-  plugins: [],
-}
+  plugins: [
+    require('@tailwindcss/forms')
+  ]
+};
 
 /*
   Nexus Colors

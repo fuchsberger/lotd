@@ -17,7 +17,7 @@
 
   <div class='col col-md-7 col-lg-8 col-xl-9'>
     <div class="form-group">
-      <%= f = form_for :search, "#", [phx_change: :search, phx_submit: :search] %>
+      <.form let={f} for={:search} phx_change={:search} phx_submit={:search}>
         <div class='input-group'>
           <%= text_input f, :query,
             autofocus: true,
@@ -39,7 +39,7 @@
             </button>
           </div>
         </div>
-      </form>
+      </.form>
     </div>
 
     <% items = items(@items, @search, @filter, @user) %>
@@ -50,8 +50,8 @@
         <tr>
           <%= unless is_nil(@user) do %>
             <th scope="col">
-              <button class='btn p-0 btn-link type='button' phx-click='toggle' phx-value-hide=''>
-                <i class='icon-<%= hide_text(!@user.hide) %>' title='<%= hide_text(@user.hide) %> collected items'></i>
+              <button class='btn p-0 btn-link' type='button' phx-click='toggle' phx-value-hide=''>
+                <i class={"icon-#{hide_text(!@user.hide)}"} title={"#{hide_text(@user.hide)} collected items"}></i>
               </button>
             </th>
           <% end %>
@@ -73,7 +73,7 @@
             <i class='icon-mod' title='Mod'></i>
           </th>
           <%= if @user && @user.moderator do %>
-            <th scope="col" class='p-0 d-none d-xl-table-cell'><button class='btn p-0 btn-link type='button' phx-click='add' phx-value-type='item' ><i class='icon-inactive' title='Add Item'></i></button></th>
+            <th scope="col" class='p-0 d-none d-xl-table-cell'><button class='btn p-0 btn-link' type='button' phx-click='add' phx-value-type='item' ><i class='icon-inactive' title='Add Item'></i></button></th>
           <% end %>
         </tr>
       </thead>
@@ -82,8 +82,8 @@
           <tr>
             <%= if @user do %>
               <td class='align-middle'>
-                <button class='btn btn-link p-0' phx-click='toggle' phx-value-item='<%= item.id %>' type='button'>
-                  <i class='icon-<%= if Enum.member?(active_character(@user).items, item.id), do: "active", else: "inactive" %>'></i>
+                <button class='btn btn-link p-0' phx-click='toggle' phx-value-item={item.id} type='button'>
+                  <i class={if Enum.member?(active_character(@user).items, item.id), do: "icon-active", else: "icon-inactive"}></i>
                 </button>
               </td>
             <% end %>
@@ -103,17 +103,17 @@
               <%= unless is_nil(item.location) do %>
                 <i class='icon-location'></i>
                 <%= unless is_nil(item.location.region) do %>
-                  <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-region='<%= item.location.region.id %>'><%= item.location.region.name %></button> »
+                  <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-region={item.location.region.id}><%= item.location.region.name %></button> »
                 <% end %>
-                <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-location='<%= item.location.id %>'><%= item.location.name %></button>
+                <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-location={item.location.id}><%= item.location.name %></button>
                 <br>
               <% end %>
               <%= unless is_nil(item.display) do %>
                 <i class='icon-displays'></i>
                 <%= unless is_nil(item.display.room) do %>
-                  <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-room='<%= item.display.room.id %>'><%= item.display.room.name %></button> »
+                  <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-room={item.display.room.id}><%= item.display.room.name %></button> »
                 <% end %>
-                <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-display='<%= item.display.id %>'><%= item.display.name %></button>
+                <button class='btn btn-sm btn-link p-0 text-black-50' type='button' phx-click='filter' phx-value-display={item.display.id}><%= item.display.name %></button>
               <% end %>
             </td>
 
@@ -121,8 +121,8 @@
               <button
                 class='btn btn-link p-0'
                 phx-click='filter'
-                phx-value-mod='<%= item.mod_id %>'
-                title='<%= item.mod.name %>'
+                phx-value-mod={item.mod_id}
+                title={item.mod.name}
                 type='submit'
               ><i class='icon-mod'></i>
               </button>
@@ -130,7 +130,7 @@
 
             <%= if @user && @user.moderator do %>
               <td class='align-middle p-0 d-none d-xl-table-cell'>
-                <button class='btn btn-link p-0' type='button' title='Edit Item' phx-click='edit' phx-value-item='<%= item.id %>'><i class='icon-edit'></i></button>
+                <button class='btn btn-link p-0' type='button' title='Edit Item' phx-click='edit' phx-value-item={item.id}><i class='icon-edit'></i></button>
               </td>
             <% end %>
           </tr>

@@ -2,13 +2,9 @@ use Mix.Config
 
 # Configure your database
 config :lotd, Lotd.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "lotd_dev",
-  hostname: "localhost",
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-  # log: false
+  url: "ecto://postgres:postgres@localhost/lotd_dev",
+  show_sensitive_data_on_connection_error: true
+  # log: false,
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -22,11 +18,12 @@ config :lotd, LotdWeb.Endpoint,
   code_reloader: true,
   check_origin: false,
   watchers: [
-    node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
-      "--color",
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch --loader:.jpg=file)]},
+    npx: [
+      "tailwindcss",
+      "--input=css/app.css",
+      "--output=../priv/static/assets/app.css",
+      "--postcss",
       "--watch",
       cd: Path.expand("../assets", __DIR__)
     ]

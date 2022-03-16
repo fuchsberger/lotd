@@ -5,7 +5,7 @@
     <meta name="author" content="Alexander Fuchsberger">
     <meta name="description" content="This tool allows you to easily keep track of the items you have collected for the Legacy of the Dragonborn Gallery. Simply sign in via Nexus and start collecting items.">
     <title>Error 403 ● LOTD Tracker</title>
-    <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
+    <link rel="stylesheet" href={Routes.static_path(@conn, "/assets/app.css")}>
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
@@ -26,10 +26,10 @@
               <%= if is_nil(@conn.assigns.current_user) do %>
                 <button id='login-button' class="btn btn-light font-weight-bold icon-nexus">Sign In</button>
                 <%# Login Form (hidden) %>
-                <%= f = form_for :session, Routes.session_path(LotdWeb.Endpoint, :create), [id: "login-form", csrf_token: false] %>
-                  <input name='_csrf_token' type='hidden' value='<%= Phoenix.Controller.get_csrf_token() %>' />
+                <.form let={f} for={:session} id="login-form" to={Routes.session_path(LotdWeb.Endpoint, :create)} csrf_token={false}>
+                  <input name='_csrf_token' type='hidden' value={Phoenix.Controller.get_csrf_token()}/>
                   <%= hidden_input(f, :api_key) %>
-                </form>
+                </.form>
               <% else %>
                 <%= LotdWeb.LayoutView.logout_button(@conn) %>
               <% end %>
@@ -46,6 +46,6 @@
         You seem to lack the appropriate rights to access <code><%= current_path(@conn, %{})%></code>. If you think this is a mistake please let us know!
       </p>
     </div>
-    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
+    <script type="text/javascript" src={Routes.static_path(@conn, "/assets/app.js")}></script>
   </body>
 </html>

@@ -21,20 +21,20 @@
         <td class='text-center'>
           <%= if @admin || u.admin do %>
             <i
-              class='<%= if u.admin, do: "icon-active", else: "icon-inactive" %> <%= if @admin, do: "text-primary" %>'
-              phx-click='<%= if @admin, do: "toggle", else: "" %>'
-              phx-value-id='<%= u.id %>'
-              phx-value-admin="<%= u.admin%>"
+              class={"#{if u.admin, do: "icon-active", else: "icon-inactive"} #{if @admin, do: "text-primary"}"}
+              phx-click={if @admin, do: "toggle", else: ""}
+              phx-value-id={u.id}
+              phx-value-admin={u.admin}
             ></i>
           <% end %>
         </td>
         <td class='text-center'>
           <%= if @admin || u.moderator do %>
             <i
-              class='<%= if u.moderator, do: "icon-active", else: "icon-inactive" %> <%= if @admin, do: "text-primary" %>'
-              phx-click='<%= if @admin, do: "toggle", else: "" %>'
-              phx-value-id='<%= u.id %>'
-              phx-value-moderator="<%= u.moderator%>"
+              class={"#{if u.moderator, do: "icon-active", else: "icon-inactive"} #{if @admin, do: "text-primary"}"}
+              phx-click={if @admin, do: "toggle", else: ""}
+              phx-value-id={u.id}
+              phx-value-moderator={u.moderator}
             ></i>
           <% end %>
         </td>

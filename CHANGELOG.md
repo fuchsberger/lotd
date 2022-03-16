@@ -1,3 +1,6 @@
+## 0.9.0
+  - Revamped interface, updated dependencies, newer build
+
 ## 0.6.10
 
 ### Enhancments

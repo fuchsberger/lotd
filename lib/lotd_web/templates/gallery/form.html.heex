@@ -1,9 +1,4 @@
-<%= f = form_for @changeset, "#",
-  class: "#{unless is_nil(@changeset.action), do: "was-validated"}",
-  novalidate: true,
-  phx_change: :validate,
-  phx_submit: :save
-%>
+<.form let={f} for={@changeset} class={"#{unless is_nil(@changeset.action), do: "was-validated"}"} novalidate={true} phx_change={:validate} phx_submit={:save}>
   <div class='d-flex'>
     <h5 class='flex-grow-1'><%= if edit?(@changeset), do: "Update", else: "Add" %> Item</h5>
     <div class="form-group form-check ml-2 mb-0">
@@ -59,4 +54,4 @@
   </div>
 
   <p class='small'>You may also click on filters to select display / location / mod.</p>
-</form>
+</.form>

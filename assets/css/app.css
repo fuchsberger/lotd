@@ -1,0 +1,27 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* Directives */
+
+@layer base {
+  @font-face {
+    font-family: 'Inter var';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Inter'), url('../fonts/Inter.var.woff2') format('woff2');
+  }
+}
+
+@layer components {
+  html {
+    background-image: url("../images/header.jpg");
+    background-size: 100% auto;
+  }
+
+  #theme-icon-dark { @apply hidden; }
+  .dark #theme-icon-dark { @apply block !important; }
+
+  #theme-icon-light { @apply block; }
+  .dark #theme-icon-light { @apply hidden !important; }
+}

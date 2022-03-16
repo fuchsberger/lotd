@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <title>LOTD Inventory Manager</title>
-    <link rel="stylesheet" href='/css/app.css'>
+    <link rel="stylesheet" href='/assets/app.css'>
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
@@ -19,10 +19,7 @@
         <div class="ml-2 collapse navbar-collapse" id="menu-collapse">
           <ul id='menu' class="navbar-nav">
             <li class="nav-item">
-              <a class='nav-link' href='/about'><i class='icon-home'></i>About</a>
-            </li>
-            <li class="nav-item">
-              <a class='nav-link' href='/gallery'><i class='icon-displays'></i>Gallery</a>
+              <a class='nav-link' href='/'>go back</a>
             </li>
           </ul>
         </div>
@@ -31,20 +28,9 @@
 
     <div class='container text-center'>
       <h1>Oops!</h1>
-      <h2>Error 401</h2>
-      <p class="lead">
-        Please authenticate before attempting to visit
-        <code><%= current_path(@conn, %{})%></code>
-      </p>
-
-      <button id='login-button' class="btn btn-light btn-lg icon-nexus">Sign In</button>
-
-      <%# Login Form (hidden) %>
-      <%= f = form_for :session, "/session", id: "login-form" %>
-        <%= hidden_input(f, :api_key) %>
-      </form>
+      <h2>Error 500</h2>
+      <p class="lead">Sorry, this should not have happened!</p>
+      <p>It would be very kind of you to report this error to <strong>@Sekhmet13</strong> on Nexus!</p>
     </div>
-
-    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
   </body>
 </html>

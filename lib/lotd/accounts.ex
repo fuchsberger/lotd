@@ -6,7 +6,6 @@ defmodule Lotd.Accounts do
 
   alias Lotd.Repo
   alias Lotd.Accounts.{Character, User}
-  alias Lotd.Gallery.{Mod}
 
   # user
   def list_users do

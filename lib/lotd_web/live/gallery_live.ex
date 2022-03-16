@@ -1,13 +1,18 @@
 defmodule LotdWeb.GalleryLive do
 
-  use Phoenix.LiveView, layout: {LotdWeb.LayoutView, "live.html"}
+  use LotdWeb, :live_view
+
 
   alias LotdWeb.Router.Helpers, as: Routes
   alias Lotd.{Accounts, Gallery, Repo}
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Display, Location, Mod, Room, Region}
 
-  def render(assigns), do: Phoenix.View.render(LotdWeb.GalleryView, "main.html", assigns)
+  def render(assigns) do
+    ~H"""
+    <%= Phoenix.View.render(LotdWeb.GalleryView, Atom.to_string(@live_action) <> ".html", assigns) %>
+    """
+  end
 
   def mount(_params, session, socket) do
 
@@ -16,11 +21,10 @@ defmodule LotdWeb.GalleryLive do
         nil ->
           socket
           |> assign(:authenticated?, false)
+          |> assign(:user, nil)
 
         user_id ->
           user = Accounts.get_user!(user_id)
-
-          IO.inspect user.active_character
 
           socket
           |> assign(:authenticated?, true)
