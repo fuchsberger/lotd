@@ -21,7 +21,7 @@ defmodule LotdWeb.GalleryLive do
         nil ->
           socket
           |> assign(:authenticated?, false)
-          |> assign(:user, nil)
+          |> assign(:user_id, nil)
 
         user_id ->
           user = Accounts.get_user!(user_id)
@@ -29,6 +29,7 @@ defmodule LotdWeb.GalleryLive do
           socket
           |> assign(:authenticated?, true)
           |> assign(:character_mods, Gallery.list_character_mod_ids(user.active_character))
+          |> assign(:user_id, user.id)
           |> assign(:user, user)
       end
 

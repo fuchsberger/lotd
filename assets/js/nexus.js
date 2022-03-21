@@ -6,15 +6,9 @@ const uuidv4 = () => (
   })
 )
 
-export default event => {
+export function login (event) {
 
   event.preventDefault()
-
-  // handle logout if already logged in
-  if (JSON.parse(document.getElementById('auth-button').dataset.authenticated)) {
-    window.location.replace("/logout")
-    return
-  }
 
   const socket = new WebSocket("wss://sso.nexusmods.com")
 
@@ -41,7 +35,7 @@ export default event => {
       if (res.data.hasOwnProperty('api_key')){
 
         // Send API key to webserver that will then try to connect with it and authenticate
-        document.getElementById("session_api_key").value = res.data.api_key
+        document.getElementById("login-form_api_key").value = res.data.api_key
         document.getElementById('login-form').submit()
 
         // close right away
@@ -51,4 +45,9 @@ export default event => {
     // The SSO  will return an error attribute that can be used for error reporting
     else console.error("Nexus Error: " + res.error)
   }
+}
+
+export function logout () {
+  window.location.replace("/logout")
+  return
 }
