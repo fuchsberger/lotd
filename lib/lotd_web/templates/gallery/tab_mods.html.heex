@@ -20,7 +20,7 @@
           <% else %>
             <a href='#'
               phx-click='activate'
-              phx-value-character={character.id}
+              phx-value-character='<%= character.id %>'
               title='Activate Character'
             >
               <i class='icon-inactive'></i>
@@ -30,12 +30,12 @@
         </span>
         <span>
           <span class='badge badge-light badge-pill' title='Items collected'><%= Enum.count(character.items) %></span>
-          <a href='#' phx-click='edit' phx-value-character={character.id} title='Rename'><i class='icon-edit'></i></a>
+          <a href='#' phx-click='edit' phx-value-character='<%= character.id %>' title='Rename'><i class='icon-edit'></i></a>
 
           <%= if character.id == @user.active_character_id do %>
             <i class='icon-active' title='Active Character'></i>
           <% else %>
-            <a href='#' class='text-danger' data-confirm='Are you sure you want to delete this character? You will permanently loose all items this character has collected.' phx-click='delete' phx-value-character={character.id} title='Delete'><i class='icon-remove'></i></a>
+            <a href='#' class='text-danger' data-confirm='Are you sure you want to delete this character? You will permanently loose all items this character has collected.' phx-click='delete' phx-value-character='<%= character.id %>' title='Delete'><i class='icon-remove'></i></a>
           <% end %>
         </span>
       </li>
@@ -60,9 +60,9 @@
       </span>
 
       <%= if @user && @user.moderator do %>
-        <button class='btn btn-link badge badge-light badge-pill' type='button' phx-click='edit' phx-value-mod={mod.id} title='Edit Mod'><%= mod.item_count %></button>
+        <button class='btn btn-link badge badge-light badge-pill' type='button' phx-click='edit' phx-value-mod='<%= mod.id %>' title='Edit Mod'><%= mod.item_count %></button>
       <% else %>
-        <span class='badge badge-light badge-pill' title={"#{if @user && @user.hide, do: "Remaining", else: "Total"} Items"}><%= mod.item_count %></span>
+        <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= mod.item_count %></span>
       <% end %>
     </li>
   <% end %>

@@ -1,10 +1,14 @@
-use Mix.Config
+import Config
 
 # Configure your database
 config :lotd, Lotd.Repo,
-  url: "ecto://postgres:postgres@localhost/lotd_dev",
-  show_sensitive_data_on_connection_error: true
+  username: "postgres",
+  password: "postgres",
+  database: "lotd_dev",
+  hostname: "localhost",
+  show_sensitive_data_on_connection_error: true,
   # log: false,
+  pool_size: 10
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -13,12 +17,13 @@ config :lotd, Lotd.Repo,
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :lotd, LotdWeb.Endpoint,
-  http: [port: 4000],
-  debug_errors: true,
-  code_reloader: true,
+  http: [ip: {127, 0, 0, 1}, port: 4000],
   check_origin: false,
+  code_reloader: true,
+  debug_errors: true,
+  secret_key_base: "o4VDttM6WVlwFFes9c7jo+u46DrK2lKDdhC9tF2rUYiq7UMf7h5H8Xaz56KsoRdb",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch --loader:.jpg=file)]},
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
     npx: [
       "tailwindcss",
       "--input=css/app.css",
