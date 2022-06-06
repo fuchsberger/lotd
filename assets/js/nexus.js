@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 // Simple method to generate a standard UUID used as a request ID.
 const uuidv4 = () => (
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -8,7 +6,9 @@ const uuidv4 = () => (
   })
 )
 
-export default () => {
+export function connect () {
+
+  console.log("1. Open")
 
   const socket = new WebSocket("wss://sso.nexusmods.com")
 
@@ -26,6 +26,8 @@ export default () => {
   // When the client receives a message
   socket.onmessage = e => {
 
+    console.log("2. receive")
+
     // pass all messages back to the client by using the format type:value
     const res = JSON.parse(e.data)
 
@@ -35,8 +37,8 @@ export default () => {
       if (res.data.hasOwnProperty('api_key')){
 
         // Send API key to webserver that will then try to connect with it and authenticate
-        $("#session_api_key").val(res.data.api_key)
-        $("#login-form").submit()
+        document.getElementById("login-form_api_key").value = res.data.api_key
+        document.getElementById("login-form").submit()
 
         // close right away
         socket.close()

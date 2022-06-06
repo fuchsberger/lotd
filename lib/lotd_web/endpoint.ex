@@ -18,8 +18,8 @@ defmodule LotdWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :lotd,
-    gzip: System.get_env("MIX_ENV") == "prod",
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    gzip: true,
+    only: ~w(assets fonts images favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -27,6 +27,7 @@ defmodule LotdWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :lotd
   end
 
   plug Plug.RequestId

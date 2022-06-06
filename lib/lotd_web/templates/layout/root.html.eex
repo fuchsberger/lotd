@@ -9,7 +9,7 @@
     <title>LOTD Inventory Manager</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
-    <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/css/app.css") %>'>
+    <link rel="stylesheet" href='<%= Routes.static_path(@conn, "/assets/app.css") %>'>
   </head>
   <body>
     <%= render "navbar.html",
@@ -19,6 +19,8 @@
       moderator:  @conn.assigns.current_user && @conn.assigns.current_user.moderator
     %>
     <%= @inner_content %>
-    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/js/app.js") %>'></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script type="text/javascript" src='<%= Routes.static_path(@conn, "/assets/app.js") %>'></script>
   </body>
 </html>

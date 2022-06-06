@@ -1,7 +1,7 @@
 <li class="list-group-item bg-light p-1">
   <%= if @add do %>
     <a href='#' phx-click='add' phx-value-type="<%= @add %>">
-      <i class='icon-inactive' phx-hook='tooltip' title='Add <%= String.capitalize(@add) %>'></i>
+      <i class='icon-inactive' title='Add <%= String.capitalize(@add) %>'></i>
     </a>
   <% end %>
   <strong><%= @title %></strong>

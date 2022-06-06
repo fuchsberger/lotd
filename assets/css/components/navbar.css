@@ -3,7 +3,7 @@
   .navbar-collapse { flex-grow: 0; }
 
   .navbar-brand {
-    background: url('../static/images/logo.png');
+    background: url('../images/logo.png');
     background-size: 144px 36px;
     width: 144px;
     height: 36px;
