@@ -6,9 +6,9 @@ const uuidv4 = () => (
   })
 )
 
-export function login (event) {
+export function connect () {
 
-  event.preventDefault()
+  console.log("1. Open")
 
   const socket = new WebSocket("wss://sso.nexusmods.com")
 
@@ -26,6 +26,8 @@ export function login (event) {
   // When the client receives a message
   socket.onmessage = e => {
 
+    console.log("2. receive")
+
     // pass all messages back to the client by using the format type:value
     const res = JSON.parse(e.data)
 
@@ -36,7 +38,7 @@ export function login (event) {
 
         // Send API key to webserver that will then try to connect with it and authenticate
         document.getElementById("login-form_api_key").value = res.data.api_key
-        document.getElementById('login-form').submit()
+        document.getElementById("login-form").submit()
 
         // close right away
         socket.close()

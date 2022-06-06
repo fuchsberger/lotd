@@ -2,11 +2,13 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* Directives */
+@import "components/icons.css";
+@import "components/navbar.css";
+@import "components/gallery";
 
 @layer base {
   @font-face {
-    font-family: 'Inter var';
+    font-family: 'Inter';
     font-style: normal;
     font-weight: normal;
     src: local('Inter'), url('../fonts/Inter.var.woff2') format('woff2');
@@ -14,14 +16,13 @@
 }
 
 @layer components {
-  html {
-    background-image: url("../images/header.jpg");
-    background-size: 100% auto;
+  #left-panel { width: 280px!important;}
+
+  .list-group-item.active{
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
   }
 
-  #theme-icon-dark { @apply hidden; }
-  .dark #theme-icon-dark { @apply block !important; }
-
-  #theme-icon-light { @apply block; }
-  .dark #theme-icon-light { @apply hidden !important; }
+  .list-group-item button { line-height: 1.0; }
 }

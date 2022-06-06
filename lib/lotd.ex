@@ -1,22 +1,46 @@
 defmodule Lotd do
   @moduledoc """
-  Lotd keeps the contexts that define your domain
-  and business logic.
+  The entrypoint for defining your app logic, such contexts or schemas.
 
-  Contexts are also responsible for managing your data, regardless
-  if it comes from the database, an external API or others.
+  This can be used in your application as:
+
+      use LotdWeb, :context
+      use LotdWeb, :schema
+
+  The definitions below will be executed for every context, schema, etc,
+  so keep them short and clean, focused on imports, uses and aliases.
+
+  Do NOT define functions inside the quoted expressions below.
+  Instead, define any helper function in modules and import those modules here.
   """
 
-  def subscribe(topic) do
-    Phoenix.PubSub.subscribe(Lotd.PubSub, topic)
+  def context do
+    quote do
+      import Ecto.Query, warn: false
+      import Lotd.LotdHelpers
+
+      alias Ecto.Changeset
+      alias Lotd.Accounts.{Group, User}
+      alias Lotd.Data.Skill
+      alias Lotd.Game.Event
+      alias Lotd.PubSub
+    end
   end
 
-  def broadcast_change({:ok, result}, topic, event) do
-    Phoenix.PubSub.broadcast(Lotd.PubSub, topic, {__MODULE__, event, result})
-    {:ok, result}
+  def schema do
+    quote do
+      use Ecto.Schema
+
+      import Ecto.Changeset
+      import Lotd.LotdHelpers
+      import LotdWeb.Gettext
+    end
   end
 
-  def broadcast_change({:error, result}, _topic, _event) do
-    {:error, result}
+  @doc """
+  When used, dispatch to the appropriate schema/context/etc.
+  """
+  defmacro __using__(which) when is_atom(which) do
+    apply(__MODULE__, which, [])
   end
 end
