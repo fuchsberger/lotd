@@ -75,7 +75,7 @@ defmodule LotdWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: Routes.page_path(conn, :index))
+    |> redirect(to: Routes.lotd_path(conn, :gallery))
   end
 
   @doc """
@@ -156,7 +156,7 @@ defmodule LotdWeb.UserAuth do
     if is_nil(conn.assigns.current_user.active_character_id) do
       conn
       |> put_flash(:error, gettext("Bitte aktiviere zuerst einen Helden."))
-      |> redirect(to: Routes.page_path(conn, :index))
+      |> redirect(to: Routes.lotd_path(conn, :gallery))
       |> halt()
     else
       conn
@@ -174,7 +174,7 @@ defmodule LotdWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(conn), do: Routes.page_path(conn, :index)
+  defp signed_in_path(conn), do: Routes.lotd_path(conn, :gallery)
 
   def user(conn, _opts) do
     if conn.assigns.current_user do

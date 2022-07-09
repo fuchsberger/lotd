@@ -16,14 +16,11 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
-    get "/about", PageController, :about
-
-    live "/gallery", GalleryLive
-  end
-
-  scope "/", LotdWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_admin]
+    live "/", LotdLive, :index
+    live "/about", LotdLive, :about
+    live "/gallery", LotdLive, :gallery
+    live "/locations", LotdLive, :locations
+    live "/mods", LotdLive, :mods
     live "/users", UserLive
   end
 

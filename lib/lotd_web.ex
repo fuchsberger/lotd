@@ -32,11 +32,13 @@ defmodule LotdWeb do
   def view do
     quote do
       use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb
+      unquote(view_helpers())
+    end
+  end
 
-      # import Phoenix.HTML.Form,
-      #   except: [select: 3, select: 4, text_input: 2, text_input: 3, url_input: 3]
-
-      # Include shared imports and aliases for views
+  def live_view do
+    quote do
+      use Phoenix.LiveView, layout: {LotdWeb.LayoutView, "live.html"}
       unquote(view_helpers())
     end
   end

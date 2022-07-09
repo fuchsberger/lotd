@@ -13,9 +13,17 @@ defmodule LotdWeb.LayoutView do
       title: "Logout"
   end
 
-  def nav_item(conn, name, to, icon) do
-    active = if current_path(conn, %{}) == to, do: "active", else: ""
-    link = link [icon(icon), name], to: to, class: "nav-link"
-    content_tag :li, link, class: "nav-item #{active}"
+  defp main_menu_items(live_action) do
+    [
+      # {action, label, icon (outline), active?, show?}
+      {:home, gettext("Spielprotokoll"), "home", live_action == :home, true},
+      {:group, gettext("Kampf"), "users", live_action == :group, true},
+      {:skills, gettext("Talente"), "star", live_action in [:skills, :skill], true},
+      {:map, gettext("Karte"), "map", live_action == :map, true}
+    ]
   end
+
+  defp mobile_item_attrs(true), do: [class: "bg-gray-100 text-gray-900 block rounded-md py-2 px-3 text-base font-medium", aria_current: "page"]
+
+  defp mobile_item_attrs(false), do: [class: "hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium"]
 end
