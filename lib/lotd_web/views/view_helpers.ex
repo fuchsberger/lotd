@@ -4,8 +4,6 @@ defmodule LotdWeb.ViewHelpers do
   """
   use Phoenix.HTML
 
-  alias Phoenix.HTML.Form
-
   def action_submit(changeset) do
     action = if changeset.action == :insert, do: "create", else: "update"
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
@@ -13,22 +11,6 @@ defmodule LotdWeb.ViewHelpers do
 
   def icon(name, opts \\ [] ), do: content_tag(:i, "",
     [{:class, "icon-#{name} #{Keyword.get(opts, :class, "")}"} | Keyword.delete(opts, :class)])
-
-  def text_input(form, field, opts \\ []) do
-    Form.text_input(form, field, opts ++ Form.input_validations(form, field))
-  end
-
-  def url_input(form, field, opts \\ []) do
-    Form.url_input(form, field, opts ++ Form.input_validations(form, field))
-  end
-
-  def select(form, field, options, opts \\ []) do
-    Form.select(form, field, options, opts ++ Form.input_validations(form, field))
-  end
-
-  def select_options(collection),
-    do: [{"Please select...", nil} | Enum.map(collection, &{&1.name, &1.id})]
-
 
   def struct_to_string(s), do: Module.split(s.__struct__) |> List.last() |> String.downcase()
 

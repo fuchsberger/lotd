@@ -19,7 +19,7 @@
         <button class='btn btn-link p-0' type='button' phx-click='edit' phx-value-region='<%= region.id %>' title='Edit Region'><i class='icon-edit'></i></button>
       <% end %>
       <span class='flex-grow-1'><%= name(region.name, @search) %></span>
-      <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= region.item_count %></span>
+      <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide_aquired_items, do: "Remaining", else: "Total" %> Items'><%= region.item_count %></span>
     </li>
   <% end %>
 <% end %>
@@ -36,7 +36,7 @@
       <button class='btn btn-link p-0' type='button' phx-click='edit' phx-value-location='<%= location.id %>' title='Edit Location'><i class='icon-edit'></i></button>
     <% end %>
     <span class='flex-grow-1'><%= name(location.name, @search) %></span>
-    <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= location.item_count %></span>
+    <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide_aquired_items, do: "Remaining", else: "Total" %> Items'><%= location.item_count %></span>
   </li>
 <% end %>
 

@@ -52,7 +52,7 @@
           <%= unless is_nil(@user) do %>
             <th scope="col">
               <button class='btn p-0 btn-link type='button' phx-click='toggle' phx-value-hide=''>
-                <i class='icon-<%= hide_text(!@user.hide) %>' title='<%= hide_text(@user.hide) %> collected items'></i>
+                <i class='icon-<%= hide_text(!@user.hide_aquired_items) %>' title='<%= hide_text(@user.hide_aquired_items) %> collected items'></i>
               </button>
             </th>
           <% end %>

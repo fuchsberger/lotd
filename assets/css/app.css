@@ -2,7 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@import "./navbar";
 @import "./gallery";
 
 @layer base {

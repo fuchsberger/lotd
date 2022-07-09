@@ -74,12 +74,12 @@ defmodule LotdWeb.GalleryView do
         |> filter(search, filter)
         |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
 
-      %User{hide: false} ->
+      %User{hide_aquired_items: false} ->
         displays
         |> filter(search, filter)
         |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
 
-      %User{hide: true} ->
+      %User{hide_aquired_items: true} ->
         character = Enum.find(user.characters, & &1.id == user.active_character_id)
 
         displays
@@ -121,12 +121,12 @@ defmodule LotdWeb.GalleryView do
         |> filter(search, filter)
         |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
 
-      %User{hide: false} ->
+      %User{hide_aquired_items: false} ->
         locations
         |> filter(search, filter)
         |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
 
-      %User{hide: true} ->
+      %User{hide_aquired_items: true} ->
         character = Enum.find(user.characters, & &1.id == user.active_character_id)
 
         locations
@@ -159,12 +159,12 @@ defmodule LotdWeb.GalleryView do
         |> filter(search, filter)
         |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
 
-      %User{hide: false} ->
+      %User{hide_aquired_items: false} ->
         mods
         |> filter(search, filter)
         |> Enum.map(& Map.put(&1, :item_count, Enum.count(&1.items)))
 
-      %User{hide: true} ->
+      %User{hide_aquired_items: true} ->
         character = Enum.find(user.characters, & &1.id == user.active_character_id)
 
         mods
@@ -205,8 +205,10 @@ defmodule LotdWeb.GalleryView do
 
     case user do
       nil -> Enum.map(regions, & Map.put(&1, :item_count, Enum.count(&1.items)))
-      %User{hide: false} -> Enum.map(regions, & Map.put(&1, :item_count, Enum.count(&1.items)))
-      %User{hide: true} ->
+      %User{hide_aquired_items: false} ->
+        Enum.map(regions, & Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide_aquired_items: true} ->
         character = Enum.find(user.characters, & &1.id == user.active_character_id)
 
         Enum.map(regions, fn region ->
@@ -238,8 +240,10 @@ defmodule LotdWeb.GalleryView do
 
     case user do
       nil -> Enum.map(rooms, & Map.put(&1, :item_count, Enum.count(&1.items)))
-      %User{hide: false} -> Enum.map(rooms, & Map.put(&1, :item_count, Enum.count(&1.items)))
-      %User{hide: true} ->
+      %User{hide_aquired_items: false} ->
+        Enum.map(rooms, & Map.put(&1, :item_count, Enum.count(&1.items)))
+
+      %User{hide_aquired_items: true} ->
         character = Enum.find(user.characters, & &1.id == user.active_character_id)
 
         Enum.map(rooms, fn room ->
@@ -308,9 +312,13 @@ defmodule LotdWeb.GalleryView do
 
   def filter_hide(list, user) do
     case user do
-      nil -> list
-      %User{hide: false} -> list
-      %User{hide: true} ->
+      nil ->
+        list
+
+      %User{hide_aquired_items: false} ->
+        list
+
+      %User{hide_aquired_items: true} ->
         character = Enum.find(user.characters, & &1.id == user.active_character_id)
         Enum.reject(list, & Enum.member?(character.items, &1.id))
     end

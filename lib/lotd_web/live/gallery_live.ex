@@ -214,7 +214,7 @@ defmodule LotdWeb.GalleryLive do
   end
 
   def handle_event("toggle", %{"hide" => _}, socket) do
-    case Accounts.update_user(socket.assigns.user, %{hide: !socket.assigns.user.hide}) do
+    case Accounts.update_user(socket.assigns.user, %{hide: !socket.assigns.user.hide_aquired_items}) do
       {:ok, _user} ->
         {:noreply, assign(socket, :user, Accounts.get_user!(socket.assigns.user.id))}
 

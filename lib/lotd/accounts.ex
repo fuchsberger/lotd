@@ -2,10 +2,10 @@ defmodule Lotd.Accounts do
   @moduledoc """
   The Accounts context.
   """
-  import Ecto.Query, warn: false
+  import Ecto.Query
 
   alias Lotd.Repo
-  alias Lotd.Accounts.{Character, User}
+  alias Lotd.Accounts.{Character, UserToken, User}
   alias Lotd.Gallery.{Item, Mod}
 
   # user
@@ -33,6 +33,33 @@ defmodule Lotd.Accounts do
     user
     |> User.changeset(attrs)
     |> Repo.update()
+  end
+
+  ## Session
+
+  @doc """
+  Generates a session token.
+  """
+  def generate_user_session_token(user) do
+    {token, user_token} = UserToken.build_session_token(user)
+    Repo.insert!(user_token)
+    token
+  end
+
+  @doc """
+  Gets the user with the given signed token.
+  """
+  def get_user_by_session_token(token) do
+    {:ok, query} = UserToken.verify_session_token(token)
+    Repo.one(query)
+  end
+
+  @doc """
+  Deletes the signed token with the given context.
+  """
+  def delete_session_token(token) do
+    Repo.delete_all(UserToken.token_and_context_query(token, "session"))
+    :ok
   end
 
   # CHARACTERS -----------------------------------------------------------------------------------

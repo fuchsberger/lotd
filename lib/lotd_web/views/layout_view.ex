@@ -4,7 +4,7 @@ defmodule LotdWeb.LayoutView do
   import Phoenix.Controller, only: [current_path: 2]
 
   def logout_button(conn) do
-    link [icon("logout"), conn.assigns.current_user.name ],
+    link [icon("logout"), conn.assigns.current_user.username ],
       to: Routes.session_path(conn, :delete, conn.assigns.current_user.id),
       method: "delete",
       id: "logout-button",

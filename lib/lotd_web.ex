@@ -32,16 +32,12 @@ defmodule LotdWeb do
   def view do
     quote do
       use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb
-      use Phoenix.HTML
 
-      import Phoenix.HTML.Form,
-        except: [select: 3, select: 4, text_input: 2, text_input: 3, url_input: 3]
-      import LotdWeb.ViewHelpers
-      import Phoenix.LiveView.Helpers
-      import LotdWeb.ErrorHelpers
-      import LotdWeb.Gettext
+      # import Phoenix.HTML.Form,
+      #   except: [select: 3, select: 4, text_input: 2, text_input: 3, url_input: 3]
 
-      alias LotdWeb.Router.Helpers, as: Routes
+      # Include shared imports and aliases for views
+      unquote(view_helpers())
     end
   end
 
@@ -52,7 +48,26 @@ defmodule LotdWeb do
       import Phoenix.LiveView.Router
       import Plug.Conn
       import Phoenix.Controller
-      import LotdWeb.Auth, only: [user: 2, admin: 2]
+    end
+  end
+
+  defp view_helpers do
+    quote do
+      # Use all HTML functionality (forms, tags, etc)
+      use Phoenix.HTML
+      use LotdWeb.Components
+
+      # Import LiveView helpers (live_render, live_component, live_patch, etc)
+      import Phoenix.LiveView.Helpers
+
+      # Import basic rendering functionality (render, render_layout, etc)
+      import Phoenix.View
+
+      import LotdWeb.ErrorHelpers
+      import LotdWeb.ViewHelpers
+      import LotdWeb.Gettext
+
+      alias LotdWeb.Router.Helpers, as: Routes
     end
   end
 

@@ -62,7 +62,7 @@
       <%= if @user && @user.moderator do %>
         <button class='btn btn-link badge badge-light badge-pill' type='button' phx-click='edit' phx-value-mod='<%= mod.id %>' title='Edit Mod'><%= mod.item_count %></button>
       <% else %>
-        <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= mod.item_count %></span>
+        <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide_aquired_items, do: "Remaining", else: "Total" %> Items'><%= mod.item_count %></span>
       <% end %>
     </li>
   <% end %>

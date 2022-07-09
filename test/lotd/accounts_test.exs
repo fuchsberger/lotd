@@ -27,7 +27,7 @@ defmodule Lotd.AccountsTest do
     test "with valid data inserts user" do
       assert {:ok, %User{id: id} = user} = Accounts.create_user(@valid_attrs)
       assert user.id == 42
-      assert user.name == "some_name"
+      assert user.username == "some_name"
       assert user.active_character_id == nil
       assert user.moderator == false
       assert user.admin == false

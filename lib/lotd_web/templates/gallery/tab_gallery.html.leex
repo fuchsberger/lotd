@@ -19,7 +19,7 @@
         <button type='button' class='btn btn-link p-0' phx-click='edit' phx-value-room='<%= room.id %>' title='Edit Room'><i class='icon-edit'></i></button>
       <% end %>
       <span class='flex-grow-1'><%= name(room.name, @search) %></span>
-      <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= room.item_count %></span>
+      <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide_aquired_items, do: "Remaining", else: "Total" %> Items'><%= room.item_count %></span>
     </li>
   <% end %>
 <% end %>
@@ -39,7 +39,7 @@
         <button class='btn btn-link p-0' type='button' phx-click='edit' phx-value-display='<%= display.id %>' title='Edit Display'><i class='icon-edit'></i></button>
       <% end %>
       <span class='flex-grow-1'><%= name(display.name, @search) %></span>
-      <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide, do: "Remaining", else: "Total" %> Items'><%= display.item_count %></span>
+      <span class='badge badge-light badge-pill' title='<%= if @user && @user.hide_aquired_items, do: "Remaining", else: "Total" %> Items'><%= display.item_count %></span>
     </li>
   <% end %>
 <% end %>
