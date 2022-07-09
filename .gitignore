@@ -33,6 +33,9 @@ npm-debug.log
 # this depending on your deployment strategy.
 /priv/static/assets
 
+# exclude runtime config and manually set environment variables there
+/config/runtime.exs
+
 # editor & OS artifacts
 **/.DS_Store
 *.code-workspace
