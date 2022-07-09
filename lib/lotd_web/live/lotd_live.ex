@@ -6,19 +6,75 @@ defmodule LotdWeb.LotdLive do
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Display, Location, Mod, Room, Region}
 
-  def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
+  @requires_admin [:users]
+
+  # def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
 
   def mount(_params, session, socket) do
-    user = if user_id = Map.get(session, "user_id"), do: Accounts.get_user!(user_id), else: nil
+    user =
+      case Map.get(session, "user_token") do
+        nil ->
+          nil
+
+        token ->
+          token
+          |> Accounts.get_user_by_session_token()
+          |> Accounts.preload([:active_character, characters: Accounts.preload_characters_query()])
+      end
 
     {:ok, socket
     |> assign(:changeset, nil)
     |> assign(:filter, nil)
     |> assign(:items, Gallery.list_items(user))
     |> assign(:mod_options, Gallery.list_mod_options())
+    |> assign(:room_id, 1)
+    |> assign(:rooms, Gallery.list_room_options)
     |> assign(:search, "")
     |> assign(:tab, 3)
-    |> assign(:user, user)}
+    |> assign(:user, user)
+    |> assign_displays
+    |> assign_items}
+  end
+
+  defp assign_displays(socket) do
+    assign(socket, :displays, Gallery.list_display_options(socket.assigns.room_id))
+  end
+
+  defp assign_items(socket) do
+    case socket.assigns.live_action do
+      :gallery ->
+        ids = Enum.map(socket.assigns.displays, & elem(&1, 1))
+        assign(socket, :items, Gallery.list_items(:displays, ids))
+      _ ->
+        socket
+    end
+  end
+
+  def handle_params(_unsigned_params, _uri, socket) do
+    cond do
+      # ensure user is admin for these pages
+      socket.assigns.live_action in @requires_admin && !socket.assigns.user.admin ->
+        {:noreply, socket
+        |> put_flash(:error, gettext "Admin access needed for this page.")
+        |> push_patch(to: Routes.lotd_path(socket, :gallery))}
+
+      true ->
+        {:noreply, socket}
+    end
+  end
+
+  def render(assigns) do
+    ~H"""
+    <div>
+      <%= case @live_action do %>
+        <% :about -> %>
+          <%= Phoenix.View.render(LotdWeb.PageView, "about.html", []) %>
+
+        <% _ -> %>
+          <%= Phoenix.View.render(LotdWeb.PageView, "404.html", []) %>
+      <% end %>
+    </div>
+    """
   end
 
   defp active_character(socket), do: socket.assigns.user && Enum.find(socket.assigns.user.characters, & &1.id == socket.assigns.user.active_character_id)
@@ -329,5 +385,16 @@ defmodule LotdWeb.LotdLive do
 
       {:error, _reason} -> socket
     end
+  end
+
+  def handle_event("select-tab", %{"selection" => action}, socket) do
+    {:noreply, push_patch(socket, to: Routes.lotd_path(socket, String.to_atom(action)))}
+  end
+
+  def handle_event("select-room", %{"id" => id}, socket) do
+    {:noreply, socket
+    |> assign(:room_id, String.to_integer(id))
+    |> assign_displays
+    |> assign_items}
   end
 end

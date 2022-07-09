@@ -13,6 +13,9 @@ Alpine.start()
 if(document.getElementById("login-button")){
   document.getElementById("login-button").addEventListener("click", () => connect())
 }
+if(document.getElementById("login-button-mobile")){
+  document.getElementById("login-button-mobile").addEventListener("click", () => connect())
+}
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})

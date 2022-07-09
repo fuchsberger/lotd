@@ -23,13 +23,23 @@ defmodule Lotd.Gallery do
     |> Repo.all()
   end
 
+  def list_items(filter, ids)
+
+  def list_items(:displays, ids) do
+    from(i in Item, order_by: i.name, select: map(i, [:id, :name]))
+    |> where([i], i.display_id in ^ids)
+    |> Repo.all
+  end
+
+  def list_items(_, _), do: []
+
   def get_item!(id), do: Repo.get!(Item, id)
 
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
 
   # ROOMS ----------------------------------------------------------------------------------------
 
-  def list_room_options() do
+  def list_room_options do
     from(r in Room, select: {r.name, r.id}, order_by: r.name)
     |> Repo.all()
   end
@@ -42,6 +52,11 @@ defmodule Lotd.Gallery do
 
   def list_display_options do
     from(d in Display, select: {d.name, d.id}, order_by: d.name)
+    |> Repo.all()
+  end
+
+  def list_display_options(room_id) do
+    from(d in Display, select: {d.name, d.id}, order_by: d.name, where: d.room_id == ^room_id)
     |> Repo.all()
   end
 

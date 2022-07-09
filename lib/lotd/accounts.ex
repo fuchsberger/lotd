@@ -8,6 +8,18 @@ defmodule Lotd.Accounts do
   alias Lotd.Accounts.{Character, UserToken, User}
   alias Lotd.Gallery.{Item, Mod}
 
+  ## shared
+
+  def preload_characters_query do
+    from c in Character,
+      preload: [items: ^from(m in Item, select: m.id), mods: ^from(m in Mod, select: m.id)],
+      order_by: c.name
+  end
+
+  def preload(struct, preloads, opts \\ []) do
+    Repo.preload(struct, preloads, opts)
+  end
+
   # user
   def list_users do
     Repo.all from(u in User, preload: [characters: [:items]], order_by: u.name)

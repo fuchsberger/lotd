@@ -133,36 +133,6 @@ defmodule LotdWeb.UserAuth do
     end
   end
 
-  @doc """
-  Used for routes that require the user to be an admin.
-  require_authenticated_user/2 does not need to be plugged first but can be.
-  """
-  def require_admin(conn, _opts) do
-    if conn.assigns.current_user && conn.assigns.current_user.admin do
-      conn
-    else
-      conn
-      |> put_flash(:error, gettext("Admin access needed for this page."))
-      |> render(LotdWeb.ErrorView, "403.html")
-      |> halt()
-    end
-  end
-
-  @doc """
-  Used for routes that require the user to be authenticated and have an active character
-  Must be piped after require_authenticated_user() as it requires an authenticated user.
-  """
-  def require_active_character(conn, _opts) do
-    if is_nil(conn.assigns.current_user.active_character_id) do
-      conn
-      |> put_flash(:error, gettext("Bitte aktiviere zuerst einen Helden."))
-      |> redirect(to: Routes.lotd_path(conn, :gallery))
-      |> halt()
-    else
-      conn
-    end
-  end
-
   defp conn_has_user(conn) do
     user = conn.assigns[:current_user]
     if user, do: {:ok, user}, else: {:error, :no_user}
@@ -175,28 +145,4 @@ defmodule LotdWeb.UserAuth do
   defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(conn), do: Routes.lotd_path(conn, :gallery)
-
-  def user(conn, _opts) do
-    if conn.assigns.current_user do
-      conn
-    else
-      conn
-      |> put_status(401)
-      |> put_view(LotdWeb.ErrorView)
-      |> render("401.html")
-      |> halt()
-    end
-  end
-
-  def admin(conn, _opts) do
-    if conn.assigns.current_user.admin do
-      conn
-    else
-      conn
-      |> put_status(403)
-      |> put_view(LotdWeb.ErrorView)
-      |> render("403.html")
-      |> halt()
-    end
-  end
 end

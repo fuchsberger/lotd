@@ -21,7 +21,7 @@ defmodule LotdWeb.Router do
     live "/gallery", LotdLive, :gallery
     live "/locations", LotdLive, :locations
     live "/mods", LotdLive, :mods
-    live "/users", UserLive
+    live "/users", LotdLive, :users
   end
 
   ## Authentication routes
