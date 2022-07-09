@@ -24,11 +24,14 @@ defmodule LotdWeb.LotdLive do
 
     {:ok, socket
     |> assign(:changeset, nil)
+    |> assign(:character, nil)
+    |> assign(:displays, Gallery.list_displays)
     |> assign(:filter, nil)
-    |> assign(:items, Gallery.list_items(user))
+    |> assign(:items, Gallery.list_items)
     |> assign(:mod_options, Gallery.list_mod_options())
+    |> assign(:display_id, nil)
     |> assign(:room_id, 1)
-    |> assign(:rooms, Gallery.list_room_options)
+    |> assign(:rooms, Gallery.list_rooms)
     |> assign(:search, "")
     |> assign(:tab, 3)
     |> assign(:user, user)
@@ -37,17 +40,36 @@ defmodule LotdWeb.LotdLive do
   end
 
   defp assign_displays(socket) do
-    assign(socket, :displays, Gallery.list_display_options(socket.assigns.room_id))
+    displays =
+      socket.assigns.displays
+      |> Enum.filter(& &1.room_id == socket.assigns.room_id)
+      |> Enum.map(fn %{id: id} = display ->
+          count = Enum.count(Enum.filter(socket.assigns.items, & &1.display_id == id))
+          Map.put(display, :count, count)
+        end)
+
+    socket
+    |> assign(:current_displays, displays)
+    |> assign(:current_room_display_count, displays |> Enum.map(& &1.count) |> Enum.sum())
   end
 
   defp assign_items(socket) do
-    case socket.assigns.live_action do
-      :gallery ->
-        ids = Enum.map(socket.assigns.displays, & elem(&1, 1))
-        assign(socket, :items, Gallery.list_items(:displays, ids))
-      _ ->
-        socket
-    end
+    current_items =
+      case socket.assigns.live_action do
+        :gallery ->
+          case socket.assigns.display_id do
+            nil ->
+              ids = Enum.map(socket.assigns.current_displays, & &1.id)
+              Enum.filter(socket.assigns.items, & &1.display_id in ids)
+
+            id ->
+              Enum.filter(socket.assigns.items, & &1.display_id == id)
+          end
+        _ ->
+          []
+      end
+
+    assign(socket, :current_items, current_items)
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
@@ -71,7 +93,12 @@ defmodule LotdWeb.LotdLive do
           <%= Phoenix.View.render(LotdWeb.PageView, "about.html", []) %>
 
         <% _ -> %>
-          <%= Phoenix.View.render(LotdWeb.PageView, "404.html", []) %>
+          <.live_component
+            character={@character}
+            items={@current_items}
+            id="items-component"
+            module={LotdWeb.Live.ItemsComponent}
+          />
       <% end %>
     </div>
     """
@@ -395,6 +422,18 @@ defmodule LotdWeb.LotdLive do
     {:noreply, socket
     |> assign(:room_id, String.to_integer(id))
     |> assign_displays
+    |> assign_items}
+  end
+
+  def handle_event("select-display", %{"id" => id}, socket) do
+    {:noreply, socket
+    |> assign(:display_id, String.to_integer(id))
+    |> assign_items}
+  end
+
+  def handle_event("unselect-display", _params, socket) do
+    {:noreply, socket
+    |> assign(:display_id, nil)
     |> assign_items}
   end
 end

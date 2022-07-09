@@ -105,6 +105,19 @@
         <%= for {action, label, _icon, active?} <- main_menu_items(@live_action) do %>
           <.link to={Routes.lotd_path(@socket, action)} {mobile_item_attrs(active?)} label={label} @click="open = false" />
         <% end %>
+        <div class="border-b border-gray-200"></div>
+        <%= case @live_action do %>
+          <% _ -> %>
+            <%= for room <- @rooms do %>
+              <.link
+                link_type="button" {mobile_item_attrs(room.id == @room_id)}
+                phx-click="select-room"
+                phx-value-id={room.id}
+              >
+                <span class="truncate"><%= room.name %></span>
+              </.link>
+            <% end %>
+        <% end %>
       </div>
       <div class="border-t border-gray-200 pt-4">
         <%= if @user do %>
@@ -151,32 +164,28 @@
           <%# Desktop Sidebar main links %>
           <div class="pb-8 space-y-1">
             <%= case @live_action do %>
-              <% :gallery -> %>
-                <%= for {name, id} <- @rooms do %>
+              <% _ -> %>
+                <%= for room <- @rooms do %>
                   <.link
-                    link_type="button" {desktop_item_attrs(id == @room_id)}
+                    link_type="button" {desktop_item_attrs(room.id == @room_id)}
                     phx-click="select-room"
-                    phx-value-id={id}
+                    phx-value-id={room.id}
                   >
-                    <span class="truncate"><%= name %></span>
+                    <span class="truncate"><%= room.name %></span>
                   </.link>
                 <% end %>
-
-              <% _ -> %>
             <% end %>
           </div>
         </nav>
       </div>
       <main class="lg:col-span-9 xl:col-span-6">
-        <div class="px-4 sm:px-0">
-          <%= if @live_action in [:gallery, :locations, :mods] do %>
-            <.tabs
-              event_name="select-tab"
-              selected={@live_action}
-              tabs={[{gettext("Museum"), :gallery}, {gettext("Locations"), :locations}, {gettext("Mods"), :mods}]}
-              variant="bar"
-            />
-          <% end %>
+        <div class="space-y-4">
+          <.tabs
+            event_name="select-tab"
+            selected={@live_action}
+            tabs={[{gettext("Museum"), :gallery}, {gettext("Locations"), :locations}, {gettext("Mods"), :mods}]}
+            variant="bar"
+          />
 
           <%= @inner_content %>
         </div>
@@ -189,6 +198,56 @@
           <%# if @character do %>
             <%# <.condition_widget character={@character} /> %>
           <%# end %>
+          <.card>
+            <:header>
+              <div class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
+                <div class="ml-4 mt-4">
+                  <h3 class="text-lg leading-6 font-medium text-gray-900">Displays</h3>
+                  <p class="mt-1 text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit quam corrupti consectetur.</p>
+                </div>
+                <div class="ml-4 mt-4 flex-shrink-0">
+                  <button type="button" class="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Create new job</button>
+                </div>
+              </div>
+            </:header>
+            <:body>
+              <ul role="list" class="divide-y divide-gray-200">
+                <li>
+                  <.link
+                    link_type="button"
+                    class={"w-full flex items-center py-2 space-x-4  #{if is_nil(@display_id), do: "bg-gray-100 cursor-default", else: "hover:bg-gray-50"}"}
+                    phx-click="unselect-display"
+                  >
+                    <div>
+                      <Icon.Solid.chevron_left class="h-5 w-5 text-gray-400" />
+                    </div>
+                    <div class="grow text-left text-sm font-medium text-gray-900 truncate">
+                      <%= gettext "All" %>
+                    </div>
+                    <div class="text-sm text-gray-500"><%= @current_room_display_count %></div>
+                  </.link>
+                </li>
+                <%= for display <- @current_displays do %>
+                  <li>
+                    <.link
+                      link_type="button"
+                      class={"w-full flex items-center py-2 space-x-4  #{if display.id == @display_id, do: "bg-gray-100 cursor-default", else: "hover:bg-gray-50"}"}
+                      phx-click="select-display"
+                      phx-value-id={display.id}
+                    >
+                      <div>
+                        <Icon.Solid.chevron_left class="h-5 w-5 text-gray-400" />
+                      </div>
+                      <div class="grow text-left text-sm font-medium text-gray-900 truncate">
+                        <%= display.name %>
+                      </div>
+                      <div class="text-sm text-gray-500"><%= display.count %></div>
+                    </.link>
+                  </li>
+                <% end %>
+              </ul>
+            </:body>
+          </.card>
         </div>
       </aside>
     </div>

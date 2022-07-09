@@ -1,7 +1,7 @@
 defmodule LotdWeb.Components.Tab do
   use Phoenix.Component
   # import LotdWeb.Gettext
-  import LotdWeb.Components.{Link, SelectMenu}
+  import LotdWeb.Components.Link
 
   # prop class, :string
   # prop full-width
@@ -21,50 +21,40 @@ defmodule LotdWeb.Components.Tab do
       end)
 
     ~H"""
-    <div>
-      <.select_menu
-        class={"sm:hidden " <> @class}
-        event_name={@event_name}
-        event_target={@event_target}
-        options={@tabs}
-        selected={@selected}
-       />
-
-      <div class="hidden sm:block">
-        <%= case @variant do %>
-          <% "underline" -> %>
-            <div class="border-b border-gray-200">
-              <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                <%= for {label, value} <- @tabs do %>
-                  <.link
-                    label={label}
-                    link_type="button"
-                    class={"whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm " <> link_class(@variant, value == @selected)}
-                    phx-click={@event_name}
-                    phx-target={@event_target}
-                    phx-value-selection={value}
-                  />
-                <% end %>
-              </nav>
-            </div>
-          <% "bar" -> %>
-            <nav class="relative z-0 rounded-lg shadow flex divide-x divide-gray-200" aria-label="Tabs">
-              <%= for {{label, value}, idx} <- Enum.with_index(@tabs) do %>
+    <div class="hidden sm:block">
+      <%= case @variant do %>
+        <% "underline" -> %>
+          <div class="border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+              <%= for {label, value} <- @tabs do %>
                 <.link
-                  class={"#{rounded_class(idx, Enum.count(@tabs))} group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-50 focus:z-10 " <> link_class(@variant, value == @selected)} l
+                  label={label}
                   link_type="button"
-                  type="button"
+                  class={"whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm " <> link_class(@variant, value == @selected)}
                   phx-click={@event_name}
-                  phx_target={@event_target}
+                  phx-target={@event_target}
                   phx-value-selection={value}
-                >
-                  <span><%= label %></span>
-                  <span aria-hidden="true" class={"absolute inset-x-0 bottom-0 h-0.5 " <> (if value == @selected, do: "bg-indigo-500", else: "bg-transparent")}></span>
-                </.link>
+                />
               <% end %>
             </nav>
-          <% end %>
-      </div>
+          </div>
+        <% "bar" -> %>
+          <nav class="relative z-0 rounded-lg shadow flex divide-x divide-gray-200" aria-label="Tabs">
+            <%= for {{label, value}, idx} <- Enum.with_index(@tabs) do %>
+              <.link
+                class={"#{rounded_class(idx, Enum.count(@tabs))} group relative min-w-0 flex-1 overflow-hidden bg-white py-4 px-4 text-sm font-medium text-center hover:bg-gray-50 focus:z-10 " <> link_class(@variant, value == @selected)} l
+                link_type="button"
+                type="button"
+                phx-click={@event_name}
+                phx_target={@event_target}
+                phx-value-selection={value}
+              >
+                <span><%= label %></span>
+                <span aria-hidden="true" class={"absolute inset-x-0 bottom-0 h-0.5 " <> (if value == @selected, do: "bg-indigo-500", else: "bg-transparent")}></span>
+              </.link>
+            <% end %>
+          </nav>
+        <% end %>
     </div>
     """
   end

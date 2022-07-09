@@ -6,8 +6,8 @@ defmodule LotdWeb.Components do
       import LotdWeb.Components.{
         # Alert,
         Avatar,
-        # Badge,
-        # Button,
+        Badge,
+        Button,
         Card,
         # Container,
         Dropdown,
@@ -25,9 +25,8 @@ defmodule LotdWeb.Components do
         # SlideOver,
         # SubHeading,
         Tab,
-        # Table,
+        Table
         # Toggle,
-        # Card
       }
     end
   end
