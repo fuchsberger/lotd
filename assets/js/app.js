@@ -1,13 +1,12 @@
 
-import $ from 'jquery'
-import 'bootstrap'
+// import $ from 'jquery'
 import "phoenix_html"
 import { Socket } from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import connect from './nexus'
 
 // enable login
-$('#login-button').on("click", () => connect())
+document.getElementById("login-button").addEventListener("click", () => connect())
 
 // if we do have a crsf token (all pages except error pages)
 // then connect live socket and enable various functionalities

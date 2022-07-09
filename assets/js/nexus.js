@@ -1,5 +1,3 @@
-import $ from 'jquery'
-
 // Simple method to generate a standard UUID used as a request ID.
 const uuidv4 = () => (
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
