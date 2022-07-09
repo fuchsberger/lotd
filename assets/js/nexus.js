@@ -29,14 +29,16 @@ export default () => {
     // pass all messages back to the client by using the format type:value
     const res = JSON.parse(e.data)
 
+    console.log(res)
+
     if (res && res.success){
 
       // If the response is valid, check the data for the api_key
       if (res.data.hasOwnProperty('api_key')){
 
         // Send API key to webserver that will then try to connect with it and authenticate
-        $("#session_api_key").val(res.data.api_key)
-        $("#login-form").submit()
+        document.getElementById("login-form_api_key").value = res.data.api_key
+        document.getElementById("login-form").submit()
 
         // close right away
         socket.close()

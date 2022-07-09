@@ -22,6 +22,7 @@ defmodule LotdWeb.SessionController do
       {:ok, response} ->
         # response contains nexus user information such as userid and name
         response = Jason.decode!(response.body)
+        IO.inspect response
 
         id = response["user_id"]
         name = response["name"]

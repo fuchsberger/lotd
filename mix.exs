@@ -33,19 +33,22 @@ defmodule Lotd.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.5.1"},
+      {:phoenix, "~> 1.6.10"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.1"},
       {:ecto_sql, "~> 3.3"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 2.14"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_html, "~> 3.2.0"},
+      {:phoenix_live_reload, "~> 1.3.3", only: :dev},
+      {:phoenix_live_view, "~> 0.17.10"},
+      {:httpoison, "~> 1.6"},
+      {:floki, ">= 0.0.0", only: :test},
+      {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
+      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.17"},
       {:jason, "~> 1.1"},
-      {:plug_cowboy, "~> 2.1"},
-      {:httpoison, "~> 1.6"},
-      {:phoenix_live_view, "~> 0.6"},
-      {:floki, ">= 0.0.0", only: :test}
+      {:plug_cowboy, "~> 2.1"}
     ]
   end
 
@@ -59,7 +62,12 @@ defmodule Lotd.MixProject do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      "assets.deploy": [
+        "cmd --cd assets npm run deploy",
+        "esbuild default --minify",
+        "phx.digest"
+      ]
     ]
   end
 end

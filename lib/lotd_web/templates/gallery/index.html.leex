@@ -29,11 +29,11 @@
 
           <div class="input-group-append">
             <button
+              id="tooltip_2"
               class="btn btn-light border px-1"
               type="button"
               phx-click="clear"
               phx-value-search=""
-              phx-hook='tooltip'
               title="Clear Search"
             >
               <i class='icon-remove'></i>
@@ -52,12 +52,12 @@
           <%= unless is_nil(@user) do %>
             <th scope="col">
               <button class='btn p-0 btn-link type='button' phx-click='toggle' phx-value-hide=''>
-                <i class='icon-<%= hide_text(!@user.hide) %>' phx-hook='tooltip' title='<%= hide_text(@user.hide) %> collected items'></i>
+                <i class='icon-<%= hide_text(!@user.hide) %>' title='<%= hide_text(@user.hide) %> collected items'></i>
               </button>
             </th>
           <% end %>
           <th scope="col">Name</th>
-          <th scope="col"><i class='icon-replica' title='Replica' phx-hook='tooltip'></i></th>
+          <th scope="col"><i class='icon-replica' title='Replica'></i></th>
           <th scope="col" class='d-none d-lg-table-cell'>
             Location / Display
 
@@ -71,10 +71,10 @@
             <% end %>
           </th>
           <th scope="col" class='p-0 d-none d-xl-table-cell'>
-            <i class='icon-mod' title='Mod' phx-hook='Mod'></i>
+            <i class='icon-mod' title='Mod'></i>
           </th>
           <%= if @user && @user.moderator do %>
-            <th scope="col" class='p-0 d-none d-xl-table-cell'><button class='btn p-0 btn-link type='button' phx-click='add' phx-value-type='item' ><i class='icon-inactive' phx-hook='tooltip' title='Add Item'></i></button></th>
+            <th scope="col" class='p-0 d-none d-xl-table-cell'><button class='btn p-0 btn-link type='button' phx-click='add' phx-value-type='item' ><i class='icon-inactive' title='Add Item'></i></button></th>
           <% end %>
         </tr>
       </thead>
@@ -123,7 +123,6 @@
                 class='btn btn-link p-0'
                 phx-click='filter'
                 phx-value-mod='<%= item.mod_id %>'
-                phx-hook='tooltip'
                 title='<%= item.mod.name %>'
                 type='submit'
               ><i class='icon-mod'></i>
@@ -132,7 +131,7 @@
 
             <%= if @user && @user.moderator do %>
               <td class='align-middle p-0 d-none d-xl-table-cell'>
-                <button class='btn btn-link p-0' type='button' phx-hook='tooltip' title='Edit Item' phx-click='edit' phx-value-item='<%= item.id %>'><i class='icon-edit'></i></button>
+                <button class='btn btn-link p-0' type='button' title='Edit Item' phx-click='edit' phx-value-item='<%= item.id %>'><i class='icon-edit'></i></button>
               </td>
             <% end %>
           </tr>
@@ -147,5 +146,3 @@
     <% end %>
   </div>
 </div>
-
-
