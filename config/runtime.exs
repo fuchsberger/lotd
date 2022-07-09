@@ -5,7 +5,7 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
-  database_url = System.get_env("LOTD_DATABASE_URL") ||
+  database_url = System.get_env("DATABASE_URL") ||
     raise """
     environment variable DATABASE_URL is missing.
     For example: ecto://USER:PASS@HOST/DATABASE
@@ -30,8 +30,8 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("LOTD_HOST") || "example.com"
-  port = String.to_integer(System.get_env("LOTD_PORT") || "4000")
+  host = System.get_env("PHX_HOST") || "example.com"
+  port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :lotd, LotdWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
