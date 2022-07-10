@@ -175,10 +175,10 @@ defmodule LotdWeb.LotdLive do
 
         <% _ -> %>
           <.live_component
-            character={@character}
             items={@current_items}
             id="items-component"
             module={LotdWeb.Live.ItemsComponent}
+            user={@user}
           />
       <% end %>
     </div>
@@ -567,6 +567,18 @@ defmodule LotdWeb.LotdLive do
       end
     else
       {:noreply, put_flash(socket, :error, gettext "This is not your character, hacker!")}
+    end
+  end
+
+  def handle_event("toggle-hide", _params, socket) do
+    hide = socket.assigns.user.hide_aquired_items
+    case Accounts.update_user(socket.assigns.user, %{hide_aquired_items: !hide}) do
+      {:ok, user} ->
+        user = Map.put(socket.assigns.user, :hide_aquired_items, user.hide_aquired_items)
+        broadcast("user-id:#{user.id}", {:update_user, user})
+        {:noreply, socket}
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext "Could not toggle hide status.")}
     end
   end
 

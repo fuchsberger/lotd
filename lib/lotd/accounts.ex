@@ -101,7 +101,7 @@ defmodule Lotd.Accounts do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   def remove_item(%Character{} = character, item) do
@@ -110,7 +110,7 @@ defmodule Lotd.Accounts do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, & &1.id == item.id))
-    |> Repo.update!()
+    |> Repo.update()
   end
 
   def activate_all_mods(%Character{} = character) do

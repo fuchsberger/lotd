@@ -1,31 +1,42 @@
 defmodule LotdWeb.Live.ItemsComponent do
   use LotdWeb, :live_component
 
+  alias Lotd.Accounts
+  alias Lotd.Gallery
+
   def render(assigns) do
     ~H"""
     <div>
       <.table>
         <:thead>
           <tr>
-            <%= if @character do %>
-              <.th condensed order="first">
-                <%= checkbox :check, :mark, [class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded disabled:opacity-50", disabled: true] %>
-              </.th>
+            <%= if @user && @user.active_character do %>
+              <.th condensed order="first"></.th>
             <% end %>
-            <.th condensed order="first"><%= gettext "Name" %></.th>
+            <.th condensed {if @user && @user.active_character, do: [], else: [order: "first"]}>
+              <%= gettext "Name" %>
+            </.th>
             <.th condensed><Icon.Outline.duplicate class="w-5 h-5"/></.th>
             <.th condensed order="last"><Icon.Outline.external_link class="w-5 h-5"/></.th>
           </tr>
         </:thead>
         <:tbody>
           <%= for item <- @items do %>
+            <%= if is_nil(@user) || !@user.hide_aquired_items || !@user.active_character || item.id not in @user.active_character.items do %>
             <tr>
-              <%= if @character do %>
-                <.th condensed order="first">
-                  <.checkbox />
-                </.th>
+              <%= if @user && @user.active_character do %>
+                <.td condensed order="first">
+                  <%= checkbox :check, :mark, [
+                    class: "focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded disabled:opacity-50",
+                    checked: item.id in @user.active_character.items,
+                    phx_click: "toggle-item",
+                    phx_target: @myself,
+                    phx_value_id: item.id,
+                    id: nil, name: nil
+                  ] %>
+                </.td>
               <% end %>
-              <.td condensed order="first"><%= item.name %></.td>
+              <.td condensed {if @user && @user.active_character, do: [], else: [order: "first"]}><%= item.name %></.td>
               <.td condensed order="last">
                 <%= if item.replica do %>
                   <Icon.Outline.duplicate class="w-5 h-5"/>
@@ -39,10 +50,35 @@ defmodule LotdWeb.Live.ItemsComponent do
                 <% end %>
               </.td>
             </tr>
+            <% end %>
           <% end %>
         </:tbody>
       </.table>
     </div>
     """
+  end
+
+  def handle_event("toggle-item", %{"id" => id}, socket) do
+    item = Gallery.get_item!(id)
+    character = socket.assigns.user.active_character
+    if item.id in character.items do
+      case Accounts.remove_item(character, item) do
+        {:ok, character} ->
+          user = Accounts.preload_user_associations(socket.assigns.user)
+          broadcast("user-id:#{character.user_id}", {:update_user, user})
+          {:noreply, socket}
+        {:error, _reason} ->
+          {:noreply, put_flash(socket, :error, gettext "Could not uncollect item.")}
+      end
+    else
+      case Accounts.collect_item(character, item) do
+        {:ok, character} ->
+          user = Accounts.preload_user_associations(socket.assigns.user)
+          broadcast("user-id:#{character.user_id}", {:update_user, user})
+          {:noreply, socket}
+        {:error, _reason} ->
+          {:noreply, put_flash(socket, :error, gettext "Could not collect item.")}
+      end
+    end
   end
 end

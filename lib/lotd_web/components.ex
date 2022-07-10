@@ -9,24 +9,12 @@ defmodule LotdWeb.Components do
         Badge,
         Button,
         Card,
-        # Container,
         Dropdown,
         Form,
-        # Loading,
-        # Typography,
-        # Avatar,
-        # Progress,
-        # Breadcrumbs,
-        # Pagination,
         Link,
-        # Modal,
-        # Select,
-        SelectMenu,
-        # SlideOver,
-        # SubHeading,
         Tab,
-        Table
-        # Toggle,
+        Table,
+        Toggle
       }
     end
   end
