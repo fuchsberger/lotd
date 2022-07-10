@@ -5,6 +5,8 @@ defmodule LotdWeb.UserSessionController do
   alias Lotd.Accounts.Character
   alias LotdWeb.UserAuth
 
+  require Logger
+
   @doc """
   connect to nexus to test api key and return username, userid and avatar_url.
   Checks if ok check if user_id already in database
@@ -21,6 +23,8 @@ defmodule LotdWeb.UserSessionController do
       {:ok, response} ->
         # response contains nexus user information such as userid and name
         response = Jason.decode!(response.body)
+
+        Logger.warning(IO.inspect(response))
 
         id = response["user_id"]
         avatar_url = Map.get(response, "profile_url")
