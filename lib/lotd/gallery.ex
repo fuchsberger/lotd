@@ -2,30 +2,16 @@ defmodule Lotd.Gallery do
   @moduledoc """
   The Gallery context.
   """
-  import Ecto.Query, warn: false
+  import Ecto.Query
 
   alias Lotd.Repo
   alias Lotd.Gallery.{Item, Room, Region, Display, Location, Mod}
 
   # ITEMS ----------------------------------------------------------------------------------------
 
-  def item_query, do: from i in Item,
-    preload: [:mod, location: :region, display: :room],
-    order_by: i.name
-
   def list_items do
     from(i in Item, order_by: i.name, select: map(i, [:id, :display_id, :location_id, :mod_id, :name, :replica, :url]))
     |> Repo.all
-  end
-
-  def list_items(nil), do: Repo.all(item_query())
-
-  def list_items(user) do
-    character = Enum.find(user.characters, & &1.id == user.active_character_id)
-
-    item_query()
-    |> where([i], i.mod_id in ^character.mods)
-    |> Repo.all()
   end
 
   def get_item!(id), do: Repo.get!(Item, id)
@@ -43,6 +29,20 @@ defmodule Lotd.Gallery do
 
   def change_room(%Room{} = room, params \\ %{}), do: Room.changeset(room, params)
 
+  def create_room(attrs \\ %{}) do
+    %Room{}
+    |> Room.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_room(%Room{} = room, attrs) do
+    room
+    |> Room.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_room(%Room{} = room), do: Repo.delete(room)
+
   # DISPLAYS -------------------------------------------------------------------------------------
 
   def list_displays do
@@ -50,14 +50,23 @@ defmodule Lotd.Gallery do
     |> Repo.all()
   end
 
-  def list_display_options(room_id) do
-    from(d in Display, select: {d.name, d.id}, order_by: d.name, where: d.room_id == ^room_id)
-    |> Repo.all()
-  end
-
   def get_display!(id), do: Repo.get!(Display, id)
 
   def change_display(%Display{} = display, params \\ %{}), do: Display.changeset(display, params)
+
+  def create_display(attrs \\ %{}) do
+    %Display{}
+    |> Display.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_display(%Display{} = display, attrs) do
+    display
+    |> Display.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # REGIONS --------------------------------------------------------------------------------------
 
@@ -69,6 +78,20 @@ defmodule Lotd.Gallery do
   def get_region!(id), do: Repo.get!(Region, id)
 
   def change_region(%Region{} = region, params \\ %{}), do: Region.changeset(region, params)
+
+  def create_region(attrs \\ %{}) do
+    %Region{}
+    |> Region.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_region(%Region{} = region, attrs) do
+    region
+    |> Region.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_region(%Region{} = region), do: Repo.delete(region)
 
   # LOCATIONS ------------------------------------------------------------------------------------
 
@@ -82,6 +105,20 @@ defmodule Lotd.Gallery do
   def change_location(%Location{} = location, params \\ %{}),
     do: Location.changeset(location, params)
 
+  def create_location(attrs \\ %{}) do
+    %Location{}
+    |> Location.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_location(%Location{} = location, attrs) do
+    location
+    |> Location.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_location(%Location{} = location), do: Repo.delete(location)
+
   # MODS -----------------------------------------------------------------------------------------
 
   def list_mods do
@@ -93,4 +130,18 @@ defmodule Lotd.Gallery do
   def get_mod!(id), do: Repo.get!(Mod, id)
 
   def change_mod(%Mod{} = mod, params \\ %{}), do: Mod.changeset(mod, params)
+
+  def create_mod(attrs \\ %{}) do
+    %Mod{}
+    |> Mod.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_mod(%Mod{} = mod, attrs) do
+    mod
+    |> Mod.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
 end

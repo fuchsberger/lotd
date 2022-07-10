@@ -204,6 +204,54 @@ defmodule LotdWeb.LotdLive do
             module={LotdWeb.Live.CharacterComponent}
           />
 
+        <% :create_display -> %>
+          <.live_component
+            display_id={nil}
+            id="create-display-component"
+            items={[]}
+            module={LotdWeb.Live.DisplayComponent}
+          />
+
+        <% :update_display -> %>
+          <.live_component
+            display_id={@display_id}
+            items={@current_items}
+            id="update-display-component"
+            module={LotdWeb.Live.DisplayComponent}
+          />
+
+        <% :create_location -> %>
+          <.live_component
+            location_id={nil}
+            id="create-location-component"
+            items={[]}
+            module={LotdWeb.Live.LocationComponent}
+          />
+
+        <% :update_location -> %>
+          <.live_component
+            location_id={@location_id}
+            items={@current_items}
+            id="update-location-component"
+            module={LotdWeb.Live.LocationComponent}
+          />
+
+        <% :create_mod -> %>
+          <.live_component
+            mod_id={nil}
+            id="create-mod-component"
+            items={[]}
+            module={LotdWeb.Live.ModComponent}
+          />
+
+        <% :update_mod -> %>
+          <.live_component
+            mod_id={@mod_id}
+            items={@current_items}
+            id="update-mod-component"
+            module={LotdWeb.Live.ModComponent}
+          />
+
         <% _ -> %>
           <.live_component
             items={@current_items}
