@@ -30,16 +30,18 @@ defmodule LotdWeb.Router do
     live "/update_character", LotdLive, :update_character
 
     # requires authentication and moderator access
+    live "/create_item", LotdLive, :create_item
+    live "/update_item/:id", LotdLive, :update_item
     live "/create_display", LotdLive, :create_display
     live "/update_display", LotdLive, :update_display
     live "/create_location", LotdLive, :create_location
     live "/update_location", LotdLive, :update_location
+
+    # requires authentication and admin access
     live "/create_room", LotdLive, :create_room
     live "/update_room", LotdLive, :update_room
     live "/create_region", LotdLive, :create_region
     live "/update_region", LotdLive, :update_region
-
-    # requires authentication and admin access
     live "/users", LotdLive, :users
 
     # handle 404 in live view

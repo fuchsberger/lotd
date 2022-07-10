@@ -1,7 +1,7 @@
-<div class="min-h-full" x-data="{open: false}"  :class="open ? 'overflow-hidden' : ''">
+<div :class="open ? 'overflow-hidden' : ''" class="min-h-full" x-data="{open: false}">
   <header
-    class="bg-white shadow-sm lg:static lg:overflow-y-visible"
     :class="open ? 'fixed inset-0 z-40 overflow-y-auto' : ''"
+    class="bg-white shadow-sm lg:static lg:overflow-y-visible"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="relative flex justify-between xl:grid xl:grid-cols-12 lg:gap-8">
@@ -117,8 +117,8 @@
                 <span class="truncate"><%= region.name %></span>
               </.link>
             <% end %>
-          <% @live_action in [:mods, :create_mod, :update_mod] -> %>
-            <%= for mod <- @mods do %>
+          <% @live_action in [:mods, :create_character, :update_character, :create_mod, :update_mod] -> %>
+            <%= for mod <- @current_mods do %>
               <.link
                 link_type="button" {mobile_item_attrs(mod.id == @mod_id)}
                 phx-click="select-mod"
@@ -194,8 +194,8 @@
                     <span class="truncate"><%= region.name %></span>
                   </.link>
                 <% end %>
-              <% @live_action in [:mods, :create_mod, :update_mod] -> %>
-                <%= for mod <- @mods do %>
+              <% @live_action in [:mods, :create_character, :update_character, :create_mod, :update_mod] -> %>
+                <%= for mod <- @current_mods do %>
                   <.link
                     link_type="button" {desktop_item_attrs(mod.id == @mod_id)}
                     phx-click="select-mod"

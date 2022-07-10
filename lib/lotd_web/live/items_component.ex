@@ -17,6 +17,13 @@ defmodule LotdWeb.Live.ItemsComponent do
               <%= gettext "Name" %>
             </.th>
             <.th condensed><Icon.Outline.duplicate class="w-5 h-5"/></.th>
+            <%= if @user && @user.moderator do %>
+              <.th condensed>
+                <.link class="text-indigo-600 hover:text-indigo-900" to={Routes.lotd_path(@socket, :create_item)} target="_blank">
+                  <Icon.Outline.plus class="w-5 h-5"/>
+                </.link>
+              </.th>
+            <% end %>
             <.th condensed order="last"><Icon.Outline.external_link class="w-5 h-5"/></.th>
           </tr>
         </:thead>
@@ -36,12 +43,19 @@ defmodule LotdWeb.Live.ItemsComponent do
                   ] %>
                 </.td>
               <% end %>
-              <.td condensed {if @user && @user.active_character, do: [], else: [order: "first"]}><%= item.name %></.td>
+              <.td class="truncate" condensed {if @user && @user.active_character, do: [], else: [order: "first"]}><%= item.name %></.td>
               <.td condensed order="last">
                 <%= if item.replica do %>
                   <Icon.Outline.duplicate class="w-5 h-5"/>
                 <% end %>
               </.td>
+              <%= if @user && @user.moderator do %>
+                <.td condensed>
+                  <.link class="text-indigo-600 hover:text-indigo-900" to={Routes.lotd_path(@socket, :update_item, item.id)} target="_blank">
+                    <Icon.Outline.pencil class="w-5 h-5"/>
+                  </.link>
+                </.td>
+              <% end %>
               <.td condensed order="last">
                 <%= if item.url do %>
                   <.link class="text-indigo-600 hover:text-indigo-900" link_type="a" to={item.url} target="_blank">

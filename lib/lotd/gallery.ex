@@ -18,6 +18,20 @@ defmodule Lotd.Gallery do
 
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
 
+  def create_item(attrs \\ %{}) do
+    %Item{}
+    |> Item.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_item(%Item{} = item, attrs) do
+    item
+    |> Item.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_item(%Item{} = item), do: Repo.delete(item)
+
   # ROOMS ----------------------------------------------------------------------------------------
 
   def list_rooms do

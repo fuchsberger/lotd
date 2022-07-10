@@ -5,8 +5,8 @@ defmodule LotdWeb.LotdLive do
   alias Lotd.{Accounts, Gallery}
 
   @requires_character ~w(update_character)a
-  @requires_moderator ~w(create_display update_display create_location update_location create_mod update_mod)a
-  @requires_admin ~w(users)a
+  @requires_moderator ~w(create_item update_item create_display update_display create_location update_location create_mod update_mod)a
+  @requires_admin ~w(create_region update_region create_room update_room users)a
   @private_routes [:create_character] ++ @requires_character ++ @requires_moderator ++ @requires_admin
 
   def broadcast(topic, message), do: Phoenix.PubSub.broadcast(Lotd.PubSub, topic, message)
@@ -48,6 +48,7 @@ defmodule LotdWeb.LotdLive do
     |> assign(:user, user)
     |> assign_displays
     |> assign_locations
+    |> assign_mods
     |> assign_items}
   end
 
@@ -97,12 +98,46 @@ defmodule LotdWeb.LotdLive do
     |> assign(:current_region_location_count, locations |> Enum.map(& &1.count) |> Enum.sum())
   end
 
-  defp assign_items(socket) do
+  defp assign_mods(socket) do
+    user = socket.assigns.user
     search_query = Ecto.Changeset.get_field(socket.assigns.search_changeset, :query)
+
+    mods =
+      if search_query do
+        socket.assigns.mods
+        |> Enum.map(& Map.put(&1, :similarity, FuzzyCompare.similarity(&1.name, search_query)))
+        |> Enum.sort_by(& &1.similarity, :desc)
+        |> Enum.filter(& &1.similarity > 0.9)
+        |> Enum.take(10)
+      else
+        if user && user.active_character do
+          Enum.filter(socket.assigns.mods, & &1.id in user.active_character.mods)
+        else
+          socket.assigns.mods
+        end
+      end
+      |> Enum.map(fn %{id: id} = mod ->
+          count = Enum.count(Enum.filter(socket.assigns.items, & &1.mod_id == id))
+          Map.put(mod, :count, count)
+        end)
+
+    assign(socket, :current_mods, mods)
+  end
+
+  defp assign_items(socket) do
+    user = socket.assigns.user
+    search_query = Ecto.Changeset.get_field(socket.assigns.search_changeset, :query)
+
+    items =
+      if user && user.active_character do
+        Enum.filter(socket.assigns.items, & &1.mod_id in user.active_character.mods )
+      else
+        socket.assigns.items
+      end
 
     current_items =
       if search_query do
-        socket.assigns.items
+        items
         |> Enum.map(& Map.put(&1, :similarity, FuzzyCompare.ChunkSet.standard_similarity(&1.name, search_query)))
         |> Enum.sort_by(& &1.similarity, :desc)
         |> Enum.take(50)
@@ -112,22 +147,22 @@ defmodule LotdWeb.LotdLive do
             case socket.assigns.display_id do
               nil ->
                 ids = Enum.map(socket.assigns.current_displays, & &1.id)
-                Enum.filter(socket.assigns.items, & &1.display_id in ids)
+                Enum.filter(items, & &1.display_id in ids)
 
               id ->
-                Enum.filter(socket.assigns.items, & &1.display_id == id)
+                Enum.filter(items, & &1.display_id == id)
             end
           socket.assigns.live_action in [:locations, :create_location, :update_location] ->
             case socket.assigns.location_id do
               nil ->
                 ids = Enum.map(socket.assigns.current_locations, & &1.id)
-                Enum.filter(socket.assigns.items, & &1.location_id in ids)
+                Enum.filter(items, & &1.location_id in ids)
 
               id ->
-                Enum.filter(socket.assigns.items, & &1.location_id == id)
+                Enum.filter(items, & &1.location_id == id)
             end
           :mods ->
-            Enum.filter(socket.assigns.items, & &1.mod_id == socket.assigns.mod_id)
+            Enum.filter(items, & &1.mod_id == socket.assigns.mod_id)
 
           true ->
             []
@@ -137,7 +172,7 @@ defmodule LotdWeb.LotdLive do
     assign(socket, :current_items, Enum.take(current_items, 200))
   end
 
-  def handle_params(_unsigned_params, uri, socket) do
+  def handle_params(unsigned_params, uri, socket) do
     cond do
       # ensure user is authenticated if required to
       socket.assigns.live_action in @private_routes && is_nil(socket.assigns.user) ->
@@ -162,6 +197,12 @@ defmodule LotdWeb.LotdLive do
         {:noreply, socket
         |> put_flash(:error, gettext "Admin access needed for this page.")
         |> push_patch(to: Routes.lotd_path(socket, :gallery))}
+
+      # assign id for pages that need it
+      socket.assigns.live_action == :update_item ->
+        {:noreply, socket
+        |> assign(:id, Map.get(unsigned_params, "id"))
+        |> assign_items}
 
       # redirect from index page
       socket.assigns.live_action == :index ->
@@ -202,6 +243,32 @@ defmodule LotdWeb.LotdLive do
             user={@user}
             id="update-character-component"
             module={LotdWeb.Live.CharacterComponent}
+          />
+
+        <% :create_item -> %>
+          <.live_component
+            item_id={nil}
+            id="create-item-component"
+            module={LotdWeb.Live.ItemComponent}
+            display_id={@display_id}
+            display_options={Enum.map(@displays, & {&1.name, &1.id})}
+            location_id={@location_id}
+            location_options={Enum.map(@locations, & {&1.name, &1.id})}
+            mod_id={@mod_id}
+            mod_options={Enum.map(@mods, & {&1.name, &1.id})}
+          />
+
+        <% :update_item -> %>
+          <.live_component
+            item_id={@id}
+            id="update-item-component"
+            module={LotdWeb.Live.ItemComponent}
+            display_id={@display_id}
+            display_options={Enum.map(@displays, & {&1.name, &1.id})}
+            location_id={@location_id}
+            location_options={Enum.map(@locations, & {&1.name, &1.id})}
+            mod_id={@mod_id}
+            mod_options={Enum.map(@mods, & {&1.name, &1.id})}
           />
 
         <% :create_display -> %>
@@ -278,6 +345,14 @@ defmodule LotdWeb.LotdLive do
     |> Ecto.Changeset.validate_length(:query, max: 80)
   end
 
+  def handle_event("search", %{"search" => params}, socket) do
+    {:noreply, socket
+    |> assign(:search_changeset, search_changeset(params))
+    |> assign_displays
+    |> assign_locations
+    |> assign_items}
+  end
+
   def handle_event("select-tab", %{"selection" => action}, socket) do
     {:noreply, push_patch(socket, to: Routes.lotd_path(socket, String.to_atom(action)))}
   end
@@ -292,18 +367,23 @@ defmodule LotdWeb.LotdLive do
   def handle_event("select-display", %{"id" => id}, socket) do
     {:noreply, socket
     |> assign(:display_id, String.to_integer(id))
+    |> assign(:search_changeset, search_changeset(%{}))
+    |> assign_displays
     |> assign_items}
   end
 
   def handle_event("unselect-display", _params, socket) do
     {:noreply, socket
     |> assign(:display_id, nil)
+    |> assign(:search_changeset, search_changeset(%{}))
+    |> assign_displays
     |> assign_items}
   end
 
   def handle_event("select-region", %{"id" => id}, socket) do
     {:noreply, socket
     |> assign(:region_id, String.to_integer(id))
+    |> assign(:search_changeset, search_changeset(%{}))
     |> assign_locations
     |> assign_items}
   end
@@ -311,12 +391,16 @@ defmodule LotdWeb.LotdLive do
   def handle_event("select-location", %{"id" => id}, socket) do
     {:noreply, socket
     |> assign(:location_id, String.to_integer(id))
+    |> assign(:search_changeset, search_changeset(%{}))
+    |> assign_locations
     |> assign_items}
   end
 
   def handle_event("unselect-location", _params, socket) do
     {:noreply, socket
     |> assign(:location_id, nil)
+    |> assign(:search_changeset, search_changeset(%{}))
+    |> assign_locations()
     |> assign_items}
   end
 
@@ -385,6 +469,15 @@ defmodule LotdWeb.LotdLive do
     {:noreply, socket
     |> assign(:locations, locations)
     |> assign_locations
+    |> assign_items}
+  end
+
+  def handle_info({:update_items, items}, socket) do
+    {:noreply, socket
+    |> assign(:items, items)
+    |> assign_displays
+    |> assign_locations
+    |> assign_mods
     |> assign_items}
   end
 end

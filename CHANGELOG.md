@@ -6,6 +6,9 @@
   - improved account security and secure session handling
   - avatar from nexus now being displayed when logged in
   - mods can now be toggled on and off collectively
+  - improved moderation system
+  - when moderating will update the system for all users on the fly
+  - entering an invalid item url no longer possible thus the page can no longer be broken this way
 
 ## 0.6.4
 

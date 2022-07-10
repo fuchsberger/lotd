@@ -77,8 +77,6 @@ defmodule LotdWeb.Live.DisplayComponent do
   end
 
   def handle_event("save-display", %{"display" => params}, socket) do
-    params = Map.put(params, "room_id", socket.assigns.room_id)
-
     if socket.assigns.display do
       case Gallery.update_display(socket.assigns.display, params) do
         {:ok, _display} ->
