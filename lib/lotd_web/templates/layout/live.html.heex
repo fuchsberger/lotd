@@ -232,12 +232,12 @@
       </main>
       <aside class="hidden xl:block xl:col-span-4">
         <div class="sticky top-4 space-y-4">
-          <%= if @live_action in [:gallery, :locations] do %>
+          <%= if @live_action in [:gallery, :create_display, :update_display, :create_room, :update_room, :create_room, :update_room, :create_region, :update_region] do %>
             <.card>
               <:header>
                 <div class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
                   <div class="ml-4 mt-4">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900"><%= if @live_action == :gallery, do: "Displays", else: "Locations" %></h3>
+                    <h3 class="text-lg leading-6 font-medium text-gray-900"><%= if @live_action in [:gallery, :create_display, :update_display, :create_room, :update_room], do: "Displays", else: "Locations" %></h3>
                     <%= if @user do %>
                       <div class="flex mt-1 space-x-1">
                         <.toggle short enabled={@user.hide_aquired_items} phx-click="toggle-hide" />
@@ -245,9 +245,21 @@
                       </div>
                     <% end %>
                   </div>
-                  <div class="ml-4 mt-4 flex-shrink-0">
-                    <button type="button" class="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">New</button>
-                  </div>
+                  <%= if @user.moderator do %>
+                    <div class="ml-4 mt-4 flex-shrink-0">
+                      <%= if @live_action in [:gallery, :create_display, :update_display, :create_room, :update_room] do %>
+                        <%= if @display_id do %>
+                          <.button size="sm" leading_icon="pencil" label="edit" color="secondary" class="!px-2" link_type="live_patch" to={Routes.lotd_path(@socket, :update_display)} />
+                        <% end %>
+                        <.button size="sm" class="!px-2" leading_icon="plus" label="add" color="secondary" class="!px-2" link_type="live_patch" to={Routes.lotd_path(@socket, :create_display)} />
+                      <% else %>
+                        <%= if @location_id do %>
+                            <.button size="sm" leading_icon="pencil" label="edit" color="secondary" class="!px-2" link_type="live_patch" to={Routes.lotd_path(@socket, :update_location)} />
+                          <% end %>
+                          <.button size="sm" class="!px-2" leading_icon="plus" label="add" color="secondary" class="!px-2" link_type="live_patch" to={Routes.lotd_path(@socket, :create_location)} />
+                        <% end %>
+                    </div>
+                  <% end %>
                 </div>
               </:header>
               <:body>
@@ -330,6 +342,7 @@
                     <%= if @user.active_character do %>
                       <.button link_type="live_patch" to={Routes.lotd_path(@socket, :update_character)}  color="secondary" type="button" leading_icon="pencil" size="sm" label={gettext "Edit"} />
                     <% end %>
+
                     <.button link_type="live_patch" to={Routes.lotd_path(@socket, :create_character)} color="secondary" type="button" leading_icon="plus" size="sm" disabled={Enum.count(@user.characters) > 20} label={gettext "New"} />
                   </div>
                 </div>

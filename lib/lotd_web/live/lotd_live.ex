@@ -107,8 +107,8 @@ defmodule LotdWeb.LotdLive do
         |> Enum.sort_by(& &1.similarity, :desc)
         |> Enum.take(50)
       else
-        case socket.assigns.live_action do
-          :gallery ->
+        cond do
+          socket.assigns.live_action in [:gallery, :create_display, :update_display] ->
             case socket.assigns.display_id do
               nil ->
                 ids = Enum.map(socket.assigns.current_displays, & &1.id)
@@ -117,7 +117,7 @@ defmodule LotdWeb.LotdLive do
               id ->
                 Enum.filter(socket.assigns.items, & &1.display_id == id)
             end
-          :locations ->
+          socket.assigns.live_action in [:locations, :create_location, :update_location] ->
             case socket.assigns.region_id do
               nil ->
                 ids = Enum.map(socket.assigns.current_locations, & &1.id)
@@ -129,7 +129,7 @@ defmodule LotdWeb.LotdLive do
           :mods ->
             Enum.filter(socket.assigns.items, & &1.mod_id == socket.assigns.mod_id)
 
-          _ ->
+          true ->
             []
         end
       end
@@ -174,7 +174,7 @@ defmodule LotdWeb.LotdLive do
         |> push_patch(to: Routes.lotd_path(socket, :gallery))}
 
       true ->
-        {:noreply, socket}
+        {:noreply, assign_items(socket)}
     end
   end
 
@@ -210,6 +210,7 @@ defmodule LotdWeb.LotdLive do
             id="create-display-component"
             items={[]}
             module={LotdWeb.Live.DisplayComponent}
+            room_id={@room_id}
           />
 
         <% :update_display -> %>
@@ -218,6 +219,7 @@ defmodule LotdWeb.LotdLive do
             items={@current_items}
             id="update-display-component"
             module={LotdWeb.Live.DisplayComponent}
+            room_id={@room_id}
           />
 
         <% :create_location -> %>
@@ -226,6 +228,7 @@ defmodule LotdWeb.LotdLive do
             id="create-location-component"
             items={[]}
             module={LotdWeb.Live.LocationComponent}
+            region_id={@region_id}
           />
 
         <% :update_location -> %>
@@ -234,6 +237,7 @@ defmodule LotdWeb.LotdLive do
             items={@current_items}
             id="update-location-component"
             module={LotdWeb.Live.LocationComponent}
+            region_id={@region_id}
           />
 
         <% :create_mod -> %>
