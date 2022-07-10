@@ -55,7 +55,8 @@ defmodule Lotd.Accounts do
   def generate_user_session_token(user) do
     {token, user_token} = UserToken.build_session_token(user)
 
-    Logger.warn({token, user_token})
+    Logger.warn(IO.inspect(token))
+    Logger.warn(IO.inspect(user_token))
     Repo.insert!(user_token)
     token
   end
