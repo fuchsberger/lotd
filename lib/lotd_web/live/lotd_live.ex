@@ -8,8 +8,6 @@ defmodule LotdWeb.LotdLive do
 
   @requires_admin [:users]
 
-  # def render(assigns), do: LotdWeb.GalleryView.render("index.html", assigns)
-
   def mount(_params, session, socket) do
     user =
       case Map.get(session, "user_token") do
@@ -23,26 +21,40 @@ defmodule LotdWeb.LotdLive do
       end
 
     {:ok, socket
-    |> assign(:changeset, nil)
+    |> assign(:search_changeset, search_changeset(%{}))
     |> assign(:character, nil)
     |> assign(:displays, Gallery.list_displays)
     |> assign(:filter, nil)
     |> assign(:items, Gallery.list_items)
-    |> assign(:mod_options, Gallery.list_mod_options())
+    |> assign(:location_id, nil)
+    |> assign(:locations, Gallery.list_locations)
+    |> assign(:mod_id, 1)
+    |> assign(:mods, Gallery.list_mods)
     |> assign(:display_id, nil)
+    |> assign(:region_id, 1)
+    |> assign(:regions, Gallery.list_regions)
     |> assign(:room_id, 1)
     |> assign(:rooms, Gallery.list_rooms)
     |> assign(:search, "")
-    |> assign(:tab, 3)
     |> assign(:user, user)
     |> assign_displays
+    |> assign_locations
     |> assign_items}
   end
 
   defp assign_displays(socket) do
+    search_query = Ecto.Changeset.get_field(socket.assigns.search_changeset, :query)
+
     displays =
-      socket.assigns.displays
-      |> Enum.filter(& &1.room_id == socket.assigns.room_id)
+      if search_query do
+        socket.assigns.displays
+        |> Enum.map(& Map.put(&1, :similarity, FuzzyCompare.similarity(&1.name, search_query)))
+        |> Enum.sort_by(& &1.similarity, :desc)
+        |> Enum.filter(& &1.similarity > 0.9)
+        |> Enum.take(50)
+      else
+        Enum.filter(socket.assigns.displays, & &1.room_id == socket.assigns.room_id)
+      end
       |> Enum.map(fn %{id: id} = display ->
           count = Enum.count(Enum.filter(socket.assigns.items, & &1.display_id == id))
           Map.put(display, :count, count)
@@ -53,23 +65,67 @@ defmodule LotdWeb.LotdLive do
     |> assign(:current_room_display_count, displays |> Enum.map(& &1.count) |> Enum.sum())
   end
 
-  defp assign_items(socket) do
-    current_items =
-      case socket.assigns.live_action do
-        :gallery ->
-          case socket.assigns.display_id do
-            nil ->
-              ids = Enum.map(socket.assigns.current_displays, & &1.id)
-              Enum.filter(socket.assigns.items, & &1.display_id in ids)
+  defp assign_locations(socket) do
+    search_query = Ecto.Changeset.get_field(socket.assigns.search_changeset, :query)
 
-            id ->
-              Enum.filter(socket.assigns.items, & &1.display_id == id)
-          end
-        _ ->
-          []
+    locations =
+      if search_query do
+        socket.assigns.locations
+        |> Enum.map(& Map.put(&1, :similarity, FuzzyCompare.similarity(&1.name, search_query)))
+        |> Enum.sort_by(& &1.similarity, :desc)
+        |> Enum.filter(& &1.similarity > 0.9)
+        |> Enum.take(50)
+      else
+        Enum.filter(socket.assigns.locations, & &1.region_id == socket.assigns.region_id)
+      end
+      |> Enum.map(fn %{id: id} = location ->
+          count = Enum.count(Enum.filter(socket.assigns.items, & &1.location_id == id))
+          Map.put(location, :count, count)
+        end)
+
+    socket
+    |> assign(:current_locations, locations)
+    |> assign(:current_region_location_count, locations |> Enum.map(& &1.count) |> Enum.sum())
+  end
+
+  defp assign_items(socket) do
+    search_query = Ecto.Changeset.get_field(socket.assigns.search_changeset, :query)
+
+    current_items =
+      if search_query do
+        socket.assigns.items
+        |> Enum.map(& Map.put(&1, :similarity, FuzzyCompare.ChunkSet.standard_similarity(&1.name, search_query)))
+        |> Enum.sort_by(& &1.similarity, :desc)
+        |> Enum.take(50)
+      else
+        case socket.assigns.live_action do
+          :gallery ->
+            case socket.assigns.display_id do
+              nil ->
+                ids = Enum.map(socket.assigns.current_displays, & &1.id)
+                Enum.filter(socket.assigns.items, & &1.display_id in ids)
+
+              id ->
+                Enum.filter(socket.assigns.items, & &1.display_id == id)
+            end
+          :locations ->
+            case socket.assigns.region_id do
+              nil ->
+                ids = Enum.map(socket.assigns.current_locations, & &1.id)
+                Enum.filter(socket.assigns.items, & &1.location_id in ids)
+
+              id ->
+                Enum.filter(socket.assigns.items, & &1.location_id == id)
+            end
+          :mods ->
+            Enum.filter(socket.assigns.items, & &1.mod_id == socket.assigns.mod_id)
+
+          _ ->
+            []
+        end
       end
 
-    assign(socket, :current_items, current_items)
+    assign(socket, :current_items, Enum.take(current_items, 200))
   end
 
   def handle_params(_unsigned_params, _uri, socket) do
@@ -102,6 +158,12 @@ defmodule LotdWeb.LotdLive do
       <% end %>
     </div>
     """
+  end
+
+  defp search_changeset(params) do
+    {%{}, %{query: :string}}
+    |> Ecto.Changeset.cast(params, [:query])
+    |> Ecto.Changeset.validate_length(:query, max: 80)
   end
 
   defp active_character(socket), do: socket.assigns.user && Enum.find(socket.assigns.user.characters, & &1.id == socket.assigns.user.active_character_id)
@@ -277,8 +339,11 @@ defmodule LotdWeb.LotdLive do
     |> assign(:tab, 3)}
   end
 
-  def handle_event("search", %{"search" => %{"query" => query}}, socket) do
-    {:noreply, assign(socket, :search, query)}
+  def handle_event("search", %{"search" => params}, socket) do
+    {:noreply, socket
+    |> assign(:search_changeset, search_changeset(params))
+    |> assign_displays
+    |> assign_items}
   end
 
   def handle_event("tab", %{"tab" => tab}, socket) do
@@ -434,6 +499,31 @@ defmodule LotdWeb.LotdLive do
   def handle_event("unselect-display", _params, socket) do
     {:noreply, socket
     |> assign(:display_id, nil)
+    |> assign_items}
+  end
+
+  def handle_event("select-region", %{"id" => id}, socket) do
+    {:noreply, socket
+    |> assign(:region_id, String.to_integer(id))
+    |> assign_locations
+    |> assign_items}
+  end
+
+  def handle_event("select-location", %{"id" => id}, socket) do
+    {:noreply, socket
+    |> assign(:location_id, String.to_integer(id))
+    |> assign_items}
+  end
+
+  def handle_event("unselect-location", _params, socket) do
+    {:noreply, socket
+    |> assign(:location_id, nil)
+    |> assign_items}
+  end
+
+  def handle_event("select-mod", %{"id" => id}, socket) do
+    {:noreply, socket
+    |> assign(:mod_id, String.to_integer(id))
     |> assign_items}
   end
 end

@@ -25,9 +25,9 @@ defmodule LotdWeb.LayoutView do
     ]
   end
 
-  defp desktop_item_attrs(true), do: [class: "bg-gray-200 text-gray-900 group flex items-center px-3 py-2 text-sm font-medium rounded-md", aria_current: "page"]
+  defp desktop_item_attrs(true), do: [class: "w-full text-left bg-gray-200 text-gray-900 group flex items-center px-3 py-2 text-sm font-medium rounded-md", aria_current: "page"]
 
-  defp desktop_item_attrs(false), do: [class: "text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"]
+  defp desktop_item_attrs(false), do: [class: "w-full text-left text-gray-600 hover:bg-gray-50 group flex items-center px-3 py-2 text-sm font-medium rounded-md"]
 
   defp mobile_item_attrs(true), do: [class: "w-full text-left bg-gray-100 text-gray-900 block rounded-md py-2 px-3 text-base font-medium truncate", aria_current: "page"]
 

@@ -15,14 +15,14 @@
         <div class="min-w-0 flex-1 md:px-8 lg:px-0 xl:col-span-6">
           <div class="flex items-center px-6 py-4 md:max-w-3xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
             <div class="w-full">
-              <.form let={f} for={:search_changeset} phx-change="search" phx-submit="search">
-                <.form_label label={gettext "Search"} class="sr-only" form={f} field={:term} />
+              <.form as={:search} let={f} for={@search_changeset} phx-change="search" phx-submit="search">
+                <.form_label label={gettext "Search"} class="sr-only" form={f} field={:query} />
                 <div class="relative">
                   <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center">
                     <Icon.Solid.search class="h-5 w-5 text-gray-400" />
                   </div>
 
-                  <.search_input form={f} field={:term} class="block w-full bg-white border border-gray-300 rounded-md py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:outline-none focus:text-gray-900 focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder={gettext "Search"} phx-debounce="200" />
+                  <.search_input form={f} field={:query} class="block w-full bg-white border border-gray-300 rounded-md py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:outline-none focus:text-gray-900 focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder={gettext "Search"} phx-debounce="300" />
                 </div>
               </.form>
             </div>
@@ -107,6 +107,26 @@
         <% end %>
         <div class="border-b border-gray-200"></div>
         <%= case @live_action do %>
+          <% :locations -> %>
+            <%= for region <- @regions do %>
+              <.link
+                link_type="button" {mobile_item_attrs(region.id == @region_id)}
+                phx-click="select-region"
+                phx-value-id={region.id}
+              >
+                <span class="truncate"><%= region.name %></span>
+              </.link>
+            <% end %>
+          <% :mods -> %>
+            <%= for mod <- @mods do %>
+              <.link
+                link_type="button" {mobile_item_attrs(mod.id == @mod_id)}
+                phx-click="select-mod"
+                phx-value-id={mod.id}
+              >
+                <span class="truncate"><%= mod.name %></span>
+              </.link>
+            <% end %>
           <% _ -> %>
             <%= for room <- @rooms do %>
               <.link
@@ -164,6 +184,26 @@
           <%# Desktop Sidebar main links %>
           <div class="pb-8 space-y-1">
             <%= case @live_action do %>
+              <% :locations -> %>
+                <%= for region <- @regions do %>
+                  <.link
+                    link_type="button" {desktop_item_attrs(region.id == @region_id)}
+                    phx-click="select-region"
+                    phx-value-id={region.id}
+                  >
+                    <span class="truncate"><%= region.name %></span>
+                  </.link>
+                <% end %>
+              <% :mods -> %>
+                <%= for mod <- @mods do %>
+                  <.link
+                    link_type="button" {desktop_item_attrs(mod.id == @mod_id)}
+                    phx-click="select-mod"
+                    phx-value-id={mod.id}
+                  >
+                    <span class="truncate"><%= mod.name %></span>
+                  </.link>
+                <% end %>
               <% _ -> %>
                 <%= for room <- @rooms do %>
                   <.link
@@ -198,56 +238,81 @@
           <%# if @character do %>
             <%# <.condition_widget character={@character} /> %>
           <%# end %>
-          <.card>
-            <:header>
-              <div class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
-                <div class="ml-4 mt-4">
-                  <h3 class="text-lg leading-6 font-medium text-gray-900">Displays</h3>
-                  <p class="mt-1 text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit quam corrupti consectetur.</p>
+          <%= if @live_action in [:gallery, :locations] do %>
+            <.card>
+              <:header>
+                <div class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
+                  <div class="ml-4 mt-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Displays</h3>
+                    <p class="mt-1 text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit quam corrupti consectetur.</p>
+                  </div>
+                  <div class="ml-4 mt-4 flex-shrink-0">
+                    <button type="button" class="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Create new job</button>
+                  </div>
                 </div>
-                <div class="ml-4 mt-4 flex-shrink-0">
-                  <button type="button" class="relative inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Create new job</button>
-                </div>
-              </div>
-            </:header>
-            <:body>
-              <ul role="list" class="divide-y divide-gray-200">
-                <li>
-                  <.link
-                    link_type="button"
-                    class={"w-full flex items-center py-2 space-x-4  #{if is_nil(@display_id), do: "bg-gray-100 cursor-default", else: "hover:bg-gray-50"}"}
-                    phx-click="unselect-display"
-                  >
-                    <div>
-                      <Icon.Solid.chevron_left class="h-5 w-5 text-gray-400" />
-                    </div>
-                    <div class="grow text-left text-sm font-medium text-gray-900 truncate">
-                      <%= gettext "All" %>
-                    </div>
-                    <div class="text-sm text-gray-500"><%= @current_room_display_count %></div>
-                  </.link>
-                </li>
-                <%= for display <- @current_displays do %>
+              </:header>
+              <:body>
+                <ul role="list" class="divide-y divide-gray-200">
                   <li>
                     <.link
                       link_type="button"
-                      class={"w-full flex items-center py-2 space-x-4  #{if display.id == @display_id, do: "bg-gray-100 cursor-default", else: "hover:bg-gray-50"}"}
-                      phx-click="select-display"
-                      phx-value-id={display.id}
+                      class={"w-full flex items-center py-2 space-x-4  #{if is_nil(@display_id), do: "bg-gray-100 cursor-default", else: "hover:bg-gray-50"}"}
+                      phx-click="unselect-display"
                     >
                       <div>
                         <Icon.Solid.chevron_left class="h-5 w-5 text-gray-400" />
                       </div>
                       <div class="grow text-left text-sm font-medium text-gray-900 truncate">
-                        <%= display.name %>
+                        <%= gettext "All" %>
                       </div>
-                      <div class="text-sm text-gray-500"><%= display.count %></div>
+                      <div class="text-sm text-gray-500"><%= @current_room_display_count %></div>
                     </.link>
                   </li>
-                <% end %>
-              </ul>
-            </:body>
-          </.card>
+                  <%= case @live_action do %>
+                    <% :locations -> %>
+                      <%= for location <- @current_locations do %>
+                        <li>
+                          <.link
+                            link_type="button"
+                            class={"w-full flex items-center py-2 space-x-4  #{if location.id == @location_id, do: "bg-gray-100 cursor-default", else: "hover:bg-gray-50"}"}
+                            phx-click="select-location"
+                            phx-value-id={location.id}
+                          >
+                            <div>
+                              <Icon.Solid.chevron_left class="h-5 w-5 text-gray-400" />
+                            </div>
+                            <div class="grow text-left text-sm font-medium text-gray-900 truncate">
+                              <%= location.name %>
+                            </div>
+                            <div class="text-sm text-gray-500"><%= location.count %></div>
+                          </.link>
+                        </li>
+                      <% end %>
+
+                    <% _ -> %>
+                      <%= for display <- @current_displays do %>
+                        <li>
+                          <.link
+                            link_type="button"
+                            class={"w-full flex items-center py-2 space-x-4  #{if display.id == @display_id, do: "bg-gray-100 cursor-default", else: "hover:bg-gray-50"}"}
+                            phx-click="select-display"
+                            phx-value-id={display.id}
+                          >
+                            <div>
+                              <Icon.Solid.chevron_left class="h-5 w-5 text-gray-400" />
+                            </div>
+                            <div class="grow text-left text-sm font-medium text-gray-900 truncate">
+                              <%= display.name %>
+                            </div>
+                            <div class="text-sm text-gray-500"><%= display.count %></div>
+                          </.link>
+                        </li>
+                      <% end %>
+                  <% end %>
+                </ul>
+              </:body>
+            </.card>
+          <% end %>
         </div>
       </aside>
     </div>

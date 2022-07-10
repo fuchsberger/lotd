@@ -61,8 +61,8 @@ defmodule Lotd.Gallery do
 
   # REGIONS --------------------------------------------------------------------------------------
 
-  def list_region_options() do
-    from(r in Region, select: {r.name, r.id}, order_by: r.name)
+  def list_regions do
+    from(r in Region, select: map(r, [:name, :id]), order_by: r.name)
     |> Repo.all()
   end
 
@@ -72,8 +72,8 @@ defmodule Lotd.Gallery do
 
   # LOCATIONS ------------------------------------------------------------------------------------
 
-  def list_location_options() do
-    from(l in Location, select: {l.name, l.id}, order_by: l.name)
+  def list_locations do
+    from(l in Location, select: map(l, [:name, :id, :region_id]), order_by: l.name)
     |> Repo.all()
   end
 
@@ -84,9 +84,10 @@ defmodule Lotd.Gallery do
 
   # MODS -----------------------------------------------------------------------------------------
 
-  def list_mod_options() do
-    from(m in Mod, select: {m.name, m.id}, order_by: m.name)
-    |> Repo.all()
+  def list_mods do
+    mods = Repo.all(from(m in Mod, select: map(m, [:name, :id]), order_by: m.name))
+    # move Vanilla / LOTD to front
+    [Enum.find(mods, & &1.id == 1) | Enum.reject(mods, & &1.id == 1)]
   end
 
   def get_mod!(id), do: Repo.get!(Mod, id)
