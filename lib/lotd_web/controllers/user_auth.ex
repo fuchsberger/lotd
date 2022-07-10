@@ -27,6 +27,8 @@ defmodule LotdWeb.UserAuth do
   """
   require Logger
   def log_in_user(conn, user) do
+    Logger.warning("AUTHENTICATION START")
+
     token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
 
