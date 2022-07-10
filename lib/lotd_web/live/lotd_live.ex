@@ -6,7 +6,10 @@ defmodule LotdWeb.LotdLive do
   alias Lotd.Accounts.Character
   alias Lotd.Gallery.{Item, Display, Location, Mod, Room, Region}
 
-  @requires_admin [:users]
+  @requires_character ~w(update_character)a
+  @requires_moderator ~w(create_display update_display create_location update_location create_mod update_mod)a
+  @requires_admin ~w(users)a
+  @private_routes [:create_character] ++ @requires_character ++ @requires_moderator ++ @requires_admin
 
   def broadcast(topic, message), do: Phoenix.PubSub.broadcast(Lotd.PubSub, topic, message)
 
@@ -134,12 +137,40 @@ defmodule LotdWeb.LotdLive do
     assign(socket, :current_items, Enum.take(current_items, 200))
   end
 
-  def handle_params(_unsigned_params, _uri, socket) do
+  def handle_params(_unsigned_params, uri, socket) do
     cond do
-      # ensure user is admin for these pages
+      # ensure user is authenticated if required to
+      socket.assigns.live_action in @private_routes && is_nil(socket.assigns.user) ->
+        {:noreply, socket
+        |> put_flash(:error, gettext "You must login to access this page.")
+        |> push_patch(to: Routes.lotd_path(socket, :gallery))}
+
+      # ensure user has character if required to
+      socket.assigns.live_action in @requires_character && is_nil(socket.assigns.user.active_character) ->
+        {:noreply, socket
+        |> put_flash(:error, gettext "Activated character needed to access.")
+        |> push_patch(to: Routes.lotd_path(socket, :mods))}
+
+      # ensure user is moderator if required to
+      socket.assigns.live_action in @requires_moderator && !socket.assigns.user.moderator ->
+        {:noreply, socket
+        |> put_flash(:error, gettext "Moderator access needed for this page.")
+        |> push_patch(to: Routes.lotd_path(socket, :gallery))}
+
+      # ensure user is admin if required to
       socket.assigns.live_action in @requires_admin && !socket.assigns.user.admin ->
         {:noreply, socket
         |> put_flash(:error, gettext "Admin access needed for this page.")
+        |> push_patch(to: Routes.lotd_path(socket, :gallery))}
+
+      # redirect from index page
+      socket.assigns.live_action == :index ->
+        {:noreply, push_patch(socket, to: Routes.lotd_path(socket, :gallery))}
+
+      # invalid url -> redirect to gallery
+      socket.assigns.live_action == :unknown_url ->
+        {:noreply, socket
+        |> put_flash(:error, uri <> gettext(" doesn't exist."))
         |> push_patch(to: Routes.lotd_path(socket, :gallery))}
 
       true ->
