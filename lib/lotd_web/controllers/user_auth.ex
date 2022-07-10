@@ -25,15 +25,10 @@ defmodule LotdWeb.UserAuth do
   disconnected on log out. The line can be safely removed
   if you are not using LiveView.
   """
-  require Logger
   def log_in_user(conn, user) do
-    Logger.warning("AUTHENTICATION START")
 
     token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
-
-    Logger.warning(token)
-    Logger.warning(user_return_to || signed_in_path(conn))
 
     conn
     |> renew_session()
