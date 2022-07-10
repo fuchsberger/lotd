@@ -4,7 +4,7 @@ defmodule LotdWeb.Components do
       alias LotdWeb.Components.Icon
 
       import LotdWeb.Components.{
-        # Alert,
+        Alert,
         Avatar,
         Badge,
         Button,

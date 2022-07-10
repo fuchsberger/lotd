@@ -16,6 +16,7 @@ defmodule LotdWeb.Components.Button do
   def button(assigns) do
     assigns =
       assigns
+      |> assign_new(:color, fn -> "primary" end)
       |> assign_new(:link_type, fn -> "button" end)
       |> assign_new(:inner_block, fn -> nil end)
       |> assign_new(:size, fn -> "md" end)

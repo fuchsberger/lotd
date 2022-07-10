@@ -18,6 +18,8 @@ defmodule LotdWeb.Router do
 
     live "/", LotdLive, :index
     live "/about", LotdLive, :about
+    live "/create_character", LotdLive, :create_character
+    live "/update_character", LotdLive, :update_character
     live "/gallery", LotdLive, :gallery
     live "/locations", LotdLive, :locations
     live "/mods", LotdLive, :mods

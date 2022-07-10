@@ -24,7 +24,8 @@ defmodule Lotd.Accounts.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:avatar_url, :hide_aquired_items, :username])
+    |> cast(attrs, [:avatar_url, :hide_aquired_items, :username, :active_character_id])
+    |> foreign_key_constraint(:active_character_id)
   end
 
   def admin_changeset(user, attrs) do

@@ -8,19 +8,18 @@ defmodule Lotd.Accounts do
   alias Lotd.Accounts.{Character, UserToken, User}
   alias Lotd.Gallery.{Item, Mod}
 
-  ## shared
+  ## user
 
-  def preload_characters_query do
-    from c in Character,
-      preload: [items: ^from(m in Item, select: m.id), mods: ^from(m in Mod, select: m.id)],
-      order_by: c.name
+  def preload_user_associations(user) do
+    Repo.preload(user, [
+      active_character: from(c in Character, preload: [
+          items: ^from(i in Item, select: i.id),
+          mods: ^from(m in Mod, select: m.id),
+        ]),
+      characters: from(c in Character, select: map(c, [:id, :name]), order_by: c.name)
+    ], force: true)
   end
 
-  def preload(struct, preloads, opts \\ []) do
-    Repo.preload(struct, preloads, opts)
-  end
-
-  # user
   def list_users do
     Repo.all from(u in User, preload: [characters: [:items]], order_by: u.name)
   end
@@ -79,6 +78,19 @@ defmodule Lotd.Accounts do
   def change_character(%Character{} = character, params \\ %{}),
     do: Character.changeset(character, params)
 
+  def create_character(user, params) do
+    %Character{}
+    |> change_character(params)
+    |> Ecto.Changeset.put_assoc(:user, user)
+    |> Repo.insert()
+  end
+
+  def update_character(character, params) do
+    character
+    |> change_character(params)
+    |> Repo.update()
+  end
+
   def delete_character(%Character{} = character), do: Repo.delete(character)
 
   # MUSEUM FEATURES
@@ -101,6 +113,16 @@ defmodule Lotd.Accounts do
     |> Repo.update!()
   end
 
+  def activate_all_mods(%Character{} = character) do
+    character = Repo.preload(character, :mods, force: true)
+    mods = Repo.all(Mod)
+
+    character
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:mods, mods)
+    |> Repo.update()
+  end
+
   def activate_mod(%Character{} = character, %Mod{} = mod) do
     character = Repo.preload(character, :mods, force: true)
     character_mods = [mod | character.mods]
@@ -108,6 +130,14 @@ defmodule Lotd.Accounts do
     character
     |> Ecto.Changeset.change()
     |> Ecto.Changeset.put_assoc(:mods, character_mods)
+    |> Repo.update()
+  end
+
+  def deactivate_all_mods(%Character{} = character) do
+    character
+    |> Repo.preload(:mods, force: true)
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:mods, [])
     |> Repo.update()
   end
 

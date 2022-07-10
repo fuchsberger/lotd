@@ -15,9 +15,8 @@ defmodule Lotd.Accounts.Character do
   @doc false
   def changeset(character, attrs) do
     character
-    |> cast(attrs, [:name, :user_id])
+    |> cast(attrs, [:name])
     |> validate_required([:name])
     |> validate_length(:name, min: 3, max: 80)
-    |> assoc_constraint(:user)
   end
 end

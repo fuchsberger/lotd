@@ -1,3 +1,12 @@
+## 1.0
+  - creating a character auto-activates it
+  - completely redesigned GUI with full mobile support
+  - much more performant as all data is loaded up-front and then dynamically displayed
+  - improved search (now using FuzzyCompare.ChunkSet.standard_similarity for much better results)
+  - improved account security and secure session handling
+  - avatar from nexus now being displayed when logged in
+  - mods can now be toggled on and off collectively
+
 ## 0.6.4
 
 ### New Features
@@ -40,6 +49,8 @@
 
 ### Bug Fixes
   - When hitting ENTER in a search field it would redirect to a 404 page
+
+
 
 ## 0.5.7
 

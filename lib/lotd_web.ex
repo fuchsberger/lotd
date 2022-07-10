@@ -39,6 +39,8 @@ defmodule LotdWeb do
   def live_component do
     quote do
       use Phoenix.LiveComponent
+      import LotdWeb.LotdLive, only: [broadcast: 2]
+
       unquote(view_helpers())
     end
   end

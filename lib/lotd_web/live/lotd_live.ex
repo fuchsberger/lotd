@@ -8,6 +8,8 @@ defmodule LotdWeb.LotdLive do
 
   @requires_admin [:users]
 
+  def broadcast(topic, message), do: Phoenix.PubSub.broadcast(Lotd.PubSub, topic, message)
+
   def mount(_params, session, socket) do
     user =
       case Map.get(session, "user_token") do
@@ -15,9 +17,13 @@ defmodule LotdWeb.LotdLive do
           nil
 
         token ->
-          token
-          |> Accounts.get_user_by_session_token()
-          |> Accounts.preload([:active_character, characters: Accounts.preload_characters_query()])
+          user =
+            token
+            |> Accounts.get_user_by_session_token
+            |> Accounts.preload_user_associations
+
+          Phoenix.PubSub.subscribe(Lotd.PubSub, "user-id:#{user.id}")
+          user
       end
 
     {:ok, socket
@@ -144,9 +150,28 @@ defmodule LotdWeb.LotdLive do
   def render(assigns) do
     ~H"""
     <div>
+      <.flash flash={@flash} />
       <%= case @live_action do %>
         <% :about -> %>
           <%= Phoenix.View.render(LotdWeb.PageView, "about.html", []) %>
+
+        <% :create_character -> %>
+          <.live_component
+            action={:create}
+            mods={@mods}
+            user={@user}
+            id="create-character-component"
+            module={LotdWeb.Live.CharacterComponent}
+          />
+
+        <% :update_character -> %>
+          <.live_component
+            action={:update}
+            mods={@mods}
+            user={@user}
+            id="update-character-component"
+            module={LotdWeb.Live.CharacterComponent}
+          />
 
         <% _ -> %>
           <.live_component
@@ -525,5 +550,27 @@ defmodule LotdWeb.LotdLive do
     {:noreply, socket
     |> assign(:mod_id, String.to_integer(id))
     |> assign_items}
+  end
+
+  def handle_event("select-character", %{"id" => id}, socket) do
+    if String.to_integer(id) in Enum.map(socket.assigns.user.characters, & &1.id) do
+      case Accounts.update_user(socket.assigns.user, %{active_character_id: id}) do
+        {:ok, user} ->
+          {:noreply, socket
+          |> assign(:user, Accounts.preload_user_associations(user))
+          |> assign_displays
+          |> assign_locations
+          |> assign_items}
+
+        {:error, _reason} ->
+          {:noreply, put_flash(socket, :error, gettext "Something went wrong.")}
+      end
+    else
+      {:noreply, put_flash(socket, :error, gettext "This is not your character, hacker!")}
+    end
+  end
+
+  def handle_info({:update_user, user}, socket) do
+    {:noreply, assign(socket, :user, user)}
   end
 end
