@@ -211,6 +211,7 @@ defmodule LotdWeb.LotdLive do
             items={[]}
             module={LotdWeb.Live.DisplayComponent}
             room_id={@room_id}
+            room_options={Enum.map(@rooms, & {&1.name, &1.id})}
           />
 
         <% :update_display -> %>
@@ -220,6 +221,7 @@ defmodule LotdWeb.LotdLive do
             id="update-display-component"
             module={LotdWeb.Live.DisplayComponent}
             room_id={@room_id}
+            room_options={Enum.map(@rooms, & {&1.name, &1.id})}
           />
 
         <% :create_location -> %>
@@ -356,6 +358,20 @@ defmodule LotdWeb.LotdLive do
 
   def handle_info({:update_user, user}, socket) do
     {:noreply, assign(socket, :user, user)}
+  end
+
+  def handle_info({:update_displays, displays}, socket) do
+    socket =
+      if not is_nil(socket.assigns.display_id) and socket.assigns.display_id not in displays do
+        assign(socket, :display_id, nil)
+      else
+        socket
+      end
+
+    {:noreply, socket
+    |> assign(:displays, displays)
+    |> assign_displays
+    |> assign_items}
   end
 
   def handle_info({:update_locations, locations}, socket) do

@@ -4,21 +4,23 @@ defmodule LotdWeb.Live.DisplayComponent do
   alias Lotd.Gallery
   alias Lotd.Gallery.Display
 
-  def update(%{display_id: display_id, room_id: room_id, items: items}, socket) do
-    if display_id do
-      display = Gallery.get_display!(display_id)
-      {:ok, socket
-      |> assign(:display, display)
-      |> assign(:changeset, Gallery.change_display(display, %{}))
-      |> assign(:items, items)
-      |> assign(:room_id, room_id)}
-    else
-      {:ok, socket
-      |> assign(:display, nil)
-      |> assign(:changeset, Gallery.change_display(%Display{}))
-      |> assign(:items, items)
-      |> assign(:room_id, room_id)}
-    end
+  def update(%{display_id: display_id, room_id: room_id, room_options: room_options, items: items}, socket) do
+    socket =
+      if display_id do
+        display = Gallery.get_display!(display_id)
+        socket
+        |> assign(:display, display)
+        |> assign(:changeset, Gallery.change_display(display, %{}))
+      else
+        socket
+        |> assign(:display, nil)
+        |> assign(:changeset, Gallery.change_display(%Display{}))
+      end
+
+    {:ok, socket
+    |> assign(:items, items)
+    |> assign(:room_id, room_id)
+    |> assign(:room_options, room_options)}
   end
 
   def render(assigns) do
@@ -27,17 +29,17 @@ defmodule LotdWeb.Live.DisplayComponent do
     <.form let={f} for={@changeset} class="space-y-4" phx-change="validate-display" phx-submit="save-display" phx-target={@myself}>
       <.card>
         <:body>
-          <div class="flex justify-between items-center gap-x-3">
-            <div class="grow">
-              <.form_field type="text_input" form={f} field={:name}/>
-            </div>
-            <div class="flex-shrink-0 pt-4">
-              <.button type="submit" color="secondary" label={if @display, do: "Update", else: "Create"} />
-            </div>
+          <div class='space-y-3'>
+            <.form_field type="text_input" form={f} field={:name}/>
+
+            <.form_field type="select" options={@room_options} form={f} field={:room_id}/>
+
+            <.button type="submit" color="secondary" label={if @display, do: "Update", else: "Create"} />
+
+            <.button link_type="live_patch" to={Routes.lotd_path(@socket, :gallery)} color="white" label="Cancel" />
+
             <%= if @display do %>
-              <div class="flex-shrink-0 pt-4">
-                <.button type="button" phx-click="delete-display" color="red" leading_icon="x" label="Delete" phx-target={@myself} data-confirm="Are you absolutely sure?" disabled={Enum.count(@items) > 0} />
-              </div>
+              <.button type="button" phx-click="delete-display" color="red" leading_icon="x" label="Delete" phx-target={@myself} data-confirm="Are you absolutely sure?" disabled={Enum.count(@items) > 0} />
             <% end %>
           </div>
         </:body>
@@ -80,9 +82,8 @@ defmodule LotdWeb.Live.DisplayComponent do
     if socket.assigns.display do
       case Gallery.update_display(socket.assigns.display, params) do
         {:ok, _display} ->
-          {:noreply, socket
-          |> put_flash(:info, gettext "Display updated.")
-          |> push_patch(to: Routes.lotd_path(socket, :update_display))}
+          broadcast("all", {:update_displays, Gallery.list_displays()})
+          {:noreply, put_flash(socket, :info, gettext "Display updated.")}
 
         {:error, changeset} ->
           {:noreply, socket
@@ -92,9 +93,8 @@ defmodule LotdWeb.Live.DisplayComponent do
     else
       case Gallery.create_display(params) do
         {:ok, _display} ->
-          {:noreply, socket
-          |> put_flash(:info, gettext "Display created.")
-          |> push_redirect(to: Routes.lotd_path(socket, :gallery))}
+          broadcast("all", {:update_displays, Gallery.list_displays()})
+          {:noreply, put_flash(socket, :info, gettext "Display created.")}
 
         {:error, changeset} ->
           {:noreply, socket
@@ -107,6 +107,8 @@ defmodule LotdWeb.Live.DisplayComponent do
   def handle_event("delete-display", _params, socket) do
     case Gallery.delete_display(socket.assigns.display) do
       {:ok, _display} ->
+        broadcast("all", {:update_displays, Gallery.list_displays()})
+
         {:noreply, socket
         |> put_flash(:error, gettext "Display deleted.")
         |> push_patch(to: Routes.lotd_path(socket, :gallery))}

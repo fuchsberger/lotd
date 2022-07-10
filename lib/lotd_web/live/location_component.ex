@@ -91,9 +91,8 @@ defmodule LotdWeb.Live.LocationComponent do
     else
       case Gallery.create_location(params) do
         {:ok, _location} ->
-          {:noreply, socket
-          |> put_flash(:info, gettext "Location created.")
-          |> push_redirect(to: Routes.lotd_path(socket, :locations))}
+          broadcast("all", {:update_locations, Gallery.list_locations()})
+          {:noreply, put_flash(socket, :info, gettext "Location created.")}
 
         {:error, changeset} ->
           {:noreply, socket
