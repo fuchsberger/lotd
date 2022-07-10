@@ -2,7 +2,6 @@ defmodule LotdWeb.UserAuth do
 
   import Plug.Conn
   import Phoenix.Controller
-  import LotdWeb.Gettext
 
   alias Lotd.Accounts
   alias LotdWeb.Router.Helpers, as: Routes
@@ -26,9 +25,13 @@ defmodule LotdWeb.UserAuth do
   disconnected on log out. The line can be safely removed
   if you are not using LiveView.
   """
+  require Logger
   def log_in_user(conn, user) do
     token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
+
+    Logger.warning(token)
+    Logger.warning(user_return_to || signed_in_path(conn))
 
     conn
     |> renew_session()
@@ -114,35 +117,6 @@ defmodule LotdWeb.UserAuth do
       conn
     end
   end
-
-  @doc """
-  Used for routes that require the user to be authenticated.
-
-  If you want to enforce the user email is confirmed before
-  they use the application at all, here would be a good place.
-  """
-  def require_authenticated_user(conn, _opts) do
-    if conn_has_user(conn) do
-      conn
-    else
-      conn
-      |> put_flash(:error, gettext("Login required for this page."))
-      |> maybe_store_return_to()
-      |> redirect(to: Routes.user_session_path(conn, :new))
-      |> halt()
-    end
-  end
-
-  defp conn_has_user(conn) do
-    user = conn.assigns[:current_user]
-    if user, do: {:ok, user}, else: {:error, :no_user}
-  end
-
-  defp maybe_store_return_to(%{method: "GET"} = conn) do
-    put_session(conn, :user_return_to, current_path(conn))
-  end
-
-  defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(conn), do: Routes.lotd_path(conn, :gallery)
 end
