@@ -245,7 +245,7 @@
                       </div>
                     <% end %>
                   </div>
-                  <%= if @user.moderator do %>
+                  <%= if @user && @user.moderator do %>
                     <div class="ml-4 mt-4 flex-shrink-0">
                       <%= if @live_action in [:gallery, :create_display, :update_display, :create_room, :update_room] do %>
                         <%= if @display_id do %>
