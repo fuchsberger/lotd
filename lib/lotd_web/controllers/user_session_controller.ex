@@ -24,7 +24,7 @@ defmodule LotdWeb.UserSessionController do
         # response contains nexus user information such as userid and name
         response = Jason.decode!(response.body)
 
-        Logger.warning(IO.inspect(response))
+
 
         id = response["user_id"]
         avatar_url = Map.get(response, "profile_url")
@@ -33,6 +33,7 @@ defmodule LotdWeb.UserSessionController do
         case Accounts.get_user(id) do
           # no record found --> create it and authenticate
           nil ->
+            Logger.warning("NO USER")
             case Accounts.create_user(%{id: id, avatar_url: avatar_url, username: user_name}) do
               {:ok, user} ->
 
@@ -58,14 +59,17 @@ defmodule LotdWeb.UserSessionController do
             end
           # user found --> authenticate
           user ->
+            Logger.warning("USER")
             case Accounts.update_user(user, %{avatar_url: avatar_url, username: user_name}) do
-              {:error, _changeset} ->
+              {:error, changeset} ->
+                Logger.warning(IO.inspect(changeset.errors))
                 conn
                 |> put_flash(:error, "Error: Could not update user!")
                 |> redirect(to: Routes.lotd_path(conn, :gallery))
                 |> halt()
 
               {:ok, user} ->
+                Logger.warning(IO.inspect(user))
                 conn
                 |> UserAuth.log_in_user(user)
             end
