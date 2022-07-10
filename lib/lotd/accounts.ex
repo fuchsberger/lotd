@@ -51,8 +51,11 @@ defmodule Lotd.Accounts do
   @doc """
   Generates a session token.
   """
+  require Logger
   def generate_user_session_token(user) do
     {token, user_token} = UserToken.build_session_token(user)
+
+    Logger.warn({token, user_token})
     Repo.insert!(user_token)
     token
   end
