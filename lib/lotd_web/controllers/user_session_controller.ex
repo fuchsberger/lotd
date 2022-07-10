@@ -72,7 +72,6 @@ defmodule LotdWeb.UserSessionController do
         end
 
       {:error, %HTTPoison.Error{reason: reason}} ->
-        IO.inspect reason
         conn
         |> put_flash(:error, "Error connecting to Nexus: #{reason}")
         |> redirect(to: Routes.lotd_path(conn, :gallery))
