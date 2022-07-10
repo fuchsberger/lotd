@@ -106,8 +106,8 @@
           <.link to={Routes.lotd_path(@socket, action)} {mobile_item_attrs(active?)} label={label} @click="open = false" />
         <% end %>
         <div class="border-b border-gray-200"></div>
-        <%= case @live_action do %>
-          <% :locations -> %>
+        <%= cond do %>
+          <% @live_action in [:locations, :create_location, :update_location, :create_region, :update_region] -> %>
             <%= for region <- @regions do %>
               <.link
                 link_type="button" {mobile_item_attrs(region.id == @region_id)}
@@ -117,7 +117,7 @@
                 <span class="truncate"><%= region.name %></span>
               </.link>
             <% end %>
-          <% :mods -> %>
+          <% @live_action in [:mods, :create_mod, :update_mod] -> %>
             <%= for mod <- @mods do %>
               <.link
                 link_type="button" {mobile_item_attrs(mod.id == @mod_id)}
@@ -127,7 +127,7 @@
                 <span class="truncate"><%= mod.name %></span>
               </.link>
             <% end %>
-          <% _ -> %>
+          <% true -> %>
             <%= for room <- @rooms do %>
               <.link
                 link_type="button" {mobile_item_attrs(room.id == @room_id)}
@@ -183,8 +183,8 @@
         <nav aria-label="Sidebar" class="sticky top-4 divide-y divide-gray-300">
           <%# Desktop Sidebar main links %>
           <div class="pb-8 space-y-1">
-            <%= case @live_action do %>
-              <% :locations -> %>
+            <%= cond do %>
+              <% @live_action in [:locations, :create_location, :update_location, :create_region, :update_region] -> %>
                 <%= for region <- @regions do %>
                   <.link
                     link_type="button" {desktop_item_attrs(region.id == @region_id)}
@@ -194,7 +194,7 @@
                     <span class="truncate"><%= region.name %></span>
                   </.link>
                 <% end %>
-              <% :mods -> %>
+              <% @live_action in [:mods, :create_mod, :update_mod] -> %>
                 <%= for mod <- @mods do %>
                   <.link
                     link_type="button" {desktop_item_attrs(mod.id == @mod_id)}
@@ -204,7 +204,7 @@
                     <span class="truncate"><%= mod.name %></span>
                   </.link>
                 <% end %>
-              <% _ -> %>
+              <% true -> %>
                 <%= for room <- @rooms do %>
                   <.link
                     link_type="button" {desktop_item_attrs(room.id == @room_id)}
@@ -232,7 +232,7 @@
       </main>
       <aside class="hidden xl:block xl:col-span-4">
         <div class="sticky top-4 space-y-4">
-          <%= if @live_action in [:gallery, :create_display, :update_display, :create_room, :update_room, :create_room, :update_room, :create_region, :update_region] do %>
+          <%= if @live_action in [:gallery, :create_display, :update_display, :create_room, :update_room, :locations, :create_location, :update_location, :create_region, :update_region] do %>
             <.card>
               <:header>
                 <div class="-ml-4 -mt-4 flex justify-between items-center flex-wrap sm:flex-nowrap">
@@ -279,8 +279,8 @@
                       <div class="text-sm text-gray-500"><%= @current_room_display_count %></div>
                     </.link>
                   </li>
-                  <%= case @live_action do %>
-                    <% :locations -> %>
+                  <%= cond do %>
+                    <% @live_action in [:locations, :create_location, :update_location, :create_region, :update_region] -> %>
                       <%= for location <- @current_locations do %>
                         <li>
                           <.link
@@ -300,7 +300,7 @@
                         </li>
                       <% end %>
 
-                    <% _ -> %>
+                    <% true -> %>
                       <%= for display <- @current_displays do %>
                         <li>
                           <.link
