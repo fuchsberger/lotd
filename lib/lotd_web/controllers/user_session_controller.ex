@@ -12,9 +12,6 @@ defmodule LotdWeb.UserSessionController do
     if yes, login and send session token back to client
   """
   def create(conn, %{"session" => %{"api_key" => api_key}}) do
-
-    IO.inspect api_key
-
     url = Application.get_env(:lotd, Lotd.NexusAPI)[:user_url]
     header =
       Application.get_env(:lotd, Lotd.NexusAPI)[:header]
@@ -48,7 +45,8 @@ defmodule LotdWeb.UserSessionController do
                 # login and redirect to gallery page
                 conn
                 |> UserAuth.log_in_user(user)
-                |> redirect(to: Routes.live_path(conn, LotdWeb.LotdLive))
+                |> redirect(to: Routes.lotd_path(conn, :gallery))
+                |> halt()
 
               {:error, _changeset} ->
                 conn
