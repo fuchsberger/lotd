@@ -1,3 +1,7 @@
+## 1.0.1
+  - mod tag now showing on mods
+  - readded ability to modify mods
+
 ## 1.0
   - creating a character auto-activates it
   - completely redesigned GUI with full mobile support

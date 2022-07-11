@@ -16,9 +16,12 @@ defmodule LotdWeb.Live.ItemsComponent do
             <.th condensed {if @user && @user.active_character, do: [], else: [order: "first"]}>
               <%= gettext "Name" %>
             </.th>
-            <.th condensed><Icon.Outline.duplicate class="w-5 h-5"/></.th>
+            <.th class="hidden lg:table-cell text-center" condensed>Mod</.th>
+            <.th condensed class="hidden lg:table-cell">
+              <Icon.Outline.duplicate class="w-5 h-5"/>
+            </.th>
             <%= if @user && @user.moderator do %>
-              <.th condensed>
+              <.th condensed class="hidden lg:table-cell">
                 <.link class="text-indigo-600 hover:text-indigo-900" to={Routes.lotd_path(@socket, :create_item)} target="_blank">
                   <Icon.Outline.plus class="w-5 h-5"/>
                 </.link>
@@ -44,13 +47,23 @@ defmodule LotdWeb.Live.ItemsComponent do
                 </.td>
               <% end %>
               <.td class="truncate" condensed {if @user && @user.active_character, do: [], else: [order: "first"]}><%= item.name %></.td>
-              <.td condensed order="last">
+              <.td class="hidden lg:table-cell text-center" condensed>
+                <%= case Enum.find(@mods, & &1.id == item.mod_id) do %>
+                  <% nil -> %>
+                  <% %{initials: initials} -> %>
+                    <%= if initials do %>
+                      <.badge label={initials} />
+                    <% end %>
+                <% end %>
+              </.td>
+
+              <.td condensed class="hidden lg:table-cell">
                 <%= if item.replica do %>
                   <Icon.Outline.duplicate class="w-5 h-5"/>
                 <% end %>
               </.td>
               <%= if @user && @user.moderator do %>
-                <.td condensed>
+                <.td condensed class="hidden lg:table-cell">
                   <.link class="text-indigo-600 hover:text-indigo-900" to={Routes.lotd_path(@socket, :update_item, item.id)} target="_blank">
                     <Icon.Outline.pencil class="w-5 h-5"/>
                   </.link>

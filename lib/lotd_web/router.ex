@@ -36,6 +36,8 @@ defmodule LotdWeb.Router do
     live "/update_display", LotdLive, :update_display
     live "/create_location", LotdLive, :create_location
     live "/update_location", LotdLive, :update_location
+    live "/create_mod", LotdLive, :create_mod
+    live "/update_mod", LotdLive, :update_mod
 
     # requires authentication and admin access
     live "/create_room", LotdLive, :create_room

@@ -322,8 +322,8 @@ defmodule LotdWeb.LotdLive do
         <% :update_mod -> %>
           <.live_component
             mod_id={@mod_id}
-            items={@current_items}
             id="update-mod-component"
+            items={@current_items}
             module={LotdWeb.Live.ModComponent}
           />
 
@@ -332,6 +332,7 @@ defmodule LotdWeb.LotdLive do
             items={@current_items}
             id="items-component"
             module={LotdWeb.Live.ItemsComponent}
+            mods={@mods}
             user={@user}
           />
       <% end %>
@@ -477,6 +478,13 @@ defmodule LotdWeb.LotdLive do
     |> assign(:items, items)
     |> assign_displays
     |> assign_locations
+    |> assign_mods
+    |> assign_items}
+  end
+
+  def handle_info({:update_mods, mods}, socket) do
+    {:noreply, socket
+    |> assign(:mods, mods)
     |> assign_mods
     |> assign_items}
   end
