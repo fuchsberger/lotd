@@ -14,6 +14,15 @@ defmodule Lotd.Gallery do
     |> Repo.all
   end
 
+  def list_items(:complete) do
+    from(i in Item, preload: [
+      mod: ^from(m in Mod, select: m.initials),
+      display: [room: ^from(r in Room, select: r.name)],
+      location: [region: ^from(r in Region, select: r.name)],
+    ])
+    |> Repo.all
+  end
+
   def get_item!(id), do: Repo.get!(Item, id)
 
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)

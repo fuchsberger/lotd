@@ -3,6 +3,10 @@ defmodule LotdWeb.Router do
 
   import LotdWeb.UserAuth
 
+  pipeline :api do
+    plug :accepts, ["json"]
+  end
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -13,8 +17,16 @@ defmodule LotdWeb.Router do
     plug :fetch_current_user
   end
 
+  scope "/api", LotdWeb.Api, as: :api do
+    pipe_through :api
+
+    get "/items", ItemController, :index
+  end
+
   scope "/", LotdWeb do
     pipe_through :browser
+
+    get "/test", TestController, :index
 
     # public routes
     live "/", LotdLive, :index

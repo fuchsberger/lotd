@@ -2,8 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@import "./gallery";
-
 @layer base {
   @font-face {
     font-family: 'Inter';
@@ -24,79 +22,43 @@
     font-weight: normal;
     font-style: normal;
   }
-  /* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
-  /* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
-  /*
-  @media screen and (-webkit-min-device-pixel-ratio:0) {
-    @font-face {
-      font-family: 'icons';
-      src: url('../font/icons.svg?79587921#icons') format('svg');
-    }
-  }
-  */
-
-   [class^="icon-"]:before, [class*=" icon-"]:before {
-    font-family: "icons";
-    font-style: normal;
-    font-weight: normal;
-    speak: none;
-
-    display: inline-block;
-    text-decoration: inherit;
-    width: 1em;
-    margin-right: .2em;
-    text-align: center;
-    /* opacity: .8; */
-
-    /* For safety - reset parent styles, that can break glyph codes*/
-    font-variant: normal;
-    text-transform: none;
-
-    /* fix buttons height, for twitter bootstrap */
-    line-height: 1em;
-
-    /* Animation center compensation - margins should be symmetric */
-    /* remove if not needed */
-    margin-left: .2em;
-
-    /* you can be more comfortable with increased icons size */
-    /* font-size: 120%; */
-
-    /* Font smoothing. That was taken from TWBS */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Uncomment for 3D effect */
-    /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
-  }
-
-  .icon-logout:before { content: '\e800'; } /* '' */
-  .icon-settings:before { content: '\e803'; } /* '' */
-  .icon-show:before { content: '\e804'; } /* '' */
-  .icon-home:before { content: '\e805'; } /* '' */
-  .icon-remove:before { content: '\e806'; } /* '' */
-  .icon-edit:before { content: '\e807'; } /* '' */
-  .icon-hide:before { content: '\e808'; } /* '' */
-  .icon-replica:before { content: '\e80a'; } /* '' */
-  .icon-link:before { content: '\f08e'; } /* '' */
-  .icon-location:before { content: '\f124'; } /* '' */
-  .icon-mod:before { content: '\f12e'; } /* '' */
-  .icon-active:before { content: '\f14a'; } /* '' */
-  .icon-inactive:before { content: '\f196'; } /* '' */
-  .icon-displays:before { content: '\f286'; } /* '' */
-
-  html {
-    scroll-behavior: smooth;
-  }
-
 }
 
-#left-panel { width: 280px!important;}
+.dataTable tbody { @apply divide-y divide-gray-200 bg-white; }
+.dataTable th { @apply whitespace-nowrap py-3.5 text-left text-sm font-semibold text-gray-900; }
+.dataTable td { @apply whitespace-nowrap py-2 text-sm text-gray-500; }
 
-.list-group-item.active{
-  color: #0c5460;
-  background-color: #d1ecf1;
-  border-color: #bee5eb;
+
+/* Column Ordering Sort icons */
+th:not(.sorting_asc) .asc { @apply hidden; }
+th:not(.sorting_desc) .desc { @apply hidden; }
+
+th .sort-icon { @apply ml-2 flex-none rounded; }
+
+th:not(.sorting_asc, .sorting_desc) .sort-icon {
+  @apply invisible text-gray-400 group-hover:visible  group-focus:visible;
 }
 
-.list-group-item button { line-height: 1.0; }
+th.sorting_asc .sort-icon,
+th.sorting_desc .sort-icon {
+  @apply bg-gray-200 text-gray-900 group-hover:bg-gray-300;
+}
+
+.dataTable td.bold { @apply font-medium text-gray-900; }
+
+/* Table Padding */
+.dataTable th.first, .dataTable td.first { @apply pl-4 pr-3 sm:pl-6; }
+.dataTable th:not(.first), .dataTable td:not(.first) { @apply px-2; }
+
+.dataTables_length label { @apply flex items-center gap-x-2; }
+.dataTables_length select { @apply block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md; }
+
+.dataTables_filter label { @apply flex items-center gap-x-2 text-sm font-medium text-gray-700; }
+.dataTables_filter input { @apply shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full font-normal text-base sm:text-sm border-gray-300 rounded-md; }
+
+/* Table Pagination */
+.dataTables_paginate { @apply flex-1 flex justify-between sm:justify-end; }
+.dataTables_paginate a { @apply relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white; }
+.dataTables_paginate a.next { @apply ml-4; }
+.dataTables_paginate a.disabled { @apply opacity-50; }
+.dataTables_paginate a:not(.disabled) { @apply hover:bg-gray-50; }
