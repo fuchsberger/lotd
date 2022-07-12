@@ -11,6 +11,7 @@ defmodule Lotd.Accounts.User do
 
     belongs_to :active_character, Lotd.Accounts.Character
     has_many :characters, Lotd.Accounts.Character
+    many_to_many :mods, Lotd.Gallery.Mod, join_through: "user_mods", on_replace: :delete
     timestamps()
   end
 

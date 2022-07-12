@@ -24,16 +24,9 @@
   }
 }
 
-.dataTable tbody { @apply divide-y divide-gray-200 bg-white; }
-.dataTable th { @apply whitespace-nowrap py-3.5 text-left text-sm font-semibold text-gray-900; }
-.dataTable td { @apply whitespace-nowrap py-2 text-sm text-gray-500; }
-
-
 /* Column Ordering Sort icons */
 th:not(.sorting_asc) .asc { @apply hidden; }
 th:not(.sorting_desc) .desc { @apply hidden; }
-
-th .sort-icon { @apply ml-2 flex-none rounded; }
 
 th:not(.sorting_asc, .sorting_desc) .sort-icon {
   @apply invisible text-gray-400 group-hover:visible  group-focus:visible;
@@ -43,12 +36,6 @@ th.sorting_asc .sort-icon,
 th.sorting_desc .sort-icon {
   @apply bg-gray-200 text-gray-900 group-hover:bg-gray-300;
 }
-
-.dataTable td.bold { @apply font-medium text-gray-900; }
-
-/* Table Padding */
-.dataTable th.first, .dataTable td.first { @apply pl-4 pr-3 sm:pl-6; }
-.dataTable th:not(.first), .dataTable td:not(.first) { @apply px-2; }
 
 .dataTables_length label { @apply flex items-center gap-x-2; }
 .dataTables_length select { @apply block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md; }

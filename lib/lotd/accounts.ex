@@ -9,6 +9,12 @@ defmodule Lotd.Accounts do
   alias Lotd.Gallery.{Item, Mod}
 
   ## user
+  def preload_user_assigns(user) do
+    Repo.preload(user, [
+      active_character: from(c in Character, select: c.name),
+      mods: from(m in Mod, select: m.id)
+    ])
+  end
 
   def preload_user_associations(user) do
     Repo.preload(user, [

@@ -26,14 +26,16 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/test", TestController, :index
+    get "/", ItemController, :index
+    get "/about", PageController, :about
+    get "/mods", ModController, :index
 
     # public routes
-    live "/", LotdLive, :index
-    live "/about", LotdLive, :about
+    # live "/", LotdLive, :index
+
     live "/gallery", LotdLive, :gallery
     live "/locations", LotdLive, :locations
-    live "/mods", LotdLive, :mods
+    # live "/mods", LotdLive, :mods
 
     # requires authentication
     live "/create_character", LotdLive, :create_character
