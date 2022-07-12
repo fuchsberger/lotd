@@ -144,7 +144,9 @@ defmodule Lotd.Gallery do
   # MODS -----------------------------------------------------------------------------------------
 
   def list_mods do
-    mods = Repo.all(from(m in Mod, order_by: m.name))
+    mods = Repo.all(from(m in Mod, order_by: m.name, preload: [
+      items: ^from(i in Item, select: i.id)
+    ]))
     # move Vanilla / LOTD to front
     [Enum.find(mods, & &1.id == 1) | Enum.reject(mods, & &1.id == 1)]
   end

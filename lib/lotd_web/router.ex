@@ -64,6 +64,13 @@ defmodule LotdWeb.Router do
     live "/*unknown", LotdLive, :unknown_url
   end
 
+  scope "/", LotdWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    put "/mods/toggle-all", ModController, :toggle_all
+    put "/mods/toggle/:id", ModController, :toggle
+  end
+
   ## Authentication routes
   scope "/", LotdWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]

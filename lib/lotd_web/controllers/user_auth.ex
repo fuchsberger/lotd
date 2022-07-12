@@ -2,6 +2,7 @@ defmodule LotdWeb.UserAuth do
 
   import Plug.Conn
   import Phoenix.Controller
+  import LotdWeb.Gettext
 
   alias Lotd.Accounts
   alias LotdWeb.Router.Helpers, as: Routes
@@ -116,5 +117,29 @@ defmodule LotdWeb.UserAuth do
     end
   end
 
-  defp signed_in_path(conn), do: Routes.lotd_path(conn, :gallery)
+  @doc """
+  Used for routes that require the user to be authenticated.
+
+  If you want to enforce the user email is confirmed before
+  they use the application at all, here would be a good place.
+  """
+  def require_authenticated_user(conn, _opts) do
+    if conn.assigns[:current_user] do
+      conn
+    else
+      conn
+      |> put_flash(:error, gettext("You must log in to access this page."))
+      |> maybe_store_return_to()
+      |> redirect(to: signed_in_path(conn))
+      |> halt()
+    end
+  end
+
+  defp maybe_store_return_to(%{method: "GET"} = conn) do
+    put_session(conn, :user_return_to, current_path(conn))
+  end
+
+  defp maybe_store_return_to(conn), do: conn
+
+  defp signed_in_path(_conn), do: "/"
 end

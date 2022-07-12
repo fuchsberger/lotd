@@ -119,41 +119,37 @@ defmodule Lotd.Accounts do
     |> Repo.update()
   end
 
-  def activate_all_mods(%Character{} = character) do
-    character = Repo.preload(character, :mods, force: true)
+  def toggle_mod(%User{} = user, mod_id) do
+    mod = Repo.get(Mod, mod_id)
+    user = Repo.preload(user, :mods, force: true)
+
+    if Enum.find(user.mods, & &1.id == mod.id) do
+      user
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:mods, Enum.reject(user.mods, & &1.id == mod.id))
+      |> Repo.update()
+    else
+      user
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:mods, [mod | user.mods])
+      |> Repo.update()
+    end
+  end
+
+  def toggle_mods(%User{} = user) do
     mods = Repo.all(Mod)
+    user = Repo.preload(user, :mods, force: true)
 
-    character
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, mods)
-    |> Repo.update()
-  end
-
-  def activate_mod(%Character{} = character, %Mod{} = mod) do
-    character = Repo.preload(character, :mods, force: true)
-    character_mods = [mod | character.mods]
-
-    character
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, character_mods)
-    |> Repo.update()
-  end
-
-  def deactivate_all_mods(%Character{} = character) do
-    character
-    |> Repo.preload(:mods, force: true)
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, [])
-    |> Repo.update()
-  end
-
-  def deactivate_mod(%Character{} = character, %Mod{} = mod) do
-    character = Repo.preload(character, :mods, force: true)
-    character_mods = Enum.reject(character.mods, & &1.id == mod.id)
-
-    character
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:mods, character_mods)
-    |> Repo.update()
+    if Enum.count(mods) == Enum.count(user.mods) do
+      user
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:mods, [])
+      |> Repo.update()
+    else
+      user
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:mods, mods)
+      |> Repo.update()
+    end
   end
 end

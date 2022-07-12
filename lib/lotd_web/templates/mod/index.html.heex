@@ -1,0 +1,30 @@
+<.table id="mod-table">
+  <:thead>
+    <tr>
+      <%= if @current_user do %>
+        <.th condensed class="relative w-12">
+          <.link to={Routes.mod_path(@conn, :toggle_all)} link_type="phx-button" method={:put}>
+            <.static_checkbox active={Enum.count(@mods) == Enum.count(@current_user.mods)} />
+          </.link>
+        </.th>
+      <% end %>
+      <.th condensed><%= gettext "Name" %></.th>
+      <.th condensed><%= gettext "Items" %></.th>
+    </tr>
+  </:thead>
+  <:tbody>
+    <%= for mod <- @mods do %>
+      <tr>
+        <%= if @current_user do %>
+          <.td class="relative w-12" condensed>
+            <.link to={Routes.mod_path(@conn, :toggle, mod.id)} link_type="phx-button" method={:put}>
+              <.static_checkbox active={mod.id in @current_user.mods} />
+            </.link>
+          </.td>
+        <% end %>
+        <.td condensed><%= mod.name %></.td>
+        <.td condensed><%= Enum.count(mod.items) %></.td>
+      </tr>
+    <% end %>
+  </:tbody>
+</.table>
