@@ -6,6 +6,7 @@ defmodule Lotd.Gallery do
 
   alias Lotd.Repo
   alias Lotd.Gallery.{Item, Room, Region, Display, Location, Mod}
+  alias Lotd.Accounts.User
 
   # ITEMS ----------------------------------------------------------------------------------------
 
@@ -145,7 +146,8 @@ defmodule Lotd.Gallery do
 
   def list_mods do
     mods = Repo.all(from(m in Mod, order_by: m.name, preload: [
-      items: ^from(i in Item, select: i.id)
+      items: ^from(i in Item, select: i.id),
+      users: ^from(u in User, select: u.id)
     ]))
     # move Vanilla / LOTD to front
     [Enum.find(mods, & &1.id == 1) | Enum.reject(mods, & &1.id == 1)]

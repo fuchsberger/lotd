@@ -48,14 +48,15 @@
                   <p class="text-sm font-medium text-gray-900 truncate" role="none"><%= @current_user.username %></p>
                 </div>
                 <div class="py-1" role="none">
-                  <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="user-menu-item-0">Sign out</a>
+                  <.link link_type="phx-button" method={:delete} to={Routes.user_session_path(@conn, :delete)} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="user-menu-item-0" label={gettext "Sign out"} />
                 </div>
               </div>
             </div>
           <% else %>
             <%# Login Button with hidden form %>
             <.link id='login-button' link_type="button" to="#" class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" label={gettext "Login"}>
-              <Icon.Outline.login class="h-6 w-6" />
+              <span><%= gettext "Sign in" %></span>
+              <Icon.Outline.login class="inline-block h-6 w-6" />
 
             </.link>
             <.form let={f} for={:session} action={Routes.user_session_path(LotdWeb.Endpoint, :create)} id="login-form">

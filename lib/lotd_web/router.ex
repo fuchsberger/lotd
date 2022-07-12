@@ -58,17 +58,31 @@ defmodule LotdWeb.Router do
     live "/update_room", LotdLive, :update_room
     live "/create_region", LotdLive, :create_region
     live "/update_region", LotdLive, :update_region
-    live "/users", LotdLive, :users
-
-    # handle 404 in live view
-    live "/*unknown", LotdLive, :unknown_url
   end
 
   scope "/", LotdWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    put "/mods/toggle-all", ModController, :toggle_all
-    put "/mods/toggle/:id", ModController, :toggle
+    resources "/character", CharacterController
+
+    put "/mod/toggle-all", ModController, :toggle_all
+    put "/mod/toggle/:id", ModController, :toggle
+  end
+
+  scope "/", LotdWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_moderator]
+
+    resources "/display", DisplayController
+    resources "/location", LocationController
+    resources "/mod", ModController
+    resources "/region", RegionController
+    resources "/room", RoomController
+  end
+
+  scope "/", LotdWeb do
+    pipe_through [:browser, :require_authenticated_user, :require_admin]
+
+    resources "/users", UserController, only: [:index, :delete]
   end
 
   ## Authentication routes

@@ -1,29 +1,65 @@
-<.table id="mod-table">
+<.table id="mod-table" class={extra_classes(@current_user)}}>
   <:thead>
     <tr>
-      <%= if @current_user do %>
-        <.th condensed class="relative w-12">
+      <.th condensed class="relative w-12">
+        <%= if @current_user do %>
           <.link to={Routes.mod_path(@conn, :toggle_all)} link_type="phx-button" method={:put}>
             <.static_checkbox active={Enum.count(@mods) == Enum.count(@current_user.mods)} />
           </.link>
-        </.th>
-      <% end %>
-      <.th condensed><%= gettext "Name" %></.th>
-      <.th condensed><%= gettext "Items" %></.th>
+        <% end %>
+      </.th>
+      <.th condensed>
+        <div class="flex items-center">
+          <%= gettext "Mod" %><.sort_icon />
+        </div>
+      </.th>
+      <.th condensed>
+        <div class="flex items-center">
+          <%= gettext "Items" %><.sort_icon />
+        </div>
+      </.th>
+      <.th condensed>
+        <div class="flex items-center">
+          <%= gettext "Players" %><.sort_icon />
+        </div>
+      </.th>
+      <.th condensed>
+        <Icon.Outline.external_link class="w-5 h-5" />
+      </.th>
+      <.th condensed>
+        <%= if @current_user && @current_user.moderator do %>
+          <Icon.Outline.pencil_alt class="w-5 h-5" />
+        <% end %>
+      </.th>
     </tr>
   </:thead>
   <:tbody>
     <%= for mod <- @mods do %>
       <tr>
-        <%= if @current_user do %>
-          <.td class="relative w-12" condensed>
-            <.link to={Routes.mod_path(@conn, :toggle, mod.id)} link_type="phx-button" method={:put}>
-              <.static_checkbox active={mod.id in @current_user.mods} />
-            </.link>
-          </.td>
-        <% end %>
-        <.td condensed><%= mod.name %></.td>
+        <.td class="relative w-12" condensed>
+          <%= if @current_user do %>
+          <.link to={Routes.mod_path(@conn, :toggle, mod.id)} link_type="phx-button" method={:put}>
+            <.static_checkbox active={mod.id in @current_user.mods} />
+          </.link>
+          <% end %>
+        </.td>
+        <.td condensed class="font-medium text-gray-900"><%= mod.name %></.td>
         <.td condensed><%= Enum.count(mod.items) %></.td>
+        <.td condensed><%= Enum.count(mod.users) %></.td>
+        <.td condensed>
+          <%= if mod.url do %>
+            <.link to={mod.url} class="text-indigo-600 hover:text-indigo-900">
+              <Icon.Outline.external_link class="w-5 h-5" />
+            </.link>
+          <% end %>
+        </.td>
+        <.td class="relative w-12" condensed>
+          <%= if @current_user && @current_user.moderator do %>
+            <.link to={Routes.mod_path(@conn, :edit, mod.id)} class="text-indigo-600 hover:text-indigo-900">
+              <Icon.Outline.pencil_alt class="w-5 h-5" />
+            </.link>
+          <% end %>
+        </.td>
       </tr>
     <% end %>
   </:tbody>

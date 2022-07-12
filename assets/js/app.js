@@ -1,6 +1,4 @@
 import "phoenix_html"
-import { Socket } from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
 import connect from './nexus'
 
 import $ from 'jquery'
@@ -113,6 +111,25 @@ var table = $('#data-table').DataTable({
   onDraw(table);
 })
 
+$('#mod-table').DataTable({
+  dom: '<"sm:flex sm:items-center sm:justify-between px-3 space-y-3"lf>t',
+  order: [[ 2, 'desc' ]],
+  columnDefs: [
+    {
+      targets: 0,
+      searchable: false,
+      orderable: false,
+      visible: $('#mod-table').hasClass("has-user"),
+    },
+    {
+      targets: 5,
+      searchable: false,
+      orderable: false,
+      visible: $('#mod-table').hasClass("moderator"),
+    }
+  ]
+})
+
 // toggle hidden items
 $("#toggle-hidden").on("click", () => {
   hideCollected = !hideCollected
@@ -146,10 +163,3 @@ if(document.getElementById("login-button-mobile")){
   document.getElementById("login-button-mobile").addEventListener("click", () => connect())
 }
 
-
-// Configure Live Sockets
-let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
-
-// Connect if there are any LiveViews on the page
-liveSocket.connect()

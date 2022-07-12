@@ -4,9 +4,24 @@ defmodule LotdWeb.ViewHelpers do
   """
   use Phoenix.HTML
 
+  alias Lotd.Accounts.Character
+  alias LotdWeb.Components.Icon
+
+  import Phoenix.LiveView.Helpers
+
   def action_submit(changeset) do
     action = if changeset.action == :insert, do: "create", else: "update"
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
+  end
+
+  def extra_classes(user) do
+    case user do
+      %{moderator: true, active_character: %Character{}} -> " has-user has-character moderator"
+      %{active_character: %Character{}} -> " has-user has-character"
+      %{moderator: true} -> " has-user moderator"
+      %{} -> " has-user"
+      nil -> ""
+    end
   end
 
   def icon(name, opts \\ [] ), do: content_tag(:i, "",
@@ -27,5 +42,16 @@ defmodule LotdWeb.ViewHelpers do
     |> to_string()
     |> String.split(".")
     |> List.last()
+  end
+
+  def sort_icon(assigns) do
+    ~H"""
+    <div class="group inline-flex">
+      <span class="sort-icon ml-2 flex-none rounded">
+        <Icon.Solid.chevron_up class="asc h-5 w-5" />
+        <Icon.Solid.chevron_down class="desc h-5 w-5" />
+      </span>
+    </div>
+    """
   end
 end

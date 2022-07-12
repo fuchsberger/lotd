@@ -76,7 +76,7 @@ defmodule LotdWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: Routes.lotd_path(conn, :gallery))
+    |> redirect(to: signed_in_path(conn))
   end
 
   @doc """
@@ -130,6 +130,28 @@ defmodule LotdWeb.UserAuth do
       conn
       |> put_flash(:error, gettext("You must log in to access this page."))
       |> maybe_store_return_to()
+      |> redirect(to: signed_in_path(conn))
+      |> halt()
+    end
+  end
+
+  def require_moderator(conn, _opts) do
+    if conn.assigns.current_user.moderator do
+      conn
+    else
+      conn
+      |> put_flash(:error, gettext("You must be a moderator to access this page."))
+      |> redirect(to: signed_in_path(conn))
+      |> halt()
+    end
+  end
+
+  def require_admin(conn, _opts) do
+    if conn.assigns.current_user.admin do
+      conn
+    else
+      conn
+      |> put_flash(:error, gettext("You must be a administrator to access this page."))
       |> redirect(to: signed_in_path(conn))
       |> halt()
     end
