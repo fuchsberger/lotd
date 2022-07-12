@@ -106,7 +106,7 @@
               <div class="text-base font-medium text-gray-800"><%= @current_user.username %></div>
               <%= if @current_user.active_character do %>
                 <div class="text-sm font-medium text-gray-500">
-                  <%= @current_user.active_character.name %>
+                  <%= @current_user.active_character %>
                 </div>
               <% end %>
             </div>

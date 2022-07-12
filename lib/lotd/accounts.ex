@@ -81,6 +81,13 @@ defmodule Lotd.Accounts do
 
   # CHARACTERS -----------------------------------------------------------------------------------
 
+  def list_user_characters(%User{} = user) do
+    from(c in Character, preload: :items, where: c.user_id == ^user.id)
+    |> Repo.all()
+  end
+
+  def get_character!(id), do: Repo.get!(Character, id)
+
   def change_character(%Character{} = character, params \\ %{}),
     do: Character.changeset(character, params)
 

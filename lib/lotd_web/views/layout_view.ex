@@ -44,7 +44,7 @@ defmodule LotdWeb.LayoutView do
     if is_nil(conn.assigns.current_user) do
       items
     else
-      items ++ [{gettext("Characters"), Routes.item_path(conn, :index)}]
+      items ++ [{gettext("Characters"), Routes.character_path(conn, :index)}]
     end
     |> Enum.map(fn {label, path} ->
         {label, path, Phoenix.Controller.current_path(conn) == path}

@@ -64,7 +64,7 @@ defmodule LotdWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     resources "/character", CharacterController
-
+    put "/character/activate/:id", CharacterController, :activate
     put "/mod/toggle-all", ModController, :toggle_all
     put "/mod/toggle/:id", ModController, :toggle
   end

@@ -4,7 +4,6 @@ defmodule Lotd.Accounts.Character do
 
   schema "characters" do
     field :name, :string
-    field :item_count, :integer, virtual: true
 
     belongs_to :user, Lotd.Accounts.User
     many_to_many :items, Lotd.Gallery.Item, join_through: "character_items", on_replace: :delete
