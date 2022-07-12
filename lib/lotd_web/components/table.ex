@@ -14,25 +14,17 @@ defmodule LotdWeb.Components.Table do
         end)
 
     ~H"""
-    <div class={build_class(["flex flex-col", @container_class])}>
-      <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-            <table
-              class={build_class(["min-w-full divide-y divide-gray-300", @class])} {@extra_assigns}
-            >
-              <%= if @thead do %>
-                <thead classs="bg-gray-50">
-                  <%= render_slot(@thead) %>
-                </thead>
-              <% end %>
-              <tbody class="divide-y divide-gray-200 bg-white">
-                <%= render_slot(@tbody) %>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    <div class={build_class(["w-full overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg", @container_class])}>
+      <table class={build_class(["min-w-full divide-y divide-gray-300", @class])} {@extra_assigns}>
+        <%= if @thead do %>
+          <thead classs="bg-gray-50">
+            <%= render_slot(@thead) %>
+          </thead>
+        <% end %>
+        <tbody class="divide-y divide-gray-200 bg-white">
+          <%= render_slot(@tbody) %>
+        </tbody>
+      </table>
     </div>
     """
   end
@@ -57,18 +49,15 @@ defmodule LotdWeb.Components.Table do
     assigns =
       assigns
       |> assign_new(:class, fn -> "" end)
-      |> assign_new(:condensed, fn -> false end)
       |> assign_new(:order, fn -> "middle" end)
-      |> assign_new(:extra_assigns, fn ->
-        assigns_to_attributes(assigns, ~w(class condensed)a)
-      end)
+      |> assign_new(:extra_assigns, fn -> assigns_to_attributes(assigns, ~w(class)a) end)
 
     ~H"""
     <th
       scope="col"
       class={build_class([
-        th_order_classes(@order, @condensed),
-        "whitespace-nowrap text-left text-sm font-semibold text-gray-900",
+        order_classes(@order),
+        "py-3.5 whitespace-nowrap text-sm font-semibold text-gray-900",
         @class
       ])}
       {@extra_assigns}
@@ -84,19 +73,18 @@ defmodule LotdWeb.Components.Table do
     assigns =
       assigns
       |> assign_new(:class, fn -> "" end)
-      |> assign_new(:condensed, fn -> false end)
       |> assign_new(:bold, fn -> false end)
       |> assign_new(:order, fn -> "middle" end)
       |> assign_new(:extra_assigns, fn ->
-        assigns_to_attributes(assigns, ~w(class condensed weight)a)
+        assigns_to_attributes(assigns, ~w(class weight)a)
       end)
 
     ~H"""
     <td
       class={build_class([
-        td_order_classes(@order, @condensed),
+        order_classes(@order),
         td_weight_classes(@bold),
-        "whitespace-nowrap text-left text-sm",
+        "py-2 whitespace-nowrap text-sm",
         @class
       ])}
       {@extra_assigns}
@@ -108,19 +96,11 @@ defmodule LotdWeb.Components.Table do
     """
   end
 
-  defp th_order_classes(order, condensed? \\ false) do
+  defp order_classes(order) do
     case order do
-      "first" -> (if condensed?, do: "py-2 pl-3 pr-2 sm:pl-4", else: "py-3.5 pl-4 pr-3 sm:pl-6")
-      "last" ->  (if condensed?, do: "py-2 pl-2 pr-3 sm:pr-4", else: "py-3.5 pl-3 pr-4 sm:pr-6")
-      _ -> (if condensed?, do: "px-2 py-3.5", else: "px-3 py-3.5")
-    end
-  end
-
-  defp td_order_classes(order, condensed? \\ false) do
-    case order do
-      "first" -> (if condensed?, do: "py-2 pl-3 pr-2 sm:pl-4", else: "py-4 pl-4 pr-3 sm:pl-6")
-      "last" ->  (if condensed?, do: "py-2 pl-2 pr-3 sm:pr-4", else: "py-4 pl-3 pr-4 sm:pr-6")
-      _ -> (if condensed?, do: "px-2 py-2", else: "px-3 py-4")
+      "first" -> "pl-4 pr-3 sm:pl-6"
+      "last" ->  "pl-3 pr-4 sm:pr-6"
+      _ -> "px-2"
     end
   end
 

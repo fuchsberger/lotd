@@ -6,12 +6,12 @@ defmodule LotdWeb.Components do
       import LotdWeb.Components.{
         Alert,
         Avatar,
-        Badge,
         Button,
         Card,
         Dropdown,
         Form,
         Link,
+        Modal,
         Tab,
         Table,
         Toggle

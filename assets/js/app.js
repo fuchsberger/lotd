@@ -1,4 +1,6 @@
 import "phoenix_html"
+import {Socket} from "phoenix"
+import {LiveSocket} from "phoenix_live_view"
 import connect from './nexus'
 
 import $ from 'jquery'
@@ -130,6 +132,17 @@ $('#mod-table').DataTable({
   ]
 })
 
+$('#character-table').DataTable({
+  dom: 't',
+  order: [[ 4, 'desc' ]],
+  searching: false,
+  columnDefs: [
+    { targets: [2, 3, 4] },
+    { targets: [0, 5, 6], orderable: false },
+    { targets: [0, 6], width: "2.25rem" }
+  ]
+})
+
 // toggle hidden items
 $("#toggle-hidden").on("click", () => {
   hideCollected = !hideCollected
@@ -155,6 +168,11 @@ $("#user-dropdown-button").on("click", e => {
   $("#user-dropdown-menu").toggleClass("hidden")
 })
 
+// enable dismissing of alerts
+$(".alert button").on("click", el => {
+  $(el.currentTarget).closest(".alert").remove()
+})
+
 // enable login
 if(document.getElementById("login-button")){
   document.getElementById("login-button").addEventListener("click", () => connect())
@@ -163,3 +181,7 @@ if(document.getElementById("login-button-mobile")){
   document.getElementById("login-button-mobile").addEventListener("click", () => connect())
 }
 
+let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+let liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}})
+liveSocket.connect()
+window.liveSocket = liveSocket

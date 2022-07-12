@@ -1,6 +1,8 @@
 defmodule LotdWeb.LayoutView do
   use LotdWeb, :view
 
+  import Phoenix.Controller, only: [get_flash: 1]
+
   defp main_menu_items(live_action) do
     [
       # {action, label, icon (outline), active?}

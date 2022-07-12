@@ -48,13 +48,13 @@ defmodule LotdWeb.Live.LocationComponent do
         <.table>
           <:thead>
             <tr>
-              <.th condensed order="last"><%= gettext "Contains the following Items" %></.th>
+              <.th order="last"><%= gettext "Contains the following Items" %></.th>
             </tr>
           </:thead>
           <:tbody>
             <%= for item <- @items do %>
               <tr>
-                <.td condensed order="first"><%= item.name %></.td>
+                <.td order="first"><%= item.name %></.td>
               </tr>
             <% end %>
           </:tbody>

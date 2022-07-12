@@ -6,7 +6,9 @@ defmodule LotdWeb.ViewHelpers do
 
   alias Lotd.Accounts.Character
   alias LotdWeb.Components.Icon
+  alias LotdWeb.Router.Helpers, as: Routes
 
+  import LotdWeb.Gettext
   import Phoenix.LiveView.Helpers
 
   def action_submit(changeset) do

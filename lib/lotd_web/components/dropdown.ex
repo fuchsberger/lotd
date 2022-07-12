@@ -1,7 +1,6 @@
 defmodule LotdWeb.Components.Dropdown do
   use Phoenix.Component
 
-  alias Phoenix.LiveView.JS
   alias LotdWeb.Components.Icon
   import LotdWeb.Gettext
   import LotdWeb.Components.Link

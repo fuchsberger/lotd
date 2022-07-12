@@ -40,7 +40,7 @@ defmodule LotdWeb.UserSessionController do
 
                 # activate character and enable Legacy of the Dragonborn mod by default
                 Accounts.update_user(user, %{ active_character_id: character.id})
-                Accounts.activate_mod(character, Lotd.Repo.get!(Lotd.Gallery.Mod, 1))
+                Accounts.toggle_mod(user, 1)
 
                 # login and redirect to gallery page
                 conn

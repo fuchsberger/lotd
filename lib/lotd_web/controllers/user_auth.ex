@@ -2,10 +2,9 @@ defmodule LotdWeb.UserAuth do
 
   import Plug.Conn
   import Phoenix.Controller
-  import LotdWeb.Gettext
 
   alias Lotd.Accounts
-  alias LotdWeb.Router.Helpers, as: Routes
+  alias LotdWeb.ErrorController
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -27,7 +26,6 @@ defmodule LotdWeb.UserAuth do
   if you are not using LiveView.
   """
   def log_in_user(conn, user) do
-
     token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
 
@@ -127,11 +125,7 @@ defmodule LotdWeb.UserAuth do
     if conn.assigns[:current_user] do
       conn
     else
-      conn
-      |> put_flash(:error, gettext("You must log in to access this page."))
-      |> maybe_store_return_to()
-      |> redirect(to: signed_in_path(conn))
-      |> halt()
+      ErrorController.call(conn, {:error, :unauthorized})
     end
   end
 
@@ -139,10 +133,7 @@ defmodule LotdWeb.UserAuth do
     if conn.assigns.current_user.moderator do
       conn
     else
-      conn
-      |> put_flash(:error, gettext("You must be a moderator to access this page."))
-      |> redirect(to: signed_in_path(conn))
-      |> halt()
+      ErrorController.call(conn, {:error, :forbidden})
     end
   end
 
@@ -150,18 +141,9 @@ defmodule LotdWeb.UserAuth do
     if conn.assigns.current_user.admin do
       conn
     else
-      conn
-      |> put_flash(:error, gettext("You must be a administrator to access this page."))
-      |> redirect(to: signed_in_path(conn))
-      |> halt()
+      ErrorController.call(conn, {:error, :forbidden})
     end
   end
-
-  defp maybe_store_return_to(%{method: "GET"} = conn) do
-    put_session(conn, :user_return_to, current_path(conn))
-  end
-
-  defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(_conn), do: "/"
 end

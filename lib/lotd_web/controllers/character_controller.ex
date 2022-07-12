@@ -2,20 +2,31 @@ defmodule LotdWeb.CharacterController do
   use LotdWeb, :controller
 
   alias Lotd.Accounts
-  alias Lotd.Accounts.Character
+  alias Lotd.Accounts.{Character, User}
+
+  action_fallback LotdWeb.ErrorController
 
   def index(conn, _params) do
     characters = Accounts.list_user_characters(conn.assigns.current_user)
-    render(conn, "index.html", characters: characters)
+    render conn, "index.html", action: nil, characters: characters
   end
 
   def new(conn, _params) do
-    changeset = Accounts.change_character(%Character{})
-    render(conn, "new.html", changeset: changeset)
+    characters = Accounts.list_user_characters(conn.assigns.current_user)
+
+    if Enum.count(characters) < 10 do
+      changeset = Accounts.change_character(%Character{})
+      render(conn, "index.html", action: :create, changeset: changeset, characters: characters)
+    else
+      conn
+      |> put_flash(:error, gettext("You cannot create more than 10 characters."))
+      |> redirect(to: Routes.character_path(conn, :index))
+    end
   end
 
   def create(conn, %{"character" => character_params}) do
     characters = Accounts.list_user_characters(conn.assigns.current_user)
+
     if Enum.count(characters) < 10 do
       case Accounts.create_character(conn.assigns.current_user, character_params) do
         {:ok, _character} ->
@@ -24,60 +35,75 @@ defmodule LotdWeb.CharacterController do
           |> redirect(to: Routes.character_path(conn, :index))
 
         {:error, %Ecto.Changeset{} = changeset} ->
-          render(conn, "new.html", changeset: changeset)
+          render(conn, "index.html", action: :create, changeset: changeset, characters: characters)
       end
     else
       conn
-      |> put_flash(:info, "You cannot create more than 10 characters.")
+      |> put_flash(:error, gettext("You cannot create more than 10 characters."))
       |> redirect(to: Routes.character_path(conn, :index))
     end
   end
 
   def edit(conn, %{"id" => id}) do
-    character = Accounts.get_character!(id)
-    changeset = Accounts.change_character(character)
-    render(conn, "edit.html", character: character, changeset: changeset)
-  end
-
-  def update(conn, %{"id" => id, "character" => character_params}) do
-    character = Accounts.get_character!(id)
-
-    case Accounts.update_character(character, character_params) do
-      {:ok, _character} ->
-        conn
-        |> put_flash(:info, "Character updated successfully.")
-        |> redirect(to: Routes.character_path(conn, :index))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", character: character, changeset: changeset)
+    with characters <- Accounts.list_user_characters(conn.assigns.current_user),
+        %Character{} = character <- Accounts.get_character!(id),
+        :ok <- owned?(conn.assigns.current_user, character) do
+      changeset = Accounts.change_character(character)
+      render(conn, "index.html", action: :update, changeset: changeset, characters: characters)
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    character = Accounts.get_character!(id)
-    {:ok, _character} = Accounts.delete_character(character)
-
-    conn
-    |> put_flash(:info, "Character deleted successfully.")
-    |> redirect(to: Routes.character_path(conn, :index))
-  end
-
-  def activate(conn, %{"id" => id}) do
-    character = Accounts.get_character!(id)
-    if character.user_id == conn.assigns.current_user.id do
-      case Accounts.update_user(conn.assigns.current_user, %{active_character_id: id}) do
+  def update(conn, %{"id" => id, "character" => character_params}) do
+    with characters <- Accounts.list_user_characters(conn.assigns.current_user),
+        %Character{} = character <- Accounts.get_character!(id),
+        :ok <- owned?(conn.assigns.current_user, character) do
+      case Accounts.update_character(character, character_params) do
         {:ok, _character} ->
           conn
           |> put_flash(:info, "Character updated successfully.")
           |> redirect(to: Routes.character_path(conn, :index))
 
         {:error, %Ecto.Changeset{} = changeset} ->
-          render(conn, "edit.html", character: character, changeset: changeset)
+          render(conn, "index.html", action: :update, changeset: changeset, characters: characters)
       end
-    else
+    end
+  end
+
+  def remove(conn, %{"id" => id}) do
+    with characters <- Accounts.list_user_characters(conn.assigns.current_user),
+        %Character{} = character <- Accounts.get_character!(id),
+        :ok <- owned?(conn.assigns.current_user, character) do
+      render(conn, "index.html", action: :delete, character: character, characters: characters)
+    end
+  end
+
+  def delete(conn, %{"id" => id}) do
+    with %Character{} = character <- Accounts.get_character!(id),
+        :ok <- owned?(conn.assigns.current_user, character),
+        {:ok, _character} = Accounts.delete_character(character)
+    do
       conn
-      |> put_flash(:info, "You cannot activate another players character, hacker!")
+      |> put_flash(:info, "Character deleted successfully.")
       |> redirect(to: Routes.character_path(conn, :index))
     end
+  end
+
+  def activate(conn, %{"id" => id}) do
+    with %Character{} = character <- Accounts.get_character!(id),
+    :ok <- owned?(conn.assigns.current_user, character) do
+      case Accounts.update_user(conn.assigns.current_user, %{active_character_id: id}) do
+        {:ok, _character} ->
+          redirect(conn, to: Routes.character_path(conn, :index))
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          conn
+          |> put_flash(:error, gettext("Character could not be activated."))
+          |> render("edit.html", action: :index, character: character, changeset: changeset)
+      end
+    end
+  end
+
+  defp owned?(%User{} = user, %Character{} = character) do
+    if character.user_id == user.id, do: :ok, else: {:error, :forbidden}
   end
 end

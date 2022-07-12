@@ -36,7 +36,6 @@ defmodule LotdWeb.Components.Alert do
       |> assign_new(:with_icon, fn -> nil end)
       |> assign_new(:inner_block, fn -> nil end)
       |> assign_new(:classes, fn -> alert_classes(assigns) end)
-      |> assign_new(:close_button_properties, fn -> [] end)
       |> assign_new(:extra_assigns, fn ->
         assigns_to_attributes(assigns, ~w(
           accent
@@ -48,13 +47,12 @@ defmodule LotdWeb.Components.Alert do
           inner_block
           classes
           class
-          close_button_properties
         )a)
       end)
 
     ~H"""
     <%= unless label_blank?(@label, @inner_block) do %>
-    <div {@extra_assigns} class={@classes} x-data="{ dismissed: false }" x-show="!dismissed" >
+    <div {@extra_assigns} class={@classes}>
       <div class="flex">
         <%= if @with_icon do %>
           <div class="flex-shrink-0">
@@ -84,7 +82,7 @@ defmodule LotdWeb.Components.Alert do
         <%= if @dismiss do %>
           <div class="ml-auto pl-3">
             <div class="-mx-1.5 -my-1.5">
-              <button class={get_dismiss_button_classes(@color)} @click="dismissed = true" type='button' {@close_button_properties}>
+              <button class={get_dismiss_button_classes(@color)} type='button'>
                 <span class="sr-only"><%= gettext("ausblenden") %></span>
                 <Icon.Solid.x class="w-5 h-5" />
               </button>
@@ -100,17 +98,17 @@ defmodule LotdWeb.Components.Alert do
   def flash(assigns) do
     ~H"""
     <div>
-      <%= if live_flash(@flash, :error) do %>
-        <.alert class="mb-6" border dismiss color="error" close_button_properties={["phx-click": "lv:clear-flash", "phx-value-key": "error"]} label={live_flash(@flash, :error)} />
+      <%= if Map.has_key?(@flash, "error") do %>
+        <.alert class="mb-6" border dismiss color="error" label={Map.get(@flash, "error")} />
       <% end %>
-      <%= if live_flash(@flash, :info) do %>
-      <.alert class="mb-6" border dismiss color="info" close_button_properties={["phx-click": "lv:clear-flash", "phx-value-key": "info"]} label={live_flash(@flash, :info)} />
+      <%= if Map.has_key?(@flash, "info") do %>
+      <.alert class="mb-6" border dismiss color="info" label={Map.get(@flash, "info")} />
       <% end %>
-      <%= if live_flash(@flash, :warning) do %>
-        <.alert class="mb-6" border dismiss color="warning" close_button_properties={["phx-click": "lv:clear-flash", "phx-value-key": "warning"]} label={live_flash(@flash, :warning)} />
+      <%= if Map.has_key?(@flash, "warning") do %>
+        <.alert class="mb-6" border dismiss color="warning" label={Map.get(@flash, "warning")} />
       <% end %>
-      <%= if live_flash(@flash, :success) do %>
-        <.alert class="mb-6" border dismiss color="success" close_button_properties={["phx-click": "lv:clear-flash", "phx-value-key": "success"]} label={live_flash(@flash, :success)} />
+      <%= if Map.has_key?(@flash, "success") do %>
+        <.alert class="mb-6" border dismiss color="success" label={Map.get(@flash, "success")} />
       <% end %>
     </div>
     """
@@ -125,7 +123,7 @@ defmodule LotdWeb.Components.Alert do
     }
 
     build_class([
-      "p-3 text-sm",
+      "alert p-3 text-sm",
       get_border_classes(opts.accent, opts.border),
       get_border_color_class(opts.accent, opts.border, opts.color),
       get_color_classes(opts.color),
