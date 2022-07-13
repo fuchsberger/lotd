@@ -10,8 +10,4 @@ defmodule LotdWeb.CharacterView do
     <% end %>
     """
   end
-
-  defp title(:create), do: gettext "Create Character"
-  defp title(:update), do: gettext "Update Character"
-  defp title(:delete), do: gettext "Delete Character"
 end

@@ -9,7 +9,7 @@ defmodule LotdWeb.Components.Link do
     assigns =
       assigns
       |> assign_new(:class, fn -> "" end)
-      |> assign_new(:link_type, fn -> "live_patch" end)
+      |> assign_new(:link_type, fn -> "a" end)
       |> assign_new(:label, fn -> nil end)
       |> assign_new(:to, fn -> nil end)
       |> assign_new(:inner_block, fn -> nil end)

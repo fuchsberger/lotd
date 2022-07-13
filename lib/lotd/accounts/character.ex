@@ -2,6 +2,7 @@ defmodule Lotd.Accounts.Character do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:name]}
   schema "characters" do
     field :name, :string
 

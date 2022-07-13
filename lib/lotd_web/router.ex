@@ -25,6 +25,12 @@ defmodule LotdWeb.Router do
     get "/items", ItemController, :index
   end
 
+  scope "/api", LotdWeb.Api, as: :api do
+    pipe_through [:api, :require_authenticated_user]
+    resources "/character", CharacterController, only: [:create, :update, :delete, :index]
+    put "/character/:id/activate", CharacterController, :activate
+  end
+
   scope "/", LotdWeb do
     pipe_through :browser
 
@@ -37,8 +43,7 @@ defmodule LotdWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     resources "/character", CharacterController, except: [:show]
-    get "/character/:id/remove", CharacterController, :remove
-    put "/character/activate/:id", CharacterController, :activate
+
     put "/character/toggle/:item_id", CharacterController, :toggle
     put "/mod/toggle-all", ModController, :toggle_all
     put "/mod/toggle/:id", ModController, :toggle

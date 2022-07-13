@@ -6,9 +6,7 @@ defmodule LotdWeb.ViewHelpers do
 
   alias Lotd.Accounts.Character
   alias LotdWeb.Components.Icon
-  alias LotdWeb.Router.Helpers, as: Routes
 
-  import LotdWeb.Gettext
   import Phoenix.LiveView.Helpers
 
   def action_submit(changeset) do
@@ -16,13 +14,22 @@ defmodule LotdWeb.ViewHelpers do
     String.to_atom("#{action}_#{struct_name(changeset.data)}")
   end
 
-  def extra_classes(user) do
+  def table_classes(user) do
     case user do
-      %{moderator: true, active_character: %Character{}} -> " has-user has-character moderator"
-      %{active_character: %Character{}} -> " has-user has-character"
-      %{moderator: true} -> " has-user moderator"
-      %{} -> " has-user"
-      nil -> ""
+      %{moderator: true, active_character: %Character{}} ->
+        "dataTable has-user has-character moderator"
+
+      %{active_character: %Character{}} ->
+        "dataTable has-user has-character"
+
+      %{moderator: true} ->
+        "dataTable has-user moderator"
+
+      %{} ->
+        "dataTable has-user"
+
+      nil ->
+        "dataTable"
     end
   end
 

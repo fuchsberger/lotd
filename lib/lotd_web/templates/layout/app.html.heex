@@ -18,7 +18,7 @@
 
           <!-- Profile dropdown -->
           <%= if @current_user do %>
-            <span class="bg-white p-1 text-gray-500 text-sm">
+            <span class="character-name bg-white p-1 text-gray-500 text-sm">
               <%= if @current_user.active_character,
                 do: @current_user.active_character.name,
                 else: gettext("no active Character")
@@ -105,7 +105,7 @@
             <div class="ml-3">
               <div class="text-base font-medium text-gray-800"><%= @current_user.username %></div>
               <%= if @current_user.active_character do %>
-                <div class="text-sm font-medium text-gray-500">
+                <div class="character-name text-sm font-medium text-gray-500">
                   <%= @current_user.active_character.name %>
                 </div>
               <% end %>

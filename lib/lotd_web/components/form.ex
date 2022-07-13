@@ -176,7 +176,7 @@ defmodule LotdWeb.Components.Form do
     assigns = assign_defaults(assigns, text_input_classes(field_has_errors?(assigns)))
 
     ~H"""
-    <%= text_input @form, @field, [class: @classes, phx_feedback_for: input_name(@form, @field)] ++ @extra_assigns %>
+    <%= text_input @form, @field, [class: @classes, phx_feedback_for: input_name(@form, @field)] ++ input_validations(@form, @field) ++ @extra_assigns %>
     """
   end
 

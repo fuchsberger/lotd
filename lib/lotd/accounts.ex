@@ -88,6 +88,8 @@ defmodule Lotd.Accounts do
 
   def get_character!(id), do: Repo.get!(Character, id)
 
+  def preload_items(%Character{} = character), do: Repo.preload(character, :items)
+
   def change_character(%Character{} = character, params \\ %{}),
     do: Character.changeset(character, params)
 
