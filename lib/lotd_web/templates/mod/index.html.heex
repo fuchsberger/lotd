@@ -1,66 +1,86 @@
-<.table id="mod-table" class={extra_classes(@current_user)}}>
-  <:thead>
+<%= if @current_user && @current_user.moderator do %>
+  <div class="px-4 sm:px-0 mb-4 flex items-center justify-between flex-wrap sm:flex-nowrap">
+    <div>
+      <h3 class="text-lg leading-6 font-medium text-gray-900"><%= gettext "Mods" %></h3>
+    </div>
+    <div class="flex-shrink-0">
+      <.button link_type="a" leading_icon="plus" to={Routes.mod_path(@conn, :new)} label="New" />
+    </div>
+  </div>
+<% end %>
+<table id="mod-table" class={extra_classes(@current_user)}}>
+  <thead>
     <tr>
-      <.th class="relative w-12">
+      <th class="w-12">
         <%= if @current_user do %>
           <.link to={Routes.mod_path(@conn, :toggle_all)} link_type="phx-button" method={:put}>
             <.static_checkbox active={Enum.count(@mods) == Enum.count(@current_user.mods)} />
           </.link>
         <% end %>
-      </.th>
-      <.th>
+      </th>
+      <th>
         <div class="flex items-center">
           <%= gettext "Mod" %><.sort_icon />
         </div>
-      </.th>
-      <.th>
+      </th>
+      <th class="w-24 hidden sm:table-cell text-right">
         <div class="flex items-center">
           <%= gettext "Items" %><.sort_icon />
         </div>
-      </.th>
-      <.th>
+      </th>
+      <th class="w-24 hidden md:table-cell text-right">
         <div class="flex items-center">
           <%= gettext "Players" %><.sort_icon />
         </div>
-      </.th>
-      <.th>
-        <Icon.Outline.external_link class="w-5 h-5" />
-      </.th>
-      <.th>
+      </th>
+      <th class="w-9">
+        <Icon.Outline.external_link class="inline-block w-5 h-5" />
+      </th>
+      <th class="w-11">
         <%= if @current_user && @current_user.moderator do %>
-          <Icon.Outline.pencil_alt class="w-5 h-5" />
+          <span class="sr-only"><%= gettext "Edit" %></span>
+          <Icon.Outline.pencil_alt class="inline-block h-5 w-5" />
         <% end %>
-      </.th>
+      </th>
+      <th class="w-12">
+        <span class="sr-only"><%= gettext "Delete" %></span>
+        <Icon.Outline.trash class="inline-block h-5 w-5" />
+      </th>
     </tr>
-  </:thead>
-  <:tbody>
+  </thead>
+  <tbody>
     <%= for mod <- @mods do %>
       <tr>
-        <.td class="relative w-12">
+        <td>
           <%= if @current_user do %>
           <.link to={Routes.mod_path(@conn, :toggle, mod.id)} link_type="phx-button" method={:put}>
             <.static_checkbox active={mod.id in @current_user.mods} />
           </.link>
           <% end %>
-        </.td>
-        <.td class="font-medium text-gray-900"><%= mod.name %></.td>
-        <.td><%= Enum.count(mod.items) %></.td>
-        <.td><%= Enum.count(mod.users) %></.td>
-        <.td>
+        </td>
+        <td class="font-medium text-gray-900 truncate" order={unless @current_user, do: "first"}><%= mod.name %></td>
+        <td class="hidden sm:table-cell text-right pr-12"><%= Enum.count(mod.items) %></td>
+        <td class="hidden md:table-cell text-right pr-10"><%= Enum.count(mod.users) %></td>
+        <td>
           <%= if mod.url do %>
             <.link to={mod.url} class="text-indigo-600 hover:text-indigo-900">
-              <Icon.Outline.external_link class="w-5 h-5" />
+              <Icon.Outline.external_link class="inline-block w-5 h-5" />
             </.link>
           <% end %>
-        </.td>
-        <.td class="relative w-12">
+        </td>
+        <td>
           <%= if @current_user && @current_user.moderator do %>
-            <.link to={Routes.mod_path(@conn, :edit, mod.id)} class="text-indigo-600 hover:text-indigo-900">
-              <Icon.Outline.pencil_alt class="w-5 h-5" />
+            <.link to={Routes.mod_path(@conn, :edit, mod.id)} class="text-indigo-600 hover:text-indigo-900" label={gettext "Edit"} />
+          <% end %>
+        </td>
+        <td>
+          <%= if @current_user && @current_user.moderator do %>
+            <.link to={Routes.mod_path(@conn, :remove, mod.id)} class="text-red-600 hover:text-red-900" label={gettext "Edit"}>
+              <Icon.Outline.trash class="h-5 w-5 inline-block" />
             </.link>
           <% end %>
-        </.td>
+        </td>
       </tr>
     <% end %>
-  </:tbody>
-</.table>
+  </tbody>
+</table>

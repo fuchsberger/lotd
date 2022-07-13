@@ -11,7 +11,7 @@ defmodule Lotd.Accounts do
   ## user
   def preload_user_assigns(user) do
     Repo.preload(user, [
-      active_character: from(c in Character, select: c.name),
+      active_character: from(c in Character, preload: [items: ^from(i in Item, select: i.id)]),
       mods: from(m in Mod, select: m.id)
     ])
   end
@@ -108,22 +108,23 @@ defmodule Lotd.Accounts do
 
   # MUSEUM FEATURES
 
-  def collect_item(%Character{} = character, item) do
+  def toggle_item!(%Character{} = character, item_id) do
+    item = Repo.get(Item, item_id)
     character = Repo.preload(character, :items, force: true)
 
-    character
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:items, [ item | character.items ])
-    |> Repo.update()
-  end
-
-  def remove_item(%Character{} = character, item) do
-    character = Repo.preload(character, :items, force: true)
-
-    character
-    |> Ecto.Changeset.change()
-    |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, & &1.id == item.id))
-    |> Repo.update()
+    if Enum.find(character.items, & &1.id == item.id) do
+      character
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:items, Enum.reject(character.items, & &1.id == item.id))
+      |> Repo.update!()
+      false
+    else
+      character
+      |> Ecto.Changeset.change()
+      |> Ecto.Changeset.put_assoc(:items, [item | character.items])
+      |> Repo.update!()
+      true
+    end
   end
 
   def toggle_mod(%User{} = user, mod_id) do
@@ -135,6 +136,7 @@ defmodule Lotd.Accounts do
       |> Ecto.Changeset.change()
       |> Ecto.Changeset.put_assoc(:mods, Enum.reject(user.mods, & &1.id == mod.id))
       |> Repo.update()
+
     else
       user
       |> Ecto.Changeset.change()

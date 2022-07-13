@@ -11,15 +11,18 @@ defmodule Lotd.Gallery do
   # ITEMS ----------------------------------------------------------------------------------------
 
   def list_items do
-    from(i in Item, order_by: i.name, select: map(i, [:id, :display_id, :location_id, :mod_id, :name, :replica, :url]))
-    |> Repo.all
-  end
-
-  def list_items(:complete) do
     from(i in Item, preload: [
       display: [room: ^from(r in Room, select: r.name)],
       location: [region: ^from(r in Region, select: r.name)],
     ])
+    |> Repo.all
+  end
+
+  def list_items(mods) do
+    from(i in Item, preload: [
+      display: [room: ^from(r in Room, select: r.name)],
+      location: [region: ^from(r in Region, select: r.name)],
+    ], where: i.mod_id in ^mods)
     |> Repo.all
   end
 

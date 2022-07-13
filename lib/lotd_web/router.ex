@@ -5,6 +5,8 @@ defmodule LotdWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :fetch_current_user
   end
 
   pipeline :browser do
@@ -66,6 +68,7 @@ defmodule LotdWeb.Router do
     resources "/character", CharacterController
     get "/character/remove/:id", CharacterController, :remove
     put "/character/activate/:id", CharacterController, :activate
+    put "/character/toggle/:item_id", CharacterController, :toggle
     put "/mod/toggle-all", ModController, :toggle_all
     put "/mod/toggle/:id", ModController, :toggle
   end
@@ -73,9 +76,12 @@ defmodule LotdWeb.Router do
   scope "/", LotdWeb do
     pipe_through [:browser, :require_authenticated_user, :require_moderator]
 
+    resources "/item", ItemController, except: [:index]
+    get "/item/remove/:id", ItemController, :remove
     resources "/display", DisplayController
     resources "/location", LocationController
     resources "/mod", ModController
+    get "/mod/remove/:id", ModController, :remove
     resources "/region", RegionController
     resources "/room", RoomController
   end

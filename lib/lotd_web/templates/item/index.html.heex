@@ -1,80 +1,69 @@
-<table id="data-table" class={"min-w-full table-fixed divide-y divide-gray-300#{extra_classes(@current_user)}"} style="width:100%">
-  <thead class="bg-gray-50">
+<table id="item-table" class={extra_classes(@current_user)}>
+  <thead>
     <tr>
-        <th></th>
-        <th class="!pl-3.5 pt-2">
+      <th class="w-12">
+        <%= if @current_user do %>
           <button id="toggle-hidden" type="button" class="text-indigo-600 hover:text-indigo-900">
             <Icon.Solid.eye class="h-5 w-5" />
             <Icon.Solid.eye_off class="hidden h-5 w-5" />
           </button>
-        </th>
-        <th class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer">
-          <div class="flex items-center">
-            Item <.sort_icon />
-          </div>
-        </th>
-        <th class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer">
-          <div class="flex items-center">
-            Location <.sort_icon />
-          </div>
-        </th>
-        <th class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer">
-          <div class="flex items-center">
-            Region <.sort_icon />
-          </div>
-        </th>
-        <th class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer">
-          <div class="flex items-center">
-            Display <.sort_icon />
-          </div>
-        </th>
-        <th class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer">
-          <div class="flex items-center">
-            Room <.sort_icon />
-          </div>
-        </th>
-        <th class="px-2 py-3.5 text-gray-900"><Icon.Outline.external_link class="w-5 h-5" /></th>
-        <th class="px-2 py-3.5 text-gray-900"><Icon.Outline.pencil class="w-5 h-5" /></th>
+        <% end %>
+      </th>
+      <th><div class="flex items-center">Item <.sort_icon /></div></th>
+      <th class="w-40"><div class="flex items-center">Location <.sort_icon /></div></th>
+      <th class="w-40"><div class="flex items-center">Region <.sort_icon /></div></th>
+      <th class="w-40"><div class="flex items-center">Display <.sort_icon /></div></th>
+      <th class="w-40"><div class="flex items-center">Room <.sort_icon /></div></th>
+      <th class="w-9">
+        <Icon.Outline.external_link class="inline-block w-5 h-5" />
+      </th>
+      <th class="w-11">
+        <span class="sr-only"><%= gettext "Edit" %></span>
+        <Icon.Outline.pencil_alt class="inline-block h-5 w-5" />
+      </th>
+      <th class="w-12">
+        <span class="sr-only"><%= gettext "Delete" %></span>
+        <Icon.Outline.trash class="inline-block w-5 h-5" />
+      </th>
     </tr>
   </thead>
-  <tbody class="divide-y divide-gray-200 bg-white"></tbody>
-  <tfoot class="bg-gray-50">
+  <tfoot>
     <tr>
-        <th></th>
-        <th></th>
-        <th>
-          <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-            <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-gray-50 text-xs font-medium text-gray-900">Item</label>
-            <input type="text" name="name" id="name" class="block w-full border-0 p-0 bg-gray-50 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
-          </div>
-        </th>
-        <th>
-          <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-            <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-gray-50 text-xs font-medium text-gray-900">Location</label>
-            <input type="text" name="name" id="name" class="block w-full border-0 p-0 bg-gray-50 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
-          </div>
-        </th>
-        <th>
-          <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-            <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-gray-50 text-xs font-medium text-gray-900">Region</label>
-            <input type="text" name="name" id="name" class="block w-full border-0 p-0 bg-gray-50 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
-          </div>
-        </th>
-        <th>
-          <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-            <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-gray-50 text-xs font-medium text-gray-900">Display</label>
-            <input type="text" name="name" id="name" class="block w-full border-0 p-0 bg-gray-50 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
-          </div>
-        </th>
-        <th>
-          <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-            <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-gray-50 text-xs font-medium text-gray-900">Room</label>
-            <input type="text" name="name" id="name" class="block w-full border-0 p-0 bg-gray-50 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
-          </div>
-        </th>
-        <th></th>
-        <th></th>
-      </tr>
+      <th></th>
+      <th>
+        <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Item</label>
+          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+        </div>
+      </th>
+      <th>
+        <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Location</label>
+          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+        </div>
+      </th>
+      <th>
+        <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Region</label>
+          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+        </div>
+      </th>
+      <th>
+        <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Display</label>
+          <input type="text" name="name" id="name" class="block w-full border-0 p-0  text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+        </div>
+      </th>
+      <th>
+        <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Room</label>
+          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+        </div>
+      </th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
   </tfoot>
 </table>
 

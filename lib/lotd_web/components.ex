@@ -13,7 +13,6 @@ defmodule LotdWeb.Components do
         Link,
         Modal,
         Tab,
-        Table,
         Toggle
       }
     end

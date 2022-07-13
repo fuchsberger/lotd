@@ -103,6 +103,14 @@ defmodule LotdWeb.CharacterController do
     end
   end
 
+  def toggle(conn, %{"item_id" => id}) do
+    collected = Accounts.toggle_item!(conn.assigns.current_user.active_character, id)
+
+    conn
+    |> put_status(200)
+    |> json(%{collected: collected})
+  end
+
   defp owned?(%User{} = user, %Character{} = character) do
     if character.user_id == user.id, do: :ok, else: {:error, :forbidden}
   end

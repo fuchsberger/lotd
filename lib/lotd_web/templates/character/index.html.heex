@@ -8,68 +8,69 @@
   </div>
 </div>
 
-<.table id="character-table" class={extra_classes(@current_user)}}>
-  <:thead>
+<table id="character-table" class={extra_classes(@current_user)}}>
+  <thead>
     <tr>
-      <.th></.th>
-      <.th>
+      <th class="w-12"></th>
+      <th>
         <div class="flex items-center">
           <%= gettext "Name" %><.sort_icon />
         </div>
-      </.th>
-      <.th>
+      </th>
+      <th class="w-24 text-right">
         <div class="flex items-center">
           <%= gettext "Items" %><.sort_icon />
         </div>
-      </.th>
-      <.th class="hidden lg:table-cell">
+      </th>
+      <th class="w-32 hidden md:table-cell">
         <div class="flex items-center">
           <%= gettext "Created" %><.sort_icon />
         </div>
-      </.th>
-      <.th class="hidden md:table-cell">
+      </th>
+      <th class="w-32 hidden sm:table-cell">
         <div class="flex items-center">
           <%= gettext "Last Activity" %><.sort_icon />
         </div>
-      </.th>
-      <.th class="text-right">
+      </th>
+      <th class="w-11">
         <span class="sr-only"><%= gettext "Edit" %></span>
         <Icon.Outline.pencil_alt class="inline-block h-5 w-5" />
-      </.th>
-      <.th order="last">
+      </th>
+      <th class="w-12">
         <span class="sr-only"><%= gettext "Delete" %></span>
         <Icon.Outline.trash class="inline-block h-5 w-5" />
-      </.th>
+      </th>
     </tr>
-  </:thead>
-  <:tbody>
+  </thead>
+  <tbody>
     <%= for character <- @characters do %>
       <tr>
-        <.td order="first">
+        <td>
           <.link to={Routes.character_path(@conn, :activate, character.id)} link_type="phx-button" method={:put}>
             <.static_radio active={character.id == @current_user.active_character_id} />
           </.link>
-        </.td>
-        <.td class="font-medium text-gray-900"><%= character.name %></.td>
-        <.td><%= Enum.count(character.items) %></.td>
-        <.td class="hidden lg:table-cell">
+        </td>
+        <td class="font-medium text-gray-900 truncate"><%= character.name %></td>
+        <td class="pr-12 text-right"><%= Enum.count(character.items) %></td>
+        <td class="hidden md:table-cell">
           <%= Timex.format!(character.inserted_at, "{relative}", :relative) %>
-        </.td>
-        <.td class="hidden md:table-cell">
+        </td>
+        <td class="hidden sm:table-cell">
           <%= Timex.format!(character.updated_at, "{relative}", :relative) %>
-        </.td>
-        <.td class="text-medium text-right">
+        </td>
+        <td>
           <.link to={Routes.character_path(@conn, :edit, character.id)} class="text-indigo-600 hover:text-indigo-900" label={gettext "Edit"} />
-        </.td>
-        <.td order="last">
+        </td>
+        <td>
           <.link to={Routes.character_path(@conn, :remove, character.id)} class="text-red-600 hover:text-red-900" label={gettext "Edit"}>
             <Icon.Outline.trash class="h-5 w-5 inline-block" />
           </.link>
-        </.td>
+        </td>
       </tr>
     <% end %>
-  </:tbody>
-</.table>
+  </tbody>
+</table>
+
 <%= if @action && @action in [:create, :update] do %>
 <.form let={f} for={@changeset} action={Routes.character_path(@conn, @action)}>
   <.modal title={title(@action)} close_modal_target={Routes.character_path(@conn, :index)}>
