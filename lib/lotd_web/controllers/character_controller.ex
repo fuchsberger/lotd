@@ -49,7 +49,7 @@ defmodule LotdWeb.CharacterController do
         %Character{} = character <- Accounts.get_character!(id),
         :ok <- owned?(conn.assigns.current_user, character) do
       changeset = Accounts.change_character(character)
-      render(conn, "index.html", action: :update, changeset: changeset, characters: characters)
+      render(conn, "index.html", action: :update, changeset: changeset, character: character, characters: characters)
     end
   end
 
@@ -64,7 +64,7 @@ defmodule LotdWeb.CharacterController do
           |> redirect(to: Routes.character_path(conn, :index))
 
         {:error, %Ecto.Changeset{} = changeset} ->
-          render(conn, "index.html", action: :update, changeset: changeset, characters: characters)
+          render(conn, "index.html", action: :update, changeset: changeset, character: character, characters: characters)
       end
     end
   end
@@ -105,6 +105,7 @@ defmodule LotdWeb.CharacterController do
 
   def toggle(conn, %{"item_id" => id}) do
     collected = Accounts.toggle_item!(conn.assigns.current_user.active_character, id)
+    Accounts.refresh_character!(conn.assigns.current_user.active_character)
 
     conn
     |> put_status(200)

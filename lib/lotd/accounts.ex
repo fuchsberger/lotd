@@ -108,6 +108,14 @@ defmodule Lotd.Accounts do
 
   # MUSEUM FEATURES
 
+  def refresh_character!(%Character{} = character) do
+    now = NaiveDateTime.truncate(NaiveDateTime.utc_now(), :second)
+
+    character
+    |> Ecto.Changeset.change(%{updated_at: now})
+    |> Repo.update!()
+  end
+
   def toggle_item!(%Character{} = character, item_id) do
     item = Repo.get(Item, item_id)
     character = Repo.preload(character, :items, force: true)

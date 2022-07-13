@@ -113,7 +113,6 @@ defmodule LotdWeb.Components.Dropdown do
           :classes
         ])
       end)
-
     ~H"""
     <.link link_type={@link_type} to={@to} class={@classes} {@extra_assigns} @click="open=false">
       <%= if @inner_block do %>

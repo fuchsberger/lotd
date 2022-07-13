@@ -1,6 +1,11 @@
-## 1.0.1
+## 1.1
   - mod tag now showing on mods
   - readded ability to modify mods
+  - character creation via modals
+  - loading table and toggling items now happens via ajax (much faster)
+  - table layout set to fixed and responsive (the bigger the screen the more info)
+  - individual filters for item location region display and room
+  - pagination, ordering, changing table size
 
 ## 1.0
   - creating a character auto-activates it
@@ -13,6 +18,7 @@
   - improved moderation system
   - when moderating will update the system for all users on the fly
   - entering an invalid item url no longer possible thus the page can no longer be broken this way
+
 
 ## 0.6.4
 

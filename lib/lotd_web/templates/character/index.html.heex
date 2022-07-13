@@ -53,9 +53,11 @@
         <td class="font-medium text-gray-900 truncate"><%= character.name %></td>
         <td class="pr-12 text-right"><%= Enum.count(character.items) %></td>
         <td class="hidden md:table-cell">
+          <time class="hidden"><%= character.inserted_at %></time>
           <%= Timex.format!(character.inserted_at, "{relative}", :relative) %>
         </td>
         <td class="hidden sm:table-cell">
+          <time class="hidden"><%= character.updated_at %></time>
           <%= Timex.format!(character.updated_at, "{relative}", :relative) %>
         </td>
         <td>
@@ -72,7 +74,7 @@
 </table>
 
 <%= if @action && @action in [:create, :update] do %>
-<.form let={f} for={@changeset} action={Routes.character_path(@conn, @action)}>
+<.form let={f} for={@changeset} action={if @action == :update, do: Routes.character_path(@conn, :update, @character.id), else: Routes.character_path(@conn, :create)}>
   <.modal title={title(@action)} close_modal_target={Routes.character_path(@conn, :index)}>
     <.form_field type="text_input" form={f} field={:name} />
     <:footer>
