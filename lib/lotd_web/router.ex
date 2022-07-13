@@ -37,7 +37,7 @@ defmodule LotdWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     resources "/character", CharacterController, except: [:show]
-    get "/character/remove/:id", CharacterController, :remove
+    get "/character/:id/remove", CharacterController, :remove
     put "/character/activate/:id", CharacterController, :activate
     put "/character/toggle/:item_id", CharacterController, :toggle
     put "/mod/toggle-all", ModController, :toggle_all
@@ -48,11 +48,11 @@ defmodule LotdWeb.Router do
     pipe_through [:browser, :require_authenticated_user, :require_moderator]
 
     resources "/item", ItemController, except: [:index, :show]
-    get "/item/remove/:id", ItemController, :remove
+    get "/item/:id/remove", ItemController, :remove
     resources "/display", DisplayController, except: [:show]
     resources "/location", LocationController, except: [:show]
     resources "/mod", ModController, except: [:index, :show]
-    get "/mod/remove/:id", ModController, :remove
+    get "/mod/:id/remove", ModController, :remove
     resources "/region", RegionController, except: [:show]
     resources "/room", RoomController, except: [:show]
   end

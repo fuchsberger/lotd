@@ -1,0 +1,13 @@
+<h1>Show Region</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @region.name %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.region_path(@conn, :edit, @region) %></span> |
+<span><%= link "Back", to: Routes.region_path(@conn, :index) %></span>
