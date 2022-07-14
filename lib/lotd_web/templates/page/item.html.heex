@@ -9,7 +9,15 @@
   </div>
 <% end %>
 
-<table id="item-table" class={table_classes(@current_user)}>
+<table
+  id="item-table"
+  class={table_classes(@current_user)}
+  data-displays={map(@display_options)}
+  data-locations={map(@location_options)}
+  data-mods={map(@mod_options)}
+  data-regions={map(@region_options)}
+  data-rooms={map(@room_options)}
+>
   <thead>
     <tr>
       <th class="w-12">
@@ -82,6 +90,10 @@
   <.modal id="data-form-modal" title={gettext "Item"}>
     <.alert color="error" label="Input errors" with_icon class="data-form-alert hidden mb-2" dismiss/>
     <.form_field id="input-name" type="text_input" form={f} field={:name} />
+    <.form_field id="input-url" type="text_input" form={f} field={:url} />
+    <.form_field id="input-display-id" type="select" form={f} field={:display_id} options={@display_options} prompt={gettext "select one"} />
+    <.form_field id="input-location-id" type="select" form={f} field={:location_id} options={@location_options} prompt={gettext "select one"} />
+    <.form_field id="input-mod-id" type="select" form={f} field={:mod_id} options={@mod_options} prompt={gettext "select one"} />
     <:footer>
       <.button id="create-btn" type="submit" color="primary" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" label={gettext "Create Item"} data-struct="item" />
       <.button id="update-btn" type="submit" color="primary" class="hidden mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" label={gettext "Update Item"} data-struct="item" />

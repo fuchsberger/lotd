@@ -20,7 +20,13 @@ defmodule LotdWeb.PageController do
   end
 
   def item(conn, _params) do
-    render conn, "item.html", changeset: Gallery.change_item(%Item{})
+    render conn, "item.html",
+      changeset: Gallery.change_item(%Item{}),
+      display_options: Gallery.display_options(),
+      location_options: Gallery.location_options(),
+      mod_options: Gallery.mod_options(),
+      region_options: Gallery.region_options(),
+      room_options: Gallery.room_options()
   end
 
   def location(conn, _params) do

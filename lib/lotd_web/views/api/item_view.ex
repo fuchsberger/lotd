@@ -11,12 +11,13 @@ defmodule LotdWeb.Api.ItemView do
     [
       item.id in character_item_ids,
       item.name,
-      item.location && item.location.name,
-      item.location && item.location.region,
-      item.display.name,
-      item.display.room,
+      item.location && item.location.id,
+      item.location && item.location.region_id,
+      item.display.id,
+      item.display.room_id,
       item.url,
-      item.id
+      item.id,
+      item.mod_id
     ]
   end
 end

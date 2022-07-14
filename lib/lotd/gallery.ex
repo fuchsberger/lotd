@@ -10,26 +10,15 @@ defmodule Lotd.Gallery do
 
   # ITEMS ----------------------------------------------------------------------------------------
 
-  def list_items do
-    from(i in Item, preload: [
-      display: [room: ^from(r in Room, select: r.name)],
-      location: [region: ^from(r in Region, select: r.name)],
-    ])
-    |> Repo.all
-  end
+  def list_items, do: Repo.all(from(i in Item, preload: [:display, :location]))
 
   def list_items(mods) do
-    from(i in Item, preload: [
-      display: [room: ^from(r in Room, select: r.name)],
-      location: [region: ^from(r in Region, select: r.name)],
-    ], where: i.mod_id in ^mods)
-    |> Repo.all
+    Repo.all(from(i in Item, preload: [:display, :location], where: i.mod_id in ^mods))
   end
 
   def get_item!(id), do: Repo.get!(Item, id)
 
-  def preload_item(%Item{} = item),
-    do: Repo.preload(item, [:mod, display: [:room], location: [:region]])
+  def preload_item(%Item{} = item), do: Repo.preload(item, [:display, :location])
 
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
 
@@ -53,6 +42,8 @@ defmodule Lotd.Gallery do
     from(r in Room, select: map(r, [:name, :id]), order_by: r.name)
     |> Repo.all()
   end
+
+  def room_options, do: Repo.all(from(r in Room, select: {r.name, r.id}, order_by: r.name))
 
   def get_room!(id), do: Repo.get!(Room, id)
 
@@ -79,6 +70,8 @@ defmodule Lotd.Gallery do
     |> Repo.all()
   end
 
+  def display_options, do: Repo.all(from(d in Display, select: {d.name, d.id}, order_by: d.name))
+
   def get_display!(id), do: Repo.get!(Display, id)
 
   def change_display(%Display{} = display, params \\ %{}), do: Display.changeset(display, params)
@@ -104,6 +97,8 @@ defmodule Lotd.Gallery do
     |> Repo.all()
   end
 
+  def region_options, do: Repo.all(from(r in Region, select: {r.name, r.id}, order_by: r.name))
+
   def get_region!(id), do: Repo.get!(Region, id)
 
   def change_region(%Region{} = region, params \\ %{}), do: Region.changeset(region, params)
@@ -128,6 +123,8 @@ defmodule Lotd.Gallery do
     from(l in Location, select: map(l, [:name, :id, :region_id]), order_by: l.name)
     |> Repo.all()
   end
+
+  def location_options, do: Repo.all(from(l in Location, select: {l.name, l.id}, order_by: l.name))
 
   def get_location!(id), do: Repo.get!(Location, id)
 
@@ -158,6 +155,8 @@ defmodule Lotd.Gallery do
     # move Vanilla / LOTD to front
     [Enum.find(mods, & &1.id == 1) | Enum.reject(mods, & &1.id == 1)]
   end
+
+  def mod_options, do: Repo.all(from(m in Mod, select: {m.name, m.id}, order_by: m.name))
 
   def preload_mod(%Mod{} = mod), do: Repo.preload(mod, [:items, :users])
 

@@ -26,7 +26,7 @@ defmodule LotdWeb.Api.ItemController do
       {:ok, item} ->
         item = Gallery.preload_item(item)
         json(conn, %{success: true, item: ItemView.render("item.json",
-        item: item, user_item_ids: conn.assigns.current_user.items )})
+        item: item, character_item_ids: [] )})
 
       {:error, %Ecto.Changeset{} = _changeset} ->
         json(conn, %{success: false})
@@ -37,9 +37,17 @@ defmodule LotdWeb.Api.ItemController do
     with %Item{} = item <- Gallery.get_item!(id) do
       case Gallery.update_item(item, item_params) do
         {:ok, item} ->
+          character_item_ids =
+            if conn.assigns.current_user.active_character do
+              character = Accounts.preload_items(conn.assigns.current_user.active_character)
+              character.items
+            else
+              []
+            end
+
           item = Gallery.preload_item(item)
           json(conn, %{success: true, item: ItemView.render("item.json",
-          item: item, user_item_ids: conn.assigns.current_user.items )})
+          item: item, character_item_ids: character_item_ids )})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})
@@ -54,13 +62,9 @@ defmodule LotdWeb.Api.ItemController do
     end
   end
 
-
-  def toggle(conn, %{"item_id" => id}) do
+  def toggle(conn, %{"id" => id}) do
     collected = Accounts.toggle_item!(conn.assigns.current_user.active_character, id)
     Accounts.refresh_character!(conn.assigns.current_user.active_character)
-
-    conn
-    |> put_status(200)
-    |> json(%{collected: collected})
+    json(conn, %{success: true, collected: collected})
   end
 end
