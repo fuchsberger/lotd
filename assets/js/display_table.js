@@ -7,7 +7,7 @@ var displayTable = $('#display-table').DataTable({
   dom: `<"table-header"lf>
         <"table-wrapper"t>
         <"table-footer"<"#table-info">p>`,
-  order: [[ 2, 'desc' ]],
+  order: [[ 1, 'asc' ]],
   rowId: row => `entry-${row[3]}`,
   pagingType: "simple",
   language: {search: "", searchPlaceholder: "Search..."},

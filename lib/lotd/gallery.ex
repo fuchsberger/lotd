@@ -137,13 +137,16 @@ defmodule Lotd.Gallery do
   # LOCATIONS ------------------------------------------------------------------------------------
 
   def list_locations do
-    from(l in Location, select: map(l, [:name, :id, :region_id]), order_by: l.name)
+    from(d in Location, preload: [items: ^from(i in Item, select: i.id)])
     |> Repo.all()
   end
 
   def location_options, do: Repo.all(from(l in Location, select: {l.name, l.id}, order_by: l.name))
 
   def get_location!(id), do: Repo.get!(Location, id)
+
+  def preload_location(%Location{} = location),
+    do: Repo.preload(location, [items: from(i in Item, select: i.id)])
 
   def change_location(%Location{} = location, params \\ %{}),
     do: Location.changeset(location, params)

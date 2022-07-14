@@ -37,7 +37,10 @@ defmodule LotdWeb.PageController do
   end
 
   def location(conn, _params) do
-    render conn, "location.html", changeset: Gallery.change_location(%Location{})
+    render conn, "location.html",
+      changeset: Gallery.change_location(%Location{}),
+      item_options: Gallery.item_options(),
+      region_options: Gallery.region_options()
   end
 
   def mod(conn, _params) do
