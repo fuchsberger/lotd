@@ -2,6 +2,7 @@ defmodule Lotd.Gallery.Location do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:name, :region_id]}
   schema "locations" do
     field :name, :string
     belongs_to :region, Lotd.Gallery.Region

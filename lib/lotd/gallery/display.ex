@@ -3,6 +3,7 @@ defmodule Lotd.Gallery.Display do
 
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:name, :room_id]}
   schema "displays" do
     field :name, :string
     belongs_to :room, Lotd.Gallery.Room

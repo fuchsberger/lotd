@@ -49,8 +49,7 @@ defmodule Lotd.MixProject do
       {:gettext, "~> 0.17"},
       {:jason, "~> 1.1"},
       {:plug_cowboy, "~> 2.1"},
-      {:fuzzy_compare, "~> 1.0"},
-      {:timex, "~> 3.7.8"}
+      {:fuzzy_compare, "~> 1.0"}
     ]
   end
 

@@ -156,6 +156,8 @@ defmodule Lotd.Gallery do
     [Enum.find(mods, & &1.id == 1) | Enum.reject(mods, & &1.id == 1)]
   end
 
+  def preload_mod(%Mod{} = mod), do: Repo.preload(mod, [:items, :users])
+
   def get_mod!(id), do: Repo.get!(Mod, id)
 
   def change_mod(%Mod{} = mod, params \\ %{}), do: Mod.changeset(mod, params)

@@ -2,6 +2,7 @@ defmodule Lotd.Gallery.Mod do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [:name, :url]}
   schema "mods" do
     field :name, :string
     field :url, :string

@@ -22,13 +22,27 @@ defmodule LotdWeb.Router do
   scope "/api", LotdWeb.Api, as: :api do
     pipe_through :api
 
-    get "/items", ItemController, :index
+    resources "/item", ItemController, only: [:index]
+    resources "/mod", ModController, only: [:index]
   end
 
   scope "/api", LotdWeb.Api, as: :api do
     pipe_through [:api, :require_authenticated_user]
+
     resources "/character", CharacterController, only: [:create, :update, :delete, :index]
     put "/character/:id/activate", CharacterController, :activate
+    put "/mod/:id/toggle", ModController, :toggle
+    put "/mod/toggle-all", ModController, :toggle_all
+  end
+
+  scope "/api", LotdWeb.Api, as: :api do
+    pipe_through [:api, :require_authenticated_user, :require_moderator]
+
+    resources "/mod", ModController, only: [:create, :update, :delete]
+    resources "/region", RegionController, only: [:index, :create, :update, :delete]
+    resources "/room", RoomController, only: [:index, :create, :update, :delete]
+    resources "/display", LocationController, only: [:index, :create, :update, :delete]
+    resources "/location", LocationController, only: [:index, :create, :update, :delete]
   end
 
   scope "/", LotdWeb do
@@ -36,17 +50,16 @@ defmodule LotdWeb.Router do
 
     get "/", ItemController, :index
     get "/about", PageController, :about
-    get "/mods", ModController, :index
+    get "/mods", PageController, :mod
   end
 
   scope "/", LotdWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    resources "/character", CharacterController, except: [:show]
+    get "/characters", PageController, :character
+    resources "/character", CharacterController, except: [:index, :show]
 
     put "/character/toggle/:item_id", CharacterController, :toggle
-    put "/mod/toggle-all", ModController, :toggle_all
-    put "/mod/toggle/:id", ModController, :toggle
   end
 
   scope "/", LotdWeb do
@@ -56,8 +69,6 @@ defmodule LotdWeb.Router do
     get "/item/:id/remove", ItemController, :remove
     resources "/display", DisplayController, except: [:show]
     resources "/location", LocationController, except: [:show]
-    resources "/mod", ModController, except: [:index, :show]
-    get "/mod/:id/remove", ModController, :remove
     resources "/region", RegionController, except: [:show]
     resources "/room", RoomController, except: [:show]
   end
