@@ -21,7 +21,7 @@ var itemTable = $('#item-table').DataTable({
     {
       targets: 2,
       className: "truncate hidden sm:table-cell",
-      render: location_id => `${$("#item-table").data("regions")[location_id] || ""}`
+      render: location_id => `${$("#item-table").data("locations")[location_id] || ""}`
     },
     {
       targets: 3,
