@@ -1,3 +1,12 @@
+## 1.1.1
+  - improved performance by reducing file size that needs to be loaded by about 40% and loading via ajax after inital page load
+  - interactivity and all actions now via ajax
+  - reduced number of sql queries
+  - on first log in no character is created automatically anylonger
+  - mods are now toggled globally (for all characters)
+  - character limit of 10 was removed
+  - management of system should be much easier for moderators and admins now
+
 ## 1.1
   - mod tag now showing on mods
   - readded ability to modify mods
