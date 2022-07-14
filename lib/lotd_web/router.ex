@@ -30,6 +30,7 @@ defmodule LotdWeb.Router do
     pipe_through [:api, :require_authenticated_user]
 
     resources "/character", CharacterController, only: [:create, :update, :delete, :index]
+    put "/item/:id/toggle", ItemController, :toggle
     put "/character/:id/activate", CharacterController, :activate
     put "/mod/:id/toggle", ModController, :toggle
     put "/mod/toggle-all", ModController, :toggle_all
@@ -38,17 +39,24 @@ defmodule LotdWeb.Router do
   scope "/api", LotdWeb.Api, as: :api do
     pipe_through [:api, :require_authenticated_user, :require_moderator]
 
+    resources "/item", ItemController, only: [:create, :update, :delete]
     resources "/mod", ModController, only: [:create, :update, :delete]
     resources "/region", RegionController, only: [:index, :create, :update, :delete]
     resources "/room", RoomController, only: [:index, :create, :update, :delete]
-    resources "/display", LocationController, only: [:index, :create, :update, :delete]
+    resources "/display", DisplayController, only: [:index, :create, :update, :delete]
     resources "/location", LocationController, only: [:index, :create, :update, :delete]
+  end
+
+  scope "/api", LotdWeb.Api, as: :api do
+    pipe_through [:api, :require_authenticated_user, :require_moderator]
+
+    resources "/user", UserController, only: [:index, :delete]
   end
 
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", ItemController, :index
+    get "/", PageController, :item
     get "/about", PageController, :about
     get "/mods", PageController, :mod
   end
@@ -57,25 +65,16 @@ defmodule LotdWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/characters", PageController, :character
-    resources "/character", CharacterController, except: [:index, :show]
-
-    put "/character/toggle/:item_id", CharacterController, :toggle
-  end
-
-  scope "/", LotdWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_moderator]
-
-    resources "/item", ItemController, except: [:index, :show]
-    get "/item/:id/remove", ItemController, :remove
-    resources "/display", DisplayController, except: [:show]
-    resources "/location", LocationController, except: [:show]
-    resources "/region", RegionController, except: [:show]
-    resources "/room", RoomController, except: [:show]
+    get "/displays", PageController, :display
+    get "/locations", PageController, :location
+    get "/regions", PageController, :region
+    get "/rooms", PageController, :room
   end
 
   scope "/", LotdWeb do
     pipe_through [:browser, :require_authenticated_user, :require_admin]
-    resources "/users", UserController, only: [:index, :delete]
+
+    get "/users", PageController, :user
   end
 
   ## Authentication routes

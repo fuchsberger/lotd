@@ -11,7 +11,7 @@ defmodule LotdWeb.LayoutView do
     items =
       [
         {gettext("About"), Routes.page_path(conn, :about)},
-        {gettext("Gallery"), Routes.item_path(conn, :index)},
+        {gettext("Items"), Routes.page_path(conn, :item)},
         {gettext("Mods"), Routes.page_path(conn, :mod)}
       ]
 

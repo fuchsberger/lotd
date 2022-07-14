@@ -28,6 +28,9 @@ defmodule Lotd.Gallery do
 
   def get_item!(id), do: Repo.get!(Item, id)
 
+  def preload_item(%Item{} = item),
+    do: Repo.preload(item, [:mod, display: [:room], location: [:region]])
+
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
 
   def create_item(attrs \\ %{}) do

@@ -49,7 +49,7 @@ defmodule LotdWeb.UserSessionController do
               {:error, _changeset} ->
                 conn
                 |> put_flash(:error, "Error: Could not create user in database!")
-                |> redirect(to: Routes.item_path(conn, :index))
+                |> redirect(to: Routes.page_path(conn, :item))
                 |> halt()
             end
           # user found --> authenticate
@@ -58,7 +58,7 @@ defmodule LotdWeb.UserSessionController do
               {:error, _changeset} ->
                 conn
                 |> put_flash(:error, "Error: Could not update user!")
-                |> redirect(to: Routes.item_path(conn, :index))
+                |> redirect(to: Routes.page_path(conn, :item))
                 |> halt()
 
               {:ok, user} ->
@@ -70,7 +70,7 @@ defmodule LotdWeb.UserSessionController do
       {:error, %HTTPoison.Error{reason: reason}} ->
         conn
         |> put_flash(:error, "Error connecting to Nexus: #{reason}")
-        |> redirect(to: Routes.item_path(conn, :index))
+        |> redirect(to: Routes.page_path(conn, :item))
         |> halt()
     end
   end
