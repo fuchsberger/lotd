@@ -12,6 +12,8 @@ defmodule Lotd.Gallery do
 
   def list_items, do: Repo.all(from(i in Item, preload: [:display, :location]))
 
+  def item_options, do: Repo.all(from(i in Item, select: {i.name, i.id}))
+
   def list_items(mods) do
     Repo.all(from(i in Item, preload: [:display, :location], where: i.mod_id in ^mods))
   end
@@ -72,13 +74,16 @@ defmodule Lotd.Gallery do
   # DISPLAYS -------------------------------------------------------------------------------------
 
   def list_displays do
-    from(d in Display, select: map(d, [:name, :id, :room_id]), order_by: d.name)
+    from(d in Display, preload: [items: ^from(i in Item, select: i.id)])
     |> Repo.all()
   end
 
   def display_options, do: Repo.all(from(d in Display, select: {d.name, d.id}, order_by: d.name))
 
   def get_display!(id), do: Repo.get!(Display, id)
+
+  def preload_display(%Display{} = display),
+    do: Repo.preload(display, [items: from(i in Item, select: i.id)])
 
   def change_display(%Display{} = display, params \\ %{}), do: Display.changeset(display, params)
 
