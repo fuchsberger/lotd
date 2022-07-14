@@ -2,7 +2,6 @@ defmodule LotdWeb.UserSessionController do
   use LotdWeb, :controller
 
   alias Lotd.Accounts
-  alias Lotd.Accounts.Character
   alias LotdWeb.UserAuth
 
   @doc """
@@ -31,17 +30,6 @@ defmodule LotdWeb.UserSessionController do
           nil ->
             case Accounts.create_user(%{id: id, avatar_url: avatar_url, username: user_name}) do
               {:ok, user} ->
-
-                # also create a default character
-                character =
-                  %Character{}
-                  |> Accounts.change_character(%{name: "Default Character", user_id: user.id})
-                  |> Lotd.Repo.insert!()
-
-                # activate character and enable Legacy of the Dragonborn mod by default
-                Accounts.update_user(user, %{ active_character_id: character.id})
-                Accounts.toggle_mod(user, 1)
-
                 # login and redirect to gallery page
                 conn
                 |> UserAuth.log_in_user(user)

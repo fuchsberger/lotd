@@ -12,11 +12,9 @@
   <thead>
     <tr>
       <th class="w-11">
-        <%= if @current_user do %>
-          <.link to={Routes.api_mod_path(@conn, :toggle_all)} link_type="phx-button" method={:put}>
-            <.static_checkbox active={false} />
-          </.link>
-        <% end %>
+        <.link id="toggle-all" class="hidden" link_type="button" type="button">
+          <.static_checkbox active={false} />
+        </.link>
       </th>
       <th>
         <div class="flex items-center">
