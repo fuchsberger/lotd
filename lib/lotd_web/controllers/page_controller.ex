@@ -42,7 +42,10 @@ defmodule LotdWeb.PageController do
   end
 
   def region(conn, _params) do
-    render conn, "region.html", changeset: Gallery.change_region(%Region{})
+    render conn, "region.html",
+      changeset: Gallery.change_region(%Region{}),
+      location_options: Gallery.location_options(),
+      regions: Gallery.list_regions()
   end
 
   def room(conn, _params) do

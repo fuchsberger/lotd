@@ -99,13 +99,19 @@ defmodule Lotd.Gallery do
   # REGIONS --------------------------------------------------------------------------------------
 
   def list_regions do
-    from(r in Region, select: map(r, [:name, :id]), order_by: r.name)
+    from(r in Region,
+      preload: [locations: [items: ^from(i in Item, select: i.id)]],
+      order_by: r.name
+    )
     |> Repo.all()
   end
 
   def region_options, do: Repo.all(from(r in Region, select: {r.name, r.id}, order_by: r.name))
 
   def get_region!(id), do: Repo.get!(Region, id)
+
+  def preload_region(%Region{} = region),
+    do: Repo.preload(region, [locations: [items: from(i in Item, select: i.id)]])
 
   def change_region(%Region{} = region, params \\ %{}), do: Region.changeset(region, params)
 

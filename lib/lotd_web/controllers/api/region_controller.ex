@@ -1,62 +1,43 @@
-defmodule LotdWeb.RegionController do
+defmodule LotdWeb.Api.RegionController do
   use LotdWeb, :controller
 
   alias Lotd.Gallery
   alias Lotd.Gallery.Region
+  alias LotdWeb.Api.RegionView
 
   def index(conn, _params) do
     regions = Gallery.list_regions()
-    render(conn, "index.html", regions: regions)
-  end
-
-  def new(conn, _params) do
-    changeset = Gallery.change_region(%Region{})
-    render(conn, "new.html", changeset: changeset)
+    render(conn, "regions.json", regions: regions)
   end
 
   def create(conn, %{"region" => region_params}) do
     case Gallery.create_region(region_params) do
       {:ok, region} ->
-        conn
-        |> put_flash(:info, "Region created successfully.")
-        |> redirect(to: Routes.region_path(conn, :show, region))
+        region = Gallery.preload_region(region)
+        json(conn, %{success: true, region: RegionView.render("region.json", region: region )})
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+      {:error, %Ecto.Changeset{} = _changeset} ->
+        json(conn, %{success: false})
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    region = Gallery.get_region!(id)
-    render(conn, "show.html", region: region)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    region = Gallery.get_region!(id)
-    changeset = Gallery.change_region(region)
-    render(conn, "edit.html", region: region, changeset: changeset)
-  end
-
   def update(conn, %{"id" => id, "region" => region_params}) do
-    region = Gallery.get_region!(id)
+    with %Region{} = region <- Gallery.get_region!(id) do
+      case Gallery.update_region(region, region_params) do
+        {:ok, region} ->
+          region = Gallery.preload_region(region)
+          json(conn, %{success: true, region: RegionView.render("region.json", region: region)})
 
-    case Gallery.update_region(region, region_params) do
-      {:ok, region} ->
-        conn
-        |> put_flash(:info, "Region updated successfully.")
-        |> redirect(to: Routes.region_path(conn, :show, region))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", region: region, changeset: changeset)
+        {:error, %Ecto.Changeset{} = _changeset} ->
+          json(conn, %{success: false})
+      end
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    region = Gallery.get_region!(id)
-    {:ok, _region} = Gallery.delete_region(region)
-
-    conn
-    |> put_flash(:info, "Region deleted successfully.")
-    |> redirect(to: Routes.region_path(conn, :index))
+    with %Region{} = region <- Gallery.get_region!(id),
+        {:ok, region} = Gallery.delete_region(region) do
+      json(conn, %{success: true, deleted_id: region.id})
+    end
   end
 end
