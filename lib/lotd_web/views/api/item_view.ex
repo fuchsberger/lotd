@@ -15,9 +15,9 @@ defmodule LotdWeb.Api.ItemView do
       item.location && item.location.region_id,
       item.display.id,
       item.display.room_id,
-      item.url,
+      item.mod_id,
       item.id,
-      item.mod_id
+      item.url
     ]
   end
 end

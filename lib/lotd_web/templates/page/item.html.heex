@@ -20,7 +20,7 @@
 >
   <thead>
     <tr>
-      <th class="w-12">
+      <th class="w-12 sm:w-14">
         <%= if @current_user do %>
           <button id="toggle-hidden" type="button" class="text-indigo-600 hover:text-indigo-900">
             <Icon.Solid.eye class="h-5 w-5" />
@@ -33,9 +33,7 @@
       <th class="w-40"><div class="flex items-center">Region <.sort_icon /></div></th>
       <th class="w-40"><div class="flex items-center">Display <.sort_icon /></div></th>
       <th class="w-40"><div class="flex items-center">Room <.sort_icon /></div></th>
-      <th class="w-9">
-        <Icon.Outline.external_link class="inline-block w-5 h-5" />
-      </th>
+      <th class="w-40"><div class="flex items-center">Mod <.sort_icon /></div></th>
       <th class="w-11">
         <span class="sr-only"><%= gettext "Edit" %></span>
         <Icon.Outline.pencil_alt class="inline-block h-5 w-5" />
@@ -44,6 +42,9 @@
         <span class="sr-only"><%= gettext "Delete" %></span>
         <Icon.Outline.trash class="inline-block w-5 h-5" />
       </th>
+      <th class="w-12 sm:w-14">
+        <Icon.Outline.external_link class="inline-block w-5 h-5" />
+      </th>
     </tr>
   </thead>
   <tfoot>
@@ -51,32 +52,38 @@
       <th></th>
       <th>
         <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Item</label>
-          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+          <label for="item-filter" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Item</label>
+          <input type="text" name="item-filter" id="item-filter" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
         </div>
       </th>
       <th>
         <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Location</label>
-          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+          <label for="location-filter" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Location</label>
+          <input type="text" name="location-filter" id="location-filter" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
         </div>
       </th>
       <th>
         <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Region</label>
-          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+          <label for="region-filter" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Region</label>
+          <input type="text" name="region-filter" id="region-filter" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
         </div>
       </th>
       <th>
         <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Display</label>
-          <input type="text" name="name" id="name" class="block w-full border-0 p-0  text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+          <label for="display-filter" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Display</label>
+          <input type="text" name="display-filter" id="display-filter" class="block w-full border-0 p-0  text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
         </div>
       </th>
       <th>
         <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
-          <label for="name" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Room</label>
-          <input type="text" name="name" id="name" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+          <label for="room-filter" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Room</label>
+          <input type="text" name="room-filter" id="room-filter" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
+        </div>
+      </th>
+      <th>
+        <div class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600">
+          <label for="mod-filter" class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900">Mod</label>
+          <input type="text" name="mod-filter" id="mod-filter" class="block w-full border-0 p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm">
         </div>
       </th>
       <th></th>

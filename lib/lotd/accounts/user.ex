@@ -21,12 +21,15 @@ defmodule Lotd.Accounts.User do
   def registration_changeset(user, attrs) do
     user
     |> cast(attrs, [:id, :avatar_url, :username])
+    |> validate_required([:id, :username])
+    |> unique_constraint(:username)
   end
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:avatar_url, :hide_aquired_items, :username, :active_character_id])
+    |> cast(attrs, [:avatar_url, :hide_aquired_items, :active_character_id])
     |> foreign_key_constraint(:active_character_id)
+
   end
 
   def admin_changeset(user, attrs) do

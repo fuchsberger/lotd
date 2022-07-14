@@ -19,6 +19,10 @@ defmodule LotdWeb.PageController do
     render conn, "display.html", changeset: Gallery.change_display(%Display{})
   end
 
+  def gallery(conn, _params) do
+    redirect conn, to: Routes.page_path(conn, :item)
+  end
+
   def item(conn, _params) do
     render conn, "item.html",
       changeset: Gallery.change_item(%Item{}),
@@ -42,6 +46,9 @@ defmodule LotdWeb.PageController do
   end
 
   def room(conn, _params) do
-    render conn, "room.html", changeset: Gallery.change_room(%Room{})
+    render conn, "room.html",
+      changeset: Gallery.change_room(%Room{}),
+      display_options: Gallery.display_options(),
+      rooms: Gallery.list_rooms()
   end
 end

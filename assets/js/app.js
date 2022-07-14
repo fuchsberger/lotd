@@ -1,5 +1,6 @@
 import $ from 'jquery'
 import "phoenix_html"
+import "./gui"
 import "./timeago"
 import connect from './nexus'
 var dt = require( 'datatables.net' )( window, $ );
@@ -56,24 +57,36 @@ var itemTable = $('#item-table').DataTable({
       className: "truncate hidden lg:table-cell" ,
       render: room_id => `${$("#item-table").data("rooms")[room_id]}`
     },
-    { targets: 6, render: url => (url ? `<a target="_blank" href="${url}" class="text-indigo-600 hover:text-indigo-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>`: null) },
+    {
+      targets: 6,
+      className: "truncate hidden xl:table-cell" ,
+      render: mod_id => `${$("#item-table").data("mods")[mod_id]}`
+    },
     { targets: 7,
+      data: 7,
       visible: $('#item-table').hasClass("moderator"),
       render: (id, unknown, row) => {
         let data = JSON.stringify({
           name: row[1],
           location_id: row[2],
           display_id: row[4],
-          mod_id: row[8],
-          url: row[6]
+          mod_id: row[6],
+          url: row[8]
         })
         return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/item/${id}" data-struct="item" data-formdata='${data}'>Edit</button>`
       }
     },
     {
       targets: 8,
+      data: 7,
       visible: $('#item-table').hasClass("moderator"),
-      data: 7, render: id => `<button data-id="${id}" type="button" class="open-delete-modal text-red-600 hover:text-red-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></a>` },
+      render: id => `<button data-id="${id}" type="button" class="open-delete-modal text-red-600 hover:text-red-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></a>`
+    },
+    {
+      targets: 9,
+      data: 8,
+      render: url => (url ? `<a target="_blank" href="${url}" class="text-indigo-600 hover:text-indigo-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>`: null)
+    }
   ],
   dom: `<"table-header"lf>
         <"table-wrapper"t>
@@ -98,8 +111,7 @@ var itemTable = $('#item-table').DataTable({
   },
   language: {search: "", searchPlaceholder: "Search...", emptyTable: "No items to show. Select some mods first!"},
   order: [[ 1, 'asc' ]],
-  pagingType: "simple",
-  stateSave: true
+  pagingType: "simple"
 }).on('draw init', function() { onDraw(itemTable) })
 
 // toggle hidden items
@@ -132,13 +144,11 @@ var modTable = $('#mod-table').DataTable({
   order: [[ 2, 'desc' ]],
   rowId: row => `entry-${row[5]}`,
   pagingType: "simple",
-  stateSave: true,
-
   language: {search: "", searchPlaceholder: "Search..."},
   columnDefs: [
     { targets: [0, 2, 3, 4, 5, 6], searchable: false },
     { targets: [0, 4, 5, 6], orderable: false },
-    { targets: [5, 6], visible: $('#mod-table').hasClass("moderator")},
+    { targets: [4, 5], visible: $('#mod-table').hasClass("moderator")},
     { targets: 0,
       visible: $('#mod-table').hasClass("has-user"),
       type: "html",
@@ -148,15 +158,100 @@ var modTable = $('#mod-table').DataTable({
     { targets: 1, className: "font-medium text-gray-900 truncate"},
     { targets: 2, className: "hidden sm:table-cell text-right pr-12"},
     { targets: 3, className: "hidden md:table-cell text-right pr-10"},
-    { targets: 4, render: url => (url ? `<a target="_blank" href="${url}" class="text-indigo-600 hover:text-indigo-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>`: null) },
-    { targets: 5, type: "html", render: (id, unknown, row) => {
-      let data = JSON.stringify({ name: row[1] })
-      return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/character/${id}" data-struct="character" data-formdata='${data}'>Edit</button>`
-    }
+    {
+      targets: 4,
+      type: "html",
+      data: 5,
+      render: (id, unknown, row) => {
+        let data = JSON.stringify({ name: row[1] })
+        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/character/${id}" data-struct="character" data-formdata='${data}'>Edit</button>`
+      }
     },
-    { targets: 6, type: "html", data: 5, render: id => `<button data-id="${id}" type="button" class="open-delete-modal text-red-600 hover:text-red-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` }
+    {
+      targets: 5,
+      type: "html",
+      data: 5,
+      render: id => `<button data-id="${id}" type="button" class="open-delete-modal text-red-600 hover:text-red-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>`
+    },
+    {
+      targets: 6,
+      data: 4,
+      render: url => (url ? `<a target="_blank" href="${url}" class="text-indigo-600 hover:text-indigo-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg></a>`: null)
+    }
   ]
 }).on('draw init', function() { onDraw(modTable); })
+
+var roomTable = $('#room-table').DataTable({
+  ajax: "/api/room",
+  autoWidth: false,
+  dom: `<"table-wrapper"t>`,
+  order: [[ 1, 'asc' ]],
+  rowId: row => `entry-${row[3]}`,
+  searching: false,
+  paging: false,
+  language: {search: "", searchPlaceholder: "Search..."},
+  columnDefs: [
+    { targets: [0, 1, 2], searchable: false },
+    { targets: [4, 5], orderable: false, visible: $('#room-table').hasClass("moderator")},
+    {
+      targets: 0,
+      orderable: false,
+      data: null,
+      defaultContent: `
+        <button type="button" class="details">
+          <svg class="inline-block h-5 w-5 text-indigo-600 hover:text-indigo-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+          <svg class="hidden h-5 w-5 text-indigo-600 hover:text-indigo-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" />
+          </svg>
+        </button>
+      `,
+    },
+    { targets: 1, data: 0, className: "font-medium text-gray-900 truncate"},
+    {
+      targets: 2, data: 1,
+      className: "hidden sm:table-cell text-right pr-8",
+      render: displays => displays.length
+    },
+    { targets: 3, data: 2, className: "hidden sm:table-cell text-right pr-12"},
+    { targets: 4, data: 3, type: "html", render: (id, unknown, row) => {
+      let data = JSON.stringify({ name: row[0] })
+      return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/room/${id}" data-struct="room" data-formdata='${data}'>Edit</button>`
+    }
+    },
+    { targets: 5, type: "html", data: 3, render: id => `<button data-id="${id}" type="button" class="open-delete-modal text-red-600 hover:text-red-900"><svg class="inline-block h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>` }
+  ]
+})
+
+
+
+/* Formatting function for row details - modify as you need */
+function formatRoomExtraData(d) {
+  var elements = []
+  for(el of d[1]){
+    elements.push($("#room-table").data("displays")[el])
+  }
+
+  return `<span class="text-xs text-gray-500 w-full whitespace-normal">${elements.join(", ")}</span>`
+}
+
+// Add event listener for opening and closing details
+$('#room-table tbody').on('click', '.details', function () {
+  var tr = $(this).closest('tr');
+  var row = roomTable.row(tr);
+
+  if (row.child.isShown()) {
+    // This row is already open - close it
+    row.child.hide();
+  } else {
+    console.log(row.child())
+    // Open this row
+    row.child(formatRoomExtraData(row.data())).show();
+
+  }
+  $(this).find('svg').toggleClass("hidden inline-block")
+});
 
 var characterTable = $('#character-table').DataTable({
   ajax: "/api/character",
@@ -164,7 +259,6 @@ var characterTable = $('#character-table').DataTable({
   dom: '<"table-wrapper"t>',
   order: [[ 4, 'desc' ]],
   searching: false,
-  stateSave: true,
   paging: false,
   rowId: row => `entry-${row[5]}`,
   columnDefs: [
@@ -198,28 +292,6 @@ var characterTable = $('#character-table').DataTable({
   ]
 }).on('draw init', function() { $("time").timeago() })
 
-// enable mobile menu and user-dropdown
-$(document).on("click", () => {
-  $("#mobile-menu").addClass("hidden")
-  $("#user-dropdown-menu").addClass("hidden")
-})
-
-$("#mobile-menu-button").on("click", e => {
-  e.stopPropagation()
-  $("#mobile-menu").toggleClass("hidden")
-})
-
-$("#mobile-menu").on("click", e => { e.stopPropagation()})
-
-$("#user-dropdown-button").on("click", e => {
-  e.stopPropagation()
-  $("#user-dropdown-menu").toggleClass("hidden")
-})
-
-// enable dismissing of alerts
-$(".alert button").on("click", el => {
-  $(el.currentTarget).closest(".alert").remove()
-})
 
 // enable login
 if(document.getElementById("login-button")){
@@ -289,6 +361,34 @@ $("#mod-form").on("submit", function(e) {
         modTable.row(`#entry-${data.mod[5]}`).data(data.mod).draw()
       } else {
         modTable.row.add(data.mod).draw()
+      }
+
+      $("#data-form-modal").addClass("hidden")
+      $("#data-form-modal").find(".backdrop,.panel").addClass("hidden")
+    } else {
+      $("#data-form-alert").removeClass("hidden")
+    }
+  })
+})
+
+$("#room-form").on("submit", function(e) {
+  e.preventDefault()
+
+  $(".data-form-alert").addClass("hidden")
+
+  var action = $(e.target).attr("action")
+  var data = {
+    room: { name: $("#input-name").val() }
+  }
+
+  var method = (action.split("/").length - 1) == 3 ? "PUT" : "POST"
+  $.ajax(action, { data, method })
+  .done(data => {
+    if (data.success){
+      if( method == "PUT") {
+        roomTable.row(`#entry-${data.room[3]}`).data(data.room).draw()
+      } else {
+        roomTable.row.add(data.room).draw()
       }
 
       $("#data-form-modal").addClass("hidden")
@@ -386,8 +486,12 @@ $("#delete-btn").on("click", e => {
   .done(({deleted_id}) => {
     switch(struct){
       case "character": characterTable.rows(`#entry-${deleted_id}`).remove().draw(); break
+      case "display": displayTable.rows(`#entry-${deleted_id}`).remove().draw(); break
       case "item": itemTable.rows(`#entry-${deleted_id}`).remove().draw(); break
+      case "location": locationTable.rows(`#entry-${deleted_id}`).remove().draw(); break
       case "mod": modTable.rows(`#entry-${deleted_id}`).remove().draw(); break
+      case "region": regionTable.rows(`#entry-${deleted_id}`).remove().draw(); break
+      case "room": roomTable.rows(`#entry-${deleted_id}`).remove().draw(); break
       default:
     }
 
@@ -447,7 +551,7 @@ $("#mod-table").on("click", ".toggle-mod", e => {
   })
 })
 
-// enable toggling of mods
+// enable toggling of items
 $("#item-table").on("click", ".toggle", e => {
   e.preventDefault()
 

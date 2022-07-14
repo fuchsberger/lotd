@@ -42,7 +42,7 @@ defmodule LotdWeb.Api.ModController do
   def delete(conn, %{"id" => id}) do
     with %Mod{} = mod <- Gallery.get_mod!(id),
         {:ok, mod} = Gallery.delete_mod(mod) do
-      json(conn, %{deleted_id: mod.id})
+      json(conn, %{success: true, deleted_id: mod.id})
     end
   end
 

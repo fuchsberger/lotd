@@ -12,6 +12,29 @@
             <%= for {label, path, active?} <- menu_items(@conn) do %>
               <.link to={path} label={label} class={desktop_item_class(active?)}/>
             <% end %>
+
+            <div class="relative inline-block text-left">
+              <div>
+                <button
+                  type="button"
+                  id="more-dropdown-button"
+                  aria-haspopup="true"
+                  {more_button_attrs(action_name(@conn) in [:display, :location, :room, :region])}
+                >
+                  <%= gettext "More" %>
+                  <Icon.Solid.chevron_down class="-mr-1 ml-2 h-5 w-5" />
+                </button>
+              </div>
+
+              <div id="more-dropdown-menu" class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="more-dropdown-button" tabindex="-1">
+                <div class="py-1" role="none">
+                  <%= for {{label, path, active?}, idx} <- Enum.with_index(more_items(@conn)) do %>
+                    <.link to={path} label={label} class={dropdown_item_class(active?)} tabindex="-1" role="menuitem" id={"more-item-#{idx}"} />
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
         <div class="hidden sm:ml-6 sm:flex sm:items-center">
@@ -92,6 +115,9 @@
     <div id="mobile-menu" class="hidden sm:hidden">
       <div class="pt-2 pb-3 space-y-1">
         <%= for {label, path, active?} <- menu_items(@conn) do %>
+          <.link to={path} label={label} class={mobile_item_class(active?)}/>
+        <% end %>
+        <%= for {label, path, active?} <- more_items(@conn) do %>
           <.link to={path} label={label} class={mobile_item_class(active?)}/>
         <% end %>
       </div>

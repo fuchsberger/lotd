@@ -22,8 +22,12 @@ defmodule LotdWeb.Router do
   scope "/api", LotdWeb.Api, as: :api do
     pipe_through :api
 
+    resources "/display", DisplayController, only: [:index]
     resources "/item", ItemController, only: [:index]
+    resources "/location", LocationController, only: [:index]
     resources "/mod", ModController, only: [:index]
+    resources "/region", RegionController, only: [:index]
+    resources "/room", RoomController, only: [:index]
   end
 
   scope "/api", LotdWeb.Api, as: :api do
@@ -41,10 +45,10 @@ defmodule LotdWeb.Router do
 
     resources "/item", ItemController, only: [:create, :update, :delete]
     resources "/mod", ModController, only: [:create, :update, :delete]
-    resources "/region", RegionController, only: [:index, :create, :update, :delete]
-    resources "/room", RoomController, only: [:index, :create, :update, :delete]
-    resources "/display", DisplayController, only: [:index, :create, :update, :delete]
-    resources "/location", LocationController, only: [:index, :create, :update, :delete]
+    resources "/region", RegionController, only: [:create, :update, :delete]
+    resources "/room", RoomController, only: [:create, :update, :delete]
+    resources "/display", DisplayController, only: [:create, :update, :delete]
+    resources "/location", LocationController, only: [:create, :update, :delete]
   end
 
   scope "/api", LotdWeb.Api, as: :api do
@@ -58,17 +62,18 @@ defmodule LotdWeb.Router do
 
     get "/", PageController, :item
     get "/about", PageController, :about
+    get "/gallery", PageController, :gallery
     get "/mods", PageController, :mod
+    get "/displays", PageController, :display
+    get "/locations", PageController, :location
+    get "/regions", PageController, :region
+    get "/rooms", PageController, :room
   end
 
   scope "/", LotdWeb do
     pipe_through [:browser, :require_authenticated_user]
 
     get "/characters", PageController, :character
-    get "/displays", PageController, :display
-    get "/locations", PageController, :location
-    get "/regions", PageController, :region
-    get "/rooms", PageController, :room
   end
 
   scope "/", LotdWeb do

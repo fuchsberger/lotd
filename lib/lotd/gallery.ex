@@ -39,13 +39,19 @@ defmodule Lotd.Gallery do
   # ROOMS ----------------------------------------------------------------------------------------
 
   def list_rooms do
-    from(r in Room, select: map(r, [:name, :id]), order_by: r.name)
+    from(r in Room,
+      preload: [displays: [items: ^from(i in Item, select: i.id)]],
+      order_by: r.name
+    )
     |> Repo.all()
   end
 
   def room_options, do: Repo.all(from(r in Room, select: {r.name, r.id}, order_by: r.name))
 
   def get_room!(id), do: Repo.get!(Room, id)
+
+  def preload_room(%Room{} = room),
+    do: Repo.preload(room, [displays: [items: from(i in Item, select: i.id)]])
 
   def change_room(%Room{} = room, params \\ %{}), do: Room.changeset(room, params)
 

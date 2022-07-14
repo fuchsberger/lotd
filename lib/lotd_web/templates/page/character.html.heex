@@ -11,7 +11,7 @@
 <table id="character-table" class={table_classes(@current_user)}}>
   <thead>
     <tr>
-      <th class="w-11"></th>
+      <th class="w-12 sm:w-14"></th>
       <th>
         <div class="flex items-center">
           <%= gettext "Name" %><.sort_icon />
@@ -22,12 +22,12 @@
           <%= gettext "Items" %><.sort_icon />
         </div>
       </th>
-      <th class="w-32 hidden md:table-cell">
+      <th class="w-36 hidden md:table-cell">
         <div class="flex items-center">
           <%= gettext "Created" %><.sort_icon />
         </div>
       </th>
-      <th class="w-32 hidden sm:table-cell">
+      <th class="w-36 hidden sm:table-cell">
         <div class="flex items-center">
           <%= gettext "Last Activity" %><.sort_icon />
         </div>
@@ -36,7 +36,7 @@
         <span class="sr-only"><%= gettext "Edit" %></span>
         <Icon.Outline.pencil_alt class="inline-block h-5 w-5" />
       </th>
-      <th class="w-12">
+      <th class="w-12 sm:w-14">
         <span class="sr-only"><%= gettext "Delete" %></span>
         <Icon.Outline.trash class="inline-block h-5 w-5" />
       </th>

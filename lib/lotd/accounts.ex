@@ -42,7 +42,7 @@ defmodule Lotd.Accounts do
 
   def create_user(attrs \\ %{}) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.registration_changeset(attrs)
     |> Repo.insert()
   end
 
@@ -51,6 +51,20 @@ defmodule Lotd.Accounts do
     |> User.changeset(attrs)
     |> Repo.update()
   end
+
+  def toggle_moderator(%User{} = user) do
+    user
+    |> User.admin_changeset(%{moderator: !user.moderator})
+    |> Repo.update()
+  end
+
+  def toggle_admin(%User{} = user) do
+    user
+    |> User.admin_changeset(%{admin: !user.admin})
+    |> Repo.update()
+  end
+
+  def delete_user(%User{} = user), do: Repo.delete(user)
 
   ## Session
 
