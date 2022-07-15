@@ -28,9 +28,8 @@ var modTable = $('#mod-table').DataTable({
       targets: 4,
       type: "html",
       data: 5,
-      render: (id, unknown, row) => {
-        let data = JSON.stringify({ name: row[1], url: row[4] })
-        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/mod/${id}" data-struct="mod" data-formdata='${data}'>Edit</button>`
+      render: id => {
+        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-id="${id}">Edit</button>`
       }
     },
     {

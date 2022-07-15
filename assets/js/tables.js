@@ -24,6 +24,12 @@ function populate (frm, struct, data) {
   });
 }
 
+// helper function to get the struct from a table
+// usage example: struct(any element in table);
+function get_struct(element) {
+  return $(element).closest("table")[0].id.split("-")[0]
+}
+
 // enables creation of entries
 $("#add-btn").on("click", e => {
   e.stopPropagation()
@@ -41,11 +47,47 @@ $("#add-btn").on("click", e => {
 // enables updating of entries
 $(".dataTable").on("click", ".edit-btn", e => {
   e.stopPropagation()
-  let {action, formdata, struct} = $(e.target).data()
+
+  let struct = get_struct(e.target)
+  let id = $(e.target).data("id")
+  let rowdata = $(`#${struct}-table`).dataTable().api().row(`#entry-${id}`).data()
+  let formdata
+
+  switch(struct){
+    case "item":
+      formdata = {
+        name: rowdata[1],
+        location_id: rowdata[2],
+        display_id: rowdata[4],
+        mod_id: rowdata[6],
+        url: rowdata[8]
+      }
+      break;
+
+    case "display":
+      formdata = {name: rowdata[1], room_id: rowdata[2]}
+      break;
+
+    case "location":
+      formdata = {name: rowdata[1], region_id: rowdata[2]}
+      break;
+
+    case "region":
+      formdata = {name: rowdata[0]}
+      break;
+
+    case "room":
+      formdata = {name: rowdata[0]}
+      break;
+
+    case "mod":
+      formdata = {name: rowdata[1], url: rowdata[4]}
+      break;
+  }
 
   populate(".data-form", struct, formdata)
 
-  $(".data-form").attr("action", action)
+  $(".data-form").attr("action", `/api/${struct}/${id}`)
   $("#title-prefix").text(`Update`)
   $("#create-btn").addClass("hidden")
   $("#update-btn").removeClass("hidden")

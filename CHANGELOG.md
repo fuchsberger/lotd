@@ -1,3 +1,8 @@
+## 1.1.2
+  - column filters on item page now in header combined with ordering
+  - some unsortable columns are now sortable
+  - issue fixed with edit button for moderation
+
 ## 1.1.1
   - improved performance by reducing file size that needs to be loaded by about 40% and loading via ajax after inital page load
   - interactivity and all actions now via ajax

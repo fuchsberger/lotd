@@ -12,7 +12,7 @@ var displayTable = $('#display-table').DataTable({
   pagingType: "simple",
   language: {search: "", searchPlaceholder: "Search..."},
   columnDefs: [
-    { targets: [0, 2, 3, 4, 5], searchable: false },
+    { targets: [0, 2, 4, 5], searchable: false },
     { targets: [0, 4, 5], orderable: false },
     { targets: [4, 5], visible: $('#display-table').hasClass("moderator")},
     {
@@ -44,9 +44,8 @@ var displayTable = $('#display-table').DataTable({
       targets: 4,
       type: "html",
       data: 3,
-      render: (id, unknown, row) => {
-        let data = JSON.stringify({ name: row[1], room_id: row[2] })
-        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/display/${id}" data-struct="display" data-formdata='${data}'>Edit</button>`
+      render: id => {
+        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-id="${id}">Edit</button>`
       }
     },
     {

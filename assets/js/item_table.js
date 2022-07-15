@@ -8,7 +8,7 @@ var itemTable = $('#item-table').DataTable({
   autoWidth: false,
   rowId: row => `entry-${row[7]}`,
   columnDefs: [
-    { targets: [6, 7, 8], orderable: false, searchable: false},
+    { targets: [7, 8], orderable: false, searchable: false},
     { targets: 0,
       orderable: false,
       visible: $('#item-table').hasClass("has-character"),
@@ -46,15 +46,8 @@ var itemTable = $('#item-table').DataTable({
     { targets: 7,
       data: 7,
       visible: $('#item-table').hasClass("moderator"),
-      render: (id, unknown, row) => {
-        let data = JSON.stringify({
-          name: row[1],
-          location_id: row[2],
-          display_id: row[4],
-          mod_id: row[6],
-          url: row[8]
-        })
-        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/item/${id}" data-struct="item" data-formdata='${data}'>Edit</button>`
+      render: id => {
+        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-id="${id}">Edit</button>`
       }
     },
     {
@@ -83,7 +76,7 @@ var itemTable = $('#item-table').DataTable({
         .every(function () {
             var that = this;
 
-            $('input', this.footer()).on('keyup change clear', function () {
+            $('input', this.header()).on('keyup change clear', function () {
                 if (that.search() !== this.value) {
                     that.search(this.value).draw();
                 }
@@ -102,6 +95,9 @@ $("#toggle-hidden").on("click", () => {
   $("#toggle-hidden svg").toggleClass("hidden")
 })
 
+$("#item-table thead input").on("click", e => {
+  e.stopPropagation()
+})
 
 $("#item-form").on("submit", function(e) {
   e.preventDefault()

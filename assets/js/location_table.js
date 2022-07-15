@@ -12,7 +12,7 @@ var locationTable = $('#location-table').DataTable({
   pagingType: "simple",
   language: {search: "", searchPlaceholder: "Search..."},
   columnDefs: [
-    { targets: [0, 2, 3, 4, 5], searchable: false },
+    { targets: [0, 2, 4, 5], searchable: false },
     { targets: [0, 4, 5], orderable: false },
     { targets: [4, 5], visible: $('#location-table').hasClass("moderator")},
     {
@@ -44,9 +44,8 @@ var locationTable = $('#location-table').DataTable({
       targets: 4,
       type: "html",
       data: 3,
-      render: (id, unknown, row) => {
-        let data = JSON.stringify({ name: row[1], region_id: row[2] })
-        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-action="/api/location/${id}" data-struct="location" data-formdata='${data}'>Edit</button>`
+      render: id => {
+        return `<button type="button" class="edit-btn text-indigo-600 hover:text-indigo-900" data-id="${id}">Edit</button>`
       }
     },
     {
