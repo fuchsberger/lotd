@@ -18,7 +18,7 @@
         <% end %>
       </th>
       <th>
-        <input type="search" name="item-filter" id="item-filter" class="focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none block w-full text-gray-900 placeholder-gray-500 border-gray-300 px-3 py-2 sm:text-sm rounded-md font-medium" placeholder="Search Items...">
+        <input type="text" name="item-filter" id="item-filter" class="focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none block w-full text-gray-900 placeholder-gray-500 border-gray-300 px-3 py-2 sm:text-sm rounded-md font-medium" placeholder="Search Items...">
       </th>
       <th class="w-40">
         <%= select :filter, :location, @location_options, prompt: gettext("Location"), class: "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 block w-full font-medium pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md" %>
