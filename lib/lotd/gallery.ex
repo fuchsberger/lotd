@@ -10,12 +10,12 @@ defmodule Lotd.Gallery do
 
   # ITEMS ----------------------------------------------------------------------------------------
 
-  def list_items, do: Repo.all(from(i in Item, preload: [:display, :location]))
+  def list_items, do: Repo.all(from(i in Item, order_by: i.name, preload: [:display, :location]))
 
   def item_options, do: Repo.all(from(i in Item, select: {i.name, i.id}))
 
   def list_items(mods) do
-    Repo.all(from(i in Item, preload: [:display, :location], where: i.mod_id in ^mods))
+    Repo.all(from(i in Item, order_by: i.name, preload: [:display, :location], where: i.mod_id in ^mods))
   end
 
   def get_item!(id), do: Repo.get!(Item, id)

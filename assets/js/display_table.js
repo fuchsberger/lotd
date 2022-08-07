@@ -4,10 +4,11 @@ import { onDraw } from "./tables"
 var displayTable = $('#display-table').DataTable({
   ajax: "/api/display",
   autoWidth: false,
-  dom: `<"table-header"lf>
+  dom: `<"table-header"f>
         <"table-wrapper"t>
         <"table-footer"<"#table-info">p>`,
   order: [[ 1, 'asc' ]],
+  pageLength: 100,
   rowId: row => `entry-${row[3]}`,
   pagingType: "simple",
   language: {search: "", searchPlaceholder: "Search..."},

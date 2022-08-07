@@ -4,11 +4,12 @@ import { onDraw } from "./tables"
 var locationTable = $('#location-table').DataTable({
   ajax: "/api/location",
   autoWidth: false,
-  dom: `<"table-header"lf>
+  dom: `<"table-header"f>
         <"table-wrapper"t>
         <"table-footer"<"#table-info">p>`,
   order: [[ 1, 'asc' ]],
   rowId: row => `entry-${row[3]}`,
+  pageLength: 100,
   pagingType: "simple",
   language: {search: "", searchPlaceholder: "Search..."},
   columnDefs: [

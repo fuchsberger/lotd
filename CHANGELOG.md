@@ -3,6 +3,7 @@
   - sub-filters for displays/locations/rooms/regions switched to selects
   - clicking on a filter in the item list shows all items with that filter
   - searching for an item ignores all currently selected filters
+  - improved performance in item table: ordering done via database and removed order options. now always sorts by name.
 
 ## 1.1.2
   - column filters on item page now in header combined with ordering

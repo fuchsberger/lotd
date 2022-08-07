@@ -1,15 +1,3 @@
-<%= if @current_user && @current_user.moderator do %>
-  <div class="px-4 sm:px-0 mb-4 flex items-center justify-between flex-wrap sm:flex-nowrap">
-    <div>
-      <h3 class="text-lg leading-6 font-medium text-gray-900"><%= gettext "Mods" %></h3>
-      <p class="text-sm text-gray-500"><%= gettext "Creating mods allows you to track individual progress on items and displays!" %></p>
-    </div>
-    <div class="flex-shrink-0 mt-4 sm:mt-0">
-      <.button id="add-btn" leading_icon="plus" label="New" data-action={Routes.api_mod_path(@conn, :create)} data-struct="mod" data-formdata={Jason.encode!(@changeset.data)}/>
-    </div>
-  </div>
-<% end %>
-
 <table id="mod-table" class={table_classes(@current_user)}}>
   <thead>
     <tr>
@@ -33,15 +21,17 @@
           <%= gettext "Players" %><.sort_icon />
         </div>
       </th>
-      <th class="w-11">
-        <span class="sr-only"><%= gettext "Edit" %></span>
-        <Icon.Outline.pencil_alt class="inline-block h-5 w-5" />
+      <th class="w-9">
+        <button id="add-btn" class="text-indigo-600 hover:text-indigo-900" data-action={Routes.api_mod_path(@conn, :create)} data-struct="mod" data-formdata={Jason.encode!(@changeset.data)}>
+          <span class="sr-only"><%= gettext "Create" %></span>
+          <Icon.Outline.plus class="inline-block h-5 w-5" />
+        </button>
       </th>
-      <th class="w-12">
+      <th class="w-9">
         <span class="sr-only"><%= gettext "Delete" %></span>
         <Icon.Outline.trash class="inline-block h-5 w-5" />
       </th>
-      <th class="w-12 sm:w-14">
+      <th class="w-9 sm:w-11">
         <Icon.Outline.external_link class="inline-block w-5 h-5" />
       </th>
     </tr>
