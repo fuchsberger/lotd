@@ -35,12 +35,17 @@
   td { @apply whitespace-nowrap text-sm text-gray-500 text-left py-2 px-2 first:pl-4 first:sm:pl-6 first:pr-3 last:pl-3 last:pr-4 last:sm:pr-6; }
 }
 
+
+
 @layer components {
-  .table-header, .table-footer { @apply sm:flex sm:items-center sm:justify-between px-4 sm:px-0 space-y-3; }
-  .table-header { @apply mb-4; }
+  .table-header, .table-footer { @apply sm:flex sm:items-center sm:justify-between px-4 sm:px-0; }
   .table-wrapper { @apply w-full overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg; }
   #table-info { @apply hidden sm:block; }
+
 }
+
+/* Dynamically created, thus outside components layer: */
+.dataTables_wrapper { @apply space-y-4; }
 
 /* Column Ordering Sort icons */
 th:not(.sorting_asc) .asc { @apply hidden; }

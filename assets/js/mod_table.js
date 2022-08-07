@@ -9,7 +9,8 @@ var modTable = $('#mod-table').DataTable({
         <"table-footer"<"#table-info">p>`,
   order: [[ 2, 'desc' ]],
   rowId: row => `entry-${row[5]}`,
-  pagingType: "simple",
+
+  paging: false,
   language: {search: "", searchPlaceholder: "Search..."},
   columnDefs: [
     { targets: [0, 2, 3, 4, 5, 6], searchable: false },

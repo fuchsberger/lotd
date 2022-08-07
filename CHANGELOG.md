@@ -1,3 +1,9 @@
+## 1.1.3
+  - shows by default 100 entries and the option to select rows was removed
+  - sub-filters for displays/locations/rooms/regions switched to selects
+  - clicking on a filter in the item list shows all items with that filter
+  - searching for an item ignores all currently selected filters
+
 ## 1.1.2
   - column filters on item page now in header combined with ordering
   - some unsortable columns are now sortable

@@ -35,6 +35,7 @@ var itemTable = $('#item-table').DataTable({
     },
     {
       targets: 5,
+      orderable: false,
       className: "truncate hidden lg:table-cell" ,
       render: room_id => `${$("#item-table").data("rooms")[room_id]}`
     },
@@ -74,18 +75,28 @@ var itemTable = $('#item-table').DataTable({
         // search individual columns
         .columns()
         .every(function () {
-            var that = this;
+          var column = this;
 
-            $('input', this.header()).on('keyup change clear', function () {
-                if (that.search() !== this.value) {
-                    that.search(this.value).draw();
-                }
-            });
+          // input boxes
+          $('input', this.header()).on('keyup change clear', function () {
+              if (column.search() !== this.value) {
+                column.search(this.value).draw();
+              }
+          });
+
+          // select boxes
+          $('select', this.header()).on("change", e => {
+            let val = $("#item-table").data("rooms")[e.target.value] || ""
+            column.search(val ? '^' + val + '$' : '', true, false).draw();
+          })
         });
   },
   language: {search: "", searchPlaceholder: "Search...", emptyTable: "No items to show. Select some mods first!"},
   order: [[ 1, 'asc' ]],
-  pagingType: "simple"
+  pageLength: 100,
+  pagingType: "simple",
+  lengthChange: false,
+  // paging: false,
 }).on('draw init', function() { onDraw(itemTable) })
 
 // toggle hidden items
