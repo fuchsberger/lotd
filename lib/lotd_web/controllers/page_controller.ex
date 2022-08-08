@@ -5,7 +5,7 @@ defmodule LotdWeb.PageController do
   alias Lotd.Accounts.Character
 
   alias Lotd.Gallery
-  alias Lotd.Gallery.{Display, Item, Location, Mod, Region, Room}
+  alias Lotd.Gallery.{Display, Item, ItemFilter, Location, Mod, Region, Room}
 
   def about(conn, _params) do
     render(conn, "about.html")
@@ -30,6 +30,7 @@ defmodule LotdWeb.PageController do
     render conn, "item.html",
       changeset: Gallery.change_item(%Item{}),
       display_options: Gallery.display_options(),
+      filter_changeset: Gallery.change_item_filter(%ItemFilter{}),
       location_options: Gallery.location_options(),
       mod_options: Gallery.mod_options(),
       region_options: Gallery.region_options(),

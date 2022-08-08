@@ -9,7 +9,7 @@ var itemTable = $('#item-table').DataTable({
   autoWidth: false,
   rowId: row => `entry-${row[7]}`,
   columnDefs: [
-    { targets: [0, 2, 3, 4, 5, 6, 7, 8], searchable: false},
+    { targets: [7, 8], searchable: false},
     { targets: 0,
       visible: $('#item-table').hasClass("has-character"),
       type: "html",
@@ -48,45 +48,49 @@ var itemTable = $('#item-table').DataTable({
     { targets: 9, data: 8, render: urlBtn }
   ],
   dom: `<"table-wrapper"t><"table-footer"<"#table-info">p>`,
-  initComplete: function () {
-    // Apply the search
-    this.api()
-    // filter hideDisplayed
-    .column(0)
-    .search(hideCollected ? "false" : "")
-    // search individual columns
-    .columns()
-    .every(function () {
-      var column = this;
-
-      // input boxes
-      $('input', this.header()).on('keyup change clear', function () {
-          if (column.search() !== this.value) {
-            column.search(this.value).draw();
-          }
-      });
-
-      // select boxes
-      $('select', this.header()).on("change", e => {
-        let type = e.target.name.split("[")[1].slice(0, -1) + "s"
-        let val = $("#item-table").data(type)[e.target.value] || ""
-        column.search(val).draw();
-      })
-    });
-  },
   language: {search: "", searchPlaceholder: "Search...", emptyTable: "No items to show. Select some mods first!"},
-  orderable: false,
+  lengthChange: false,
+  ordering: false,
   pageLength: 100,
   pagingType: "simple",
-  lengthChange: false,
-  // paging: false,
+
+
 }).on('draw init', function() { onDraw(itemTable) })
+
+// Search functionality
+$('#item-filter-form').on("change", () => search())
+
+function search (){
+  let data = $("#item-filter-form").serializeArray().slice(1).reduce(function(obj, item) {
+    obj[item.name] = item.value || "";
+    return obj;
+  }, {});
+
+  data.display = data.display ? $("#item-table").data("displays")[data.display] : ""
+  data.location = data.location ? $("#item-table").data("locations")[data.location] : ""
+  data.region = data.region ? $("#item-table").data("regions")[data.region] : ""
+  data.room = data.room ? $("#item-table").data("rooms")[data.room] : ""
+  data.mod = data.mod ? $("#item-table").data("mods")[data.mod] : ""
+
+  itemTable
+  .column(0).search(hideCollected ? "false" : "")
+  .columns([1,2,4]).search(data.name)
+  .column(2).search(data.location ? '^' + data.location + '$' : '', true, false)
+  .column(3).search(data.region ? '^' + data.region + '$' : '', true, false)
+  .column(4).search(data.display ? '^' + data.display + '$' : '', true, false)
+  .column(5).search(data.room ? '^' + data.room + '$' : '', true, false)
+  .column(6).search(data.mod ? '^' + data.mod + '$' : '', true, false)
+  .draw()
+}
+$('#item-filter-form').on("submit", e => {e.preventDefault()})
+$('#item-filter-form_name').on("keyup", () => search())
 
 // toggle hidden items
 $("#toggle-hidden").on("click", () => {
   hideCollected = !hideCollected
-  itemTable.column( 0 ).search(hideCollected ? "false" : "").draw()
+  // itemTable.column( 0 ).search(hideCollected ? "false" : "").draw()
   $("#toggle-hidden svg").toggleClass("hidden")
+  search()
 })
 
 $("#item-table thead input").on("click", e => {

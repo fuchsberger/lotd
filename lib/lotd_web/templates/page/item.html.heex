@@ -1,3 +1,4 @@
+<.form id="item-filter-form" let={f} for={@filter_changeset} action="#">
 <table
   id="item-table"
   class={table_classes(@current_user)}
@@ -18,25 +19,56 @@
         <% end %>
       </th>
       <th>
-        <input type="text" name="item-filter" id="item-filter" class="focus:border-indigo-500 focus:ring-indigo-500 focus:outline-none block w-full text-gray-900 placeholder-gray-500 border-gray-300 px-3 py-2 sm:text-sm rounded-md font-medium" placeholder="Search Items...">
+        <.text_input
+          form={f} field={:name} name="name"
+          placeholder={gettext "Search Items..."}
+          class="font-normal"
+        />
       </th>
       <th class="w-40">
-        <%= select :filter, :location, @location_options, prompt: gettext("Location"), class: "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 block w-full font-medium pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md" %>
+        <.select
+          form={f} field={:location_id} name="location"
+          options={@location_options}
+          prompt={gettext "Location"}
+          class="font-normal"
+        />
       </th>
       <th class="w-40">
-        <%= select :filter, :region, @region_options, prompt: gettext("Region"), class: "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 block w-full font-medium pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md" %>
+        <.select
+          form={f} field={:region_id} name="region"
+          options={@region_options}
+          prompt={gettext "Region"}
+          class="font-normal"
+        />
       </th>
       <th class="w-40">
-        <%= select :filter, :display, @display_options, prompt: gettext("Display"), class: "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 block w-full font-medium pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md" %>
+        <.select
+          form={f} field={:display_id} name="display"
+          options={@display_options}
+          prompt={gettext "Display"}
+          class="font-normal"
+        />
       </th>
       <th class="w-40">
-        <%= select :filter, :room, @room_options, prompt: gettext("Room"), class: "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 block w-full font-medium pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md" %>
+        <.select
+          form={f} field={:room_id} name="room"
+          options={@room_options}
+          prompt={gettext "Room"}
+          class="font-normal"
+        />
       </th>
       <th class="w-40">
-        <%= select :filter, :mod, @mod_options, prompt: gettext("Mod"), class: "border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 block w-full font-medium pl-3 pr-10 py-2 text-base focus:outline-none sm:text-sm rounded-md" %>
+        <.select
+          form={f} field={:mod_id} name="mod"
+          options={if @current_user,
+            do: Enum.filter(@mod_options, & elem(&1, 1) in @current_user.mods),
+            else: @mod_options}
+          prompt={gettext "Mod"}
+          class="font-normal"
+        />
       </th>
       <th class="w-9">
-        <button id="add-btn" class="text-indigo-600 hover:text-indigo-900" data-action={Routes.api_item_path(@conn, :create)} data-struct="item" data-formdata={Jason.encode!(@changeset.data)}>
+        <button type="button" id="add-btn" class="text-indigo-600 hover:text-indigo-900" data-action={Routes.api_item_path(@conn, :create)} data-struct="item" data-formdata={Jason.encode!(@changeset.data)}>
           <span class="sr-only"><%= gettext "Create" %></span>
           <Icon.Outline.plus class="inline-block h-5 w-5" />
         </button>
@@ -46,7 +78,7 @@
         <Icon.Outline.trash class="inline-block w-5 h-5" />
       </th>
       <th class="w-9 sm:w-11">
-        <button id="clear-filters" class="text-indigo-600 hover:text-indigo-900" data-action={Routes.api_item_path(@conn, :create)} data-struct="item" data-formdata={Jason.encode!(@changeset.data)}>
+        <button id="clear-filters" type="button" class="text-indigo-600 hover:text-indigo-900" data-action={Routes.api_item_path(@conn, :create)} data-struct="item" data-formdata={Jason.encode!(@changeset.data)}>
           <span class="sr-only"><%= gettext "Clear all filters" %></span>
           <Icon.Solid.x class="inline-block w-5 h-5" />
         </button>
@@ -54,7 +86,7 @@
     </tr>
   </thead>
 </table>
-
+</.form>
 <.form id="item-form" class="data-form" let={f} for={@changeset} action="#">
   <.modal id="data-form-modal" title={gettext "Item"}>
     <.alert color="error" label="Input errors" with_icon class="data-form-alert hidden mb-2" dismiss/>

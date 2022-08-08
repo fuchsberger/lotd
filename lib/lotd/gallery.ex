@@ -5,7 +5,7 @@ defmodule Lotd.Gallery do
   import Ecto.Query
 
   alias Lotd.Repo
-  alias Lotd.Gallery.{Item, Room, Region, Display, Location, Mod}
+  alias Lotd.Gallery.{Item, ItemFilter, Room, Region, Display, Location, Mod}
   alias Lotd.Accounts.User
 
   # ITEMS ----------------------------------------------------------------------------------------
@@ -197,4 +197,9 @@ defmodule Lotd.Gallery do
   end
 
   def delete_mod(%Mod{} = mod), do: Repo.delete(mod)
+
+  # ITEM FILTER ----------------------------------------------------------------------------------
+  def change_item_filter(%ItemFilter{} = filter, params \\ %{}),
+    do: ItemFilter.changeset(filter, params)
+
 end
