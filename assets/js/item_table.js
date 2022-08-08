@@ -20,28 +20,33 @@ var itemTable = $('#item-table').DataTable({
     { targets: 1, className: "font-medium text-gray-900 truncate"},
     {
       targets: 2,
+      type: "html",
       className: "truncate hidden sm:table-cell",
-      render: location_id => `${$("#item-table").data("locations")[location_id] || ""}`
+      render: id => id ? `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="location">${$("#item-table").data("locations")[id]}</a>` : ""
     },
     {
       targets: 3,
+      type: "html",
       className: "truncate hidden lg:table-cell",
-      render: region_id => `${$("#item-table").data("regions")[region_id] || ""}`
+      render: id => id ? `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="region">${$("#item-table").data("regions")[id]}</a>` : ""
     },
     {
       targets: 4,
+      type: "html",
       className: "truncate hidden md:table-cell",
-      render: display_id => `${$("#item-table").data("displays")[display_id]}`
+      render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="display">${$("#item-table").data("displays")[id]}</a>`
     },
     {
       targets: 5,
+      type: "html",
       className: "truncate hidden lg:table-cell" ,
-      render: room_id => `${$("#item-table").data("rooms")[room_id]}`
+      render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="room">${$("#item-table").data("rooms")[id]}</a>`
     },
     {
       targets: 6,
+      type: "html",
       className: "truncate hidden xl:table-cell" ,
-      render: mod_id => `${$("#item-table").data("mods")[mod_id]}`
+      render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="mod">${$("#item-table").data("mods")[id]}</a>`
     },
     { targets: 7, data: 7, visible: moderator, render: editBtn },
     { targets: 8, data: 7, visible: moderator, render: deleteBtn },
@@ -130,6 +135,24 @@ $("#item-form").on("submit", function(e) {
     }
   })
 })
+
+// Quick Filters
+$("#item-table").on("click", "a.filter", e => {
+  e.preventDefault()
+  resetFilters()
+  $(`#item-filter-form_${$(e.currentTarget).data("type")}_id`).val($(e.currentTarget).data("id"))
+  search()
+})
+
+// reset filters
+function resetFilters(){
+  $(`#item-filter-form_name`).val("")
+  $(`#item-filter-form_display_id`).val("")
+  $(`#item-filter-form_location_id`).val("")
+  $(`#item-filter-form_region_id`).val("")
+  $(`#item-filter-form_room_id`).val("")
+  $(`#item-filter-form_mod_id`).val("")
+}
 
 // enable toggling of items
 $("#item-table").on("click", ".toggle", e => {
