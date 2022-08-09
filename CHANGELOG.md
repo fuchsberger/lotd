@@ -1,3 +1,10 @@
+## 1.1.4
+  - on tabbing in the search field is autoselected and all text highlighted
+  - search field works for all columns and while using, ignores all filters
+  - filters reapply on emptying the search field
+  - when focusing on search field auto-highlights all text
+  - fixed bug that required toggle to click twice
+
 ## 1.1.3
   - shows by default 100 entries and the option to select rows was removed
   - sub-filters for displays/locations/rooms/regions switched to selects

@@ -9,7 +9,7 @@ var itemTable = $('#item-table').DataTable({
   autoWidth: false,
   rowId: row => `entry-${row[7]}`,
   columnDefs: [
-    { targets: [7, 8], searchable: false},
+    { targets: [7, 8, 9], searchable: false},
     { targets: 0,
       visible: $('#item-table').hasClass("has-character"),
       type: "html",
@@ -60,10 +60,23 @@ var itemTable = $('#item-table').DataTable({
   pagingType: "simple",
 
 
-}).on('draw init', function() { onDraw(itemTable) })
+}).on('draw init', function() {
+  onDraw(itemTable)
+
+  // focus on search field when tabbing in
+  if (/*@cc_on!@*/false) { // check for Internet Explorer
+    document.onfocusin = onFocus;
+  } else {
+    window.onfocus = onFocus;
+  }
+})
+
+function onFocus(){
+	$('#item-filter-form_name').trigger("select")
+};
 
 // Search functionality
-$('#item-filter-form').on("change", () => search())
+$('#item-filter-form').on("change", "select", () => search())
 
 function search (){
   let data = $("#item-filter-form").serializeArray().slice(1).reduce(function(obj, item) {
@@ -71,22 +84,43 @@ function search (){
     return obj;
   }, {});
 
-  data.display = data.display ? $("#item-table").data("displays")[data.display] : ""
-  data.location = data.location ? $("#item-table").data("locations")[data.location] : ""
-  data.region = data.region ? $("#item-table").data("regions")[data.region] : ""
-  data.room = data.room ? $("#item-table").data("rooms")[data.room] : ""
-  data.mod = data.mod ? $("#item-table").data("mods")[data.mod] : ""
+  clearSearch()
 
-  itemTable
-  .column(0).search(hideCollected ? "false" : "")
-  .columns([1,2,4]).search(data.name)
-  .column(2).search(data.location ? '^' + data.location + '$' : '', true, false)
-  .column(3).search(data.region ? '^' + data.region + '$' : '', true, false)
-  .column(4).search(data.display ? '^' + data.display + '$' : '', true, false)
-  .column(5).search(data.room ? '^' + data.room + '$' : '', true, false)
-  .column(6).search(data.mod ? '^' + data.mod + '$' : '', true, false)
-  .draw()
+  if(data.name != "") {
+    // search for input
+    itemTable
+    .search(data.name)
+    .draw()
+  } else {
+    // use current filters
+    data.display = data.display ? $("#item-table").data("displays")[data.display] : ""
+    data.location = data.location ? $("#item-table").data("locations")[data.location] : ""
+    data.region = data.region ? $("#item-table").data("regions")[data.region] : ""
+    data.room = data.room ? $("#item-table").data("rooms")[data.room] : ""
+    data.mod = data.mod ? $("#item-table").data("mods")[data.mod] : ""
+
+    itemTable
+    .column(2).search(data.location ? '^' + data.location + '$' : '', true, false)
+    .column(3).search(data.region ? '^' + data.region + '$' : '', true, false)
+    .column(4).search(data.display ? '^' + data.display + '$' : '', true, false)
+    .column(5).search(data.room ? '^' + data.room + '$' : '', true, false)
+    .column(6).search(data.mod ? '^' + data.mod + '$' : '', true, false)
+    .draw()
+  }
 }
+
+function clearSearch(){
+  itemTable
+  .search("")
+  .column(0).search(hideCollected ? "false" : "")
+  .column(1).search('', true, false)
+  .column(2).search('', true, false)
+  .column(3).search('', true, false)
+  .column(4).search('', true, false)
+  .column(5).search('', true, false)
+  .column(6).search('', true, false)
+}
+
 $('#item-filter-form').on("submit", e => {e.preventDefault()})
 $('#item-filter-form_name').on("keyup", () => search())
 
@@ -98,8 +132,9 @@ $("#toggle-hidden").on("click", () => {
   search()
 })
 
-$("#item-table thead input").on("click", e => {
-  e.stopPropagation()
+$("#item-filter-form_name").on("click", e => {
+  // autoselect text when clicked
+  $(e.currentTarget).trigger("select")
 })
 
 $("#item-form").on("submit", function(e) {
@@ -155,10 +190,9 @@ function resetFilters(){
 }
 
 // enable toggling of items
-$("#item-table").on("click", ".toggle", e => {
-  e.preventDefault()
+$("#item-table").on("change", "input.toggle", e => {
 
-  const id = $(e.currentTarget).data("id")
+  const id = $(e.target).data("id")
 
   $.ajax(`/api/item/${id}/toggle`, { method: "PUT"} )
   // on success update row and redraw table
