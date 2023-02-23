@@ -10,7 +10,7 @@
           </div>
           <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
             <%= for {label, path, active?} <- menu_items(@conn) do %>
-              <.link to={path} label={label} class={desktop_item_class(active?)}/>
+              <.link href={path} class={desktop_item_class(active?)}><%= label %></.link>
             <% end %>
 
             <div class="relative inline-block text-left">
@@ -29,7 +29,7 @@
               <div id="more-dropdown-menu" class="hidden origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="more-dropdown-button" tabindex="-1">
                 <div class="py-1" role="none">
                   <%= for {{label, path, active?}, idx} <- Enum.with_index(more_items(@conn)) do %>
-                    <.link to={path} label={label} class={dropdown_item_class(active?)} tabindex="-1" role="menuitem" id={"more-item-#{idx}"} />
+                    <.link href={path} class={dropdown_item_class(active?)} tabindex="-1" role="menuitem" id={"more-item-#{idx}"}><%= label %></.link>
                   <% end %>
                 </div>
               </div>
@@ -71,18 +71,17 @@
                   <p class="text-sm font-medium text-gray-900 truncate" role="none"><%= @current_user.username %></p>
                 </div>
                 <div class="py-1" role="none">
-                  <.link link_type="phx-button" method={:delete} to={Routes.user_session_path(@conn, :delete)} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="user-menu-item-0" label={gettext "Sign out"} />
+                  <.link method="delete" href={Routes.user_session_path(@conn, :delete)} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="user-menu-item-0"><%= gettext "Sign out" %></.link>
                 </div>
               </div>
             </div>
           <% else %>
             <%# Login Button with hidden form %>
-            <.link id='login-button' link_type="button" to="#" class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" label={gettext "Login"}>
+            <button type="button" id='login-button' class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               <span><%= gettext "Sign in" %></span>
               <Icon.Outline.login class="inline-block h-6 w-6" />
-
-            </.link>
-            <.form let={f} for={:session} action={Routes.user_session_path(LotdWeb.Endpoint, :create)} id="login-form">
+            </button>
+            <.form :let={f} for={:session} action={Routes.user_session_path(LotdWeb.Endpoint, :create)} id="login-form">
               <%= hidden_input(f, :api_key) %>
             </.form>
           <% end %>
@@ -92,21 +91,17 @@
           <button id="mobile-menu-button" type="button" class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" aria-controls="mobile-menu" aria-expanded="false">
             <span class="sr-only">Open main menu</span>
             <!--
-              Heroicon name: outline/menu
+              Heroicon name: outline/bars_3
 
               Menu open: "hidden", Menu closed: "block"
             -->
-            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <Heroicons.bars_3 class="block h-6 w-6" />
             <!--
               Heroicon name: outline/x
 
               Menu open: "block", Menu closed: "hidden"
             -->
-            <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <Heroicons.x_mark class="hidden h-6 w-6" />
           </button>
         </div>
       </div>
@@ -115,10 +110,10 @@
     <div id="mobile-menu" class="hidden sm:hidden">
       <div class="pt-2 pb-3 space-y-1">
         <%= for {label, path, active?} <- menu_items(@conn) do %>
-          <.link to={path} label={label} class={mobile_item_class(active?)}/>
+          <.link href={path} class={mobile_item_class(active?)}><%= label %></.link>
         <% end %>
         <%= for {label, path, active?} <- more_items(@conn) do %>
-          <.link to={path} label={label} class={mobile_item_class(active?)}/>
+          <.link href={path} class={mobile_item_class(active?)}><%= label %></.link>
         <% end %>
       </div>
 
@@ -136,13 +131,13 @@
                 </div>
               <% end %>
             </div>
-            <.link link_type="phx-button" method={:delete} to={Routes.user_session_path(@conn, :delete)} class="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <.link method="delete" href={Routes.user_session_path(@conn, :delete)} class="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               <span class="sr-only"><%= gettext "Logout" %></span>
               <Icon.Outline.logout class="h-6 w-6" />
             </.link>
           </div>
         <% else %>
-          <.link id='login-button-mobile' to="#" class="flex items-center justify-between px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100" @click="open = false">
+          <.link id='login-button-mobile' href="#" class="flex items-center justify-between px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100" x-bind:click="open = false">
             <span><%= gettext "Login" %></span>
             <Icon.Outline.login class="h-6 w-6" />
           </.link>
@@ -152,7 +147,15 @@
   </nav>
   <main class="py-4">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <.flash flash={get_flash(@conn)} />
+      <%= if get_flash(@conn, :error) do %>
+        <.alert type={:error} text={get_flash(@conn, :error) } />
+      <% end %>
+      <%= if get_flash(@conn, :warning)  do %>
+        <.alert type={:warning} text={get_flash(@conn, :warning) } />
+      <% end %>
+      <%= if get_flash(@conn, :info)  do %>
+        <.alert type={:info} text={get_flash(@conn, :info) } />
+      <% end %>
       <%= @inner_content %>
     </div>
   </main>

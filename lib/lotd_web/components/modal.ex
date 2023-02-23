@@ -1,28 +1,24 @@
 defmodule LotdWeb.Components.Modal do
-  use Phoenix.Component
-
+  use LotdWeb, :ui_component
   alias LotdWeb.Components.Icon
-  import LotdWeb.Gettext
-  import LotdWeb.Components.{Helpers, Link}
 
-  # prop title, :string
-  # slot default
+  attr :class, :string, default: ""
+  attr :id, :string, default: "modal"
+  attr :icon, :any, default: nil
+  attr :title, :string, default: nil
+  attr :rest, :global
+
+  slot :footer
+
   def modal(assigns) do
-    assigns =
-      assigns
-      |> assign_new(:icon, fn -> nil end)
-      |> assign_new(:id, fn -> "modal" end)
-      |> assign_new(:footer, fn -> nil end)
-      |> assign_rest(~w(title footer icon)a)
-
     ~H"""
-    <div {@rest} id={@id} class="hidden relative z-10" aria-labelledby={"#{@id}-title"} role="dialog" aria-modal="true">
+    <div {@rest} id={@id} class={classes(["hidden relative z-10", @class])} aria-labelledby={"#{@id}-title"} role="dialog" aria-modal="true">
       <div class="backdrop hidden fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
       <div class="fixed z-10 inset-0 overflow-y-auto">
         <div class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0">
           <div class="panel hidden relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 w-full sm:max-w-sm sm:w-full">
             <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
-              <.link link_type="button" type="button" class="cancel bg-white rounded-md text-gray-400 hover:text-gray-500">
+              <.link href="button" type="button" class="cancel bg-white rounded-md text-gray-400 hover:text-gray-500">
                 <span class="sr-only"><%= gettext "close" %></span>
                 <Icon.Outline.x class="h-6 w-6" />
               </.link>

@@ -1,7 +1,8 @@
 defmodule LotdWeb.LayoutView do
   use LotdWeb, :view
+  use Phoenix.Component
 
-  import Phoenix.Controller, only: [action_name: 1, get_flash: 1]
+  import Phoenix.Controller, only: [action_name: 1, get_flash: 2]
 
   defp desktop_item_class(false), do: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
 

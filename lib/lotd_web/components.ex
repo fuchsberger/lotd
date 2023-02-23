@@ -8,9 +8,8 @@ defmodule LotdWeb.Components do
         Avatar,
         Button,
         Card,
-        Dropdown,
         Form,
-        Link,
+        Icon,
         Modal,
         Tab,
         Toggle

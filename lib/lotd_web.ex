@@ -32,6 +32,8 @@ defmodule LotdWeb do
   def view do
     quote do
       use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb
+      use Phoenix.Component, global_prefixes: ~w(x-)
+
       unquote(view_helpers())
     end
   end
@@ -42,6 +44,15 @@ defmodule LotdWeb do
       import LotdWeb.LotdLive, only: [broadcast: 2]
 
       unquote(view_helpers())
+    end
+  end
+
+  def ui_component do
+    quote do
+      use Phoenix.Component, global_prefixes: ~w(x-)
+
+      import LotdWeb.Gettext
+      import LotdWeb.Components.UI.Helpers
     end
   end
 

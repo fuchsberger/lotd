@@ -2,12 +2,11 @@ defmodule LotdWeb.ViewHelpers do
   @moduledoc """
   Conveniences for all views.
   """
+  use Phoenix.Component
   use Phoenix.HTML
 
   alias Lotd.Accounts.Character
   alias LotdWeb.Components.Icon
-
-  import Phoenix.LiveView.Helpers
 
   def action_submit(changeset) do
     action = if changeset.action == :insert, do: "create", else: "update"

@@ -15,13 +15,12 @@ config :lotd, Lotd.NexusAPI,
   user_url: "https://api.nexusmods.com/v1/users/validate.json",
   header: [
     application_name: "LOTD Inventory Manager",
-    application_version: "0.1"
+    application_version: "1.2.0"
   ]
 
 # Configures the endpoint
 config :lotd, LotdWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "o4VDttM6WVlwFFes9c7jo+u46DrK2lKDdhC9tF2rUYiq7UMf7h5H8Xaz56KsoRdb",
   render_errors: [view: LotdWeb.ErrorView, accepts: ~w(html json)],
   pubsub_server: Lotd.PubSub,
   live_view: [ signing_salt: "yPX4HroHXx7yWYqHVUYU1EMv7QKl5WuK" ]
@@ -33,6 +32,17 @@ config :esbuild,
     args: ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+config :tailwind,
+  version: "3.2.7",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
   ]
 
 # Configures Elixir's Logger

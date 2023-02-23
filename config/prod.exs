@@ -10,7 +10,9 @@ import Config
 # which you should run after static files are built and
 # before starting your production server.
 
-config :lotd, LotdWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
+config :lotd, LotdWeb.Endpoint,
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  url: [scheme: "https", host: "lotd.fly.dev", port: 443]
 
 # Do not print debug messages in production
 config :logger, level: :info

@@ -4,10 +4,10 @@ defmodule Lotd.MixProject do
   def project do
     [
       app: :lotd,
-      version: "1.1.4",
-      elixir: "~> 1.9",
+      version: "1.2.0",
+      elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -33,15 +33,15 @@ defmodule Lotd.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.10"},
+      {:phoenix, "~> 1.6"},
       {:phoenix_pubsub, "~> 2.0"},
-      {:phoenix_ecto, "~> 4.1"},
+      {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.3"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 3.2.0"},
-      {:phoenix_live_reload, "~> 1.3.3", only: :dev},
-      {:phoenix_live_view, "~> 0.17.10"},
-      {:httpoison, "~> 1.6"},
+      {:phoenix_html, "~> 3.3.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 0.18"},
+      {:httpoison, "~> 2.0"},
       {:floki, ">= 0.0.0", only: :test},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
@@ -49,7 +49,9 @@ defmodule Lotd.MixProject do
       {:gettext, "~> 0.17"},
       {:jason, "~> 1.1"},
       {:plug_cowboy, "~> 2.1"},
-      {:fuzzy_compare, "~> 1.0"}
+      {:fuzzy_compare, "~> 1.0"},
+      {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev},
+      {:heroicons, "~> 0.5.0"}
     ]
   end
 
@@ -65,8 +67,8 @@ defmodule Lotd.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
       "assets.deploy": [
-        "cmd --cd assets npm run deploy",
         "esbuild default --minify",
+        "tailwind default --minify",
         "phx.digest"
       ]
     ]
