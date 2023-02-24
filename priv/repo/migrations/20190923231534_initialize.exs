@@ -49,7 +49,10 @@ defmodule Lotd.Repo.Migrations.CreateUsers do
       add :location_id, references(:locations, on_delete: :nilify_all)
       add :mod_id, references(:mods, on_delete: :delete_all), null: false
     end
-    create index(:items, [:display_id, :mod_id, :location_id])
+
+    create index(:items, :display_id)
+    create index(:items, :location_id)
+    create index(:items, :mod_id)
 
     # create users
     create table(:users) do
