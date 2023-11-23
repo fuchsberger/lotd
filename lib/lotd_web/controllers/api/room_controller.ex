@@ -3,7 +3,7 @@ defmodule LotdWeb.Api.RoomController do
 
   alias Lotd.Gallery
   alias Lotd.Gallery.Room
-  alias LotdWeb.Api.RoomView
+  alias LotdWeb.RoomJSON
 
   def index(conn, _params) do
     rooms = Gallery.list_rooms()
@@ -14,7 +14,7 @@ defmodule LotdWeb.Api.RoomController do
     case Gallery.create_room(room_params) do
       {:ok, room} ->
         room = Gallery.preload_room(room)
-        json(conn, %{success: true, room: RoomView.render("room.json", room: room )})
+        json(conn, %{success: true, room: RoomJSON.show(%{room: room})})
 
       {:error, %Ecto.Changeset{} = _changeset} ->
         json(conn, %{success: false})
@@ -26,7 +26,7 @@ defmodule LotdWeb.Api.RoomController do
       case Gallery.update_room(room, room_params) do
         {:ok, room} ->
           room = Gallery.preload_room(room)
-          json(conn, %{success: true, room: RoomView.render("room.json", room: room)})
+          json(conn, %{success: true, room: RoomJSON.show(%{room: room})})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})

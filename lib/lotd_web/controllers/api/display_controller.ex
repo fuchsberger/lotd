@@ -3,7 +3,7 @@ defmodule LotdWeb.Api.DisplayController do
 
   alias Lotd.Gallery
   alias Lotd.Gallery.Display
-  alias LotdWeb.Api.DisplayView
+  alias LotdWeb.DisplayJSON
 
   def index(conn, _params) do
     render(conn, "displays.json", displays: Gallery.list_displays())
@@ -15,7 +15,7 @@ defmodule LotdWeb.Api.DisplayController do
         display = Gallery.preload_display(display)
         json(conn, %{
           success: true,
-          display: DisplayView.render("display.json", display: display )
+          display: DisplayJSON.show(%{display: display})
         })
 
       {:error, %Ecto.Changeset{} = _changeset} ->
@@ -28,7 +28,7 @@ defmodule LotdWeb.Api.DisplayController do
       case Gallery.update_display(display, display_params) do
         {:ok, display} ->
           display = Gallery.preload_display(display)
-          json(conn, %{success: true, display: DisplayView.render("display.json", display: display)})
+          json(conn, %{success: true, display: DisplayJSON.show(%{display: display})})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})

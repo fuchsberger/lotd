@@ -1,5 +1,5 @@
-defmodule LotdWeb.ItemView do
-  use LotdWeb, :view
+defmodule LotdWeb.ItemHTML do
+  use LotdWeb, :html
 
   # defp title(:create), do: gettext "Create Item"
   # defp title(:update), do: gettext "Update Item"

@@ -1,4 +1,4 @@
 defmodule LotdWeb.Api.UserView do
-  use LotdWeb, :view
+  use LotdWeb, :html
 
 end

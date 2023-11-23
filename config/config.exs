@@ -21,7 +21,7 @@ config :lotd, Lotd.NexusAPI,
 # Configures the endpoint
 config :lotd, LotdWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: LotdWeb.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: LotdWeb.ErrorHTML, accepts: ~w(html json)],
   pubsub_server: Lotd.PubSub,
   live_view: [ signing_salt: "yPX4HroHXx7yWYqHVUYU1EMv7QKl5WuK" ]
 

@@ -3,7 +3,7 @@ defmodule LotdWeb.Api.CharacterController do
 
   alias Lotd.Accounts
   alias Lotd.Accounts.{Character, User}
-  alias LotdWeb.Api.CharacterView
+  alias LotdWeb.CharacterJSON
 
   action_fallback LotdWeb.Api.FallbackController
 
@@ -17,8 +17,7 @@ defmodule LotdWeb.Api.CharacterController do
     case Accounts.create_character(conn.assigns.current_user, character_params) do
       {:ok, character} ->
         character = Accounts.preload_items(character)
-        json(conn, %{success: true, character: CharacterView.render("character.json",
-        character: character, active_id: conn.assigns.current_user.active_character_id )})
+        json(conn, %{success: true, character: CharacterJSON.show(%{character: character, active_id: conn.assigns.current_user.active_character_id})})
 
       {:error, %Ecto.Changeset{} = _changeset} ->
         json(conn, %{success: false})
@@ -31,8 +30,7 @@ defmodule LotdWeb.Api.CharacterController do
       case Accounts.update_character(character, character_params) do
         {:ok, character} ->
           character = Accounts.preload_items(character)
-          json(conn, %{success: true, character: CharacterView.render("character.json",
-          character: character, active_id: conn.assigns.current_user.active_character_id )})
+          json(conn, %{success: true, character: CharacterJSON.show(%{character: character, active_id: conn.assigns.current_user.active_character_id})})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})

@@ -1,21 +1,23 @@
 defmodule LotdWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such
-  as controllers, views, channels and so on.
+  as controllers, components, channels, and so on.
 
   This can be used in your application as:
 
       use LotdWeb, :controller
-      use LotdWeb, :view
+      use LotdWeb, :html
 
-  The definitions below will be executed for every view,
-  controller, etc, so keep them short and clean, focused
+  The definitions below will be executed for every controller,
+  component, etc, so keep them short and clean, focused
   on imports, uses and aliases.
 
   Do NOT define functions inside the quoted expressions
-  below. Instead, define any helper function in modules
-  and import those modules here.
+  below. Instead, define additional modules and import
+  those modules here.
   """
+
+  def static_paths, do: ~w(assets fonts images uploads favicon.ico robots.txt)
 
   def controller do
     quote do
@@ -29,12 +31,15 @@ defmodule LotdWeb do
     end
   end
 
-  def view do
+  def html do
     quote do
-      use Phoenix.View, root: "lib/lotd_web/templates", namespace: LotdWeb
       use Phoenix.Component, global_prefixes: ~w(x-)
 
-      unquote(view_helpers())
+      # Import convenience functions from controllers
+      import Phoenix.Controller, only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
     end
   end
 
@@ -43,7 +48,7 @@ defmodule LotdWeb do
       use Phoenix.LiveComponent
       import LotdWeb.LotdLive, only: [broadcast: 2]
 
-      unquote(view_helpers())
+      unquote(html_helpers())
     end
   end
 
@@ -58,8 +63,8 @@ defmodule LotdWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView, layout: {LotdWeb.LayoutView, "live.html"}
-      unquote(view_helpers())
+      use Phoenix.LiveView, layout: {LotdWeb.Layouts, "live.html"}
+      unquote(html_helpers())
     end
   end
 
@@ -73,23 +78,28 @@ defmodule LotdWeb do
     end
   end
 
-  defp view_helpers do
+  defp html_helpers do
     quote do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
       use LotdWeb.Components
 
-      # Import LiveView helpers (live_render, live_component, live_patch, etc)
-      import Phoenix.LiveView.Helpers
-
-      # Import basic rendering functionality (render, render_layout, etc)
-      import Phoenix.View
+      import Phoenix.Component
 
       import LotdWeb.ErrorHelpers
       import LotdWeb.ViewHelpers
       import LotdWeb.Gettext
 
-      alias LotdWeb.Router.Helpers, as: Routes
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: LotdWeb.Endpoint,
+        router: LotdWeb.Router,
+        statics: LotdWeb.static_paths()
     end
   end
 

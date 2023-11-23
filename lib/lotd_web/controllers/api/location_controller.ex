@@ -3,7 +3,7 @@ defmodule LotdWeb.Api.LocationController do
 
   alias Lotd.Gallery
   alias Lotd.Gallery.Location
-  alias LotdWeb.Api.LocationView
+  alias LotdWeb.LocationJSON
 
   def index(conn, _params) do
     render(conn, "locations.json", locations: Gallery.list_locations())
@@ -15,7 +15,7 @@ defmodule LotdWeb.Api.LocationController do
         location = Gallery.preload_location(location)
         json(conn, %{
           success: true,
-          location: LocationView.render("location.json", location: location )
+          location: LocationJSON.show(%{location: location})
         })
 
       {:error, %Ecto.Changeset{} = _changeset} ->
@@ -28,7 +28,7 @@ defmodule LotdWeb.Api.LocationController do
       case Gallery.update_location(location, location_params) do
         {:ok, location} ->
           location = Gallery.preload_location(location)
-          json(conn, %{success: true, location: LocationView.render("location.json", location: location)})
+          json(conn, %{success: true, location: LocationJSON.show(%{location: location})})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})

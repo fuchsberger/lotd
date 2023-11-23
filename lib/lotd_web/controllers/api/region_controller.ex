@@ -3,7 +3,7 @@ defmodule LotdWeb.Api.RegionController do
 
   alias Lotd.Gallery
   alias Lotd.Gallery.Region
-  alias LotdWeb.Api.RegionView
+  alias LotdWeb.RegionJSON
 
   def index(conn, _params) do
     regions = Gallery.list_regions()
@@ -14,7 +14,7 @@ defmodule LotdWeb.Api.RegionController do
     case Gallery.create_region(region_params) do
       {:ok, region} ->
         region = Gallery.preload_region(region)
-        json(conn, %{success: true, region: RegionView.render("region.json", region: region )})
+        json(conn, %{success: true, region: RegionJSON.show(%{region: region})})
 
       {:error, %Ecto.Changeset{} = _changeset} ->
         json(conn, %{success: false})
@@ -26,7 +26,7 @@ defmodule LotdWeb.Api.RegionController do
       case Gallery.update_region(region, region_params) do
         {:ok, region} ->
           region = Gallery.preload_region(region)
-          json(conn, %{success: true, region: RegionView.render("region.json", region: region)})
+          json(conn, %{success: true, region: RegionJSON.show(%{region: region})})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})

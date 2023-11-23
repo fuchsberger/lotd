@@ -4,7 +4,7 @@ defmodule LotdWeb.Api.ItemController do
   alias Lotd.Accounts
   alias Lotd.Gallery
   alias Lotd.Gallery.Item
-  alias LotdWeb.Api.ItemView
+  alias LotdWeb.ItemJSON
 
   def index(conn, _params) do
     {items, character_item_ids} =
@@ -25,8 +25,7 @@ defmodule LotdWeb.Api.ItemController do
     case Gallery.create_item(item_params) do
       {:ok, item} ->
         item = Gallery.preload_item(item)
-        json(conn, %{success: true, item: ItemView.render("item.json",
-        item: item, character_item_ids: [] )})
+        json(conn, %{success: true, item: ItemJSON.show(%{item: item, character_item_ids: []})})
 
       {:error, %Ecto.Changeset{} = _changeset} ->
         json(conn, %{success: false})
@@ -46,8 +45,7 @@ defmodule LotdWeb.Api.ItemController do
             end
 
           item = Gallery.preload_item(item)
-          json(conn, %{success: true, item: ItemView.render("item.json",
-          item: item, character_item_ids: character_item_ids )})
+          json(conn, %{success: true, item: ItemJSON.show(%{item: item, character_item_ids: character_item_ids })})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})

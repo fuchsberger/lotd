@@ -1,5 +1,5 @@
-defmodule LotdWeb.PageView do
-  use LotdWeb, :view
+defmodule LotdWeb.PageHTML do
+  use LotdWeb, :html
 
   defp map(options) do
     options

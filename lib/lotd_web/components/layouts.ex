@@ -1,6 +1,5 @@
-defmodule LotdWeb.LayoutView do
-  use LotdWeb, :view
-  use Phoenix.Component
+defmodule LotdWeb.Layouts do
+  use LotdWeb, :html
 
   import Phoenix.Controller, only: [action_name: 1, get_flash: 2]
 

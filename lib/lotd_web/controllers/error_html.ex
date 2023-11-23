@@ -1,5 +1,7 @@
-defmodule LotdWeb.ErrorView do
-  use LotdWeb, :view
+defmodule LotdWeb.ErrorHTML do
+  use LotdWeb, :html
+
+  embed_templates "error_html/*"
 
   # By default, Phoenix returns the status message from
   # the template name. For example, "404.html" becomes

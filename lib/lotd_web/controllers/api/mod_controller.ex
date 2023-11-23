@@ -4,7 +4,7 @@ defmodule LotdWeb.Api.ModController do
   alias Lotd.Accounts
   alias Lotd.Gallery
   alias Lotd.Gallery.Mod
-  alias LotdWeb.Api.ModView
+  alias LotdWeb.ModJSON
 
   def index(conn, _params) do
     mods = Gallery.list_mods()
@@ -17,8 +17,7 @@ defmodule LotdWeb.Api.ModController do
     case Gallery.create_mod(mod_params) do
       {:ok, mod} ->
         mod = Gallery.preload_mod(mod)
-        json(conn, %{success: true, mod: ModView.render("mod.json",
-        mod: mod, user_mod_ids: conn.assigns.current_user.mods )})
+        json(conn, %{success: true, mod: ModJSON.show(%{mod: mod, user_mod_ids: conn.assigns.current_user.mods})})
 
       {:error, %Ecto.Changeset{} = _changeset} ->
         json(conn, %{success: false})
@@ -30,8 +29,7 @@ defmodule LotdWeb.Api.ModController do
       case Gallery.update_mod(mod, mod_params) do
         {:ok, mod} ->
           mod = Gallery.preload_mod(mod)
-          json(conn, %{success: true, mod: ModView.render("mod.json",
-          mod: mod, user_mod_ids: conn.assigns.current_user.mods )})
+          json(conn, %{success: true, mod: ModJSON.show(%{mod: mod, user_mod_ids: conn.assigns.current_user.mods})})
 
         {:error, %Ecto.Changeset{} = _changeset} ->
           json(conn, %{success: false})

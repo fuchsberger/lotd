@@ -7,7 +7,7 @@ defmodule Lotd.MixProject do
       version: "1.2.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -33,7 +33,7 @@ defmodule Lotd.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6"},
+      {:phoenix, "~> 1.7"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.3"},
@@ -50,7 +50,7 @@ defmodule Lotd.MixProject do
       {:jason, "~> 1.1"},
       {:plug_cowboy, "~> 2.1"},
       {:fuzzy_compare, "~> 1.0"},
-      {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2.2", runtime: Mix.env() == :dev},
       {:heroicons, "~> 0.5.0"}
     ]
   end
