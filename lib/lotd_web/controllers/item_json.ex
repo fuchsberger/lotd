@@ -6,20 +6,19 @@ defmodule LotdWeb.ItemJSON do
   @doc """
   Renders a list of items.
   """
-  def index(%{items: items, character_item_ids: cids}) do
-    %{data: for(item <- items, do: data(item, cids))}
+  def index(%{items: items}) do
+    %{data: for(item <- items, do: data(item))}
   end
 
   @doc """
   Renders a single item.
   """
-  def show(%{item: item, character_item_ids: cids}) do
-    %{data: data(item, cids)}
+  def show(%{item: item}) do
+    %{data: data(item)}
   end
 
-  defp data(%Item{} = item, character_item_ids) do
+  defp data(%Item{} = item) do
     [
-      item.id in character_item_ids,
       item.name,
       item.location && item.location.id,
       item.location && item.location.region_id,

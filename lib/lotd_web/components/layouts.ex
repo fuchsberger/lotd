@@ -1,7 +1,9 @@
 defmodule LotdWeb.Layouts do
   use LotdWeb, :html
 
-  import Phoenix.Controller, only: [action_name: 1, get_flash: 2]
+  import Phoenix.Controller, only: [action_name: 1]
+
+  embed_templates "layouts/*"
 
   defp desktop_item_class(false), do: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
 
@@ -10,14 +12,10 @@ defmodule LotdWeb.Layouts do
   defp menu_items(conn) do
     items =
       [
-        {gettext("About"), Routes.page_path(conn, :about)},
-        {gettext("Items"), Routes.page_path(conn, :item)},
-        {gettext("Mods"), Routes.page_path(conn, :mod)}
+        {gettext("About"), ~p"/about"},
+        {gettext("Items"), ~p"/"},
+        {gettext("Mods"), ~p"/mods"}
       ]
-
-    items = if is_nil(conn.assigns.current_user),
-      do: items,
-      else: items ++ [{gettext("Characters"), Routes.page_path(conn, :character)}]
 
     Enum.map(items, fn {label, path} ->
       {label, path, Phoenix.Controller.current_path(conn) == path}
@@ -25,10 +23,10 @@ defmodule LotdWeb.Layouts do
   end
 
   defp more_items(conn), do: [
-    {gettext("Displays"), Routes.page_path(conn, :display)},
-    {gettext("Locations"), Routes.page_path(conn, :location)},
-    {gettext("Regions"), Routes.page_path(conn, :region)},
-    {gettext("Rooms"), Routes.page_path(conn, :room)}
+    {gettext("Displays"), ~p"/displays"},
+    {gettext("Locations"), ~p"/locations"},
+    {gettext("Regions"), ~p"/regions"},
+    {gettext("Rooms"), ~p"/rooms"}
   ]
   |> Enum.map(fn {label, path} ->
     {label, path, Phoenix.Controller.current_path(conn) == path}

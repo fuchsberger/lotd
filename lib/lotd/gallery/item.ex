@@ -11,8 +11,6 @@ defmodule Lotd.Gallery.Item do
     belongs_to :display, Lotd.Gallery.Display
     belongs_to :location, Lotd.Gallery.Location
     belongs_to :mod, Lotd.Gallery.Mod
-
-    many_to_many :characters, Lotd.Accounts.Character, join_through: "character_items"
   end
 
   @doc false

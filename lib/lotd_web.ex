@@ -21,13 +21,13 @@ defmodule LotdWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: LotdWeb
+      use Phoenix.Controller, formats: [:html, :json], layouts: []
 
       import Plug.Conn
       import Phoenix.LiveView.Controller, only: [live_render: 3]
       import LotdWeb.Gettext
 
-      alias LotdWeb.Router.Helpers, as: Routes
+      unquote(verified_routes())
     end
   end
 
@@ -63,7 +63,10 @@ defmodule LotdWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView, layout: {LotdWeb.Layouts, "live.html"}
+      use Phoenix.LiveView,
+        container: {:div, class: "flex flex-col h-full"},
+        layout: {LotdWeb.Layouts, "live.html"}
+
       unquote(html_helpers())
     end
   end
@@ -85,10 +88,11 @@ defmodule LotdWeb do
       use LotdWeb.Components
 
       import Phoenix.Component
-
       import LotdWeb.ErrorHelpers
       import LotdWeb.ViewHelpers
       import LotdWeb.Gettext
+
+      alias Phoenix.LiveView.JS
 
       unquote(verified_routes())
     end

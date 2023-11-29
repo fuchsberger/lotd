@@ -9,48 +9,41 @@ var itemTable = $('#item-table').DataTable({
   autoWidth: false,
   rowId: row => `entry-${row[7]}`,
   columnDefs: [
-    { targets: [7, 8, 9], searchable: false},
-    { targets: 0,
-      visible: $('#item-table').hasClass("has-character"),
-      type: "html",
-      render: (collected, display, row) => `
-        <input type="checkbox" data-id="${row[7]}" class="toggle inline-block cursor-pointer h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" ${collected ? " checked" : ""}><div class="hidden">${collected}</div>
-      `
-    },
-    { targets: 1, className: "font-medium text-gray-900 truncate"},
+    { targets: [6, 7, 8], searchable: false},
+    { targets: 0, className: "font-medium text-gray-900 truncate"},
     {
-      targets: 2,
+      targets: 1,
       type: "html",
       className: "truncate hidden sm:table-cell",
       render: id => id ? `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="location">${$("#item-table").data("locations")[id]}</a>` : ""
     },
     {
-      targets: 3,
+      targets: 2,
       type: "html",
       className: "truncate hidden lg:table-cell",
       render: id => id ? `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="region">${$("#item-table").data("regions")[id]}</a>` : ""
     },
     {
-      targets: 4,
+      targets: 3,
       type: "html",
       className: "truncate hidden md:table-cell",
       render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="display">${$("#item-table").data("displays")[id]}</a>`
     },
     {
-      targets: 5,
+      targets: 4,
       type: "html",
       className: "truncate hidden lg:table-cell" ,
       render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="room">${$("#item-table").data("rooms")[id]}</a>`
     },
     {
-      targets: 6,
+      targets: 5,
       type: "html",
       className: "truncate hidden xl:table-cell" ,
       render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="mod">${$("#item-table").data("mods")[id]}</a>`
     },
-    { targets: 7, data: 7, visible: moderator, render: editBtn },
-    { targets: 8, data: 7, visible: moderator, render: deleteBtn },
-    { targets: 9, data: 8, render: urlBtn }
+    { targets: 6, data: 6, visible: moderator, render: editBtn },
+    { targets: 7, data: 6, visible: moderator, render: deleteBtn },
+    { targets: 8, data: 7, render: urlBtn }
   ],
   dom: `<"table-wrapper"t><"table-footer"<"#table-info">p>`,
   language: {search: "", searchPlaceholder: "Search...", emptyTable: "No items to show. Select some mods first!"},
@@ -100,11 +93,11 @@ function search (){
     data.mod = data.mod ? $("#item-table").data("mods")[data.mod] : ""
 
     itemTable
-    .column(2).search(data.location ? '^' + data.location + '$' : '', true, false)
-    .column(3).search(data.region ? '^' + data.region + '$' : '', true, false)
-    .column(4).search(data.display ? '^' + data.display + '$' : '', true, false)
-    .column(5).search(data.room ? '^' + data.room + '$' : '', true, false)
-    .column(6).search(data.mod ? '^' + data.mod + '$' : '', true, false)
+    .column(1).search(data.location ? '^' + data.location + '$' : '', true, false)
+    .column(2).search(data.region ? '^' + data.region + '$' : '', true, false)
+    .column(3).search(data.display ? '^' + data.display + '$' : '', true, false)
+    .column(4).search(data.room ? '^' + data.room + '$' : '', true, false)
+    .column(5).search(data.mod ? '^' + data.mod + '$' : '', true, false)
     .draw()
   }
 }
@@ -112,13 +105,12 @@ function search (){
 function clearSearch(){
   itemTable
   .search("")
-  .column(0).search(hideCollected ? "false" : "")
+  .column(0).search('', true, false)
   .column(1).search('', true, false)
   .column(2).search('', true, false)
   .column(3).search('', true, false)
   .column(4).search('', true, false)
   .column(5).search('', true, false)
-  .column(6).search('', true, false)
 }
 
 $('#item-filter-form').on("submit", e => {e.preventDefault()})

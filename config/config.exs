@@ -12,6 +12,7 @@ config :lotd,
 
 # Nexus API urls
 config :lotd, Lotd.NexusAPI,
+  admins: [811039],
   user_url: "https://api.nexusmods.com/v1/users/validate.json",
   header: [
     application_name: "LOTD Inventory Manager",

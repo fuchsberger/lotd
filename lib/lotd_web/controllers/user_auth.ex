@@ -129,14 +129,6 @@ defmodule LotdWeb.UserAuth do
     end
   end
 
-  def require_moderator(conn, _opts) do
-    if conn.assigns.current_user.moderator do
-      conn
-    else
-      ErrorController.call(conn, {:error, :forbidden})
-    end
-  end
-
   def require_admin(conn, _opts) do
     if conn.assigns.current_user.admin do
       conn

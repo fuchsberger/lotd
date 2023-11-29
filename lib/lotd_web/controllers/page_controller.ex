@@ -1,18 +1,11 @@
 defmodule LotdWeb.PageController do
   use LotdWeb, :controller
 
-  alias Lotd.Accounts
-  alias Lotd.Accounts.Character
-
   alias Lotd.Gallery
   alias Lotd.Gallery.{Display, Item, ItemFilter, Location, Mod, Region, Room}
 
   def about(conn, _params) do
     render(conn, "about.html")
-  end
-
-  def character(conn, _params) do
-    render conn, "character.html", changeset: Accounts.change_character(%Character{})
   end
 
   def display(conn, _params) do
@@ -23,7 +16,7 @@ defmodule LotdWeb.PageController do
   end
 
   def gallery(conn, _params) do
-    redirect conn, to: Routes.page_path(conn, :item)
+    redirect conn, to: ~p"/"
   end
 
   def item(conn, _params) do

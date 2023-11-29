@@ -33,15 +33,12 @@ defmodule LotdWeb.Router do
   scope "/api", LotdWeb.Api, as: :api do
     pipe_through [:api, :require_authenticated_user]
 
-    resources "/character", CharacterController, only: [:create, :update, :delete, :index]
-    put "/item/:id/toggle", ItemController, :toggle
-    put "/character/:id/activate", CharacterController, :activate
     put "/mod/:id/toggle", ModController, :toggle
     put "/mod/toggle-all", ModController, :toggle_all
   end
 
   scope "/api", LotdWeb.Api, as: :api do
-    pipe_through [:api, :require_authenticated_user, :require_moderator]
+    pipe_through [:api, :require_authenticated_user, :require_admin]
 
     resources "/item", ItemController, only: [:create, :update, :delete]
     resources "/mod", ModController, only: [:create, :update, :delete]
@@ -51,16 +48,13 @@ defmodule LotdWeb.Router do
     resources "/location", LocationController, only: [:create, :update, :delete]
   end
 
-  scope "/api", LotdWeb.Api, as: :api do
-    pipe_through [:api, :require_authenticated_user, :require_moderator]
-
-    resources "/user", UserController, only: [:index, :delete]
-  end
-
   scope "/", LotdWeb do
     pipe_through :browser
 
-    get "/", PageController, :item
+    live "/", LotdLive, :index
+    live "/login", LotdLive, :login
+    
+
     get "/about", PageController, :about
     get "/gallery", PageController, :gallery
     get "/mods", PageController, :mod
@@ -71,15 +65,10 @@ defmodule LotdWeb.Router do
   end
 
   scope "/", LotdWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    get "/characters", PageController, :character
-  end
-
-  scope "/", LotdWeb do
     pipe_through [:browser, :require_authenticated_user, :require_admin]
 
     get "/users", PageController, :user
+    resources "/user", UserController, only: [:index, :delete]
   end
 
   ## Authentication routes

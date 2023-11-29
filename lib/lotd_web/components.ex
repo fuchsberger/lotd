@@ -9,10 +9,14 @@ defmodule LotdWeb.Components do
         Button,
         Card,
         Form,
-        Icon,
-        Modal,
         Tab,
         Toggle
+      }
+
+      import LotdWeb.Components.UI.{
+        Dropdown,
+        Icon,
+        Modal
       }
     end
   end

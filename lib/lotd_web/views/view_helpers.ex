@@ -5,7 +5,6 @@ defmodule LotdWeb.ViewHelpers do
   use Phoenix.Component
   use Phoenix.HTML
 
-  alias Lotd.Accounts.Character
   alias LotdWeb.Components.Icon
 
   def action_submit(changeset) do
@@ -15,15 +14,6 @@ defmodule LotdWeb.ViewHelpers do
 
   def table_classes(user) do
     case user do
-      %{moderator: true, active_character: %Character{}} ->
-        "dataTable has-user has-character moderator"
-
-      %{active_character: %Character{}} ->
-        "dataTable has-user has-character"
-
-      %{moderator: true} ->
-        "dataTable has-user moderator"
-
       %{} ->
         "dataTable has-user"
 
@@ -31,9 +21,6 @@ defmodule LotdWeb.ViewHelpers do
         "dataTable"
     end
   end
-
-  def icon(name, opts \\ [] ), do: content_tag(:i, "",
-    [{:class, "icon-#{name} #{Keyword.get(opts, :class, "")}"} | Keyword.delete(opts, :class)])
 
   def struct_to_string(s), do: Module.split(s.__struct__) |> List.last() |> String.downcase()
 

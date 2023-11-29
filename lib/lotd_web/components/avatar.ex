@@ -3,8 +3,6 @@ defmodule LotdWeb.Components.Avatar do
 
   alias LotdWeb.Components.Icon
 
-  # prop character, %Character{} || nil
-  # prop size, :string
   def avatar(assigns) do
     assigns =
       assigns

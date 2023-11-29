@@ -32,9 +32,7 @@ config :lotd, LotdWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"priv/gettext/.*(po)$",
-      ~r"lib/lotd_web/{live,views}/.*(ex)$",
-      ~r"lib/lotd_web/templates/.*(eex)$"
+      ~r"lib/test_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 

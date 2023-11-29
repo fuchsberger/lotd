@@ -1,0 +1,49 @@
+<nav class="flex-none bg-gray-800">
+  <div class="mx-auto max-w-7xl px-2 lg:px-0">
+    <div class="relative flex h-16 items-center justify-between">
+      <div class="flex items-center px-2 lg:px-0">
+        <div class="flex-shrink-0">
+          <img class="h-8 w-auto" src={~p"/images/logo.png"} alt="Legacy of the Dragonborn" />
+        </div>
+      </div>
+      <div class="flex flex-1 justify-center pl-4 pr-2">
+        <div class="w-full">
+          <label for="search" class="sr-only">Search</label>
+          <div class="relative">
+            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <input id="search" name="search" class="block w-full rounded-md border-0 bg-gray-700 py-1.5 pl-10 pr-3 text-gray-300 placeholder:text-gray-400 focus:bg-white focus:text-gray-900 focus:ring-0 sm:text-sm sm:leading-6" placeholder="Search" type="search">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center">
+        <.dropdown id="usermenu-dropdown" class="flex-shrink-0" :if={@user}>
+          <:button class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+              <span class="absolute -inset-0.5"></span>
+              <span class="sr-only">Open main menu</span>
+              <.icon name="hero-bars-3" class="block h-6 w-6" />
+          </:button>
+          <:link icon="hero-power-mini" href={~p"/logout"} method={:delete}>Logout</:link>
+        </.dropdown>
+
+        <.dropdown id="menu-dropdown" class="flex-shrink-0" :if={!@user}>
+          <:button class="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+              <span class="absolute -inset-0.5"></span>
+              <span class="sr-only">Open main menu</span>
+              <.icon name="hero-bars-3" class="block h-6 w-6" />
+          </:button>
+          <:link id='login-button' icon="hero-power-mini" dispatch="connect">Login</:link>
+        </.dropdown>
+        <%!-- Hidden Form for login --%>
+        <.form :let={f} for={%{}} as={:session} action={~p"/login"} id="login-form" :if={!@user}>
+          <%= hidden_input(f, :api_key) %>
+        </.form>
+      </div>
+
+    </div>
+  </div>
+</nav>

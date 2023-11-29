@@ -25,7 +25,7 @@ defmodule LotdWeb.ItemController do
       {:ok, _item} ->
         conn
         |> put_flash(:info, "Item created successfully.")
-        |> redirect(to: Routes.page_path(conn, :item))
+        |> redirect(to: ~p"/")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         display_options = Gallery.list_displays() |> Enum.map(& {&1.name, &1.id})
@@ -56,7 +56,7 @@ defmodule LotdWeb.ItemController do
         {:ok, _item} ->
           conn
           |> put_flash(:info, "Item updated successfully.")
-          |> redirect(to: Routes.page_path(conn, :item))
+          |> redirect(to: ~p"/")
 
         {:error, %Ecto.Changeset{} = changeset} ->
           display_options = Gallery.list_displays() |> Enum.map(& {&1.name, &1.id})
@@ -81,7 +81,7 @@ defmodule LotdWeb.ItemController do
     do
       conn
       |> put_flash(:info, "Item deleted successfully.")
-      |> redirect(to: Routes.page_path(conn, :item))
+      |> redirect(to: ~p"/")
     end
   end
 end

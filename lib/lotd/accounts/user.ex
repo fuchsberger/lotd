@@ -5,12 +5,7 @@ defmodule Lotd.Accounts.User do
   schema "users" do
     field :admin, :boolean, default: false
     field :avatar_url, :string
-    field :hide_aquired_items, :boolean, default: false
-    field :moderator, :boolean, default: false
     field :username, :string
-
-    belongs_to :active_character, Lotd.Accounts.Character
-    has_many :characters, Lotd.Accounts.Character
     many_to_many :mods, Lotd.Gallery.Mod, join_through: "user_mods", on_replace: :delete
     timestamps()
   end
@@ -27,13 +22,11 @@ defmodule Lotd.Accounts.User do
 
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:avatar_url, :hide_aquired_items, :active_character_id])
-    |> foreign_key_constraint(:active_character_id)
-
+    |> cast(attrs, [:avatar_url])
   end
 
   def admin_changeset(user, attrs) do
     user
-    |> cast(attrs, [:admin, :moderator])
+    |> cast(attrs, [:admin])
   end
 end

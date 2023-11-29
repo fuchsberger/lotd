@@ -23,11 +23,8 @@ export default () => {
 
   // When the client receives a message
   socket.onmessage = e => {
-
     // pass all messages back to the client by using the format type:value
     const res = JSON.parse(e.data)
-
-    console.log(res)
 
     if (res && res.success){
 

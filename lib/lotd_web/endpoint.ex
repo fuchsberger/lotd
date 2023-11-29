@@ -1,6 +1,9 @@
 defmodule LotdWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :lotd
 
+  # The session will be stored in the cookie and signed,
+  # this means its contents can be read but not tampered with.
+  # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
     key: "_lotd_key",
@@ -19,7 +22,7 @@ defmodule LotdWeb.Endpoint do
     at: "/",
     from: :lotd,
     gzip: true,
-    only: ~w(assets fonts images favicon.ico robots.txt)
+    only: LotdWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
