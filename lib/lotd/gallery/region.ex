@@ -10,8 +10,8 @@ defmodule Lotd.Gallery.Region do
   end
 
   @doc false
-  def changeset(display, attrs) do
-    display
+  def changeset(region, attrs) do
+    region
     |> cast(attrs, [:name])
     |> validate_required([:name])
     |> validate_length(:name, min: 3, max: 30)

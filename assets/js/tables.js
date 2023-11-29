@@ -70,14 +70,9 @@ $(".dataTable").on("click", ".edit-btn", e => {
       formdata = {
         name: rowdata[1],
         location_id: rowdata[2],
-        display_id: rowdata[4],
         mod_id: rowdata[6],
         url: rowdata[8]
       }
-      break;
-
-    case "display":
-      formdata = {name: rowdata[1], room_id: rowdata[2]}
       break;
 
     case "location":
@@ -85,10 +80,6 @@ $(".dataTable").on("click", ".edit-btn", e => {
       break;
 
     case "region":
-      formdata = {name: rowdata[0]}
-      break;
-
-    case "room":
       formdata = {name: rowdata[0]}
       break;
 

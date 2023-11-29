@@ -5,22 +5,22 @@ defmodule Lotd.Gallery do
   import Ecto.Query
 
   alias Lotd.Repo
-  alias Lotd.Gallery.{Item, ItemFilter, Room, Region, Display, Location, Mod}
+  alias Lotd.Gallery.{Item, ItemFilter, Region, Location, Mod}
   alias Lotd.Accounts.User
 
   # ITEMS ----------------------------------------------------------------------------------------
 
-  def list_items, do: Repo.all(from(i in Item, order_by: i.name, preload: [:display, :location]))
+  def list_items, do: Repo.all(from(i in Item, order_by: i.name, preload: [:location]))
 
   def item_options, do: Repo.all(from(i in Item, select: {i.name, i.id}))
 
   def list_items(mods) do
-    Repo.all(from(i in Item, order_by: i.name, preload: [:display, :location], where: i.mod_id in ^mods))
+    Repo.all(from(i in Item, order_by: i.name, preload: [:location], where: i.mod_id in ^mods))
   end
 
   def get_item!(id), do: Repo.get!(Item, id)
 
-  def preload_item(%Item{} = item), do: Repo.preload(item, [:display, :location])
+  def preload_item(%Item{} = item), do: Repo.preload(item, [:location])
 
   def change_item(%Item{} = item, params \\ %{}), do: Item.changeset(item, params)
 
@@ -37,69 +37,6 @@ defmodule Lotd.Gallery do
   end
 
   def delete_item(%Item{} = item), do: Repo.delete(item)
-
-  # ROOMS ----------------------------------------------------------------------------------------
-
-  def list_rooms do
-    from(r in Room,
-      preload: [displays: [items: ^from(i in Item, select: i.id)]],
-      order_by: r.name
-    )
-    |> Repo.all()
-  end
-
-  def room_options, do: Repo.all(from(r in Room, select: {r.name, r.id}, order_by: r.name))
-
-  def get_room!(id), do: Repo.get!(Room, id)
-
-  def preload_room(%Room{} = room),
-    do: Repo.preload(room, [displays: [items: from(i in Item, select: i.id)]])
-
-  def change_room(%Room{} = room, params \\ %{}), do: Room.changeset(room, params)
-
-  def create_room(attrs \\ %{}) do
-    %Room{}
-    |> Room.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def update_room(%Room{} = room, attrs) do
-    room
-    |> Room.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def delete_room(%Room{} = room), do: Repo.delete(room)
-
-  # DISPLAYS -------------------------------------------------------------------------------------
-
-  def list_displays do
-    from(d in Display, preload: [items: ^from(i in Item, select: i.id)])
-    |> Repo.all()
-  end
-
-  def display_options, do: Repo.all(from(d in Display, select: {d.name, d.id}, order_by: d.name))
-
-  def get_display!(id), do: Repo.get!(Display, id)
-
-  def preload_display(%Display{} = display),
-    do: Repo.preload(display, [items: from(i in Item, select: i.id)])
-
-  def change_display(%Display{} = display, params \\ %{}), do: Display.changeset(display, params)
-
-  def create_display(attrs \\ %{}) do
-    %Display{}
-    |> Display.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def update_display(%Display{} = display, attrs) do
-    display
-    |> Display.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def delete_display(%Display{} = display), do: Repo.delete(display)
 
   # REGIONS --------------------------------------------------------------------------------------
 

@@ -26,12 +26,10 @@ import topbar from "../vendor/topbar"
 // import "./gui"
 // import "./timeago"
 import connect from './nexus'
-// import "./display_table"
 // import "./item_table"
 // import "./location_table"
 // import "./mod_table"
 // import "./region_table"
-// import "./room_table"
 
 // enable login
 window.addEventListener("connect", _event => connect())

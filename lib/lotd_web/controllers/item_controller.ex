@@ -10,12 +10,11 @@ defmodule LotdWeb.ItemController do
 
   def new(conn, _params) do
     items = Gallery.list_items()
-    display_options = Gallery.list_displays() |> Enum.map(& {&1.name, &1.id})
     location_options = Gallery.list_locations() |> Enum.map(& {&1.name, &1.id})
     mod_options = Gallery.list_mods() |> Enum.map(& {&1.name, &1.id})
 
     changeset = Gallery.change_item(%Item{})
-    render(conn, "index.html", action: :create, changeset: changeset, items: items, display_options: display_options, location_options: location_options, mod_options: mod_options)
+    render(conn, "index.html", action: :create, changeset: changeset, items: items,  location_options: location_options, mod_options: mod_options)
   end
 
   def create(conn, %{"item" => item_params}) do
@@ -28,11 +27,10 @@ defmodule LotdWeb.ItemController do
         |> redirect(to: ~p"/")
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        display_options = Gallery.list_displays() |> Enum.map(& {&1.name, &1.id})
         location_options = Gallery.list_locations() |> Enum.map(& {&1.name, &1.id})
         mod_options = Gallery.list_mods() |> Enum.map(& {&1.name, &1.id})
 
-        render(conn, "index.html", action: :create, changeset: changeset, items: items, display_options: display_options, location_options: location_options, mod_options: mod_options)
+        render(conn, "index.html", action: :create, changeset: changeset, items: items, location_options: location_options, mod_options: mod_options)
     end
   end
 
@@ -40,12 +38,12 @@ defmodule LotdWeb.ItemController do
     with items <- Gallery.list_items(),
         %Item{} = item <- Gallery.get_item!(id) do
 
-      display_options = Gallery.list_displays() |> Enum.map(& {&1.name, &1.id})
+
       location_options = Gallery.list_locations() |> Enum.map(& {&1.name, &1.id})
       mod_options = Gallery.list_mods() |> Enum.map(& {&1.name, &1.id})
 
       changeset = Gallery.change_item(item)
-      render(conn, "index.html", action: :update, changeset: changeset, item: item, items: items, display_options: display_options, location_options: location_options, mod_options: mod_options)
+      render(conn, "index.html", action: :update, changeset: changeset, item: item, items: items, location_options: location_options, mod_options: mod_options)
     end
   end
 
@@ -59,11 +57,10 @@ defmodule LotdWeb.ItemController do
           |> redirect(to: ~p"/")
 
         {:error, %Ecto.Changeset{} = changeset} ->
-          display_options = Gallery.list_displays() |> Enum.map(& {&1.name, &1.id})
           location_options = Gallery.list_locations() |> Enum.map(& {&1.name, &1.id})
           mod_options = Gallery.list_mods() |> Enum.map(& {&1.name, &1.id})
 
-          render(conn, "index.html", action: :update, changeset: changeset, item: item, items: items, display_options: display_options, location_options: location_options, mod_options: mod_options)
+          render(conn, "index.html", action: :update, changeset: changeset, item: item, items: items, location_options: location_options, mod_options: mod_options)
       end
     end
   end

@@ -2,11 +2,9 @@
 <table
   id="item-table"
   class={table_classes(@current_user)}
-  data-displays={map(@display_options)}
   data-locations={map(@location_options)}
   data-mods={map(@mod_options)}
   data-regions={map(@region_options)}
-  data-rooms={map(@room_options)}
 >
   <thead>
     <tr>
@@ -38,22 +36,6 @@
           form={f} field={:region_id} name="region"
           options={@region_options}
           prompt={gettext "Region"}
-          class="font-normal"
-        />
-      </th>
-      <th class="w-40">
-        <.select
-          form={f} field={:display_id} name="display"
-          options={@display_options}
-          prompt={gettext "Display"}
-          class="font-normal"
-        />
-      </th>
-      <th class="w-40">
-        <.select
-          form={f} field={:room_id} name="room"
-          options={@room_options}
-          prompt={gettext "Room"}
           class="font-normal"
         />
       </th>
@@ -92,7 +74,6 @@
     <.alert type={:error} text="Input errors" class="data-form-alert hidden mb-2" />
     <.form_field id="input-name" type="text_input" form={f} field={:name} />
     <.form_field id="input-url" type="text_input" form={f} field={:url} />
-    <.form_field id="input-display-id" type="select" form={f} field={:display_id} options={@display_options} prompt={gettext "select one"} />
     <.form_field id="input-location-id" type="select" form={f} field={:location_id} options={@location_options} prompt={gettext "select one"} />
     <.form_field id="input-mod-id" type="select" form={f} field={:mod_id} options={@mod_options} prompt={gettext "select one"} />
     <:footer>

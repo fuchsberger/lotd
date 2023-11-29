@@ -130,7 +130,7 @@ defmodule LotdWeb.UserAuth do
   end
 
   def require_admin(conn, _opts) do
-    if conn.assigns.current_user.admin do
+    if conn.assigns.current_user.id in Application.get_env(Lotd, :nexus).admin_ids do
       conn
     else
       ErrorController.call(conn, {:error, :forbidden})

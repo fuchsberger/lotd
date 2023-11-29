@@ -23,10 +23,8 @@ defmodule LotdWeb.Layouts do
   end
 
   defp more_items(conn), do: [
-    {gettext("Displays"), ~p"/displays"},
     {gettext("Locations"), ~p"/locations"},
-    {gettext("Regions"), ~p"/regions"},
-    {gettext("Rooms"), ~p"/rooms"}
+    {gettext("Regions"), ~p"/regions"}
   ]
   |> Enum.map(fn {label, path} ->
     {label, path, Phoenix.Controller.current_path(conn) == path}

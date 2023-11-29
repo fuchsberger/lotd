@@ -6,13 +6,12 @@ defmodule Lotd.Accounts do
 
   alias Lotd.Repo
   alias Lotd.Accounts.{UserToken, User}
-  alias Lotd.Gallery.{Item, Mod}
+  alias Lotd.Gallery.Mod
 
   ## user
   def preload_user_assigns(user) do
     Repo.preload(user, [mods: from(m in Mod, select: m.id)])
   end
-
 
   def list_users do
     Repo.all from(u in User, order_by: u.name)
@@ -26,20 +25,8 @@ defmodule Lotd.Accounts do
 
   def create_user(attrs \\ %{}) do
     %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def update_user(%User{} = user, attrs) do
-    user
     |> User.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def toggle_admin(%User{} = user) do
-    user
-    |> User.admin_changeset(%{admin: !user.admin})
-    |> Repo.update()
+    |> Repo.insert()
   end
 
   def delete_user(%User{} = user), do: Repo.delete(user)

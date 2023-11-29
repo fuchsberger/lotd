@@ -22,8 +22,6 @@ defmodule LotdWeb.ItemJSON do
       item.name,
       item.location && item.location.id,
       item.location && item.location.region_id,
-      item.display.id,
-      item.display.room_id,
       item.mod_id,
       item.id,
       item.url

@@ -9,7 +9,7 @@ var itemTable = $('#item-table').DataTable({
   autoWidth: false,
   rowId: row => `entry-${row[7]}`,
   columnDefs: [
-    { targets: [6, 7, 8], searchable: false},
+    { targets: [4, 5, 6], searchable: false},
     { targets: 0, className: "font-medium text-gray-900 truncate"},
     {
       targets: 1,
@@ -26,24 +26,12 @@ var itemTable = $('#item-table').DataTable({
     {
       targets: 3,
       type: "html",
-      className: "truncate hidden md:table-cell",
-      render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="display">${$("#item-table").data("displays")[id]}</a>`
-    },
-    {
-      targets: 4,
-      type: "html",
-      className: "truncate hidden lg:table-cell" ,
-      render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="room">${$("#item-table").data("rooms")[id]}</a>`
-    },
-    {
-      targets: 5,
-      type: "html",
       className: "truncate hidden xl:table-cell" ,
       render: id => `<a href="#" class="filter hover:text-black" data-id="${id}" data-type="mod">${$("#item-table").data("mods")[id]}</a>`
     },
-    { targets: 6, data: 6, visible: moderator, render: editBtn },
-    { targets: 7, data: 6, visible: moderator, render: deleteBtn },
-    { targets: 8, data: 7, render: urlBtn }
+    { targets: 4, data: 4, visible: moderator, render: editBtn },
+    { targets: 5, data: 4, visible: moderator, render: deleteBtn },
+    { targets: 6, data: 5, render: urlBtn }
   ],
   dom: `<"table-wrapper"t><"table-footer"<"#table-info">p>`,
   language: {search: "", searchPlaceholder: "Search...", emptyTable: "No items to show. Select some mods first!"},
@@ -86,18 +74,14 @@ function search (){
     .draw()
   } else {
     // use current filters
-    data.display = data.display ? $("#item-table").data("displays")[data.display] : ""
     data.location = data.location ? $("#item-table").data("locations")[data.location] : ""
     data.region = data.region ? $("#item-table").data("regions")[data.region] : ""
-    data.room = data.room ? $("#item-table").data("rooms")[data.room] : ""
     data.mod = data.mod ? $("#item-table").data("mods")[data.mod] : ""
 
     itemTable
     .column(1).search(data.location ? '^' + data.location + '$' : '', true, false)
     .column(2).search(data.region ? '^' + data.region + '$' : '', true, false)
-    .column(3).search(data.display ? '^' + data.display + '$' : '', true, false)
-    .column(4).search(data.room ? '^' + data.room + '$' : '', true, false)
-    .column(5).search(data.mod ? '^' + data.mod + '$' : '', true, false)
+    .column(3).search(data.mod ? '^' + data.mod + '$' : '', true, false)
     .draw()
   }
 }
@@ -140,8 +124,7 @@ $("#item-form").on("submit", function(e) {
       name: $("#input-name").val(),
       url: $("#input-url").val(),
       location_id: $("#input-location-id").val(),
-      mod_id: $("#input-mod-id").val(),
-      display_id: $("#input-display-id").val()
+      mod_id: $("#input-mod-id").val()
     }
   }
 
@@ -174,10 +157,8 @@ $("#item-table").on("click", "a.filter", e => {
 // reset filters
 function resetFilters(){
   $(`#item-filter-form_name`).val("")
-  $(`#item-filter-form_display_id`).val("")
   $(`#item-filter-form_location_id`).val("")
   $(`#item-filter-form_region_id`).val("")
-  $(`#item-filter-form_room_id`).val("")
   $(`#item-filter-form_mod_id`).val("")
 }
 
