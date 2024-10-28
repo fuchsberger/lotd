@@ -1,7 +1,7 @@
 defmodule LotdWeb.Layouts do
   use LotdWeb, :html
 
-  import Phoenix.Controller, only: [action_name: 1]
+  import Phoenix.Controller, only: [action_name: 1, get_csrf_token: 0]
 
   embed_templates "layouts/*"
 

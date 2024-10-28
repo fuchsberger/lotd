@@ -20,7 +20,7 @@
                   aria-haspopup="true"
                   {more_button_attrs(action_name(@conn) in [:location, :region])}
                 >
-                  <%= gettext "More" %>
+                  More
                   <Icon.Solid.chevron_down class="-mr-1 ml-2 h-5 w-5" />
                 </button>
               </div>
@@ -41,7 +41,7 @@
           <!-- Profile dropdown -->
           <%= if @current_user do %>
             <span class="character-name bg-white p-1 text-gray-500 text-sm">
-              <%= gettext("no active Character") %>
+              no active Character
             </span>
             <div class="ml-3 relative">
               <div>
@@ -67,14 +67,14 @@
                   <p class="text-sm font-medium text-gray-900 truncate" role="none"><%= @current_user.username %></p>
                 </div>
                 <div class="py-1" role="none">
-                  <.link method="delete" href={~p"/logout"} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="user-menu-item-0"><%= gettext "Sign out" %></.link>
+                  <.link method="delete" href={~p"/logout"} class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="user-menu-item-0">Sign out</.link>
                 </div>
               </div>
             </div>
           <% else %>
             <%# Login Button with hidden form %>
             <button type="button" id='login-button' class="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              <span><%= gettext "Sign in" %></span>
+              <span>Sign in</span>
               <Icon.Outline.login class="inline-block h-6 w-6" />
             </button>
             <.form :let={_f} for={:session} action={~p"/login"} id="login-form">
@@ -123,13 +123,13 @@
               <div class="text-base font-medium text-gray-800"><%= @current_user.username %></div>
             </div>
             <.link method="delete" href={~p"/logout"} class="ml-auto bg-white flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              <span class="sr-only"><%= gettext "Logout" %></span>
+              <span class="sr-only">Logout</span>
               <Icon.Outline.logout class="h-6 w-6" />
             </.link>
           </div>
         <% else %>
           <.link id='login-button-mobile' href="#" class="flex items-center justify-between px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100" x-bind:click="open = false">
-            <span><%= gettext "Login" %></span>
+            <span>Login</span>
             <Icon.Outline.login class="h-6 w-6" />
           </.link>
         <% end %>

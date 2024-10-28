@@ -1,11 +1,11 @@
 <%= if @current_user && @current_user.moderator do %>
   <div class="px-4 sm:px-0 mb-4 flex items-center justify-between flex-wrap sm:flex-nowrap">
     <div>
-      <h3 class="text-lg leading-6 font-medium text-gray-900"><%= gettext "Locations" %></h3>
-      <p class="text-sm text-gray-500"><%= gettext "Creating locations allows you to track individual progress on items and locations!" %></p>
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Locations</h3>
+      <p class="text-sm text-gray-500">Creating locations allows you to track individual progress on items and locations!</p>
     </div>
     <div class="flex-shrink-0 mt-4 sm:mt-0">
-      <.button id="add-btn" icon={:plus} variant="leading" data-action={~p"/api/locations"} data-struct="location" data-formdata={Jason.encode!(@changeset.data)}><%= gettext "New" %></.button>
+      <.button id="add-btn" icon={:plus} variant="leading" data-action={~p"/api/locations"} data-struct="location" data-formdata={Jason.encode!(@changeset.data)}>New</.button>
     </div>
   </div>
 <% end %>
@@ -19,29 +19,23 @@
   <thead>
     <tr>
       <th class="w-12 sm:w-14">
-        <span class="sr-only"><%= gettext "Details" %></span>
+        <span class="sr-only">Details</span>
       </th>
       <th>
-        <div class="flex items-center">
-          <%= gettext "Location" %><.sort_icon />
-        </div>
+        <div class="flex items-center">Location <.sort_icon /></div>
       </th>
       <th class="w-24 hidden sm:table-cell text-right">
-        <div class="flex items-center">
-          <%= gettext "Items" %><.sort_icon />
-        </div>
+        <div class="flex items-center">Items <.sort_icon /></div>
       </th>
       <th class="w-40 hidden sm:table-cell text-right">
-        <div class="flex items-center">
-          <%= gettext "Region" %><.sort_icon />
-        </div>
+        <div class="flex items-center">Region <.sort_icon /></div>
       </th>
       <th class="w-11">
-        <span class="sr-only"><%= gettext "Edit" %></span>
+        <span class="sr-only">Edit</span>
         <Icon.Outline.pencil_alt class="inline-block h-5 w-5" />
       </th>
       <th class="w-12 sm:w-14">
-        <span class="sr-only"><%= gettext "Delete" %></span>
+        <span class="sr-only">Delete</span>
         <Icon.Outline.trash class="inline-block h-5 w-5" />
       </th>
     </tr>
@@ -49,23 +43,23 @@
 </table>
 
 <.form id="location-form" class="data-form" :let={f} for={@changeset} action="#">
-  <.modal id="data-form-modal" title={gettext "Location"}>
+  <.modal id="data-form-modal" title="Location">
     <.alert id="data-form-alert" type={:error} text="Input errors" class="hidden mb-2" />
     <.form_field id="input-name" type="text_input" form={f} field={:name} />
     <.form_field id="input-region-id" type="select" form={f} options={@region_options} field={:region_id} />
     <:footer>
-      <.button id="create-btn" type="submit" color="primary" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" data-struct="location"><%= gettext "Create Location" %></.button>
-      <.button id="update-btn" type="submit" color="primary" class="hidden mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" data-struct="location"><%= gettext "Update Location" %></.button>
-      <.button class="cancel mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto"  color="white"><%= gettext "Cancel" %></.button>
+      <.button id="create-btn" type="submit" color="primary" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" data-struct="location">Create Location</.button>
+      <.button id="update-btn" type="submit" color="primary" class="hidden mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" data-struct="location">Update Location</.button>
+      <.button class="cancel mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto"  color="white">Cancel</.button>
     </:footer>
   </.modal>
 </.form>
 
-<.modal id="delete-modal" icon="exclamation" title={gettext "Delete Location"}>
-  <p class="text-sm text-gray-500"><%= gettext "Are you sure you want to delete this location? This action cannot be undone." %></p>
+<.modal id="delete-modal" icon="exclamation" title="Delete Location">
+  <p class="text-sm text-gray-500">Are you sure you want to delete this location? This action cannot be undone.</p>
   <:footer>
-    <.button id="delete-btn" data-struct="location" color="secondary" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto"><%= gettext "Delete Location" %></.button>
-    <.button class="cancel mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" color="white"><%= gettext "Cancel" %></.button>
+    <.button id="delete-btn" data-struct="location" color="secondary" class="mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto">Delete Location</.button>
+    <.button class="cancel mt-3 w-full sm:mt-0 sm:ml-3 sm:w-auto" color="white">Cancel</.button>
   </:footer>
 </.modal>
 

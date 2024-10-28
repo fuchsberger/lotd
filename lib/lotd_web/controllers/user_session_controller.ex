@@ -65,7 +65,7 @@ defmodule LotdWeb.UserSessionController do
 
   def delete(conn, _) do
     conn
-    |> put_flash(:info, gettext "Logged out successfully.")
+    |> put_flash(:info, "Logged out successfully.")
     |> UserAuth.log_out_user()
   end
 end

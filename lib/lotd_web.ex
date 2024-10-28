@@ -42,8 +42,6 @@ defmodule LotdWeb do
         formats: [:html, :json],
         layouts: [html: LotdWeb.Layouts]
 
-      use Gettext, backend: LotdWeb.Gettext
-
       import Plug.Conn
       import Phoenix.LiveView.Controller, only: [live_render: 3]
 
@@ -73,7 +71,6 @@ defmodule LotdWeb do
   # def ui_component do
   #   quote do
   #     use Phoenix.Component, global_prefixes: ~w(x-)
-  #     use Gettext, backend: LotdWeb.Gettext
 
   #     # import LotdWeb.Components.UI.Helpers
   #   end
@@ -94,8 +91,6 @@ defmodule LotdWeb do
 
   defp html_helpers do
     quote do
-      use Gettext, backend: LotdWeb.Gettext
-
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation

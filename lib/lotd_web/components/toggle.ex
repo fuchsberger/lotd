@@ -1,8 +1,6 @@
 # defmodule LotdWeb.Components.Toggle do
 #   use Phoenix.Component
 
-#   import LotdWeb.Gettext
-
 #   @doc """
 #     Toggle Element
 #     based on [Tailwind UI](https://tailwindui.com/components/application-ui/forms/toggles)
@@ -32,7 +30,7 @@
 
 #     ~H"""
 #     <button type="button" class={button_classes(@enabled, @short, @class)} role="switch" aria-checked={@enabled} {@extra_attributes}>
-#       <span class="sr-only"><%= gettext "umschalten" %></span>
+#       <span class="sr-only">umschalten</span>
 #       <%= cond do %>
 #         <% @icon -> %>
 #           <span class={"#{translate_class(@enabled)} pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200"}>

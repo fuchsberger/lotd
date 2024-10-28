@@ -73,7 +73,7 @@
 #             <div class="ml-auto pl-3">
 #               <div class="-mx-1.5 -my-1.5">
 #                 <button type="button" class={"inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-offset-2 #{button_classes(@type)}"} @click="show = false">
-#                   <span class="sr-only"><%= gettext "ausblenden" %></span>
+#                   <span class="sr-only">ausblenden</span>
 #                   <Heroicons.x_mark mini class="h-5 w-5" />
 #               </button>
 #               </div>

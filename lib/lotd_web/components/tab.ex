@@ -1,6 +1,6 @@
 defmodule LotdWeb.Components.Tab do
   use Phoenix.Component
-  # import LotdWeb.Gettext
+
   # prop class, :string
   # prop full-width
   # prop variant, :string, default: "underline", options: ["underline", "pills", "bar"]
