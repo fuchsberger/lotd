@@ -8,7 +8,8 @@
 import Config
 
 config :lotd,
-  ecto_repos: [Lotd.Repo]
+  ecto_repos: [Lotd.Repo],
+  generators: [timestamp_type: :utc_datetime]
 
 # Nexus API urls
 config :lotd, Lotd.NexusAPI,
@@ -16,28 +17,32 @@ config :lotd, Lotd.NexusAPI,
   user_url: "https://api.nexusmods.com/v1/users/validate.json",
   header: [
     application_name: "LOTD Inventory Manager",
-    application_version: "1.2.0"
+    application_version: "2.0.0"
   ]
 
 # Configures the endpoint
 config :lotd, LotdWeb.Endpoint,
   url: [host: "localhost"],
-  render_errors: [view: LotdWeb.ErrorHTML, accepts: ~w(html json)],
+  adapter: Bandit.PhoenixAdapter,
+  render_errors: [
+    formats: [html: DsaWeb.ErrorHTML, json: DsaWeb.ErrorJSON],
+    layout: false
+  ],
   pubsub_server: Lotd.PubSub,
   live_view: [ signing_salt: "yPX4HroHXx7yWYqHVUYU1EMv7QKl5WuK" ]
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.14.41",
-  default: [
+  version: "0.17.11",
+  lotd: [
     args: ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]
 
 config :tailwind,
-  version: "3.2.7",
-  default: [
+  version: "3.4.0",
+  lotd: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css

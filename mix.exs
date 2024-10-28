@@ -4,7 +4,7 @@ defmodule Lotd.MixProject do
   def project do
     [
       app: :lotd,
-      version: "1.2.0",
+      version: "2.0.0",
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
@@ -36,15 +36,15 @@ defmodule Lotd.MixProject do
       {:phoenix, "~> 1.7"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.3"},
+      {:ecto_sql, "~> 3.12.1"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 3.3.0"},
+      {:phoenix_html, "~> 4.1.1"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.18"},
       {:httpoison, "~> 2.0"},
       {:floki, ">= 0.0.0", only: :test},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.17"},
       {:jason, "~> 1.1"},
@@ -63,12 +63,13 @@ defmodule Lotd.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": [
-        "esbuild default --minify",
-        "tailwind default --minify",
+        "tailwind lotd --minify",
+        "esbuild lotd --minify",
         "phx.digest"
       ]
     ]

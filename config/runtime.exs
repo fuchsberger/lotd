@@ -1,5 +1,22 @@
 import Config
 
+# config/runtime.exs is executed for all environments, including
+# during releases. It is executed after compilation and before the
+# system starts, so it is typically used to load production configuration
+# and secrets from environment variables or elsewhere. Do not define
+# any compile-time configuration in here, as it won't be applied.
+# The block below contains prod specific runtime configuration.
+
+# ## Using releases
+#
+# If you use `mix release`, you need to explicitly enable the server
+# by passing the PHX_SERVER=true when you start it:
+#
+#     PHX_SERVER=true bin/lotd start
+#
+# Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
+# script that automatically sets the env var above.
+
 if System.get_env("PHX_SERVER") do
   config :lotd, LotdWeb.Endpoint, server: true
 end
@@ -11,9 +28,10 @@ if config_env() == :prod do
     For example: ecto://USER:PASS@HOST/DATABASE
     """
 
-  maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
+  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :lotd, Lotd.Repo,
+    # ssl: true,
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
@@ -30,7 +48,11 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
+  host = System.get_env("PHX_HOST") ||
+    raise """
+    environment variable PHX_HOST is missing.
+    Should be the domain, such as: example.com
+    """
   port = String.to_integer(System.get_env("PORT") || "4000")
 
   config :lotd, LotdWeb.Endpoint,

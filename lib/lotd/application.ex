@@ -7,18 +7,12 @@ defmodule Lotd.Application do
 
   @impl true
   def start(_type, _args) do
-    # List all child processes to be supervised
     children = [
-      # Start the Ecto repository
+      Lotd.Telemetry,
       Lotd.Repo,
-      # Start the Telemetry supervisor
-      LotdWeb.Telemetry,
-      # Start the PubSub system
+      {DNSCluster, query: Application.get_env(:lotd, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Lotd.PubSub},
-      # Start the endpoint when the application starts
       LotdWeb.Endpoint
-      # Starts a worker by calling: Lotd.Worker.start_link(arg)
-      # {Lotd.Worker, arg},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

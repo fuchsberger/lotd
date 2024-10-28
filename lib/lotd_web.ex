@@ -17,28 +17,45 @@ defmodule LotdWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images uploads favicon.ico robots.txt)
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+
+  def router do
+    quote do
+      use Phoenix.Router, helpers: false
+
+      # Import common connection and controller functions to use in pipelines
+      import Plug.Conn
+      import Phoenix.Controller
+      import Phoenix.LiveView.Router
+    end
+  end
+
+  def channel do
+    quote do
+      use Phoenix.Channel
+    end
+  end
 
   def controller do
     quote do
-      use Phoenix.Controller, formats: [:html, :json], layouts: []
+      use Phoenix.Controller,
+        formats: [:html, :json],
+        layouts: [html: LotdWeb.Layouts]
 
       import Plug.Conn
-      import Phoenix.LiveView.Controller, only: [live_render: 3]
       import LotdWeb.Gettext
+      import Phoenix.LiveView.Controller, only: [live_render: 3]
 
       unquote(verified_routes())
     end
   end
 
-  def html do
+  def live_view do
     quote do
-      use Phoenix.Component, global_prefixes: ~w(x-)
+      use Phoenix.LiveView,
+        container: {:div, class: "flex flex-col h-full"},
+        layout: {LotdWeb.Layouts, "live.html"}
 
-      # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_csrf_token: 0, view_module: 1, view_template: 1]
-
-      # Include general helpers for rendering HTML
       unquote(html_helpers())
     end
   end
@@ -61,37 +78,33 @@ defmodule LotdWeb do
     end
   end
 
-  def live_view do
+  def html do
     quote do
-      use Phoenix.LiveView,
-        container: {:div, class: "flex flex-col h-full"},
-        layout: {LotdWeb.Layouts, "live.html"}
+      use Phoenix.Component, global_prefixes: ~w(x-)
 
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
       unquote(html_helpers())
-    end
-  end
-
-  def router do
-    quote do
-      use Phoenix.Router
-
-      import Phoenix.LiveView.Router
-      import Plug.Conn
-      import Phoenix.Controller
     end
   end
 
   defp html_helpers do
     quote do
-      # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
-      use LotdWeb.Components
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components and translation
+      import LotdWeb.Components
+      import LotdWeb.Gettext
 
       import Phoenix.Component
       import LotdWeb.ErrorHelpers
       import LotdWeb.ViewHelpers
       import LotdWeb.Gettext
 
+      # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
 
       unquote(verified_routes())
