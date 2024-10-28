@@ -1,4 +1,4 @@
-<div class="min-h-full">
+<%!-- <div class="min-h-full">
   <nav class="bg-white shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -77,8 +77,8 @@
               <span><%= gettext "Sign in" %></span>
               <Icon.Outline.login class="inline-block h-6 w-6" />
             </button>
-            <.form :let={f} for={:session} action={~p"/login"} id="login-form">
-              <%= hidden_input(f, :api_key) %>
+            <.form :let={_f} for={:session} action={~p"/login"} id="login-form">
+              <%# hidden_input(f, :api_key) %>
             </.form>
           <% end %>
         </div>
@@ -150,4 +150,4 @@
       <%= @inner_content %>
     </div>
   </main>
-</div>
+</div> --%>

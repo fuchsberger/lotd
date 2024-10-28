@@ -12,9 +12,9 @@ defmodule LotdWeb.Layouts do
   defp menu_items(conn) do
     items =
       [
-        {gettext("About"), ~p"/about"},
-        {gettext("Items"), ~p"/"},
-        {gettext("Mods"), ~p"/mods"}
+        {"About", ~p"/about"},
+        {"Items", ~p"/"},
+        {"Mods", ~p"/mods"}
       ]
 
     Enum.map(items, fn {label, path} ->
@@ -23,8 +23,8 @@ defmodule LotdWeb.Layouts do
   end
 
   defp more_items(conn), do: [
-    {gettext("Locations"), ~p"/locations"},
-    {gettext("Regions"), ~p"/regions"}
+    {"Locations", ~p"/locations"},
+    {"Regions", ~p"/regions"}
   ]
   |> Enum.map(fn {label, path} ->
     {label, path, Phoenix.Controller.current_path(conn) == path}

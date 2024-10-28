@@ -1,4 +1,4 @@
-<nav class="flex-none bg-gray-800">
+<%!-- <nav class="flex-none bg-gray-800">
   <div class="mx-auto max-w-7xl px-2 lg:px-0">
     <div class="relative flex h-16 items-center justify-between">
       <div class="flex items-center px-2 lg:px-0">
@@ -37,13 +37,13 @@
               <.icon name="hero-bars-3" class="block h-6 w-6" />
           </:button>
           <:link id='login-button' icon="hero-power-mini" dispatch="connect">Login</:link>
-        </.dropdown>
+        </.dropdown> --%>
         <%!-- Hidden Form for login --%>
-        <.form :let={f} for={%{}} as={:session} action={~p"/login"} id="login-form" :if={!@user}>
-          <%= hidden_input(f, :api_key) %>
-        </.form>
-      </div>
+        <%!-- <.form :let={f} for={%{}} as={:session} action={~p"/login"} id="login-form" :if={!@user}> --%>
+          <%# hidden_input(f, :api_key) %>
+        <%!-- </.form> --%>
+      <%!-- </div>
 
     </div>
   </div>
-</nav>
+</nav> --%>

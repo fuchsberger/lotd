@@ -2,11 +2,10 @@
 <html lang="en" class='h-full bg-gray-900'>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>LOTD Gallery</title>
-    <meta name="author" content="Alexander Fuchsberger"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <title>LOTD Curator</title>
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"}/>
-    <%= csrf_meta_tag() %>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}></script>
   </head>
   <body class="h-full">

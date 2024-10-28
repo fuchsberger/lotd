@@ -42,8 +42,9 @@ defmodule LotdWeb do
         formats: [:html, :json],
         layouts: [html: LotdWeb.Layouts]
 
+      use Gettext, backend: LotdWeb.Gettext
+
       import Plug.Conn
-      import LotdWeb.Gettext
       import Phoenix.LiveView.Controller, only: [live_render: 3]
 
       unquote(verified_routes())
@@ -54,7 +55,7 @@ defmodule LotdWeb do
     quote do
       use Phoenix.LiveView,
         container: {:div, class: "flex flex-col h-full"},
-        layout: {LotdWeb.Layouts, "live.html"}
+        layout: {LotdWeb.Layouts, :app}
 
       unquote(html_helpers())
     end
@@ -69,14 +70,14 @@ defmodule LotdWeb do
     end
   end
 
-  def ui_component do
-    quote do
-      use Phoenix.Component, global_prefixes: ~w(x-)
+  # def ui_component do
+  #   quote do
+  #     use Phoenix.Component, global_prefixes: ~w(x-)
+  #     use Gettext, backend: LotdWeb.Gettext
 
-      import LotdWeb.Gettext
-      import LotdWeb.Components.UI.Helpers
-    end
-  end
+  #     # import LotdWeb.Components.UI.Helpers
+  #   end
+  # end
 
   def html do
     quote do
@@ -93,16 +94,12 @@ defmodule LotdWeb do
 
   defp html_helpers do
     quote do
+      use Gettext, backend: LotdWeb.Gettext
+
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import LotdWeb.Components
-      import LotdWeb.Gettext
-
-      import Phoenix.Component
-      import LotdWeb.ErrorHelpers
-      import LotdWeb.ViewHelpers
-      import LotdWeb.Gettext
+      import LotdWeb.CoreComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

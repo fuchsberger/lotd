@@ -20,5 +20,5 @@ defmodule LotdWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :lotd
+  use Gettext.Backend, otp_app: :lotd
 end
